@@ -9,9 +9,9 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "WSOA.Client", "WSOA\Client\
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "WSOA.Shared", "WSOA\Shared\WSOA.Shared.csproj", "{A1AF768D-75DC-415A-A179-F0996487FDBD}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WSOA.Business", "WSOA\Business\WSOA.Business.csproj", "{BA0EA88E-F640-4570-9E2F-B51700C80BB2}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "WSOA.Business", "WSOA\Business\WSOA.Business.csproj", "{BA0EA88E-F640-4570-9E2F-B51700C80BB2}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WSOA.DataAccess", "WSOA\DataAccess\WSOA.DataAccess.csproj", "{05E42574-E514-4C50-A89C-C82930C3F0DB}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "WSOA.DataAccess", "WSOA\DataAccess\WSOA.DataAccess.csproj", "{05E42574-E514-4C50-A89C-C82930C3F0DB}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

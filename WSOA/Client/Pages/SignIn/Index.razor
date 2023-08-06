@@ -1,0 +1,11 @@
+﻿@layout FullPageLayout
+@page "/"
+@using WSOA.Client.Pages.SignIn.Component;
+@inherits SignInComponent
+
+<h3>SignIn</h3>
+<EditForm Model="_signInFormVM" OnSubmit="SignIn">
+    <InputText @bind-Value="_signInFormVM.Login" />
+    <InputText @bind-Value="_signInFormVM.Password" />
+    <button type="submit">Sign In</button>
+</EditForm>
