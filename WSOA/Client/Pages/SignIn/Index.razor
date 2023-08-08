@@ -3,9 +3,59 @@
 @using WSOA.Client.Pages.SignIn.Component;
 @inherits SignInComponent
 
-<h3>SignIn</h3>
-<EditForm Model="_signInFormVM" OnSubmit="SignIn">
-    <InputText @bind-Value="_signInFormVM.Login" />
-    <InputText @bind-Value="_signInFormVM.Password" />
-    <button type="submit">Sign In</button>
-</EditForm>
+<div class="signIn_mainContainer">
+    <div class="signIn_borderLeft">
+        <span>A</span>
+        <img class="signIn_borderLeft-logo" src="images/heart_logo.png" />
+    </div>
+    <div class="signIn_container">
+        <img class="signIn_container-logo" src="images/main_logo.png" />
+        <EditForm
+            Model="_signInFormVM"
+            OnSubmit="SignIn"
+            style="
+                width: 90%;
+            "
+        >
+            <DataAnnotationsValidator />
+            <div class="signIn_form">
+                <div class="signIn_form-field login">
+                    <span>Login</span>
+                    <InputText
+                        @bind-Value="_signInFormVM.Login"
+                        style="
+                            height: 50px;
+                            border-radius: 10px;
+                            border: 1px solid;
+                        "
+                    />
+                    <ValidationMessage
+                        For="@(() => _signInFormVM.Login)"
+                    />
+                </div>
+                <div class="signIn_form-field">
+                    <span>Mot de passe</span>
+                    <InputText
+                        @bind-Value="_signInFormVM.Password"
+                        style="
+                            height: 50px;
+                            border-radius: 10px;
+                            border: 1px solid;
+                        "
+                    />
+                    <ValidationMessage
+                        For="@(() => _signInFormVM.Password)"
+                    />
+                </div>
+            </div>
+            <div class="signIn_buttonsPanel">
+                <button class="signIn_buttonsPanel-button submit" type="submit">Se Connecter</button>
+                <button class="signIn_buttonsPanel-button">Mot de passe oublié</button>
+            </div>
+        </EditForm>
+    </div>
+    <div class="signIn_borderRight">
+        <img class="signIn_borderRight-logo" src="images/heart_logo.png" />
+        <span>A</span>
+    </div>
+</div>

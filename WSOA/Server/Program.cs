@@ -1,8 +1,21 @@
-using Microsoft.AspNetCore.ResponseCompression;
+using Microsoft.EntityFrameworkCore;
+using WSOA.Server.Business.Implementation;
+using WSOA.Server.Business.Interface;
+using WSOA.Server.Data;
+using WSOA.Server.Data.Implementation;
+using WSOA.Server.Data.Interface;
 
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
+builder.Services.AddDbContext<WSOADbContext>(options =>
+{
+    options.UseSqlServer(builder.Configuration.GetConnectionString("WSOA_DB"));
+});
+
+builder.Services.AddScoped<IAccountRepository, AccountRepository>();
+
+builder.Services.AddScoped<IAccountBusiness, AccountBusiness>();
 
 builder.Services.AddControllersWithViews();
 builder.Services.AddRazorPages();
