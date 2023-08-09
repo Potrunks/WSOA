@@ -9,6 +9,6 @@ namespace WSOA.Server.Business.Interface
         /// Sign In the user.
         /// </summary>
         /// <returns>Status of the sign in attemption.</returns>
-        APICallResult SignIn(SignInFormViewModel signInFormVM);
+        APICallResult SignIn(SignInFormViewModel signInFormVM, ISession currentSession);
     }
 }

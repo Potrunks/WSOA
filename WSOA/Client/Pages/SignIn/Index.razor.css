@@ -51,8 +51,7 @@
 .signIn_form {
     display: flex;
     flex-direction: column;
-    margin-bottom: 50px;
-    margin-top: 25px;
+    margin-bottom: 33px;
 }
 
 .signIn_form-field {
@@ -67,6 +66,7 @@
 .signIn_buttonsPanel {
     display: flex;
     flex-direction: column;
+    margin-bottom: 25px;
 }
 
 .signIn_buttonsPanel-button {
@@ -80,4 +80,21 @@
     margin-bottom: 10px;
     background-color: #276347;
     color: white;
+}
+
+.signIn_buttonsPanel-button:hover {
+    background-color: seagreen;
+    color: white;
+    transition: background-color 0.5s, color 0.5s;
+}
+
+.signIn_container-prompt {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.signIn_container-prompt.errorMsg {
+    text-align: center;
+    color: red;
 }

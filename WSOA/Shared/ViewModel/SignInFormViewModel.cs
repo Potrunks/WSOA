@@ -1,9 +1,13 @@
-﻿namespace WSOA.Shared.ViewModel
+﻿using System.ComponentModel.DataAnnotations;
+
+namespace WSOA.Shared.ViewModel
 {
     public class SignInFormViewModel
     {
-        public string Login { get; set; }
+        [Required(ErrorMessage = "Login manquant")]
+        public string? Login { get; set; }
 
-        public string Password { get; set; }
+        [Required(ErrorMessage = "Mot de passe manquant")]
+        public string? Password { get; set; }
     }
 }

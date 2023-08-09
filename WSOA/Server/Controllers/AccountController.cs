@@ -19,7 +19,7 @@ namespace WSOA.Server.Controllers
         [Route("api/account/signIn")]
         public APICallResult SignIn([FromBody] SignInFormViewModel signInFormVM)
         {
-            return _accountBusiness.SignIn(signInFormVM);
+            return _accountBusiness.SignIn(signInFormVM, HttpContext.Session);
         }
     }
 }

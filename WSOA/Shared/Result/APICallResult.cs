@@ -4,7 +4,7 @@
     {
         public APICallResult()
         {
-            Success = false;
+            Success = true;
             ErrorMessage = null;
         }
 
