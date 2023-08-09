@@ -40,12 +40,16 @@ namespace WSOA.Client.Pages.SignIn.Component
             }
 
             APICallResult result = await AccountService.SignIn(_signInFormVM);
-            _errorMessage = result.Success ? null : result.ErrorMessage;
+            if (!result.Success)
+            {
+                _errorMessage = result.ErrorMessage;
+                _isLoading = false;
+                return;
+            }
+
+            NavigationManager.NavigateTo("/home");
 
             _isLoading = false;
-
-            // Redirection vers Home
-            NavigationManager.NavigateTo("/home");
         }
     }
 }

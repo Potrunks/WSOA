@@ -11,11 +11,14 @@ namespace WSOA.Server.Business.Implementation
     public class AccountBusiness : IAccountBusiness
     {
         private readonly IAccountRepository _accountRepository;
+        private readonly IUserRepository _userRepository;
+
         private readonly ILog _log = LogManager.GetLogger(nameof(AccountBusiness));
 
-        public AccountBusiness(IAccountRepository accountRepository)
+        public AccountBusiness(IAccountRepository accountRepository, IUserRepository userRepository)
         {
             _accountRepository = accountRepository;
+            _userRepository = userRepository;
         }
 
         public APICallResult SignIn(SignInFormViewModel signInFormVM, ISession currentSession)
@@ -44,11 +47,8 @@ namespace WSOA.Server.Business.Implementation
                     return result;
                 }
 
-                // Si connexion OK, ajouter l'utilisateur dans la session s'il ne l'est pas deja
-                if (string.IsNullOrWhiteSpace(currentSession.GetString(SessionResources.USER_ID)))
-                {
-
-                }
+                User currentUser = _userRepository.GetUserByAccountId(account.Id);
+                currentSession.SetString(SessionResources.USER_ID, currentUser.Id.ToString());
 
             }
             catch (Exception ex)

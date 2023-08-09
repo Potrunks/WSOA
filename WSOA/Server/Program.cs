@@ -14,6 +14,7 @@ builder.Services.AddDbContext<WSOADbContext>(options =>
 });
 
 builder.Services.AddScoped<IAccountRepository, AccountRepository>();
+builder.Services.AddScoped<IUserRepository, UserRepository>();
 
 builder.Services.AddScoped<IAccountBusiness, AccountBusiness>();
 
