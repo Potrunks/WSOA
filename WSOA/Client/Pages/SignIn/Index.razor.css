@@ -1,12 +1,26 @@
 ﻿.signIn_mainContainer {
     background-color: #EDE8DF;
-    width: 400px;
-    height: 600px;
+    width: 300px;
+    height: 525px;
     border-radius: 30px;
     display: flex;
     justify-content: space-between;
     align-items: center;
     box-shadow: 12px 12px 2px 1px rgba(0, 0, 0, 0.15);
+}
+
+@media only screen and (max-width: 375px) and (min-width: 321px) {
+    .signIn_mainContainer {
+        width: 350px;
+        height: 550px;
+    }
+}
+
+@media only screen and (min-width: 376px) {
+    .signIn_mainContainer {
+        width: 375px;
+        height: 600px;
+    }
 }
 
 .signIn_borderLeft,
