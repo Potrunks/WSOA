@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Forms;
 using WSOA.Client.Services.Interface;
+using WSOA.Shared.RenderObject;
 using WSOA.Shared.Result;
 using WSOA.Shared.ViewModel;
 
@@ -15,6 +16,10 @@ namespace WSOA.Client.Pages.SignIn.Component
         public NavigationManager NavigationManager { get; set; }
 
         public SignInFormViewModel _signInFormVM = new SignInFormViewModel();
+
+        public CardRenderObject _cardLeftRenderObject = new CardRenderObject();
+
+        public CardRenderObject _cardRightRenderObject = new CardRenderObject();
 
         public string? _errorMessage = null;
 
