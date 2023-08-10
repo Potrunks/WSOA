@@ -1,11 +1,31 @@
-using Microsoft.AspNetCore.ResponseCompression;
+using Microsoft.EntityFrameworkCore;
+using WSOA.Server.Business.Implementation;
+using WSOA.Server.Business.Interface;
+using WSOA.Server.Data;
+using WSOA.Server.Data.Implementation;
+using WSOA.Server.Data.Interface;
 
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
+builder.Services.AddDbContext<WSOADbContext>(options =>
+{
+    options.UseSqlServer(builder.Configuration.GetConnectionString("WSOA_DB"));
+});
+
+builder.Services.AddScoped<IAccountRepository, AccountRepository>();
+builder.Services.AddScoped<IUserRepository, UserRepository>();
+
+builder.Services.AddScoped<IAccountBusiness, AccountBusiness>();
 
 builder.Services.AddControllersWithViews();
 builder.Services.AddRazorPages();
+
+builder.Services.AddDistributedMemoryCache();
+builder.Services.AddSession(option =>
+{
+    option.IdleTimeout = TimeSpan.FromMinutes(30);
+});
 
 var app = builder.Build();
 
@@ -28,9 +48,10 @@ app.UseStaticFiles();
 
 app.UseRouting();
 
-
 app.MapRazorPages();
 app.MapControllers();
 app.MapFallbackToFile("index.html");
+
+app.UseSession();
 
 app.Run();

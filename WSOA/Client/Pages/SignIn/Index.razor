@@ -1,0 +1,74 @@
+﻿@layout FullPageLayout
+@page "/"
+@using WSOA.Client.Pages.SignIn.Component;
+@using WSOA.Client.Pages.SignIn.Resources;
+@using WSOA.Client.Shared.Resources;
+@inherits SignInComponent
+
+<div class="signIn_mainContainer">
+    <div class="signIn_borderLeft">
+        <span>@_cardRightRenderObject.Value</span>
+        <img class="signIn_borderLeft-logo" src="images/@_cardRightRenderObject.IconFileName" />
+    </div>
+    <div class="signIn_container">
+        <img class="signIn_container-logo" src="images/main_logo.png" />
+        <EditForm
+            OnSubmit="SignIn"
+            EditContext="@_editContext"
+            style="
+                width: 90%;
+                height: 100%;
+                display: flex;
+                flex-direction: column;
+                margin-bottom: 10px;
+            "
+        >
+            <div class="signIn_form">
+                <div class="signIn_form-field login">
+                    <span>@SignInLabelResources.LOGIN_FIELD_LABEL</span>
+                    <InputText
+                        @bind-Value="_signInFormVM.Login"
+                        style="
+                            height: 50px;
+                            border-radius: 10px;
+                            border: 1px solid;
+                        "
+                    />
+                </div>
+                <div class="signIn_form-field">
+                    <span>@SignInLabelResources.PWD_FIELD_LABEL</span>
+                    <InputText
+                        @bind-Value="_signInFormVM.Password"
+                        style="
+                            height: 50px;
+                            border-radius: 10px;
+                            border: 1px solid;
+                        "
+                    />
+                </div>
+            </div>
+            <div class="signIn_buttonsPanel">
+                <button class="signIn_buttonsPanel-button submit" type="submit">@SignInLabelResources.SIGN_IN_BTN_LABEL</button>
+                <button class="signIn_buttonsPanel-button pwdForgotten">@SignInLabelResources.PWD_FORGOTTEN_BTN_LABEL</button>
+            </div>
+            <div class="signIn_container-prompt">
+                @if (_isLoading)
+                {
+                    <span class="signIn_container-prompt loading">@MainLabelResources.LOADING_LABEL</span>
+                }
+                else if (!string.IsNullOrEmpty(_errorMessage))
+                {
+                    <span class="signIn_container-prompt errorMsg">@_errorMessage</span>
+                }
+                else
+                {
+                    <ValidationSummary />
+                }
+            </div>
+        </EditForm>
+    </div>
+    <div class="signIn_borderRight">
+        <img class="signIn_borderRight-logo" src="images/@_cardLeftRenderObject.IconFileName" />
+        <span>@_cardLeftRenderObject.Value</span>
+    </div>
+</div>
