@@ -49,6 +49,7 @@ namespace WSOA.Server.Business.Implementation
 
                 User currentUser = _userRepository.GetUserByAccountId(account.Id);
                 currentSession.SetString(SessionResources.USER_ID, currentUser.Id.ToString());
+                currentSession.SetString(SessionResources.PROFILE_CODE, currentUser.ProfileCode);
 
             }
             catch (Exception ex)
