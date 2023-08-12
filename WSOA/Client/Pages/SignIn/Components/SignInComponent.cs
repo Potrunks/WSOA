@@ -18,9 +18,9 @@ namespace WSOA.Client.Pages.SignIn.Component
 
         public SignInFormViewModel _signInFormVM = new SignInFormViewModel();
 
-        public CardRenderObject _cardLeftRenderObject = new CardRenderObject();
+        public CardRenderObject _cardLeftRenderObject;
 
-        public CardRenderObject _cardRightRenderObject = new CardRenderObject();
+        public CardRenderObject _cardRightRenderObject;
 
         public string? _errorMessage = null;
 
@@ -32,6 +32,8 @@ namespace WSOA.Client.Pages.SignIn.Component
         {
             _editContext = new EditContext(_signInFormVM);
             _editContext.EnableDataAnnotationsValidation();
+
+            GeneratePokerHand();
         }
 
         public async Task SignIn()
@@ -56,6 +58,12 @@ namespace WSOA.Client.Pages.SignIn.Component
             _isLoading = false;
 
             NavigationManager.NavigateTo(RouteResources.HOME);
+        }
+
+        public void GeneratePokerHand()
+        {
+            _cardLeftRenderObject = new CardRenderObject();
+            _cardRightRenderObject = new CardRenderObject(_cardLeftRenderObject);
         }
     }
 }
