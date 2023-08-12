@@ -1,4 +1,4 @@
-﻿using WSOA.Client.Pages.SignIn.Resources;
+﻿using WSOA.Shared.Resources;
 using WSOA.Shared.Utils;
 
 namespace WSOA.Shared.RenderObject

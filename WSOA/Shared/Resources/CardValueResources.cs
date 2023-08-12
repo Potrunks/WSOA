@@ -1,4 +1,4 @@
-﻿namespace WSOA.Client.Pages.SignIn.Resources
+﻿namespace WSOA.Shared.Resources
 {
     public static class CardValueResources
     {
