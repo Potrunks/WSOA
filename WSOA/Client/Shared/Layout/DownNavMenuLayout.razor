@@ -12,9 +12,13 @@
         @Body
     </div>
     <div class="navMenu_container">
-        @foreach (MainNavSectionViewModel mainNavSectionVM in _mainNavSectionVMs)
-        {
-            <MainNavSection ViewModel="@mainNavSectionVM" />
-        }
+        <CascadingValue Value="@SelectedStateBySectionOrder">
+            @foreach (MainNavSectionViewModel mainNavSectionVM in _mainNavSectionVMs)
+            {
+                <MainNavSection
+                    ViewModel="@mainNavSectionVM"
+                />
+            }
+        </CascadingValue>
     </div>
 </div>

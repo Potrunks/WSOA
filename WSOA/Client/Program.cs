@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Components.WebAssembly.Hosting;
 using WSOA.Client;
 using WSOA.Client.Services.Implementation;
 using WSOA.Client.Services.Interface;
+using WSOA.Client.Shared.EventHandlers;
 
 var builder = WebAssemblyHostBuilder.CreateDefault(args);
 builder.RootComponents.Add<App>("#app");
@@ -12,5 +13,7 @@ builder.Services.AddScoped(sp => new HttpClient { BaseAddress = new Uri(builder.
 
 builder.Services.AddScoped<IAccountService, AccountService>();
 builder.Services.AddScoped<IMenuService, MenuService>();
+
+builder.Services.AddScoped<MainNavSectionEventHandlerContainer>();
 
 await builder.Build().RunAsync();
