@@ -22,13 +22,17 @@ i.selected {
 }
 
 .subSections_container.open {
-    display: block;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: flex-start;
     background-color: #EDE8DF;
-    width: 95%;
-    height: 10%;
     position: absolute;
     bottom: 10.5%;
     left: 0px;
     margin-left: 8px;
     border-radius: 5px;
+    padding-bottom: 10px;
+    padding-left: 10px;
+    padding-right: 10px;
 }

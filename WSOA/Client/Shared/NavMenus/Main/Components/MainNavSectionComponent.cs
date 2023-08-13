@@ -43,9 +43,9 @@ namespace WSOA.Client.Shared.NavMenus.Main.Components
         public void SelectSection()
         {
             _selectedStateCssClassName = CssClassNameResources.SELECTED;
-            if (ViewModel.Order != MainNavSectionResources.HOME_ORDER && ViewModel.MainNavSubSectionVMs.Any())
+            if (ViewModel.MainNavSubSectionVMs.Any())
             {
-                _openSubSectionsCssClassName = CssClassNameResources.OPEN;
+                _openSubSectionsCssClassName = _openSubSectionsCssClassName == CssClassNameResources.EMPTY_CLASS ? CssClassNameResources.OPEN : CssClassNameResources.EMPTY_CLASS;
             }
             SelectedStateBySectionOrder[ViewModel.Order] = _selectedStateCssClassName;
             EventHandlerContainer._currentMainNavSection.Order = ViewModel.Order;
