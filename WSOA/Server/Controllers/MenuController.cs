@@ -18,7 +18,7 @@ namespace WSOA.Server.Controllers
         [Route("api/menu/loadMainNavMenu")]
         public MainNavMenuResult LoadMainNavMenu()
         {
-            return _menuBusiness.LoadMainNavMenu();
+            return _menuBusiness.LoadMainNavMenu(HttpContext.Session);
         }
     }
 }

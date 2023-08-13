@@ -4,9 +4,9 @@ namespace WSOA.Shared.Result
 {
     public class MainNavMenuResult : APICallResult
     {
-        public MainNavMenuResult(List<MainNavSectionViewModel> mainNavSectionVMs) : base()
+        public MainNavMenuResult() : base()
         {
-            MainNavSectionVMs = mainNavSectionVMs;
+            MainNavSectionVMs = new List<MainNavSectionViewModel>();
         }
 
         public List<MainNavSectionViewModel> MainNavSectionVMs { get; set; }

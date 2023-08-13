@@ -7,6 +7,6 @@ namespace WSOA.Server.Business.Interface
         /// <summary>
         /// Load Main nav menu for the user connected.
         /// </summary>
-        MainNavMenuResult LoadMainNavMenu();
+        MainNavMenuResult LoadMainNavMenu(ISession currentSession);
     }
 }

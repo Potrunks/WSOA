@@ -7,7 +7,7 @@
 namespace WSOA.Server.Migrations
 {
     /// <inheritdoc />
-    public partial class InitializeDB : Migration
+    public partial class SeedDB_v010 : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -55,6 +55,28 @@ namespace WSOA.Server.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "MainNavSubSections",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    Name = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Label = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Order = table.Column<int>(type: "int", nullable: false),
+                    MainNavSectionId = table.Column<int>(type: "int", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_MainNavSubSections", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_MainNavSubSections_MainNavSections_MainNavSectionId",
+                        column: x => x.MainNavSectionId,
+                        principalTable: "MainNavSections",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "Users",
                 columns: table => new
                 {
@@ -82,6 +104,32 @@ namespace WSOA.Server.Migrations
                         onDelete: ReferentialAction.Cascade);
                 });
 
+            migrationBuilder.CreateTable(
+                name: "MainNavSubSectionsByProfileCode",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    ProfileCode = table.Column<string>(type: "nvarchar(450)", nullable: false),
+                    MainNavSubSectionId = table.Column<int>(type: "int", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_MainNavSubSectionsByProfileCode", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_MainNavSubSectionsByProfileCode_MainNavSubSections_MainNavSubSectionId",
+                        column: x => x.MainNavSubSectionId,
+                        principalTable: "MainNavSubSections",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_MainNavSubSectionsByProfileCode_Profiles_ProfileCode",
+                        column: x => x.ProfileCode,
+                        principalTable: "Profiles",
+                        principalColumn: "Code",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
             migrationBuilder.InsertData(
                 table: "Accounts",
                 columns: new[] { "Id", "Login", "Password" },
@@ -92,10 +140,10 @@ namespace WSOA.Server.Migrations
                 columns: new[] { "Id", "ClassIcon", "Label", "Name", "Order" },
                 values: new object[,]
                 {
-                    { 1, "uil uil-estate", "Accueil", "Home", 1 },
-                    { 2, "uil uil-chart-pie", "Statistique", "Statistical", 2 },
-                    { 3, "uil uil-spade", "Tournoi", "Tournament", 3 },
-                    { 4, "uil uil-user", "Compte", "Account", 4 }
+                    { 1, "uil uil-estate", "Accueil", "Home", 0 },
+                    { 2, "uil uil-chart-pie", "Statistique", "Statistical", 1 },
+                    { 3, "uil uil-spade", "Tournoi", "Tournament", 2 },
+                    { 4, "uil uil-user", "Compte", "Account", 3 }
                 });
 
             migrationBuilder.InsertData(
@@ -110,9 +158,34 @@ namespace WSOA.Server.Migrations
                 });
 
             migrationBuilder.InsertData(
+                table: "MainNavSubSections",
+                columns: new[] { "Id", "Label", "MainNavSectionId", "Name", "Order" },
+                values: new object[] { 1, "Créer un lien de création de compte", 4, "Création lien pour nouveau compte", 0 });
+
+            migrationBuilder.InsertData(
                 table: "Users",
                 columns: new[] { "Id", "AccountId", "FirstName", "LastName", "ProfileCode" },
                 values: new object[] { 1, 1, "Alexis", "ARRIAL", "ADMIN" });
+
+            migrationBuilder.InsertData(
+                table: "MainNavSubSectionsByProfileCode",
+                columns: new[] { "Id", "MainNavSubSectionId", "ProfileCode" },
+                values: new object[] { 1, 1, "ADMIN" });
+
+            migrationBuilder.CreateIndex(
+                name: "IX_MainNavSubSections_MainNavSectionId",
+                table: "MainNavSubSections",
+                column: "MainNavSectionId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_MainNavSubSectionsByProfileCode_MainNavSubSectionId",
+                table: "MainNavSubSectionsByProfileCode",
+                column: "MainNavSubSectionId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_MainNavSubSectionsByProfileCode_ProfileCode",
+                table: "MainNavSubSectionsByProfileCode",
+                column: "ProfileCode");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Users_AccountId",
@@ -129,16 +202,22 @@ namespace WSOA.Server.Migrations
         protected override void Down(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.DropTable(
-                name: "MainNavSections");
+                name: "MainNavSubSectionsByProfileCode");
 
             migrationBuilder.DropTable(
                 name: "Users");
+
+            migrationBuilder.DropTable(
+                name: "MainNavSubSections");
 
             migrationBuilder.DropTable(
                 name: "Accounts");
 
             migrationBuilder.DropTable(
                 name: "Profiles");
+
+            migrationBuilder.DropTable(
+                name: "MainNavSections");
         }
     }
 }

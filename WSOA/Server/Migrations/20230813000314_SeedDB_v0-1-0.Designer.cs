@@ -11,8 +11,8 @@ using WSOA.Server.Data;
 namespace WSOA.Server.Migrations
 {
     [DbContext(typeof(WSOADbContext))]
-    [Migration("20230811211200_InitializeDB")]
-    partial class InitializeDB
+    [Migration("20230813000314_SeedDB_v0-1-0")]
+    partial class SeedDB_v010
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -87,7 +87,7 @@ namespace WSOA.Server.Migrations
                             ClassIcon = "uil uil-estate",
                             Label = "Accueil",
                             Name = "Home",
-                            Order = 1
+                            Order = 0
                         },
                         new
                         {
@@ -95,7 +95,7 @@ namespace WSOA.Server.Migrations
                             ClassIcon = "uil uil-chart-pie",
                             Label = "Statistique",
                             Name = "Statistical",
-                            Order = 2
+                            Order = 1
                         },
                         new
                         {
@@ -103,7 +103,7 @@ namespace WSOA.Server.Migrations
                             ClassIcon = "uil uil-spade",
                             Label = "Tournoi",
                             Name = "Tournament",
-                            Order = 3
+                            Order = 2
                         },
                         new
                         {
@@ -111,7 +111,78 @@ namespace WSOA.Server.Migrations
                             ClassIcon = "uil uil-user",
                             Label = "Compte",
                             Name = "Account",
-                            Order = 4
+                            Order = 3
+                        });
+                });
+
+            modelBuilder.Entity("WSOA.Shared.Entity.MainNavSubSection", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("Label")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("MainNavSectionId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("Order")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("MainNavSectionId");
+
+                    b.ToTable("MainNavSubSections");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = 1,
+                            Label = "Créer un lien de création de compte",
+                            MainNavSectionId = 4,
+                            Name = "Création lien pour nouveau compte",
+                            Order = 0
+                        });
+                });
+
+            modelBuilder.Entity("WSOA.Shared.Entity.MainNavSubSectionByProfileCode", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<int>("MainNavSubSectionId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("ProfileCode")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(450)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("MainNavSubSectionId");
+
+                    b.HasIndex("ProfileCode");
+
+                    b.ToTable("MainNavSubSectionsByProfileCode");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = 1,
+                            MainNavSubSectionId = 1,
+                            ProfileCode = "ADMIN"
                         });
                 });
 
@@ -191,6 +262,36 @@ namespace WSOA.Server.Migrations
                             LastName = "ARRIAL",
                             ProfileCode = "ADMIN"
                         });
+                });
+
+            modelBuilder.Entity("WSOA.Shared.Entity.MainNavSubSection", b =>
+                {
+                    b.HasOne("WSOA.Shared.Entity.MainNavSection", "MainNavSection")
+                        .WithMany()
+                        .HasForeignKey("MainNavSectionId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("MainNavSection");
+                });
+
+            modelBuilder.Entity("WSOA.Shared.Entity.MainNavSubSectionByProfileCode", b =>
+                {
+                    b.HasOne("WSOA.Shared.Entity.MainNavSubSection", "MainNavSubSection")
+                        .WithMany()
+                        .HasForeignKey("MainNavSubSectionId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("WSOA.Shared.Entity.Profile", "Profile")
+                        .WithMany()
+                        .HasForeignKey("ProfileCode")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("MainNavSubSection");
+
+                    b.Navigation("Profile");
                 });
 
             modelBuilder.Entity("WSOA.Shared.Entity.User", b =>

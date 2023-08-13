@@ -11,6 +11,9 @@ namespace WSOA.Client.Shared.Layout.Components
         [Inject]
         public IMenuService MenuService { get; set; }
 
+        [Inject]
+        public NavigationManager NavigationManager { get; set; }
+
         public List<MainNavSectionViewModel> _mainNavSectionVMs = new List<MainNavSectionViewModel>();
 
         public IDictionary<int, string> SelectedStateBySectionOrder { get; set; }
@@ -20,7 +23,8 @@ namespace WSOA.Client.Shared.Layout.Components
             MainNavMenuResult result = await MenuService.LoadMainMenu();
             if (!result.Success)
             {
-                // Le menu ne s'est pas charger correctement, rediriger vers page de connexion avec message error ?
+                NavigationManager.NavigateTo(string.Format(RouteResources.SIGN_IN_WITH_ERROR_MESSAGE, result.ErrorMessage));
+                return;
             }
 
             _mainNavSectionVMs = result.MainNavSectionVMs.OrderBy(sec => sec.Order).ToList();

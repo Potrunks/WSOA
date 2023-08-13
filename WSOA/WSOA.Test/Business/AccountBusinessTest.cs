@@ -5,6 +5,7 @@ using WSOA.Server.Business.Implementation;
 using WSOA.Server.Business.Interface;
 using WSOA.Server.Business.Resources;
 using WSOA.Server.Data.Interface;
+using WSOA.Shared.Resources;
 using WSOA.Shared.Result;
 using WSOA.Shared.ViewModel;
 
@@ -26,7 +27,7 @@ namespace WSOA.Test.Business
             _accountRepositoryMock = CreateIAccountRepositoryMock();
             _userRepositoryMock = CreateIUserRepositoryMock();
             _accountBusiness = new AccountBusiness(_accountRepositoryMock.Object, _userRepositoryMock.Object);
-            _sessionMock = CreateISessionMock();
+            _sessionMock = CreateISessionMock(ProfileCodeResources.ADMINISTRATOR);
 
             _signInFormVM = new SignInFormViewModel
             {
@@ -48,7 +49,7 @@ namespace WSOA.Test.Business
         {
             APICallResult result = _accountBusiness.SignIn(null, _sessionMock.Object);
             Assert.AreEqual(false, result.Success);
-            Assert.AreEqual(MainResources.TECHNICAL_ERROR, result.ErrorMessage);
+            Assert.AreEqual(MainBusinessResources.TECHNICAL_ERROR, result.ErrorMessage);
         }
 
         [TestMethod]
@@ -79,13 +80,13 @@ namespace WSOA.Test.Business
                                     .Returns(() => null);
             APICallResult result = _accountBusiness.SignIn(_signInFormVM, _sessionMock.Object);
             Assert.AreEqual(false, result.Success);
-            Assert.AreEqual(AccountResources.ERROR_SIGN_IN, result.ErrorMessage);
+            Assert.AreEqual(AccountBusinessResources.ERROR_SIGN_IN, result.ErrorMessage);
         }
 
         private void FailSignInLoginPwdMissingTest(APICallResult result)
         {
             Assert.AreEqual(false, result.Success);
-            Assert.AreEqual(AccountResources.LOGIN_PWD_MISSING, result.ErrorMessage);
+            Assert.AreEqual(AccountBusinessResources.LOGIN_PWD_MISSING, result.ErrorMessage);
         }
     }
 }

@@ -43,7 +43,7 @@ namespace WSOA.Server.Data
                     Id = 1,
                     Name = "Home",
                     Label = "Accueil",
-                    Order = 1,
+                    Order = 0,
                     ClassIcon = "uil uil-estate"
                 },
                 new MainNavSection
@@ -51,7 +51,7 @@ namespace WSOA.Server.Data
                     Id = 2,
                     Name = "Statistical",
                     Label = "Statistique",
-                    Order = 2,
+                    Order = 1,
                     ClassIcon = "uil uil-chart-pie"
                 },
                 new MainNavSection
@@ -59,7 +59,7 @@ namespace WSOA.Server.Data
                     Id = 3,
                     Name = "Tournament",
                     Label = "Tournoi",
-                    Order = 3,
+                    Order = 2,
                     ClassIcon = "uil uil-spade"
                 },
                 new MainNavSection
@@ -67,8 +67,30 @@ namespace WSOA.Server.Data
                     Id = 4,
                     Name = "Account",
                     Label = "Compte",
-                    Order = 4,
+                    Order = 3,
                     ClassIcon = "uil uil-user"
+                }
+            );
+
+            modelBuilder.Entity<MainNavSubSection>().HasData
+            (
+                new MainNavSubSection
+                {
+                    Id = 1,
+                    Label = "Créer un lien de création de compte",
+                    MainNavSectionId = 4,
+                    Name = "Création lien pour nouveau compte",
+                    Order = 0
+                }
+            );
+
+            modelBuilder.Entity<MainNavSubSectionByProfileCode>().HasData
+            (
+                new MainNavSubSectionByProfileCode
+                {
+                    Id = 1,
+                    MainNavSubSectionId = 1,
+                    ProfileCode = "ADMIN"
                 }
             );
 
@@ -99,5 +121,7 @@ namespace WSOA.Server.Data
         public DbSet<User> Users { get; set; }
         public DbSet<Profile> Profiles { get; set; }
         public DbSet<MainNavSection> MainNavSections { get; set; }
+        public DbSet<MainNavSubSection> MainNavSubSections { get; set; }
+        public DbSet<MainNavSubSectionByProfileCode> MainNavSubSectionsByProfileCode { get; set; }
     }
 }

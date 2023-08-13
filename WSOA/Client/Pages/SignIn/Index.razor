@@ -1,5 +1,6 @@
 ﻿@layout FullPageLayout
 @page "/"
+@page "/signIn/{ErrorMessage?}"
 @using WSOA.Client.Pages.SignIn.Component;
 @using WSOA.Client.Pages.SignIn.Resources;
 @using WSOA.Client.Shared.Resources;
@@ -56,9 +57,9 @@
                 {
                     <span class="signIn_container-prompt loading">@MainLabelResources.LOADING_LABEL</span>
                 }
-                else if (!string.IsNullOrEmpty(_errorMessage))
+                else if (!string.IsNullOrEmpty(ErrorMessage))
                 {
-                    <span class="signIn_container-prompt errorMsg">@_errorMessage</span>
+                    <span class="signIn_container-prompt errorMsg">@ErrorMessage</span>
                 }
                 else
                 {

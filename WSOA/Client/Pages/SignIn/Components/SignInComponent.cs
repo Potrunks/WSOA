@@ -22,7 +22,8 @@ namespace WSOA.Client.Pages.SignIn.Component
 
         public CardRenderObject _cardRightRenderObject;
 
-        public string? _errorMessage = null;
+        [Parameter]
+        public string? ErrorMessage { get; set; }
 
         public bool _isLoading = false;
 
@@ -39,7 +40,7 @@ namespace WSOA.Client.Pages.SignIn.Component
         public async Task SignIn()
         {
             _isLoading = true;
-            _errorMessage = null;
+            ErrorMessage = null;
 
             if (!_editContext.Validate())
             {
@@ -50,7 +51,7 @@ namespace WSOA.Client.Pages.SignIn.Component
             APICallResult result = await AccountService.SignIn(_signInFormVM);
             if (!result.Success)
             {
-                _errorMessage = result.ErrorMessage;
+                ErrorMessage = result.ErrorMessage;
                 _isLoading = false;
                 return;
             }

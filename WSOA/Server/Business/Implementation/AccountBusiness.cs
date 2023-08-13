@@ -29,13 +29,13 @@ namespace WSOA.Server.Business.Implementation
             {
                 if (signInFormVM == null)
                 {
-                    throw new NullReferenceException(string.Format(MainResources.NULL_OBJ_NOT_ALLOWED, typeof(SignInFormViewModel), nameof(AccountBusiness.SignIn)));
+                    throw new NullReferenceException(string.Format(MainBusinessResources.NULL_OBJ_NOT_ALLOWED, typeof(SignInFormViewModel), nameof(AccountBusiness.SignIn)));
                 }
 
                 if (string.IsNullOrWhiteSpace(signInFormVM.Login) || string.IsNullOrWhiteSpace(signInFormVM.Password))
                 {
                     result.Success = false;
-                    result.ErrorMessage = AccountResources.LOGIN_PWD_MISSING;
+                    result.ErrorMessage = AccountBusinessResources.LOGIN_PWD_MISSING;
                     return result;
                 }
 
@@ -43,20 +43,20 @@ namespace WSOA.Server.Business.Implementation
                 if (account == null)
                 {
                     result.Success = false;
-                    result.ErrorMessage = AccountResources.ERROR_SIGN_IN;
+                    result.ErrorMessage = AccountBusinessResources.ERROR_SIGN_IN;
                     return result;
                 }
 
                 User currentUser = _userRepository.GetUserByAccountId(account.Id);
-                currentSession.SetString(SessionResources.USER_ID, currentUser.Id.ToString());
-                currentSession.SetString(SessionResources.PROFILE_CODE, currentUser.ProfileCode);
+                currentSession.SetString(HttpSessionResources.KEY_USER_ID, currentUser.Id.ToString());
+                currentSession.SetString(HttpSessionResources.KEY_PROFILE_CODE, currentUser.ProfileCode);
 
             }
             catch (Exception ex)
             {
-                _log.Error(string.Format(AccountResources.TECHNICAL_ERROR_SIGN_IN, ex.Message));
+                _log.Error(string.Format(AccountBusinessResources.TECHNICAL_ERROR_SIGN_IN, ex.Message));
                 result.Success = false;
-                result.ErrorMessage = MainResources.TECHNICAL_ERROR;
+                result.ErrorMessage = MainBusinessResources.TECHNICAL_ERROR;
             }
 
             return result;

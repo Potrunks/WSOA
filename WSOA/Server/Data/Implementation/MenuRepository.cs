@@ -1,5 +1,5 @@
 ﻿using WSOA.Server.Data.Interface;
-using WSOA.Shared.ViewModel;
+using WSOA.Shared.Entity;
 
 namespace WSOA.Server.Data.Implementation
 {
@@ -12,16 +12,24 @@ namespace WSOA.Server.Data.Implementation
             _dbContext = dbContext;
         }
 
-        public List<MainNavSectionViewModel> GetMainNavSectionVMsByProfileCode()
+        public List<MainNavSection> GetMainNavSections()
         {
             return
             (
-                from mainNavSection in _dbContext.MainNavSections
-                select new MainNavSectionViewModel
-                {
-                    ClassIcon = mainNavSection.ClassIcon,
-                    Order = mainNavSection.Order
-                }
+                from mns in _dbContext.MainNavSections
+                select mns
+            )
+            .ToList();
+        }
+
+        public List<MainNavSubSection> GetMainNavSubSectionsByProfileCode(string profileCode)
+        {
+            return
+            (
+                from mnss in _dbContext.MainNavSubSections
+                join mnss_pc in _dbContext.MainNavSubSectionsByProfileCode on mnss.Id equals mnss_pc.MainNavSubSectionId
+                where mnss_pc.ProfileCode == profileCode
+                select mnss
             )
             .ToList();
         }

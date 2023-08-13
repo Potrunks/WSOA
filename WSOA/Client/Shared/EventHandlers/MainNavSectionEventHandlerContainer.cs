@@ -8,7 +8,7 @@
 
         public void Invoke()
         {
-            if (_currentMainNavSection != null && _currentMainNavSection.Order != 0)
+            if (_currentMainNavSection != null)
             {
                 _onSelectSectionChanged?.Invoke(this, _currentMainNavSection);
             }

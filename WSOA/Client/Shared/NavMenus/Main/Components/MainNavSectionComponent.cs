@@ -1,7 +1,7 @@
 ﻿using Microsoft.AspNetCore.Components;
 using WSOA.Client.Shared.EventHandlers;
-using WSOA.Client.Shared.NavMenus.Main.Resources;
 using WSOA.Client.Shared.Resources;
+using WSOA.Shared.Resources;
 using WSOA.Shared.ViewModel;
 
 namespace WSOA.Client.Shared.NavMenus.Main.Components
@@ -24,7 +24,7 @@ namespace WSOA.Client.Shared.NavMenus.Main.Components
 
         protected override void OnInitialized()
         {
-            if (ViewModel.Order == (int)MainNavSectionEnum.HOME)
+            if (ViewModel.Order == MainNavSectionResources.HOME_ORDER)
             {
                 _selectedStateCssClassName = CssClassNameResources.SELECTED;
             }
@@ -43,7 +43,7 @@ namespace WSOA.Client.Shared.NavMenus.Main.Components
         public void SelectSection()
         {
             _selectedStateCssClassName = CssClassNameResources.SELECTED;
-            if (ViewModel.Order != (int)MainNavSectionEnum.HOME)
+            if (ViewModel.Order != MainNavSectionResources.HOME_ORDER && ViewModel.MainNavSubSectionVMs.Any())
             {
                 _openSubSectionsCssClassName = CssClassNameResources.OPEN;
             }
