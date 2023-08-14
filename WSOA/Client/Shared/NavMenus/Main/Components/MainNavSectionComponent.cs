@@ -1,7 +1,6 @@
 ﻿using Microsoft.AspNetCore.Components;
 using WSOA.Client.Shared.EventHandlers;
 using WSOA.Client.Shared.Resources;
-using WSOA.Shared.Resources;
 using WSOA.Shared.ViewModel;
 
 namespace WSOA.Client.Shared.NavMenus.Main.Components
@@ -12,11 +11,8 @@ namespace WSOA.Client.Shared.NavMenus.Main.Components
         [EditorRequired]
         public MainNavSectionViewModel ViewModel { get; set; }
 
-        [CascadingParameter]
-        public IDictionary<int, string> SelectedStateBySectionOrder { get; set; }
-
         [Inject]
-        public MainNavSectionEventHandlerContainer EventHandlerContainer { get; set; }
+        public MainNavSectionEventHandler EventHandler { get; set; }
 
         public string _selectedStateCssClassName = CssClassNameResources.EMPTY_CLASS;
 
@@ -24,14 +20,7 @@ namespace WSOA.Client.Shared.NavMenus.Main.Components
 
         protected override void OnInitialized()
         {
-            if (ViewModel.Order == MainNavSectionResources.HOME_ORDER)
-            {
-                _selectedStateCssClassName = CssClassNameResources.SELECTED;
-            }
-
-            SelectedStateBySectionOrder[ViewModel.Order] = _selectedStateCssClassName;
-
-            EventHandlerContainer._onSelectSectionChanged += (obj, currentMainNavSection) =>
+            EventHandler._onSelectSectionChanged += (obj, currentMainNavSection) =>
             {
                 if (currentMainNavSection.Order != ViewModel.Order && _selectedStateCssClassName == CssClassNameResources.SELECTED)
                 {
@@ -47,16 +36,14 @@ namespace WSOA.Client.Shared.NavMenus.Main.Components
             {
                 _openSubSectionsCssClassName = _openSubSectionsCssClassName == CssClassNameResources.EMPTY_CLASS ? CssClassNameResources.OPEN : CssClassNameResources.EMPTY_CLASS;
             }
-            SelectedStateBySectionOrder[ViewModel.Order] = _selectedStateCssClassName;
-            EventHandlerContainer._currentMainNavSection.Order = ViewModel.Order;
-            EventHandlerContainer.Invoke();
+            EventHandler._currentMainNavSection.Order = ViewModel.Order;
+            EventHandler.Invoke();
         }
 
         private void UnselectSection()
         {
             _selectedStateCssClassName = CssClassNameResources.EMPTY_CLASS;
             _openSubSectionsCssClassName = CssClassNameResources.EMPTY_CLASS;
-            SelectedStateBySectionOrder[ViewModel.Order] = _selectedStateCssClassName;
             StateHasChanged();
         }
     }

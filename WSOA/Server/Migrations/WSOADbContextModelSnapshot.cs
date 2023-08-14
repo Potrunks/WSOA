@@ -144,9 +144,9 @@ namespace WSOA.Server.Migrations
                         new
                         {
                             Id = 1,
-                            Label = "Créer un lien de création de compte",
+                            Label = "Inviter",
                             MainNavSectionId = 4,
-                            Name = "Création lien pour nouveau compte",
+                            Name = "Inviter de nouveaux utilisateurs",
                             Order = 0
                         });
                 });

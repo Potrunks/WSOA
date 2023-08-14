@@ -14,6 +14,7 @@ builder.Services.AddScoped(sp => new HttpClient { BaseAddress = new Uri(builder.
 builder.Services.AddScoped<IAccountService, AccountService>();
 builder.Services.AddScoped<IMenuService, MenuService>();
 
-builder.Services.AddScoped<MainNavSectionEventHandlerContainer>();
+builder.Services.AddSingleton<MainNavSectionEventHandler>();
+builder.Services.AddSingleton<MainNavSubSectionEventHandler>();
 
 await builder.Build().RunAsync();

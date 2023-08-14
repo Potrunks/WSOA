@@ -16,8 +16,6 @@ namespace WSOA.Client.Shared.Layout.Components
 
         public List<MainNavSectionViewModel> _mainNavSectionVMs = new List<MainNavSectionViewModel>();
 
-        public IDictionary<int, string> SelectedStateByMainNavSection { get; set; }
-
         protected override async Task OnInitializedAsync()
         {
             MainNavMenuResult result = await MenuService.LoadMainMenu();
@@ -28,7 +26,6 @@ namespace WSOA.Client.Shared.Layout.Components
             }
 
             _mainNavSectionVMs = result.MainNavSectionVMs.OrderBy(sec => sec.Order).ToList();
-            SelectedStateByMainNavSection = result.MainNavSectionVMs.ToDictionary(sec => sec.Order, sec => CssClassNameResources.EMPTY_CLASS);
         }
     }
 }

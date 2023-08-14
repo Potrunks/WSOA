@@ -1,4 +1,6 @@
 ﻿using Microsoft.AspNetCore.Components;
+using WSOA.Client.Shared.EventHandlers;
+using WSOA.Client.Shared.Resources;
 using WSOA.Shared.ViewModel;
 
 namespace WSOA.Client.Shared.NavMenus.Main.Components
@@ -8,5 +10,34 @@ namespace WSOA.Client.Shared.NavMenus.Main.Components
         [Parameter]
         [EditorRequired]
         public MainNavSubSectionViewModel ViewModel { get; set; }
+
+        [Inject]
+        public MainNavSubSectionEventHandler EventHandler { get; set; }
+
+        public string _selectedStateCssClassName = CssClassNameResources.EMPTY_CLASS;
+
+        protected override void OnInitialized()
+        {
+            EventHandler._onSelectSectionChanged += (obj, currentMainNavSection) =>
+            {
+                if (currentMainNavSection.Order != ViewModel.Order && _selectedStateCssClassName == CssClassNameResources.SELECTED)
+                {
+                    UnselectSubSection();
+                }
+            };
+        }
+
+        public void SelectSubSection()
+        {
+            _selectedStateCssClassName = CssClassNameResources.SELECTED;
+            EventHandler._currentMainNavSubSection.Order = ViewModel.Order;
+            EventHandler.Invoke();
+        }
+
+        private void UnselectSubSection()
+        {
+            _selectedStateCssClassName = CssClassNameResources.EMPTY_CLASS;
+            StateHasChanged();
+        }
     }
 }

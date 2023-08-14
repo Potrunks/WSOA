@@ -11,7 +11,7 @@ using WSOA.Server.Data;
 namespace WSOA.Server.Migrations
 {
     [DbContext(typeof(WSOADbContext))]
-    [Migration("20230813000314_SeedDB_v0-1-0")]
+    [Migration("20230814110120_SeedDB_v0-1-0")]
     partial class SeedDB_v010
     {
         /// <inheritdoc />
@@ -147,9 +147,9 @@ namespace WSOA.Server.Migrations
                         new
                         {
                             Id = 1,
-                            Label = "Créer un lien de création de compte",
+                            Label = "Inviter",
                             MainNavSectionId = 4,
-                            Name = "Création lien pour nouveau compte",
+                            Name = "Inviter de nouveaux utilisateurs",
                             Order = 0
                         });
                 });

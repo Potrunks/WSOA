@@ -3,8 +3,8 @@
 @using WSOA.Shared.ViewModel;
 @inherits MainNavSectionComponent
 
-<div @onclick="SelectSection">
-    <i class="@ViewModel.ClassIcon @_selectedStateCssClassName"></i>
+<div>
+    <i class="@ViewModel.ClassIcon @_selectedStateCssClassName" @onclick="SelectSection"></i>
     <div class="highlighter @_selectedStateCssClassName" />
     <div class="subSections_container @_openSubSectionsCssClassName">
         @foreach (MainNavSubSectionViewModel subSectionVM in ViewModel.MainNavSubSectionVMs)

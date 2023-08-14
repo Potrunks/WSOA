@@ -8,17 +8,13 @@
 </head>
 
 <div class="layout_container">
-    <CascadingValue Value="@SelectedStateByMainNavSection">
-        <div class="body_container">
-            @Body
-        </div>
-        <div class="navMenu_container">
-            @foreach (MainNavSectionViewModel mainNavSectionVM in _mainNavSectionVMs)
-            {
-                <MainNavSection
-                    ViewModel="@mainNavSectionVM"
-                />
-            }
-        </div>
-    </CascadingValue>
+    <div class="body_container">
+        @Body
+    </div>
+    <div class="navMenu_container">
+        @foreach (MainNavSectionViewModel mainNavSectionVM in _mainNavSectionVMs)
+        {
+            <MainNavSection ViewModel="@mainNavSectionVM" />
+        }
+    </div>
 </div>

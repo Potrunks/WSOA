@@ -6,6 +6,11 @@
     margin-top: 10px;
 }
 
+span.selected {
+    color: red;
+    transition: 0.5s;
+}
+
 .highlighter {
     height: 3px;
     width: 100%;

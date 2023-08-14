@@ -1,6 +1,6 @@
 ﻿namespace WSOA.Client.Shared.EventHandlers
 {
-    public class MainNavSectionEventHandlerContainer
+    public class MainNavSectionEventHandler
     {
         public MainNavSectionEventArgs _currentMainNavSection = new MainNavSectionEventArgs();
 

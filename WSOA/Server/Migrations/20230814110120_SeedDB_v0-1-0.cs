@@ -160,7 +160,7 @@ namespace WSOA.Server.Migrations
             migrationBuilder.InsertData(
                 table: "MainNavSubSections",
                 columns: new[] { "Id", "Label", "MainNavSectionId", "Name", "Order" },
-                values: new object[] { 1, "Créer un lien de création de compte", 4, "Création lien pour nouveau compte", 0 });
+                values: new object[] { 1, "Inviter", 4, "Inviter de nouveaux utilisateurs", 0 });
 
             migrationBuilder.InsertData(
                 table: "Users",
