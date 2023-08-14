@@ -36,3 +36,33 @@ i.selected {
     padding-left: 10px;
     padding-right: 10px;
 }
+
+@media only screen and (max-width: 375px) and (min-width: 321px) {
+    .subSections_container.open {
+        margin-left: 9px;
+    }
+}
+
+@media only screen and (max-width: 425px) and (min-width: 376px) {
+    .subSections_container.open {
+        margin-left: 11px;
+    }
+}
+
+@media only screen and (max-width: 768px) and (min-width: 426px) {
+    .subSections_container.open {
+        margin-left: 19px;
+    }
+}
+
+@media only screen and (max-width: 1024px) and (min-width: 769px) {
+    .subSections_container.open {
+        margin-left: 26px;
+    }
+}
+
+@media only screen and (max-width: 1440px) and (min-width: 1025px) {
+    .subSections_container.open {
+        margin-left: 36px;
+    }
+}
