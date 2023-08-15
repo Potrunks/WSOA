@@ -80,7 +80,8 @@ namespace WSOA.Server.Data
                     Label = "Inviter",
                     MainNavSectionId = 4,
                     Name = "Inviter de nouveaux utilisateurs",
-                    Order = 0
+                    Order = 0,
+                    Url = "/account/invite"
                 }
             );
 

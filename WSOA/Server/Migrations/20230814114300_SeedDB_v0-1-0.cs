@@ -63,6 +63,7 @@ namespace WSOA.Server.Migrations
                     Name = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     Label = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     Order = table.Column<int>(type: "int", nullable: false),
+                    Url = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     MainNavSectionId = table.Column<int>(type: "int", nullable: false)
                 },
                 constraints: table =>
@@ -159,8 +160,8 @@ namespace WSOA.Server.Migrations
 
             migrationBuilder.InsertData(
                 table: "MainNavSubSections",
-                columns: new[] { "Id", "Label", "MainNavSectionId", "Name", "Order" },
-                values: new object[] { 1, "Inviter", 4, "Inviter de nouveaux utilisateurs", 0 });
+                columns: new[] { "Id", "Label", "MainNavSectionId", "Name", "Order", "Url" },
+                values: new object[] { 1, "Inviter", 4, "Inviter de nouveaux utilisateurs", 0, "/account/invite" });
 
             migrationBuilder.InsertData(
                 table: "Users",

@@ -134,6 +134,10 @@ namespace WSOA.Server.Migrations
                     b.Property<int>("Order")
                         .HasColumnType("int");
 
+                    b.Property<string>("Url")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
                     b.HasKey("Id");
 
                     b.HasIndex("MainNavSectionId");
@@ -147,7 +151,8 @@ namespace WSOA.Server.Migrations
                             Label = "Inviter",
                             MainNavSectionId = 4,
                             Name = "Inviter de nouveaux utilisateurs",
-                            Order = 0
+                            Order = 0,
+                            Url = "/account/invite"
                         });
                 });
 

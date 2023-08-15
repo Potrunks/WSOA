@@ -14,6 +14,9 @@ namespace WSOA.Client.Shared.NavMenus.Main.Components
         [Inject]
         public MainNavSubSectionEventHandler EventHandler { get; set; }
 
+        [Inject]
+        public NavigationManager NavigationManager { get; set; }
+
         public string _selectedStateCssClassName = CssClassNameResources.EMPTY_CLASS;
 
         protected override void OnInitialized()
@@ -32,6 +35,10 @@ namespace WSOA.Client.Shared.NavMenus.Main.Components
             _selectedStateCssClassName = CssClassNameResources.SELECTED;
             EventHandler._currentMainNavSubSection.Order = ViewModel.Order;
             EventHandler.Invoke();
+            if (ViewModel.Url != null)
+            {
+                NavigationManager.NavigateTo(ViewModel.Url);
+            }
         }
 
         private void UnselectSubSection()

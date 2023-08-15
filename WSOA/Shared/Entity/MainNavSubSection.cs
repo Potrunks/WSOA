@@ -19,6 +19,9 @@ namespace WSOA.Shared.Entity
         public int Order { get; set; }
 
         [Required]
+        public string Url { get; set; }
+
+        [Required]
         [ForeignKey(nameof(MainNavSection))]
         public int MainNavSectionId { get; set; }
         public MainNavSection MainNavSection { get; set; }

@@ -11,7 +11,7 @@ using WSOA.Server.Data;
 namespace WSOA.Server.Migrations
 {
     [DbContext(typeof(WSOADbContext))]
-    [Migration("20230814110120_SeedDB_v0-1-0")]
+    [Migration("20230814114300_SeedDB_v0-1-0")]
     partial class SeedDB_v010
     {
         /// <inheritdoc />
@@ -137,6 +137,10 @@ namespace WSOA.Server.Migrations
                     b.Property<int>("Order")
                         .HasColumnType("int");
 
+                    b.Property<string>("Url")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
                     b.HasKey("Id");
 
                     b.HasIndex("MainNavSectionId");
@@ -150,7 +154,8 @@ namespace WSOA.Server.Migrations
                             Label = "Inviter",
                             MainNavSectionId = 4,
                             Name = "Inviter de nouveaux utilisateurs",
-                            Order = 0
+                            Order = 0,
+                            Url = "/account/invite"
                         });
                 });
 

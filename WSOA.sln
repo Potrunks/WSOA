@@ -9,7 +9,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "WSOA.Client", "WSOA\Client\
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "WSOA.Shared", "WSOA\Shared\WSOA.Shared.csproj", "{A1AF768D-75DC-415A-A179-F0996487FDBD}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WSOA.Test", "WSOA\WSOA.Test\WSOA.Test.csproj", "{5766DF50-FA38-42E9-80F2-96DF31414DF8}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "WSOA.Test", "WSOA\WSOA.Test\WSOA.Test.csproj", "{5766DF50-FA38-42E9-80F2-96DF31414DF8}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

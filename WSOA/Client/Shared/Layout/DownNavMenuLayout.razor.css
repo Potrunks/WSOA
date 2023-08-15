@@ -23,3 +23,33 @@
     margin: 8px;
     border-radius: 5px;
 }
+
+@media only screen and (min-width: 820px) and (min-height: 1180px) {
+    .navMenu_container {
+        width: 98%;
+    }
+}
+
+@media only screen and (min-width: 768px) and (min-height: 1024px) {
+    .navMenu_container {
+        width: 98%;
+    }
+}
+
+@media only screen and (min-width: 912px) and (min-height: 1368px) {
+    .navMenu_container {
+        width: 98%;
+    }
+}
+
+@media only screen and (min-width: 540px) and (min-height: 720px) {
+    .navMenu_container {
+        width: 98%;
+    }
+}
+
+@media only screen and (min-width: 1024px) and (min-height: 600px) {
+    .navMenu_container {
+        width: 98%;
+    }
+}
