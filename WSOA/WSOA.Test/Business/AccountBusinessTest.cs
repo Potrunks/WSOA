@@ -92,5 +92,42 @@ namespace WSOA.Test.Business
             Assert.AreEqual(_linkAccountCreationVM.ProfileCodeSelected, linkCreated.ProfileCode);
             Assert.AreEqual(DateTime.UtcNow.AddDays(AccountBusinessResources.LINK_ACCOUNT_CREATION_EXPIRATION_DAY_DELAY).Day, linkCreated.ExpirationDate.Day);
         }
+
+        [TestMethod]
+        public void ShouldDontCreateLinkAccountCreation_WhenUserNotConnected()
+        {
+            _sessionMock = CreateISessionMock(null);
+
+            APICallResult result = _accountBusiness.CreateLinkAccountCreation(_linkAccountCreationVM, _sessionMock.Object);
+
+            Assert.AreEqual(false, result.Success);
+            Assert.AreEqual(MainBusinessResources.USER_NOT_CONNECTED, result.ErrorMessage);
+            Assert.AreEqual(string.Format(RouteBusinessResources.SIGN_IN_WITH_ERROR_MESSAGE, MainBusinessResources.USER_NOT_CONNECTED), result.RedirectUrl);
+        }
+
+        [TestMethod]
+        public void ShouldDontCreateLinkAccountCreation_WhenUserNotAuthorized()
+        {
+            _menuRepositoryMock.Setup(m => m.GetMainNavSubSectionByIdAndProfileCode(It.IsAny<string>(), It.IsAny<int>()))
+                                .Returns(() => null);
+
+            APICallResult result = _accountBusiness.CreateLinkAccountCreation(_linkAccountCreationVM, _sessionMock.Object);
+
+            Assert.AreEqual(false, result.Success);
+            Assert.AreEqual(MainBusinessResources.USER_CANNOT_PERFORM_ACTION, result.ErrorMessage);
+            Assert.AreEqual(string.Format(RouteBusinessResources.ACCOUNT_INVITE_WITH_ERROR_MESSAGE, MainBusinessResources.USER_CANNOT_PERFORM_ACTION), result.RedirectUrl);
+        }
+
+        [TestMethod]
+        public void ShouldDontCreateLinkAccountCreation_WhenLinkAccountCreationVMIsNull()
+        {
+            _linkAccountCreationVM = null;
+
+            APICallResult result = _accountBusiness.CreateLinkAccountCreation(_linkAccountCreationVM, _sessionMock.Object);
+
+            Assert.AreEqual(false, result.Success);
+            Assert.AreEqual(MainBusinessResources.TECHNICAL_ERROR, result.ErrorMessage);
+            Assert.AreEqual(string.Format(RouteBusinessResources.SIGN_IN_WITH_ERROR_MESSAGE, MainBusinessResources.TECHNICAL_ERROR), result.RedirectUrl);
+        }
     }
 }

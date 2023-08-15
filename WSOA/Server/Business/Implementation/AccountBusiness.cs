@@ -37,7 +37,7 @@ namespace WSOA.Server.Business.Implementation
                 string currentProfileCode = currentSession.GetString(HttpSessionResources.KEY_PROFILE_CODE);
                 if (currentProfileCode == null)
                 {
-                    string errorMsg = MainBusinessResources.USER_NO_CONNECTED;
+                    string errorMsg = MainBusinessResources.USER_NOT_CONNECTED;
                     return new APICallResult(errorMsg, string.Format(RouteBusinessResources.SIGN_IN_WITH_ERROR_MESSAGE, errorMsg));
                 }
 

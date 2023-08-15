@@ -60,8 +60,8 @@ namespace WSOA.Test.Business
             MainNavMenuResult result = _menuBusiness.LoadMainNavMenu(_sessionMock.Object);
 
             Assert.AreEqual(false, result.Success);
-            Assert.AreEqual(MainBusinessResources.USER_NO_CONNECTED, result.ErrorMessage);
-            Assert.AreEqual(string.Format(RouteBusinessResources.SIGN_IN_WITH_ERROR_MESSAGE, MainBusinessResources.USER_NO_CONNECTED), result.RedirectUrl);
+            Assert.AreEqual(MainBusinessResources.USER_NOT_CONNECTED, result.ErrorMessage);
+            Assert.AreEqual(string.Format(RouteBusinessResources.SIGN_IN_WITH_ERROR_MESSAGE, MainBusinessResources.USER_NOT_CONNECTED), result.RedirectUrl);
         }
 
         [TestMethod]
