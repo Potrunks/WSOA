@@ -11,6 +11,9 @@ namespace WSOA.Client.Shared.NavMenus.Main.Components
         [EditorRequired]
         public MainNavSubSectionViewModel ViewModel { get; set; }
 
+        [Parameter]
+        public Action? OnSubSectionSelected { get; set; }
+
         [Inject]
         public MainNavSubSectionEventHandler EventHandler { get; set; }
 
@@ -35,10 +38,8 @@ namespace WSOA.Client.Shared.NavMenus.Main.Components
             _selectedStateCssClassName = CssClassNameResources.SELECTED;
             EventHandler._currentMainNavSubSection.Order = ViewModel.Order;
             EventHandler.Invoke();
-            if (ViewModel.Url != null)
-            {
-                NavigationManager.NavigateTo(ViewModel.Url);
-            }
+            OnSubSectionSelected?.Invoke();
+            NavigationManager.NavigateTo(ViewModel.Url);
         }
 
         private void UnselectSubSection()

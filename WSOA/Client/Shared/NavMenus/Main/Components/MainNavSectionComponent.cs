@@ -46,5 +46,10 @@ namespace WSOA.Client.Shared.NavMenus.Main.Components
             _openSubSectionsCssClassName = CssClassNameResources.EMPTY_CLASS;
             StateHasChanged();
         }
+
+        public void CloseSubSectionWindow()
+        {
+            _openSubSectionsCssClassName = CssClassNameResources.EMPTY_CLASS;
+        }
     }
 }

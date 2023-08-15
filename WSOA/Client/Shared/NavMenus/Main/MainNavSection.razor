@@ -9,7 +9,10 @@
     <div class="subSections_container @_openSubSectionsCssClassName">
         @foreach (MainNavSubSectionViewModel subSectionVM in ViewModel.MainNavSubSectionVMs)
         {
-            <MainNavSubSection ViewModel="@subSectionVM" />
+            <MainNavSubSection
+                ViewModel="@subSectionVM"
+                OnSubSectionSelected="CloseSubSectionWindow"
+            />
         }
     </div>
 </div>
