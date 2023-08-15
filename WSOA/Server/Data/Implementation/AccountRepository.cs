@@ -23,5 +23,12 @@ namespace WSOA.Server.Data.Implementation
                 )
                 .SingleOrDefault();
         }
+
+        public LinkAccountCreation SaveLinkAccountCreation(LinkAccountCreation link)
+        {
+            _dbContext.LinkAccountCreations.Add(link);
+            _dbContext.SaveChanges();
+            return link;
+        }
     }
 }

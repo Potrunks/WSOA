@@ -1,6 +1,5 @@
 ﻿using Microsoft.AspNetCore.Components;
 using WSOA.Client.Services.Interface;
-using WSOA.Client.Shared.Resources;
 using WSOA.Shared.Result;
 using WSOA.Shared.ViewModel;
 
@@ -21,7 +20,7 @@ namespace WSOA.Client.Shared.Layout.Components
             MainNavMenuResult result = await MenuService.LoadMainMenu();
             if (!result.Success)
             {
-                NavigationManager.NavigateTo(string.Format(RouteResources.SIGN_IN_WITH_ERROR_MESSAGE, result.ErrorMessage));
+                NavigationManager.NavigateTo(result.RedirectUrl);
                 return;
             }
 

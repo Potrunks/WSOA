@@ -1,7 +1,6 @@
 ﻿using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Forms;
 using WSOA.Client.Services.Interface;
-using WSOA.Client.Shared.Resources;
 using WSOA.Shared.RenderObject;
 using WSOA.Shared.Result;
 using WSOA.Shared.ViewModel;
@@ -58,7 +57,7 @@ namespace WSOA.Client.Pages.SignIn.Component
 
             _isLoading = false;
 
-            NavigationManager.NavigateTo(RouteResources.HOME);
+            NavigationManager.NavigateTo(result.RedirectUrl);
         }
 
         public void GeneratePokerHand()

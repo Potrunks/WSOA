@@ -28,6 +28,9 @@ namespace WSOA.Test
             mock.Setup(m => m.GetByLoginAndPassword(It.IsAny<SignInFormViewModel>()))
                 .Returns(new Account { Id = 1, Login = "Login", Password = "Password" });
 
+            mock.Setup(m => m.SaveLinkAccountCreation(It.IsAny<LinkAccountCreation>()))
+                .Returns<LinkAccountCreation>(linkCreated => linkCreated);
+
             return mock;
         }
 
@@ -57,6 +60,9 @@ namespace WSOA.Test
 
             mock.Setup(m => m.GetMainNavSubSectionsByProfileCode(ProfileCodeResources.ORGANIZER))
                 .Returns(new List<MainNavSubSection> { new MainNavSubSection { Id = 2, Label = "Sub Section Orga 1", MainNavSectionId = 2, Name = "Sub Section Orga 1", Order = 0 } });
+
+            mock.Setup(m => m.GetMainNavSubSectionByIdAndProfileCode(It.IsAny<string>(), It.IsAny<int>()))
+                .Returns(new MainNavSubSection());
 
             return mock;
         }

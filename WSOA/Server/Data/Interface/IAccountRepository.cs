@@ -9,5 +9,10 @@ namespace WSOA.Server.Data.Interface
         /// Get an entity Account by Login and Password.
         /// </summary>
         public Account? GetByLoginAndPassword(SignInFormViewModel signInFormVM);
+
+        /// <summary>
+        /// Save a link account creation in DB.
+        /// </summary>
+        public LinkAccountCreation SaveLinkAccountCreation(LinkAccountCreation link);
     }
 }

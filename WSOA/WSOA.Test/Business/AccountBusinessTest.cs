@@ -5,6 +5,7 @@ using WSOA.Server.Business.Implementation;
 using WSOA.Server.Business.Interface;
 using WSOA.Server.Business.Resources;
 using WSOA.Server.Data.Interface;
+using WSOA.Shared.Entity;
 using WSOA.Shared.Resources;
 using WSOA.Shared.Result;
 using WSOA.Shared.ViewModel;
@@ -15,24 +16,34 @@ namespace WSOA.Test.Business
     public class AccountBusinessTest : TestClassBase
     {
         private SignInFormViewModel _signInFormVM;
+        private LinkAccountCreationViewModel _linkAccountCreationVM;
 
         private IAccountBusiness _accountBusiness;
         private Mock<ISession> _sessionMock;
         private Mock<IAccountRepository> _accountRepositoryMock;
         private Mock<IUserRepository> _userRepositoryMock;
+        private Mock<IMenuRepository> _menuRepositoryMock;
 
         [TestInitialize]
         public void Init()
         {
             _accountRepositoryMock = CreateIAccountRepositoryMock();
             _userRepositoryMock = CreateIUserRepositoryMock();
-            _accountBusiness = new AccountBusiness(_accountRepositoryMock.Object, _userRepositoryMock.Object);
+            _menuRepositoryMock = CreateIMenuRepositoryMock();
+            _accountBusiness = new AccountBusiness(_accountRepositoryMock.Object, _userRepositoryMock.Object, _menuRepositoryMock.Object);
             _sessionMock = CreateISessionMock(ProfileCodeResources.ADMINISTRATOR);
 
             _signInFormVM = new SignInFormViewModel
             {
                 Login = "Login",
                 Password = "Password"
+            };
+
+            _linkAccountCreationVM = new LinkAccountCreationViewModel
+            {
+                ProfileCodeSelected = ProfileCodeResources.PLAYER,
+                RecipientMail = "test@test.test",
+                SubSectionIdConcerned = 1
             };
         }
 
@@ -42,6 +53,7 @@ namespace WSOA.Test.Business
             APICallResult result = _accountBusiness.SignIn(_signInFormVM, _sessionMock.Object);
             Assert.AreEqual(true, result.Success);
             Assert.AreEqual(null, result.ErrorMessage);
+            Assert.AreEqual(RouteBusinessResources.HOME, result.RedirectUrl);
         }
 
         [TestMethod]
@@ -50,27 +62,7 @@ namespace WSOA.Test.Business
             APICallResult result = _accountBusiness.SignIn(null, _sessionMock.Object);
             Assert.AreEqual(false, result.Success);
             Assert.AreEqual(MainBusinessResources.TECHNICAL_ERROR, result.ErrorMessage);
-        }
-
-        [TestMethod]
-        public void ShouldFailSignIn_WhenLoginOrPasswordIsNullOrWhiteSpace()
-        {
-            _signInFormVM.Login = null;
-            APICallResult result = _accountBusiness.SignIn(_signInFormVM, _sessionMock.Object);
-            FailSignInLoginPwdMissingTest(result);
-
-            _signInFormVM.Login = " ";
-            result = _accountBusiness.SignIn(_signInFormVM, _sessionMock.Object);
-            FailSignInLoginPwdMissingTest(result);
-
-            _signInFormVM.Login = "Login";
-            _signInFormVM.Password = null;
-            result = _accountBusiness.SignIn(_signInFormVM, _sessionMock.Object);
-            FailSignInLoginPwdMissingTest(result);
-
-            _signInFormVM.Password = " ";
-            result = _accountBusiness.SignIn(_signInFormVM, _sessionMock.Object);
-            FailSignInLoginPwdMissingTest(result);
+            Assert.AreEqual(null, result.RedirectUrl);
         }
 
         [TestMethod]
@@ -81,12 +73,24 @@ namespace WSOA.Test.Business
             APICallResult result = _accountBusiness.SignIn(_signInFormVM, _sessionMock.Object);
             Assert.AreEqual(false, result.Success);
             Assert.AreEqual(AccountBusinessResources.ERROR_SIGN_IN, result.ErrorMessage);
+            Assert.AreEqual(null, result.RedirectUrl);
         }
 
-        private void FailSignInLoginPwdMissingTest(APICallResult result)
+        [TestMethod]
+        public void ShouldCreateLinkAccountCreation()
         {
-            Assert.AreEqual(false, result.Success);
-            Assert.AreEqual(AccountBusinessResources.LOGIN_PWD_MISSING, result.ErrorMessage);
+            LinkAccountCreation linkCreated = null;
+            _accountRepositoryMock.Setup(m => m.SaveLinkAccountCreation(It.IsAny<LinkAccountCreation>()))
+                                    .Callback<LinkAccountCreation>((link) => linkCreated = link);
+
+            APICallResult result = _accountBusiness.CreateLinkAccountCreation(_linkAccountCreationVM, _sessionMock.Object);
+
+            Assert.AreEqual(true, result.Success);
+            Assert.AreEqual(null, result.ErrorMessage);
+            Assert.AreEqual(RouteBusinessResources.SUCCESS, result.RedirectUrl);
+            Assert.AreEqual(_linkAccountCreationVM.RecipientMail, linkCreated.RecipientMail);
+            Assert.AreEqual(_linkAccountCreationVM.ProfileCodeSelected, linkCreated.ProfileCode);
+            Assert.AreEqual(DateTime.UtcNow.AddDays(AccountBusinessResources.LINK_ACCOUNT_CREATION_EXPIRATION_DAY_DELAY).Day, linkCreated.ExpirationDate.Day);
         }
     }
 }

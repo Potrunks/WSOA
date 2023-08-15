@@ -22,14 +22,15 @@ namespace WSOA.Server.Business.Implementation
 
         public MainNavMenuResult LoadMainNavMenu(ISession currentSession)
         {
-            MainNavMenuResult result = new MainNavMenuResult();
+            MainNavMenuResult result = new MainNavMenuResult(null);
 
             try
             {
                 string currentProfileCode = currentSession.GetString(HttpSessionResources.KEY_PROFILE_CODE);
                 if (currentProfileCode == null)
                 {
-                    throw new Exception(string.Format(MainBusinessResources.NULL_OBJ_NOT_ALLOWED, currentProfileCode, nameof(MenuBusiness.LoadMainNavMenu)));
+                    string errorMsg = MainBusinessResources.USER_NO_CONNECTED;
+                    return new MainNavMenuResult(errorMsg, string.Format(RouteBusinessResources.SIGN_IN_WITH_ERROR_MESSAGE, errorMsg));
                 }
 
                 List<MainNavSection> mainNavSections = _menuRepository.GetMainNavSections();
@@ -54,8 +55,8 @@ namespace WSOA.Server.Business.Implementation
             catch (Exception exception)
             {
                 _log.Error(string.Format(MenuBusinessResources.LOAD_MENU_TECH_ERROR, exception.Message));
-                result.Success = false;
-                result.ErrorMessage = MainBusinessResources.TECHNICAL_ERROR;
+                string errorMsg = MainBusinessResources.TECHNICAL_ERROR;
+                return new MainNavMenuResult(errorMsg, string.Format(RouteBusinessResources.SIGN_IN_WITH_ERROR_MESSAGE, errorMsg));
             }
 
             return result;

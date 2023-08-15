@@ -15,6 +15,9 @@ namespace WSOA.Server.Controllers
             _accountBusiness = accountBusiness;
         }
 
+        /// <summary>
+        /// Sign In the user.
+        /// </summary>
         [HttpPost]
         [Route("api/account/signIn")]
         public APICallResult SignIn([FromBody] SignInFormViewModel signInFormVM)

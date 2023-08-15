@@ -22,6 +22,20 @@ namespace WSOA.Server.Data.Implementation
             .ToList();
         }
 
+        public MainNavSubSection? GetMainNavSubSectionByIdAndProfileCode(string profileCode, int id)
+        {
+            return
+            (
+                from ss in _dbContext.MainNavSubSections
+                join ss_pc in _dbContext.MainNavSubSectionsByProfileCode on ss.Id equals ss_pc.MainNavSubSectionId
+                where
+                    ss.Id == id
+                    && ss_pc.ProfileCode == profileCode
+                select ss
+            )
+            .SingleOrDefault();
+        }
+
         public List<MainNavSubSection> GetMainNavSubSectionsByProfileCode(string profileCode)
         {
             return

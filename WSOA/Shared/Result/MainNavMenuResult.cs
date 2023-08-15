@@ -9,6 +9,16 @@ namespace WSOA.Shared.Result
             MainNavSectionVMs = new List<MainNavSectionViewModel>();
         }
 
+        public MainNavMenuResult(string redirectUrl) : base(redirectUrl)
+        {
+            MainNavSectionVMs = new List<MainNavSectionViewModel>();
+        }
+
+        public MainNavMenuResult(string errorMsg, string redirectUrl) : base(errorMsg, redirectUrl)
+        {
+            MainNavSectionVMs = new List<MainNavSectionViewModel>();
+        }
+
         public List<MainNavSectionViewModel> MainNavSectionVMs { get; set; }
     }
 }

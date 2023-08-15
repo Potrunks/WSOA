@@ -124,5 +124,6 @@ namespace WSOA.Server.Data
         public DbSet<MainNavSection> MainNavSections { get; set; }
         public DbSet<MainNavSubSection> MainNavSubSections { get; set; }
         public DbSet<MainNavSubSectionByProfileCode> MainNavSubSectionsByProfileCode { get; set; }
+        public DbSet<LinkAccountCreation> LinkAccountCreations { get; set; }
     }
 }

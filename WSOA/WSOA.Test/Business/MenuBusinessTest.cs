@@ -33,6 +33,7 @@ namespace WSOA.Test.Business
 
             Assert.AreEqual(true, result.Success);
             Assert.AreEqual(null, result.ErrorMessage);
+            Assert.AreEqual(null, result.RedirectUrl);
             Assert.AreEqual("Section 1 Icon", result.MainNavSectionVMs[0].ClassIcon);
             Assert.AreEqual("Sub Section Admin 1", result.MainNavSectionVMs[0].MainNavSubSectionVMs.Single().Label);
             Assert.AreEqual("Section 2 Icon", result.MainNavSectionVMs[1].ClassIcon);
@@ -44,6 +45,7 @@ namespace WSOA.Test.Business
 
             Assert.AreEqual(true, result.Success);
             Assert.AreEqual(null, result.ErrorMessage);
+            Assert.AreEqual(null, result.RedirectUrl);
             Assert.AreEqual("Section 1 Icon", result.MainNavSectionVMs[0].ClassIcon);
             Assert.AreEqual(false, result.MainNavSectionVMs[0].MainNavSubSectionVMs.Any());
             Assert.AreEqual("Section 2 Icon", result.MainNavSectionVMs[1].ClassIcon);
@@ -57,7 +59,9 @@ namespace WSOA.Test.Business
 
             MainNavMenuResult result = _menuBusiness.LoadMainNavMenu(_sessionMock.Object);
 
-            LoadMainMenuTestFail(result);
+            Assert.AreEqual(false, result.Success);
+            Assert.AreEqual(MainBusinessResources.USER_NO_CONNECTED, result.ErrorMessage);
+            Assert.AreEqual(string.Format(RouteBusinessResources.SIGN_IN_WITH_ERROR_MESSAGE, MainBusinessResources.USER_NO_CONNECTED), result.RedirectUrl);
         }
 
         [TestMethod]
@@ -86,6 +90,7 @@ namespace WSOA.Test.Business
         {
             Assert.AreEqual(false, result.Success);
             Assert.AreEqual(MainBusinessResources.TECHNICAL_ERROR, result.ErrorMessage);
+            Assert.AreEqual(string.Format(RouteBusinessResources.SIGN_IN_WITH_ERROR_MESSAGE, MainBusinessResources.TECHNICAL_ERROR), result.RedirectUrl);
         }
     }
 }

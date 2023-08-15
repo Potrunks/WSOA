@@ -13,5 +13,10 @@ namespace WSOA.Server.Data.Interface
         /// Get all sub sections by profile of the user connected.
         /// </summary>
         List<MainNavSubSection> GetMainNavSubSectionsByProfileCode(string profileCode);
+
+        /// <summary>
+        /// Get a sub section by ID and profile code. Return null if not found.
+        /// </summary>
+        MainNavSubSection? GetMainNavSubSectionByIdAndProfileCode(string profileCode, int id);
     }
 }
