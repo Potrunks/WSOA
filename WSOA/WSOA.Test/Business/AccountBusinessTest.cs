@@ -115,7 +115,7 @@ namespace WSOA.Test.Business
 
             Assert.AreEqual(false, result.Success);
             Assert.AreEqual(MainBusinessResources.USER_CANNOT_PERFORM_ACTION, result.ErrorMessage);
-            Assert.AreEqual(string.Format(RouteBusinessResources.ACCOUNT_INVITE_WITH_ERROR_MESSAGE, MainBusinessResources.USER_CANNOT_PERFORM_ACTION), result.RedirectUrl);
+            Assert.AreEqual(null, result.RedirectUrl);
         }
 
         [TestMethod]

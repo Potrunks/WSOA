@@ -44,8 +44,7 @@ namespace WSOA.Server.Business.Implementation
                 MainNavSubSection? subSection = _menuRepository.GetMainNavSubSectionByIdAndProfileCode(currentProfileCode, link.SubSectionIdConcerned);
                 if (subSection == null)
                 {
-                    string errorMsg = MainBusinessResources.USER_CANNOT_PERFORM_ACTION;
-                    return new APICallResult(errorMsg, string.Format(RouteBusinessResources.ACCOUNT_INVITE_WITH_ERROR_MESSAGE, errorMsg));
+                    return new APICallResult(MainBusinessResources.USER_CANNOT_PERFORM_ACTION, null);
                 }
 
                 if (link == null)

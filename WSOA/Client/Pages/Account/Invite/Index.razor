@@ -1,4 +1,52 @@
 ﻿@page "/account/invite"
+@using WSOA.Client.Pages.Account.Invite.Components;
 @layout DownNavMenuLayout
+@inherits InviteComponent
 
-<h3>Invite</h3>
+<div class="mainContainer">
+    <span class="title">Inviter un nouvel utilisateur</span>
+    <EditForm
+        OnSubmit="() => null"
+        EditContext="@_editContext"
+              style="background-color: #EDE8DF;
+                    border-radius: 30px;
+                    height: 79%;
+                    width: 90%;
+                    display: flex;
+                    flex-direction: column;
+                    justify-content: flex-start;
+                    align-items: center;
+    ">
+        <div class="fields_container">
+            <div class="field">
+                <span>Label</span>
+                <InputText
+                    @bind-Value="_viewModel.RecipientMail"
+                    style="height: 50px;
+                            border-radius: 10px;
+                            border: 1px solid;"
+                />
+            </div>
+            <div class="field">
+                <span>Label</span>
+                <InputSelect
+                    @bind-Value="_viewModel.ProfileCodeSelected"
+                    style="height: 50px;
+                            border-radius: 10px;
+                            border: 1px solid;">
+                    <option value="0">Option</option>
+                    <option value="1">Option</option>
+                    <option value="2">Option</option>
+                    <option value="3">Option</option>
+                </InputSelect>
+            </div>
+        </div>
+        <div class="buttons_panel">
+            <button class="button main">Button</button>
+            <button class="button">Button</button>
+        </div>
+        <div class="errors_container">
+            <span class="error">Error</span>
+        </div>
+    </EditForm>
+</div>
