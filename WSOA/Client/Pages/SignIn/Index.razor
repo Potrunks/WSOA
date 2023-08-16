@@ -57,14 +57,13 @@
                 {
                     <span class="signIn_container-prompt loading">@MainLabelResources.LOADING_LABEL</span>
                 }
-                else if (!string.IsNullOrEmpty(ErrorMessage))
+
+                @if (!string.IsNullOrEmpty(ErrorMessage))
                 {
                     <span class="signIn_container-prompt errorMsg">@ErrorMessage</span>
                 }
-                else
-                {
-                    <ValidationSummary />
-                }
+
+                <ValidationSummary />
             </div>
         </EditForm>
     </div>

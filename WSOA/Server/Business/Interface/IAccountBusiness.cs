@@ -14,6 +14,11 @@ namespace WSOA.Server.Business.Interface
         /// <summary>
         /// Create a link account creation.
         /// </summary>
-        APICallResult CreateLinkAccountCreation(LinkAccountCreationViewModel link, ISession currentSession);
+        APICallResult CreateLinkAccountCreation(LinkAccountCreationFormViewModel link, ISession currentSession);
+
+        /// <summary>
+        /// Load all data for the Invite page.
+        /// </summary>
+        InviteCallResult LoadInviteDatas(int subSectionId, ISession currentSession);
     }
 }

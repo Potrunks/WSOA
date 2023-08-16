@@ -2,12 +2,13 @@
 
 namespace WSOA.Shared.ViewModel
 {
-    public class LinkAccountCreationViewModel
+    public class LinkAccountCreationFormViewModel
     {
-        public LinkAccountCreationViewModel()
+        public LinkAccountCreationFormViewModel()
         {
             RecipientMail = null;
             ProfileCodeSelected = null;
+            SubSectionIdConcerned = 0;
         }
 
         [Required(ErrorMessage = "Mail manquant")]

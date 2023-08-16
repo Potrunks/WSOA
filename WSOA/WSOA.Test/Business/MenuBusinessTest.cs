@@ -21,7 +21,7 @@ namespace WSOA.Test.Business
         public void Init()
         {
             _menuRepositoryMock = CreateIMenuRepositoryMock();
-            _sessionMock = CreateISessionMock(ProfileCodeResources.ADMINISTRATOR);
+            _sessionMock = CreateISessionMock(ProfileResources.ADMINISTRATOR_CODE);
 
             _menuBusiness = new MenuBusiness(_menuRepositoryMock.Object);
         }
@@ -39,7 +39,7 @@ namespace WSOA.Test.Business
             Assert.AreEqual("Section 2 Icon", result.MainNavSectionVMs[1].ClassIcon);
             Assert.AreEqual(false, result.MainNavSectionVMs[1].MainNavSubSectionVMs.Any());
 
-            _sessionMock = CreateISessionMock(ProfileCodeResources.ORGANIZER);
+            _sessionMock = CreateISessionMock(ProfileResources.ORGANIZER_CODE);
 
             result = _menuBusiness.LoadMainNavMenu(_sessionMock.Object);
 
@@ -78,7 +78,7 @@ namespace WSOA.Test.Business
         [TestMethod]
         public void ShouldDontLoadMainMenu_WhenNoMainNavSubSectionInDB()
         {
-            _menuRepositoryMock.Setup(m => m.GetMainNavSubSectionsByProfileCode(ProfileCodeResources.ADMINISTRATOR))
+            _menuRepositoryMock.Setup(m => m.GetMainNavSubSectionsByProfileCode(ProfileResources.ADMINISTRATOR_CODE))
                                 .Returns(() => null);
 
             MainNavMenuResult result = _menuBusiness.LoadMainNavMenu(_sessionMock.Object);

@@ -12,6 +12,11 @@ namespace WSOA.Server.Data.Implementation
             _dbContext = dbContext;
         }
 
+        public IEnumerable<Profile> GetAllProfiles()
+        {
+            return _dbContext.Profiles;
+        }
+
         public User GetUserByAccountId(int accountId)
         {
             return _dbContext.Users.Single(usr => usr.AccountId == accountId);

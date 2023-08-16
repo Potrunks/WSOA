@@ -1,4 +1,5 @@
 ﻿using log4net;
+using Microsoft.IdentityModel.Tokens;
 using WSOA.Server.Business.Interface;
 using WSOA.Server.Business.Resources;
 using WSOA.Server.Data.Interface;
@@ -13,6 +14,8 @@ namespace WSOA.Server.Business.Implementation
         private readonly IAccountRepository _accountRepository;
         private readonly IUserRepository _userRepository;
         private readonly IMenuRepository _menuRepository;
+        private readonly ITransactionManager _transactionManager;
+        private readonly IMailService _mailService;
 
         private readonly ILog _log = LogManager.GetLogger(nameof(AccountBusiness));
 
@@ -20,20 +23,26 @@ namespace WSOA.Server.Business.Implementation
         (
             IAccountRepository accountRepository,
             IUserRepository userRepository,
-            IMenuRepository menuRepository
+            IMenuRepository menuRepository,
+            ITransactionManager transactionManager,
+            IMailService mailService
         )
         {
             _accountRepository = accountRepository;
             _userRepository = userRepository;
             _menuRepository = menuRepository;
+            _transactionManager = transactionManager;
+            _mailService = mailService;
         }
 
-        public APICallResult CreateLinkAccountCreation(LinkAccountCreationViewModel link, ISession currentSession)
+        public APICallResult CreateLinkAccountCreation(LinkAccountCreationFormViewModel link, ISession currentSession)
         {
-            APICallResult result = new APICallResult(RouteBusinessResources.SUCCESS);
+            APICallResult result = new APICallResult(null);
 
             try
             {
+                _transactionManager.BeginTransaction();
+
                 string currentProfileCode = currentSession.GetString(HttpSessionResources.KEY_PROFILE_CODE);
                 if (currentProfileCode == null)
                 {
@@ -47,11 +56,6 @@ namespace WSOA.Server.Business.Implementation
                     return new APICallResult(MainBusinessResources.USER_CANNOT_PERFORM_ACTION, null);
                 }
 
-                if (link == null)
-                {
-                    throw new NullReferenceException(string.Format(MainBusinessResources.NULL_OBJ_NOT_ALLOWED, typeof(LinkAccountCreationViewModel), nameof(AccountBusiness.CreateLinkAccountCreation)));
-                }
-
                 LinkAccountCreation newLink = new LinkAccountCreation
                 {
                     ProfileCode = link.ProfileCodeSelected,
@@ -60,12 +64,54 @@ namespace WSOA.Server.Business.Implementation
                 };
 
                 _accountRepository.SaveLinkAccountCreation(newLink);
+
+                _mailService.SendMailAccountCreation(newLink);
+
+                _transactionManager.CommitTransaction();
             }
             catch (Exception ex)
             {
+                _transactionManager.RollbackTransaction();
                 _log.Error(string.Format(AccountBusinessResources.TECHNICAL_ERROR_LINK_ACCOUNT_CREATION, ex.Message));
                 string errorMsg = MainBusinessResources.TECHNICAL_ERROR;
                 return new APICallResult(errorMsg, string.Format(RouteBusinessResources.SIGN_IN_WITH_ERROR_MESSAGE, errorMsg));
+            }
+
+            return result;
+        }
+
+        public InviteCallResult LoadInviteDatas(int subSectionId, ISession currentSession)
+        {
+            InviteCallResult result = new InviteCallResult();
+
+            try
+            {
+                string currentProfileCode = currentSession.GetString(HttpSessionResources.KEY_PROFILE_CODE);
+                if (currentProfileCode == null)
+                {
+                    string errorMsg = MainBusinessResources.USER_NOT_CONNECTED;
+                    return new InviteCallResult(errorMsg, string.Format(RouteBusinessResources.SIGN_IN_WITH_ERROR_MESSAGE, errorMsg));
+                }
+
+                MainNavSubSection? subSection = _menuRepository.GetMainNavSubSectionByIdAndProfileCode(currentProfileCode, subSectionId);
+                if (subSection == null)
+                {
+                    return new InviteCallResult(MainBusinessResources.USER_CANNOT_PERFORM_ACTION, null);
+                }
+
+                Dictionary<string, string> allProfileNames = _userRepository.GetAllProfiles().ToDictionary(p => p.Code, p => p.Name);
+                if (allProfileNames.IsNullOrEmpty())
+                {
+                    throw new Exception(string.Format(MainBusinessResources.NULL_OR_EMPTY_OBJ_NOT_ALLOWED, nameof(allProfileNames), nameof(AccountBusiness.LoadInviteDatas)));
+                }
+
+                result.InviteVM.ProfileLabelsByCode = allProfileNames;
+                result.Success = true;
+            }
+            catch (Exception exception)
+            {
+                _log.Error(string.Format(AccountBusinessResources.TECHNICAL_ERROR_INVITE_PAGE_LOADING, exception.Message));
+                return new InviteCallResult(MainBusinessResources.TECHNICAL_ERROR, null);
             }
 
             return result;

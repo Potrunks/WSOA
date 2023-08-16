@@ -24,5 +24,25 @@ namespace WSOA.Server.Controllers
         {
             return _accountBusiness.SignIn(signInFormVM, HttpContext.Session);
         }
+
+        /// <summary>
+        /// Load Invite page datas.
+        /// </summary>
+        [HttpGet]
+        [Route("api/account/invite/{subSectionId}")]
+        public InviteCallResult LoadInviteDatas(int subSectionId)
+        {
+            return _accountBusiness.LoadInviteDatas(subSectionId, HttpContext.Session);
+        }
+
+        /// <summary>
+        /// Create and send a link to new user for account creation.
+        /// </summary>
+        [HttpPost]
+        [Route("api/account/invite/createLink")]
+        public APICallResult CreateLinkAccountCreation([FromBody] LinkAccountCreationFormViewModel formViewModel)
+        {
+            return _accountBusiness.CreateLinkAccountCreation(formViewModel, HttpContext.Session);
+        }
     }
 }

@@ -16,13 +16,15 @@ namespace WSOA.Test.Business
     public class AccountBusinessTest : TestClassBase
     {
         private SignInFormViewModel _signInFormVM;
-        private LinkAccountCreationViewModel _linkAccountCreationVM;
+        private LinkAccountCreationFormViewModel _linkAccountCreationVM;
 
         private IAccountBusiness _accountBusiness;
         private Mock<ISession> _sessionMock;
         private Mock<IAccountRepository> _accountRepositoryMock;
         private Mock<IUserRepository> _userRepositoryMock;
         private Mock<IMenuRepository> _menuRepositoryMock;
+        private Mock<ITransactionManager> _transactionManagerMock;
+        private Mock<IMailService> _mailServiceMock;
 
         [TestInitialize]
         public void Init()
@@ -30,8 +32,10 @@ namespace WSOA.Test.Business
             _accountRepositoryMock = CreateIAccountRepositoryMock();
             _userRepositoryMock = CreateIUserRepositoryMock();
             _menuRepositoryMock = CreateIMenuRepositoryMock();
-            _accountBusiness = new AccountBusiness(_accountRepositoryMock.Object, _userRepositoryMock.Object, _menuRepositoryMock.Object);
-            _sessionMock = CreateISessionMock(ProfileCodeResources.ADMINISTRATOR);
+            _transactionManagerMock = CreateITransactionManager();
+            _mailServiceMock = CreateIMailServiceMock();
+            _accountBusiness = new AccountBusiness(_accountRepositoryMock.Object, _userRepositoryMock.Object, _menuRepositoryMock.Object, _transactionManagerMock.Object, _mailServiceMock.Object);
+            _sessionMock = CreateISessionMock(ProfileResources.ADMINISTRATOR_CODE);
 
             _signInFormVM = new SignInFormViewModel
             {
@@ -39,9 +43,9 @@ namespace WSOA.Test.Business
                 Password = "Password"
             };
 
-            _linkAccountCreationVM = new LinkAccountCreationViewModel
+            _linkAccountCreationVM = new LinkAccountCreationFormViewModel
             {
-                ProfileCodeSelected = ProfileCodeResources.PLAYER,
+                ProfileCodeSelected = ProfileResources.PLAYER_CODE,
                 RecipientMail = "test@test.test",
                 SubSectionIdConcerned = 1
             };
@@ -87,10 +91,13 @@ namespace WSOA.Test.Business
 
             Assert.AreEqual(true, result.Success);
             Assert.AreEqual(null, result.ErrorMessage);
-            Assert.AreEqual(RouteBusinessResources.SUCCESS, result.RedirectUrl);
+            Assert.AreEqual(null, result.RedirectUrl);
             Assert.AreEqual(_linkAccountCreationVM.RecipientMail, linkCreated.RecipientMail);
             Assert.AreEqual(_linkAccountCreationVM.ProfileCodeSelected, linkCreated.ProfileCode);
             Assert.AreEqual(DateTime.UtcNow.AddDays(AccountBusinessResources.LINK_ACCOUNT_CREATION_EXPIRATION_DAY_DELAY).Day, linkCreated.ExpirationDate.Day);
+            _transactionManagerMock.Verify(t => t.BeginTransaction(), Times.Once());
+            _transactionManagerMock.Verify(t => t.CommitTransaction(), Times.Once());
+            _mailServiceMock.Verify(m => m.SendMailAccountCreation(It.IsAny<LinkAccountCreation>()), Times.Once());
         }
 
         [TestMethod]
@@ -103,6 +110,9 @@ namespace WSOA.Test.Business
             Assert.AreEqual(false, result.Success);
             Assert.AreEqual(MainBusinessResources.USER_NOT_CONNECTED, result.ErrorMessage);
             Assert.AreEqual(string.Format(RouteBusinessResources.SIGN_IN_WITH_ERROR_MESSAGE, MainBusinessResources.USER_NOT_CONNECTED), result.RedirectUrl);
+            _transactionManagerMock.Verify(t => t.BeginTransaction(), Times.Once());
+            _transactionManagerMock.Verify(t => t.CommitTransaction(), Times.Never());
+            _mailServiceMock.Verify(m => m.SendMailAccountCreation(It.IsAny<LinkAccountCreation>()), Times.Never());
         }
 
         [TestMethod]
@@ -116,18 +126,71 @@ namespace WSOA.Test.Business
             Assert.AreEqual(false, result.Success);
             Assert.AreEqual(MainBusinessResources.USER_CANNOT_PERFORM_ACTION, result.ErrorMessage);
             Assert.AreEqual(null, result.RedirectUrl);
+            _transactionManagerMock.Verify(t => t.BeginTransaction(), Times.Once());
+            _transactionManagerMock.Verify(t => t.CommitTransaction(), Times.Never());
+            _mailServiceMock.Verify(m => m.SendMailAccountCreation(It.IsAny<LinkAccountCreation>()), Times.Never());
         }
 
         [TestMethod]
-        public void ShouldDontCreateLinkAccountCreation_WhenLinkAccountCreationVMIsNull()
+        public void ShouldLoadInviteData()
         {
-            _linkAccountCreationVM = null;
+            InviteCallResult result = _accountBusiness.LoadInviteDatas(1, _sessionMock.Object);
 
-            APICallResult result = _accountBusiness.CreateLinkAccountCreation(_linkAccountCreationVM, _sessionMock.Object);
+            Assert.AreEqual(true, result.Success);
+            Assert.AreEqual(null, result.ErrorMessage);
+            Assert.AreEqual(null, result.RedirectUrl);
+            Assert.AreEqual(ProfileResources.ADMINISTRATOR_NAME, result.InviteVM.ProfileLabelsByCode.Single().Value);
+        }
+
+        [TestMethod]
+        public void ShouldNotLoadInviteData_WhenUserNotAuthorized()
+        {
+            _menuRepositoryMock.Setup(m => m.GetMainNavSubSectionByIdAndProfileCode(It.IsAny<string>(), It.IsAny<int>()))
+                                .Returns(() => null);
+
+            InviteCallResult result = _accountBusiness.LoadInviteDatas(1, _sessionMock.Object);
+
+            Assert.AreEqual(false, result.Success);
+            Assert.AreEqual(MainBusinessResources.USER_CANNOT_PERFORM_ACTION, result.ErrorMessage);
+            Assert.AreEqual(null, result.RedirectUrl);
+            Assert.AreEqual(0, result.InviteVM.ProfileLabelsByCode.Count());
+        }
+
+        [TestMethod]
+        public void ShouldNotLoadInviteData_WhenUserNotConnected()
+        {
+            _sessionMock = CreateISessionMock(null);
+
+            InviteCallResult result = _accountBusiness.LoadInviteDatas(1, _sessionMock.Object);
+
+            Assert.AreEqual(false, result.Success);
+            Assert.AreEqual(MainBusinessResources.USER_NOT_CONNECTED, result.ErrorMessage);
+            Assert.AreEqual(string.Format(RouteBusinessResources.SIGN_IN_WITH_ERROR_MESSAGE, MainBusinessResources.USER_NOT_CONNECTED), result.RedirectUrl);
+            Assert.AreEqual(0, result.InviteVM.ProfileLabelsByCode.Count());
+        }
+
+        [TestMethod]
+        public void ShouldNotLoadInviteData_WhenNoProfilesInDB()
+        {
+            _userRepositoryMock.Setup(m => m.GetAllProfiles())
+                .Returns(new List<Profile>());
+
+            InviteCallResult result = _accountBusiness.LoadInviteDatas(1, _sessionMock.Object);
 
             Assert.AreEqual(false, result.Success);
             Assert.AreEqual(MainBusinessResources.TECHNICAL_ERROR, result.ErrorMessage);
-            Assert.AreEqual(string.Format(RouteBusinessResources.SIGN_IN_WITH_ERROR_MESSAGE, MainBusinessResources.TECHNICAL_ERROR), result.RedirectUrl);
+            Assert.AreEqual(null, result.RedirectUrl);
+            Assert.AreEqual(0, result.InviteVM.ProfileLabelsByCode.Count());
+
+            _userRepositoryMock.Setup(m => m.GetAllProfiles())
+                .Returns(() => null);
+
+            result = _accountBusiness.LoadInviteDatas(1, _sessionMock.Object);
+
+            Assert.AreEqual(false, result.Success);
+            Assert.AreEqual(MainBusinessResources.TECHNICAL_ERROR, result.ErrorMessage);
+            Assert.AreEqual(null, result.RedirectUrl);
+            Assert.AreEqual(0, result.InviteVM.ProfileLabelsByCode.Count());
         }
     }
 }

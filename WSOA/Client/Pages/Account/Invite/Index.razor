@@ -1,4 +1,4 @@
-﻿@page "/account/invite"
+﻿@page "/account/invite/{SubSectionId:int}"
 @using WSOA.Client.Pages.Account.Invite.Components;
 @layout DownNavMenuLayout
 @inherits InviteComponent
@@ -6,7 +6,7 @@
 <div class="mainContainer">
     <span class="title">Inviter un nouvel utilisateur</span>
     <EditForm
-        OnSubmit="() => null"
+        OnSubmit="CreateLinkAccountCreation"
         EditContext="@_editContext"
               style="background-color: #EDE8DF;
                     border-radius: 30px;
@@ -21,7 +21,7 @@
             <div class="field">
                 <span>Label</span>
                 <InputText
-                    @bind-Value="_viewModel.RecipientMail"
+                    @bind-Value="_formVM.RecipientMail"
                     style="height: 50px;
                             border-radius: 10px;
                             border: 1px solid;"
@@ -30,23 +30,40 @@
             <div class="field">
                 <span>Label</span>
                 <InputSelect
-                    @bind-Value="_viewModel.ProfileCodeSelected"
+                    @bind-Value="_formVM.ProfileCodeSelected"
                     style="height: 50px;
                             border-radius: 10px;
-                            border: 1px solid;">
-                    <option value="0">Option</option>
-                    <option value="1">Option</option>
-                    <option value="2">Option</option>
-                    <option value="3">Option</option>
+                            border: 1px solid;"
+                >
+                    @if (_isLoading)
+                    {
+                        <option value="">Chargement...</option>
+                    }
+                    else
+                    {
+                        @foreach (KeyValuePair<string, string> kvp in _inviteVM.ProfileLabelsByCode)
+                        {
+                            <option value="@kvp.Key">@kvp.Value</option>
+                        }
+                    }
                 </InputSelect>
             </div>
         </div>
         <div class="buttons_panel">
-            <button class="button main">Button</button>
+            <button class="button main" type="submit">Submit</button>
             <button class="button">Button</button>
         </div>
-        <div class="errors_container">
-            <span class="error">Error</span>
+        <div class="prompt_container">
+            @if (_isProcessing)
+            {
+                <span>Traitement en cours...</span>
+            }
+            @if (_isSuccessProcessing)
+            {
+                <span>Traitement effectué</span>
+            }
+            <span class="error">@_errorMessage</span>
+            <ValidationSummary />
         </div>
     </EditForm>
 </div>

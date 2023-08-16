@@ -8,5 +8,10 @@ namespace WSOA.Server.Data.Interface
         /// Get user by account ID.
         /// </summary>
         public User GetUserByAccountId(int accountId);
+
+        /// <summary>
+        /// Get all existing profile in DB.
+        /// </summary>
+        public IEnumerable<Profile> GetAllProfiles();
     }
 }
