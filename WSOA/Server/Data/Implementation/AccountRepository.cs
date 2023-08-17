@@ -24,9 +24,17 @@ namespace WSOA.Server.Data.Implementation
                 .SingleOrDefault();
         }
 
+        public LinkAccountCreation? GetLinkAccountCreationByMail(string mail)
+        {
+            return _dbContext.LinkAccountCreations.SingleOrDefault(l => l.RecipientMail == mail);
+        }
+
         public LinkAccountCreation SaveLinkAccountCreation(LinkAccountCreation link)
         {
-            _dbContext.LinkAccountCreations.Add(link);
+            if (link.Id == 0)
+            {
+                _dbContext.LinkAccountCreations.Add(link);
+            }
             _dbContext.SaveChanges();
             return link;
         }

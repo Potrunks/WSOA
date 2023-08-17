@@ -7,20 +7,31 @@
             Success = false;
             ErrorMessage = null;
             RedirectUrl = null;
+            WarningMessage = null;
         }
 
-        public APICallResult(string redirectUrl)
+        public APICallResult(string? redirectUrl)
         {
             Success = true;
             ErrorMessage = null;
             RedirectUrl = redirectUrl;
+            WarningMessage = null;
         }
 
-        public APICallResult(string errorMsg, string redirectUrl)
+        public APICallResult(string errorMsg, string? redirectUrl)
         {
             Success = false;
             ErrorMessage = errorMsg;
             RedirectUrl = redirectUrl;
+            WarningMessage = null;
+        }
+
+        public APICallResult(bool isSuccess, string warningMsg, string? redirectUrl)
+        {
+            Success = isSuccess;
+            WarningMessage = warningMsg;
+            RedirectUrl = redirectUrl;
+            WarningMessage = null;
         }
 
         public bool Success { get; set; }
@@ -28,5 +39,7 @@
         public string? ErrorMessage { get; set; }
 
         public string? RedirectUrl { get; set; }
+
+        public string? WarningMessage { get; set; }
     }
 }

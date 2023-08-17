@@ -32,6 +32,9 @@ namespace WSOA.Test
             mock.Setup(m => m.SaveLinkAccountCreation(It.IsAny<LinkAccountCreation>()))
                 .Returns<LinkAccountCreation>(linkCreated => linkCreated);
 
+            mock.Setup(m => m.GetLinkAccountCreationByMail(It.IsAny<string>()))
+                .Returns(() => null);
+
             return mock;
         }
 

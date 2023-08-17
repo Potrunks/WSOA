@@ -56,16 +56,3 @@
     background-color: #276347;
     color: white;
 }
-
-.prompt_container {
-    height: 29%;
-    width: 75%;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-}
-
-.error {
-    color: red;
-    text-align: center;
-}

@@ -1,0 +1,16 @@
+﻿@using WSOA.Client.Shared.Prompts.Form.Components;
+@inherits PromptFormComponent
+
+<div class="promptForm_container">
+    @if (IsProcessingListener)
+    {
+        <span class="promptForm_message">Traitement en cours...</span>
+    }
+    @if (IsProcessSuccessListener)
+    {
+        <span class="promptForm_message success">Traitement effectué</span>
+    }
+    <span class="promptForm_message error">@ErrorMessageListerner</span>
+    <span class="promptForm_message warning">@WarningMessageListerner</span>
+    <ValidationSummary />
+</div>

@@ -14,5 +14,10 @@ namespace WSOA.Server.Data.Interface
         /// Save a link account creation in DB.
         /// </summary>
         public LinkAccountCreation SaveLinkAccountCreation(LinkAccountCreation link);
+
+        /// <summary>
+        /// Get link account creation by mail.
+        /// </summary>
+        public LinkAccountCreation? GetLinkAccountCreationByMail(string mail);
     }
 }

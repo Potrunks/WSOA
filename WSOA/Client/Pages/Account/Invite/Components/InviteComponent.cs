@@ -23,7 +23,9 @@ namespace WSOA.Client.Pages.Account.Invite.Components
 
         public EditContext _editContext;
 
-        public string _errorMessage = null;
+        public string? _errorMessage = null;
+
+        public string? _warningMessage = null;
 
         public bool _isLoading = true;
 
@@ -63,8 +65,10 @@ namespace WSOA.Client.Pages.Account.Invite.Components
         public async Task CreateLinkAccountCreation()
         {
             _isProcessing = true;
+
             _isSuccessProcessing = false;
             _errorMessage = null;
+            _warningMessage = null;
 
             if (!_editContext.Validate())
             {
@@ -73,20 +77,16 @@ namespace WSOA.Client.Pages.Account.Invite.Components
             }
 
             APICallResult result = await AccountService.CreateLinkAccountCreation(_formVM);
-            if (!result.Success)
-            {
-                if (result.RedirectUrl != null)
-                {
-                    NavigationManager.NavigateTo(result.RedirectUrl);
-                    return;
-                }
 
-                _errorMessage = result.ErrorMessage;
-                _isProcessing = false;
+            if (result.RedirectUrl != null)
+            {
+                NavigationManager.NavigateTo(result.RedirectUrl);
                 return;
             }
 
-            _isSuccessProcessing = true;
+            _errorMessage = result.ErrorMessage;
+            _warningMessage = result.WarningMessage;
+            _isSuccessProcessing = result.Success;
 
             _isProcessing = false;
         }

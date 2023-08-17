@@ -1,5 +1,6 @@
 ﻿@page "/account/invite/{SubSectionId:int}"
 @using WSOA.Client.Pages.Account.Invite.Components;
+@using WSOA.Client.Shared.Prompts.Form
 @layout DownNavMenuLayout
 @inherits InviteComponent
 
@@ -53,17 +54,11 @@
             <button class="button main" type="submit">Submit</button>
             <button class="button">Button</button>
         </div>
-        <div class="prompt_container">
-            @if (_isProcessing)
-            {
-                <span>Traitement en cours...</span>
-            }
-            @if (_isSuccessProcessing)
-            {
-                <span>Traitement effectué</span>
-            }
-            <span class="error">@_errorMessage</span>
-            <ValidationSummary />
-        </div>
+        <PromptForm
+            IsProcessingListener="@_isProcessing"
+            IsProcessSuccessListener="@_isSuccessProcessing"
+            ErrorMessageListerner="@_errorMessage"
+            WarningMessageListerner="@_warningMessage"
+        />
     </EditForm>
 </div>

@@ -91,6 +91,7 @@ namespace WSOA.Test.Business
 
             Assert.AreEqual(true, result.Success);
             Assert.AreEqual(null, result.ErrorMessage);
+            Assert.AreEqual(null, result.WarningMessage);
             Assert.AreEqual(null, result.RedirectUrl);
             Assert.AreEqual(_linkAccountCreationVM.RecipientMail, linkCreated.RecipientMail);
             Assert.AreEqual(_linkAccountCreationVM.ProfileCodeSelected, linkCreated.ProfileCode);
@@ -109,6 +110,7 @@ namespace WSOA.Test.Business
 
             Assert.AreEqual(false, result.Success);
             Assert.AreEqual(MainBusinessResources.USER_NOT_CONNECTED, result.ErrorMessage);
+            Assert.AreEqual(null, result.WarningMessage);
             Assert.AreEqual(string.Format(RouteBusinessResources.SIGN_IN_WITH_ERROR_MESSAGE, MainBusinessResources.USER_NOT_CONNECTED), result.RedirectUrl);
             _transactionManagerMock.Verify(t => t.BeginTransaction(), Times.Once());
             _transactionManagerMock.Verify(t => t.CommitTransaction(), Times.Never());
@@ -125,10 +127,76 @@ namespace WSOA.Test.Business
 
             Assert.AreEqual(false, result.Success);
             Assert.AreEqual(MainBusinessResources.USER_CANNOT_PERFORM_ACTION, result.ErrorMessage);
+            Assert.AreEqual(null, result.WarningMessage);
             Assert.AreEqual(null, result.RedirectUrl);
             _transactionManagerMock.Verify(t => t.BeginTransaction(), Times.Once());
             _transactionManagerMock.Verify(t => t.CommitTransaction(), Times.Never());
             _mailServiceMock.Verify(m => m.SendMailAccountCreation(It.IsAny<LinkAccountCreation>()), Times.Never());
+        }
+
+        [TestMethod]
+        public void ShouldDontCreateLinkAccountCreation_WhenMailFormatNotValid()
+        {
+            _linkAccountCreationVM.RecipientMail = "mauvais format";
+
+            APICallResult result = _accountBusiness.CreateLinkAccountCreation(_linkAccountCreationVM, _sessionMock.Object);
+
+            Assert.AreEqual(false, result.Success);
+            Assert.AreEqual(MainBusinessResources.MAIL_FORMAT_NO_VALID, result.ErrorMessage);
+            Assert.AreEqual(null, result.WarningMessage);
+            Assert.AreEqual(null, result.RedirectUrl);
+            _transactionManagerMock.Verify(t => t.BeginTransaction(), Times.Once());
+            _transactionManagerMock.Verify(t => t.CommitTransaction(), Times.Never());
+            _mailServiceMock.Verify(m => m.SendMailAccountCreation(It.IsAny<LinkAccountCreation>()), Times.Never());
+        }
+
+        [TestMethod]
+        public void ShouldExtendLinkAccountCreation_WhenLinkAlreadyExistsAndOver()
+        {
+            LinkAccountCreation currentLink = new LinkAccountCreation
+            {
+                ExpirationDate = DateTime.UtcNow.AddDays(-1),
+                Id = 1,
+                ProfileCode = ProfileResources.ADMINISTRATOR_CODE,
+                RecipientMail = "test@test.test"
+            };
+            _accountRepositoryMock.Setup(m => m.GetLinkAccountCreationByMail(It.IsAny<string>()))
+                                    .Returns(currentLink);
+
+            APICallResult result = _accountBusiness.CreateLinkAccountCreation(_linkAccountCreationVM, _sessionMock.Object);
+
+            Assert.AreEqual(true, result.Success);
+            Assert.AreEqual(null, result.ErrorMessage);
+            Assert.AreEqual(AccountBusinessResources.LINK_ACCOUNT_CREATION_EXTENDED, result.WarningMessage);
+            Assert.AreEqual(null, result.RedirectUrl);
+            Assert.AreEqual(DateTime.UtcNow.AddDays(AccountBusinessResources.LINK_ACCOUNT_CREATION_EXPIRATION_DAY_DELAY).Day, currentLink.ExpirationDate.Day);
+            _transactionManagerMock.Verify(t => t.BeginTransaction(), Times.Once());
+            _transactionManagerMock.Verify(t => t.CommitTransaction(), Times.Once());
+            _mailServiceMock.Verify(m => m.SendMailAccountCreation(It.IsAny<LinkAccountCreation>()), Times.Once());
+        }
+
+        [TestMethod]
+        public void ShouldNotExtendLinkAccountCreation_WhenLinkAlreadyExistsAndNotOver()
+        {
+            LinkAccountCreation currentLink = new LinkAccountCreation
+            {
+                ExpirationDate = DateTime.UtcNow.AddDays(1),
+                Id = 1,
+                ProfileCode = ProfileResources.ADMINISTRATOR_CODE,
+                RecipientMail = "test@test.test"
+            };
+            _accountRepositoryMock.Setup(m => m.GetLinkAccountCreationByMail(It.IsAny<string>()))
+                                    .Returns(currentLink);
+
+            APICallResult result = _accountBusiness.CreateLinkAccountCreation(_linkAccountCreationVM, _sessionMock.Object);
+
+            Assert.AreEqual(true, result.Success);
+            Assert.AreEqual(null, result.ErrorMessage);
+            Assert.AreEqual(AccountBusinessResources.LINK_ACCOUNT_CREATION_RE_SEND, result.WarningMessage);
+            Assert.AreEqual(null, result.RedirectUrl);
+            _transactionManagerMock.Verify(t => t.BeginTransaction(), Times.Once());
+            _transactionManagerMock.Verify(t => t.CommitTransaction(), Times.Once());
+            _mailServiceMock.Verify(m => m.SendMailAccountCreation(It.IsAny<LinkAccountCreation>()), Times.Once());
         }
 
         [TestMethod]

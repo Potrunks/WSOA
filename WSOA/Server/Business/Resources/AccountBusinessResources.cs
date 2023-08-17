@@ -8,5 +8,7 @@
         public const string TECHNICAL_ERROR_INVITE_PAGE_LOADING = "Erreur technique pendant la tentative de chargement de la page d'invitation -> {0}";
         public const int LINK_ACCOUNT_CREATION_EXPIRATION_DAY_DELAY = 1;
         public const string LINK_ACCOUNT_CREATION_MAIL_SUBJECT = "World Series of Antoine : Creation de compte";
+        public const string LINK_ACCOUNT_CREATION_EXTENDED = "Lien déjà généré. Extension de la date d'éxpiration";
+        public const string LINK_ACCOUNT_CREATION_RE_SEND = "Lien déjà généré. Renvoie du lien par mail";
     }
 }

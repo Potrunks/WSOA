@@ -5,6 +5,7 @@ using WSOA.Server.Business.Resources;
 using WSOA.Server.Data.Interface;
 using WSOA.Shared.Entity;
 using WSOA.Shared.Result;
+using WSOA.Shared.Utils;
 using WSOA.Shared.ViewModel;
 
 namespace WSOA.Server.Business.Implementation
@@ -56,16 +57,38 @@ namespace WSOA.Server.Business.Implementation
                     return new APICallResult(MainBusinessResources.USER_CANNOT_PERFORM_ACTION, null);
                 }
 
-                LinkAccountCreation newLink = new LinkAccountCreation
+                if (!link.RecipientMail.IsValidMailFormat())
                 {
-                    ProfileCode = link.ProfileCodeSelected,
-                    RecipientMail = link.RecipientMail,
-                    ExpirationDate = DateTime.UtcNow.AddDays(AccountBusinessResources.LINK_ACCOUNT_CREATION_EXPIRATION_DAY_DELAY)
-                };
+                    return new APICallResult(MainBusinessResources.MAIL_FORMAT_NO_VALID, null);
+                }
 
-                _accountRepository.SaveLinkAccountCreation(newLink);
+                LinkAccountCreation currentLink = _accountRepository.GetLinkAccountCreationByMail(link.RecipientMail);
+                if (currentLink == null)
+                {
+                    currentLink = new LinkAccountCreation
+                    {
+                        ProfileCode = link.ProfileCodeSelected,
+                        RecipientMail = link.RecipientMail,
+                        ExpirationDate = DateTime.UtcNow.AddDays(AccountBusinessResources.LINK_ACCOUNT_CREATION_EXPIRATION_DAY_DELAY)
+                    };
+                }
+                else
+                {
+                    currentLink.ProfileCode = link.ProfileCodeSelected != currentLink.ProfileCode ? link.ProfileCodeSelected : currentLink.ProfileCode;
+                    if (currentLink.ExpirationDate < DateTime.UtcNow)
+                    {
+                        currentLink.ExpirationDate = DateTime.UtcNow.AddDays(AccountBusinessResources.LINK_ACCOUNT_CREATION_EXPIRATION_DAY_DELAY);
+                        result.WarningMessage = AccountBusinessResources.LINK_ACCOUNT_CREATION_EXTENDED;
+                    }
+                    else
+                    {
+                        result.WarningMessage = AccountBusinessResources.LINK_ACCOUNT_CREATION_RE_SEND;
+                    }
+                }
 
-                _mailService.SendMailAccountCreation(newLink);
+                _accountRepository.SaveLinkAccountCreation(currentLink);
+
+                _mailService.SendMailAccountCreation(currentLink);
 
                 _transactionManager.CommitTransaction();
             }
