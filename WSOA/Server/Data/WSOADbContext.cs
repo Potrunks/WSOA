@@ -17,22 +17,22 @@ namespace WSOA.Server.Data
                 new Profile
                 {
                     Code = "ADMIN",
-                    Name = "Administrator"
+                    Name = "Administrateur"
                 },
                 new Profile
                 {
                     Code = "ORGA",
-                    Name = "Organizer"
+                    Name = "Organisateur"
                 },
                 new Profile
                 {
                     Code = "PLAYER",
-                    Name = "Player"
+                    Name = "Joueur"
                 },
                 new Profile
                 {
                     Code = "GUEST",
-                    Name = "Guest"
+                    Name = "Invité"
                 }
             );
 
@@ -79,7 +79,7 @@ namespace WSOA.Server.Data
                     Id = 1,
                     Label = "Inviter",
                     MainNavSectionId = 4,
-                    Name = "Inviter de nouveaux utilisateurs",
+                    Description = "Inviter un nouvel utilisateur",
                     Order = 0,
                     Url = "/account/invite"
                 }

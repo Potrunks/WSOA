@@ -8,7 +8,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace WSOA.Server.Migrations
 {
     /// <inheritdoc />
-    public partial class SeedDB_v010 : Migration
+    public partial class SeedDb_v010 : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -76,7 +76,7 @@ namespace WSOA.Server.Migrations
                 {
                     Id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
-                    Name = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Description = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     Label = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     Order = table.Column<int>(type: "int", nullable: false),
                     Url = table.Column<string>(type: "nvarchar(max)", nullable: false),
@@ -168,16 +168,16 @@ namespace WSOA.Server.Migrations
                 columns: new[] { "Code", "Name" },
                 values: new object[,]
                 {
-                    { "ADMIN", "Administrator" },
-                    { "GUEST", "Guest" },
-                    { "ORGA", "Organizer" },
-                    { "PLAYER", "Player" }
+                    { "ADMIN", "Administrateur" },
+                    { "GUEST", "Invité" },
+                    { "ORGA", "Organisateur" },
+                    { "PLAYER", "Joueur" }
                 });
 
             migrationBuilder.InsertData(
                 table: "MainNavSubSections",
-                columns: new[] { "Id", "Label", "MainNavSectionId", "Name", "Order", "Url" },
-                values: new object[] { 1, "Inviter", 4, "Inviter de nouveaux utilisateurs", 0, "/account/invite" });
+                columns: new[] { "Id", "Description", "Label", "MainNavSectionId", "Order", "Url" },
+                values: new object[] { 1, "Inviter un nouvel utilisateur", "Inviter", 4, 0, "/account/invite" });
 
             migrationBuilder.InsertData(
                 table: "Users",

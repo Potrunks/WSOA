@@ -10,7 +10,7 @@ namespace WSOA.Shared.Entity
         public int Id { get; set; }
 
         [Required]
-        public string Name { get; set; }
+        public string Description { get; set; }
 
         [Required]
         public string Label { get; set; }

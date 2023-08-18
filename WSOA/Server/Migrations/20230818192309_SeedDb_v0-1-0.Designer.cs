@@ -12,8 +12,8 @@ using WSOA.Server.Data;
 namespace WSOA.Server.Migrations
 {
     [DbContext(typeof(WSOADbContext))]
-    [Migration("20230815150829_SeedDB_v0-1-0")]
-    partial class SeedDB_v010
+    [Migration("20230818192309_SeedDb_v0-1-0")]
+    partial class SeedDb_v010
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -148,16 +148,16 @@ namespace WSOA.Server.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
+                    b.Property<string>("Description")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<string>("Label")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<int>("MainNavSectionId")
                         .HasColumnType("int");
-
-                    b.Property<string>("Name")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
 
                     b.Property<int>("Order")
                         .HasColumnType("int");
@@ -176,9 +176,9 @@ namespace WSOA.Server.Migrations
                         new
                         {
                             Id = 1,
+                            Description = "Inviter un nouvel utilisateur",
                             Label = "Inviter",
                             MainNavSectionId = 4,
-                            Name = "Inviter de nouveaux utilisateurs",
                             Order = 0,
                             Url = "/account/invite"
                         });
@@ -233,22 +233,22 @@ namespace WSOA.Server.Migrations
                         new
                         {
                             Code = "ADMIN",
-                            Name = "Administrator"
+                            Name = "Administrateur"
                         },
                         new
                         {
                             Code = "ORGA",
-                            Name = "Organizer"
+                            Name = "Organisateur"
                         },
                         new
                         {
                             Code = "PLAYER",
-                            Name = "Player"
+                            Name = "Joueur"
                         },
                         new
                         {
                             Code = "GUEST",
-                            Name = "Guest"
+                            Name = "Invité"
                         });
                 });
 

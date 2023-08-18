@@ -145,16 +145,16 @@ namespace WSOA.Server.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
+                    b.Property<string>("Description")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<string>("Label")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<int>("MainNavSectionId")
                         .HasColumnType("int");
-
-                    b.Property<string>("Name")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
 
                     b.Property<int>("Order")
                         .HasColumnType("int");
@@ -173,9 +173,9 @@ namespace WSOA.Server.Migrations
                         new
                         {
                             Id = 1,
+                            Description = "Inviter un nouvel utilisateur",
                             Label = "Inviter",
                             MainNavSectionId = 4,
-                            Name = "Inviter de nouveaux utilisateurs",
                             Order = 0,
                             Url = "/account/invite"
                         });
@@ -230,22 +230,22 @@ namespace WSOA.Server.Migrations
                         new
                         {
                             Code = "ADMIN",
-                            Name = "Administrator"
+                            Name = "Administrateur"
                         },
                         new
                         {
                             Code = "ORGA",
-                            Name = "Organizer"
+                            Name = "Organisateur"
                         },
                         new
                         {
                             Code = "PLAYER",
-                            Name = "Player"
+                            Name = "Joueur"
                         },
                         new
                         {
                             Code = "GUEST",
-                            Name = "Guest"
+                            Name = "Invité"
                         });
                 });
 

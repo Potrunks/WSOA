@@ -129,6 +129,7 @@ namespace WSOA.Server.Business.Implementation
                 }
 
                 result.InviteVM.ProfileLabelsByCode = allProfileNames;
+                result.InviteVM.SubSectionDescription = subSection.Description;
                 result.Success = true;
             }
             catch (Exception exception)

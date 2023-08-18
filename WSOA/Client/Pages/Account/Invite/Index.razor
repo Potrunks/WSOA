@@ -6,11 +6,12 @@
 @using WSOA.Client.Shared.Fields.Selects.CodeText
 @using WSOA.Client.Shared.Forms.PromptForm
 @using WSOA.Client.Shared.Prompts.Prompt
+@using WSOA.Client.Shared.Resources;
 @layout DownNavMenuLayout
 @inherits InviteComponent
 
 <div class="mainContainer">
-    <span class="title">Inviter un nouvel utilisateur</span>
+    <span class="title">@_inviteVM.SubSectionDescription</span>
     <PromptForm
         OnSubmit="@CreateLinkAccountCreation"
         EditContext="@_editContext"
@@ -19,9 +20,9 @@
         IsProcessSuccessListener="@_isSuccessProcessing"
         WarningMessageListerner="@_warningMessage">
         <Fields>
-            <TextInputField Label="Mail"
+            <TextInputField Label="@MainLabelResources.MAIL"
                             @bind-InputValue="_formVM.RecipientMail" />
-            <CodeTextSelectField Label="Profile"
+            <CodeTextSelectField Label="@MainLabelResources.PROFILE"
                                  IsLoadingListener="@_isLoading"
                                  Options="@_inviteVM.ProfileLabelsByCode"
                                  @bind-InputValue="_formVM.ProfileCodeSelected" />
