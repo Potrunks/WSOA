@@ -1,31 +1,26 @@
 ﻿@page "/account/invite/{SubSectionId:int}"
 @using WSOA.Client.Pages.Account.Invite.Components;
 @using WSOA.Client.Shared.Buttons.Main
-@using WSOA.Client.Shared.Buttons.Main.Components
 @using WSOA.Client.Shared.Fields.Inputs.Text
 @using WSOA.Client.Shared.Fields.Selects.CodeText
 @using WSOA.Client.Shared.Forms.PromptForm
-@using WSOA.Client.Shared.Prompts.Prompt
 @using WSOA.Client.Shared.Resources;
 @layout DownNavMenuLayout
 @inherits InviteComponent
 
-<div class="mainContainer">
-    <span class="title">@_inviteVM.SubSectionDescription</span>
-    <PromptForm
-        OnSubmit="@CreateLinkAccountCreation"
-        EditContext="@_editContext"
-        ErrorMessageListerner="@_errorMessage"
-        IsProcessingListener="@_isProcessing"
-        IsProcessSuccessListener="@_isSuccessProcessing"
-        WarningMessageListerner="@_warningMessage">
-        <Fields>
-            <TextInputField Label="@MainLabelResources.MAIL"
-                            @bind-InputValue="_formVM.RecipientMail" />
-            <CodeTextSelectField Label="@MainLabelResources.PROFILE"
-                                 IsLoadingListener="@_isLoading"
-                                 Options="@_inviteVM.ProfileLabelsByCode"
-                                 @bind-InputValue="_formVM.ProfileCodeSelected" />
-        </Fields>
-    </PromptForm>
-</div>
+<PromptForm Title="@_inviteVM.SubSectionDescription"
+            OnSubmit="@CreateLinkAccountCreation"
+            EditContext="@_editContext"
+            ErrorMessageListerner="@_errorMessage"
+            IsProcessingListener="@_isProcessing"
+            IsProcessSuccessListener="@_isSuccessProcessing"
+            WarningMessageListerner="@_warningMessage">
+    <Fields>
+        <TextInputField Label="@MainLabelResources.MAIL"
+                        @bind-InputValue="_formVM.RecipientMail" />
+        <CodeTextSelectField Label="@MainLabelResources.PROFILE"
+                             IsLoadingListener="@_isLoading"
+                             Options="@_inviteVM.ProfileLabelsByCode"
+                             @bind-InputValue="_formVM.ProfileCodeSelected" />
+    </Fields>
+</PromptForm>

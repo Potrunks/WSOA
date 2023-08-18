@@ -7,6 +7,10 @@ namespace WSOA.Client.Shared.Forms.PromptForm.Components
     {
         [Parameter]
         [EditorRequired]
+        public string Title { get; set; }
+
+        [Parameter]
+        [EditorRequired]
         public EventCallback<EditContext> OnSubmit { get; set; }
 
         [Parameter]
