@@ -1,0 +1,20 @@
+﻿@using WSOA.Client.Shared.Fields.Selects.CodeText.Components;
+@inherits CodeTextSelectFieldComponent
+
+<div class="mainSelectField_mainContainer">
+    <span>Label</span>
+    <InputSelect @bind-Value="InputValue"
+                 style="height: 50px; border-radius: 10px; border: 1px solid;">
+        @if (IsLoadingListener)
+        {
+            <option value="">Chargement...</option>
+        }
+        else
+        {
+            @foreach (KeyValuePair<string, string> kvp in Options)
+            {
+                <option value="@kvp.Key">@kvp.Value</option>
+            }
+        }
+    </InputSelect>
+</div>

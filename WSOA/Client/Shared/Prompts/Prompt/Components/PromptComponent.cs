@@ -1,8 +1,8 @@
 ﻿using Microsoft.AspNetCore.Components;
 
-namespace WSOA.Client.Shared.Prompts.Form.Components
+namespace WSOA.Client.Shared.Prompts.Prompt.Components
 {
-    public class PromptFormComponent : ComponentBase
+    public class PromptComponent : ComponentBase
     {
         [Parameter]
         [EditorRequired]

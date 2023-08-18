@@ -1,0 +1,18 @@
+﻿.mainButton {
+    height: 50px;
+    border-radius: 10px;
+    border: 1px solid;
+    background-color: white;
+}
+
+    .mainButton:hover,
+    .mainButton.primary:hover {
+        background-color: seagreen;
+        color: white;
+        transition: background-color 0.5s, color 0.5s;
+    }
+
+    .mainButton.primary {
+        background-color: #276347;
+        color: white;
+    }

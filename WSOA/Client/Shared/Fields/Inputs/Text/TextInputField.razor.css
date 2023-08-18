@@ -1,0 +1,5 @@
+﻿.mainInputField_mainContainer {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+}
