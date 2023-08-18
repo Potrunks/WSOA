@@ -34,24 +34,13 @@ namespace WSOA.Server.Business.Implementation
                 }
 
                 // TODO : recupérer direct section et subsection dans une seule requete
-                List<MainNavSection> mainNavSections = _menuRepository.GetMainNavSections();
-                if (mainNavSections.IsNullOrEmpty())
+                IDictionary<MainNavSection, List<MainNavSubSection>> subSectionsBySection = _menuRepository.GetMainNavSubSectionsBySectionAndProfileCode(currentProfileCode);
+                if (subSectionsBySection.IsNullOrEmpty() || subSectionsBySection.Values.All(ss => ss.IsNullOrEmpty()))
                 {
-                    throw new Exception(string.Format(MainBusinessResources.NULL_OR_EMPTY_OBJ_NOT_ALLOWED, mainNavSections, nameof(MenuBusiness.LoadMainNavMenu)));
+                    throw new Exception(string.Format(MainBusinessResources.NULL_OR_EMPTY_OBJ_NOT_ALLOWED, nameof(subSectionsBySection), nameof(MenuBusiness.LoadMainNavMenu)));
                 }
 
-                List<MainNavSubSection> mainNavSubSections = _menuRepository.GetMainNavSubSectionsByProfileCode(currentProfileCode);
-                if (mainNavSubSections.IsNullOrEmpty())
-                {
-                    throw new Exception(string.Format(MainBusinessResources.NULL_OR_EMPTY_OBJ_NOT_ALLOWED, mainNavSections, nameof(MenuBusiness.LoadMainNavMenu)));
-                }
-
-                foreach (MainNavSection mainNavSection in mainNavSections)
-                {
-                    MainNavSectionViewModel mainNavSectionVM = new MainNavSectionViewModel(mainNavSection);
-                    mainNavSectionVM.MainNavSubSectionVMs = mainNavSubSections.Where(sub => sub.MainNavSectionId == mainNavSection.Id).Select(sub => new MainNavSubSectionViewModel(sub)).ToList();
-                    result.MainNavSectionVMs.Add(mainNavSectionVM);
-                }
+                result.MainNavSectionVMs.AddRange(subSectionsBySection.Select(kvp => new MainNavSectionViewModel(kvp)));
             }
             catch (Exception exception)
             {

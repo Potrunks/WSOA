@@ -18,6 +18,13 @@ namespace WSOA.Shared.ViewModel
             MainNavSubSectionVMs = new List<MainNavSubSectionViewModel>();
         }
 
+        public MainNavSectionViewModel(KeyValuePair<MainNavSection, List<MainNavSubSection>> subSectionsBySection)
+        {
+            ClassIcon = subSectionsBySection.Key.ClassIcon;
+            Order = subSectionsBySection.Key.Order;
+            MainNavSubSectionVMs = subSectionsBySection.Value.Select(ss => new MainNavSubSectionViewModel(ss)).ToList();
+        }
+
         public string ClassIcon { get; set; }
 
         public int Order { get; set; }

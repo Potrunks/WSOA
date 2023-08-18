@@ -12,16 +12,6 @@ namespace WSOA.Server.Data.Implementation
             _dbContext = dbContext;
         }
 
-        public List<MainNavSection> GetMainNavSections()
-        {
-            return
-            (
-                from mns in _dbContext.MainNavSections
-                select mns
-            )
-            .ToList();
-        }
-
         public MainNavSubSection? GetMainNavSubSectionByIdAndProfileCode(string profileCode, int id)
         {
             return
@@ -36,16 +26,25 @@ namespace WSOA.Server.Data.Implementation
             .SingleOrDefault();
         }
 
-        public List<MainNavSubSection> GetMainNavSubSectionsByProfileCode(string profileCode)
+        public IDictionary<MainNavSection, List<MainNavSubSection>> GetMainNavSubSectionsBySectionAndProfileCode(string profileCode)
         {
             return
             (
-                from mnss in _dbContext.MainNavSubSections
-                join mnss_pc in _dbContext.MainNavSubSectionsByProfileCode on mnss.Id equals mnss_pc.MainNavSubSectionId
-                where mnss_pc.ProfileCode == profileCode
-                select mnss
-            )
-            .ToList();
+                from mns in _dbContext.MainNavSections
+                join ss in _dbContext.MainNavSubSections on mns.Id equals ss.MainNavSectionId into left_ss
+                from ss in left_ss.DefaultIfEmpty()
+                join ss_pc in _dbContext.MainNavSubSectionsByProfileCode on ss.Id equals ss_pc.MainNavSubSectionId into left_ss_pc
+                from ss_pc in left_ss_pc.DefaultIfEmpty()
+                where
+                    ss_pc.ProfileCode == profileCode
+                    || ss.Id == null
+                group new { mns, ss } by mns into grouped
+                select new
+                {
+                    MainNavSection = grouped.Key,
+                    MainNavSubSections = grouped.All(g => g.ss == null) ? new List<MainNavSubSection>() : grouped.Select(x => x.ss).ToList()
+                }
+            ).ToDictionary(x => x.MainNavSection, x => x.MainNavSubSections);
         }
     }
 }

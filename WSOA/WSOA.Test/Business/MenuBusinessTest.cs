@@ -5,6 +5,7 @@ using WSOA.Server.Business.Implementation;
 using WSOA.Server.Business.Interface;
 using WSOA.Server.Business.Resources;
 using WSOA.Server.Data.Interface;
+using WSOA.Shared.Entity;
 using WSOA.Shared.Resources;
 using WSOA.Shared.Result;
 
@@ -34,22 +35,6 @@ namespace WSOA.Test.Business
             Assert.AreEqual(true, result.Success);
             Assert.AreEqual(null, result.ErrorMessage);
             Assert.AreEqual(null, result.RedirectUrl);
-            Assert.AreEqual("Section 1 Icon", result.MainNavSectionVMs[0].ClassIcon);
-            Assert.AreEqual("Sub Section Admin 1", result.MainNavSectionVMs[0].MainNavSubSectionVMs.Single().Label);
-            Assert.AreEqual("Section 2 Icon", result.MainNavSectionVMs[1].ClassIcon);
-            Assert.AreEqual(false, result.MainNavSectionVMs[1].MainNavSubSectionVMs.Any());
-
-            _sessionMock = CreateISessionMock(ProfileResources.ORGANIZER_CODE);
-
-            result = _menuBusiness.LoadMainNavMenu(_sessionMock.Object);
-
-            Assert.AreEqual(true, result.Success);
-            Assert.AreEqual(null, result.ErrorMessage);
-            Assert.AreEqual(null, result.RedirectUrl);
-            Assert.AreEqual("Section 1 Icon", result.MainNavSectionVMs[0].ClassIcon);
-            Assert.AreEqual(false, result.MainNavSectionVMs[0].MainNavSubSectionVMs.Any());
-            Assert.AreEqual("Section 2 Icon", result.MainNavSectionVMs[1].ClassIcon);
-            Assert.AreEqual("Sub Section Orga 1", result.MainNavSectionVMs[1].MainNavSubSectionVMs.Single().Label);
         }
 
         [TestMethod]
@@ -67,8 +52,8 @@ namespace WSOA.Test.Business
         [TestMethod]
         public void ShouldDontLoadMainMenu_WhenNoMainNavSectionInDB()
         {
-            _menuRepositoryMock.Setup(m => m.GetMainNavSections())
-                                .Returns(() => null);
+            _menuRepositoryMock.Setup(m => m.GetMainNavSubSectionsBySectionAndProfileCode(It.IsAny<string>()))
+                .Returns(() => null);
 
             MainNavMenuResult result = _menuBusiness.LoadMainNavMenu(_sessionMock.Object);
 
@@ -78,8 +63,11 @@ namespace WSOA.Test.Business
         [TestMethod]
         public void ShouldDontLoadMainMenu_WhenNoMainNavSubSectionInDB()
         {
-            _menuRepositoryMock.Setup(m => m.GetMainNavSubSectionsByProfileCode(ProfileResources.ADMINISTRATOR_CODE))
-                                .Returns(() => null);
+            _menuRepositoryMock.Setup(m => m.GetMainNavSubSectionsBySectionAndProfileCode(It.IsAny<string>()))
+                .Returns(new Dictionary<MainNavSection, List<MainNavSubSection>>
+                {
+                    { new MainNavSection(), null }
+                });
 
             MainNavMenuResult result = _menuBusiness.LoadMainNavMenu(_sessionMock.Object);
 

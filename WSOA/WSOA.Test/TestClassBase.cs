@@ -62,18 +62,11 @@ namespace WSOA.Test
         {
             Mock<IMenuRepository> mock = new Mock<IMenuRepository>();
 
-            mock.Setup(m => m.GetMainNavSections())
-                .Returns(new List<MainNavSection>
+            mock.Setup(m => m.GetMainNavSubSectionsBySectionAndProfileCode(It.IsAny<string>()))
+                .Returns(new Dictionary<MainNavSection, List<MainNavSubSection>>
                 {
-                    new MainNavSection { ClassIcon = "Section 1 Icon", Id = 1, Label = "Section 1", Name = "Section 1", Order = 0 },
-                    new MainNavSection { ClassIcon = "Section 2 Icon", Id = 2, Label = "Section 2", Name = "Section 2", Order = 1 }
+                    { new MainNavSection(), new List<MainNavSubSection> { new MainNavSubSection() } }
                 });
-
-            mock.Setup(m => m.GetMainNavSubSectionsByProfileCode(ProfileResources.ADMINISTRATOR_CODE))
-                .Returns(new List<MainNavSubSection> { new MainNavSubSection { Id = 1, Label = "Sub Section Admin 1", MainNavSectionId = 1, Name = "Sub Section Admin 1", Order = 0 } });
-
-            mock.Setup(m => m.GetMainNavSubSectionsByProfileCode(ProfileResources.ORGANIZER_CODE))
-                .Returns(new List<MainNavSubSection> { new MainNavSubSection { Id = 2, Label = "Sub Section Orga 1", MainNavSectionId = 2, Name = "Sub Section Orga 1", Order = 0 } });
 
             mock.Setup(m => m.GetMainNavSubSectionByIdAndProfileCode(It.IsAny<string>(), It.IsAny<int>()))
                 .Returns(new MainNavSubSection());
