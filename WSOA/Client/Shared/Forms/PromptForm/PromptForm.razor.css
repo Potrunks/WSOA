@@ -35,6 +35,28 @@
     justify-content: space-evenly;
 }
 
+@media only screen and (min-width: 412px) and (min-height: 915px) {
+    .fields_container {
+        height: 41%;
+    }
+
+    .buttonsPanel_container {
+        height: 29%;
+    }
+}
+
+@media only screen and (min-width: 540px) and (min-height: 720px) {
+    ::deep form {
+        width: 70% !important;
+    }
+}
+
+@media only screen and (min-width: 1024px) and (min-height: 600px) {
+    ::deep form {
+        width: 40% !important;
+    }
+}
+
 @media only screen and (min-width: 768px) and (min-height: 1024px) {
     .title {
         font-size: 50px;

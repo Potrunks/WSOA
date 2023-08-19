@@ -22,3 +22,21 @@
 .success {
     color: green;
 }
+
+@media only screen and (min-width: 360px) and (min-height: 740px) {
+    .promptForm_container > span,
+    ::deep li {
+        font-size: 20px;
+    }
+}
+
+@media only screen and (min-width: 412px) and (min-height: 915px) {
+    .promptForm_container {
+        height: 34%;
+    }
+
+        .promptForm_container > span,
+        ::deep li {
+            font-size: 30px;
+        }
+}
