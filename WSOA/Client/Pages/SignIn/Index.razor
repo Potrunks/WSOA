@@ -6,60 +6,55 @@
 @using WSOA.Client.Shared.Buttons.Main
 @using WSOA.Client.Shared.Fields.Inputs.Password
 @using WSOA.Client.Shared.Fields.Inputs.Text
+@using WSOA.Client.Shared.Loaders.FullPageLoader
+@using WSOA.Client.Shared.Prompts.Prompt
 @using WSOA.Client.Shared.Resources;
 @inherits SignInComponent
 
-<div class="signIn_mainContainer">
-    <div class="signIn_borderLeft">
-        <span>@_cardRightRenderObject.Value</span>
-        <img class="signIn_borderLeft-logo" src="images/@_cardRightRenderObject.IconFileName" />
-    </div>
-    <div class="signIn_container">
-        <img class="signIn_container-logo" src="images/main_logo.png" />
-        <EditForm
-            OnSubmit="SignIn"
-            EditContext="@_editContext"
-            style="
-                width: 90%;
+@if (_isLoading)
+{
+    <FullPageLoader />
+}
+else
+{
+    <div class="signIn_mainContainer">
+        <div class="signIn_borderLeft">
+            <span>@_cardRightRenderObject.Value</span>
+            <img class="signIn_borderLeft-logo" src="images/@_cardRightRenderObject.IconFileName" />
+        </div>
+        <div class="signIn_container">
+            <img class="signIn_container-logo" src="images/main_logo.png" />
+            <EditForm OnSubmit="SignIn"
+                  EditContext="@_editContext"
+                  style="
                 height: 100%;
                 display: flex;
                 flex-direction: column;
                 margin-bottom: 10px;
-            "
-        >
-            <div class="signIn_form">
-                <TextInputField
-                    Label="@SignInLabelResources.LOGIN_FIELD_LABEL"
-                    @bind-InputValue="_signInFormVM.Login"/>
-                <PasswordInputField
-                    Label="@SignInLabelResources.PWD_FIELD_LABEL"
-                    @bind-InputValue="_signInFormVM.Password"/>
-            </div>
-            <div class="signIn_buttonsPanel">
-                <MainButton
-                    Label="@SignInLabelResources.SIGN_IN_BTN_LABEL"
-                    IsPrimary="true"
-                    Type="submit"/>
-                <MainButton
-                    Label="@SignInLabelResources.PWD_FORGOTTEN_BTN_LABEL"/>
-            </div>
-            <div class="signIn_container-prompt">
-                @if (_isLoading)
-                {
-                    <span class="signIn_container-prompt loading">@MainLabelResources.LOADING_LABEL</span>
-                }
-
-                @if (!string.IsNullOrEmpty(ErrorMessage))
-                {
-                    <span class="signIn_container-prompt errorMsg">@ErrorMessage</span>
-                }
-
-                <ValidationSummary />
-            </div>
-        </EditForm>
+                align-items: center;
+            ">
+                <div class="signIn_form">
+                    <TextInputField Label="@SignInLabelResources.LOGIN_FIELD_LABEL"
+                                @bind-InputValue="_signInFormVM.Login" />
+                    <PasswordInputField Label="@SignInLabelResources.PWD_FIELD_LABEL"
+                                    @bind-InputValue="_signInFormVM.Password" />
+                </div>
+                <div class="signIn_buttonsPanel">
+                    <MainButton Label="@SignInLabelResources.SIGN_IN_BTN_LABEL"
+                            IsPrimary="true"
+                            Type="submit" />
+                    <MainButton Label="@SignInLabelResources.PWD_FORGOTTEN_BTN_LABEL" />
+                </div>
+                <Prompt
+                    ErrorMessageListerner="@ErrorMessage"
+                    IsProcessingListener="@_isProcessing"
+                    IsProcessSuccessListener="@_isProcessSuccess"
+                    Width="100"/>
+            </EditForm>
+        </div>
+        <div class="signIn_borderRight">
+            <img class="signIn_borderRight-logo" src="images/@_cardLeftRenderObject.IconFileName" />
+            <span>@_cardLeftRenderObject.Value</span>
+        </div>
     </div>
-    <div class="signIn_borderRight">
-        <img class="signIn_borderRight-logo" src="images/@_cardLeftRenderObject.IconFileName" />
-        <span>@_cardLeftRenderObject.Value</span>
-    </div>
-</div>
+}

@@ -18,5 +18,9 @@ namespace WSOA.Client.Shared.Prompts.Prompt.Components
 
         [Parameter]
         public string? WarningMessageListerner { get; set; }
+
+        [Parameter]
+        [EditorRequired]
+        public int Width { get; set; }
     }
 }

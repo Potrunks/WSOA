@@ -1,8 +1,8 @@
 ﻿using Microsoft.AspNetCore.Components;
 
-namespace WSOA.Client.Shared.Fields.Inputs.Components
+namespace WSOA.Client.Shared.Fields.Components
 {
-    public class InputFieldComponentBase : ComponentBase
+    public class FieldsComponentBase : ComponentBase
     {
         [Parameter]
         [EditorRequired]
