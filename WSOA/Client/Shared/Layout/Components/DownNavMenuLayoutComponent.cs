@@ -15,8 +15,12 @@ namespace WSOA.Client.Shared.Layout.Components
 
         public List<MainNavSectionViewModel> _mainNavSectionVMs = new List<MainNavSectionViewModel>();
 
+        public bool _isLoading = false;
+
         protected override async Task OnInitializedAsync()
         {
+            _isLoading = true;
+
             MainNavMenuResult result = await MenuService.LoadMainMenu();
             if (!result.Success)
             {
@@ -25,6 +29,8 @@ namespace WSOA.Client.Shared.Layout.Components
             }
 
             _mainNavSectionVMs = result.MainNavSectionVMs.OrderBy(sec => sec.Order).ToList();
+
+            _isLoading = false;
         }
     }
 }

@@ -6,14 +6,14 @@
 @using WSOA.Client.Shared.Buttons.Main
 @using WSOA.Client.Shared.Fields.Inputs.Password
 @using WSOA.Client.Shared.Fields.Inputs.Text
-@using WSOA.Client.Shared.Loaders.FullPageLoader
+@using WSOA.Client.Shared.Loaders
 @using WSOA.Client.Shared.Prompts.Prompt
 @using WSOA.Client.Shared.Resources;
 @inherits SignInComponent
 
 @if (_isLoading)
 {
-    <FullPageLoader />
+    <CardCoinLoader />
 }
 else
 {

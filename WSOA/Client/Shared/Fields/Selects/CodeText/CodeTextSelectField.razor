@@ -1,4 +1,5 @@
 ﻿@using WSOA.Client.Shared.Fields.Selects.CodeText.Components;
+@using WSOA.Client.Shared.Resources;
 @inherits CodeTextSelectFieldComponent
 
 <div class="mainSelectField_mainContainer">
@@ -7,7 +8,7 @@
                  style="height: 50px; border-radius: 10px; border: 1px solid;">
         @if (IsLoadingListener)
         {
-            <option value="">Chargement...</option>
+            <option value="">@MainLabelResources.LOADING_LABEL</option>
         }
         else
         {

@@ -1,4 +1,5 @@
 ﻿@using WSOA.Client.Shared.Layout.Components;
+@using WSOA.Client.Shared.Loaders
 @using WSOA.Client.Shared.NavMenus.Main;
 @using WSOA.Shared.ViewModel;
 @inherits DownNavMenuLayoutComponent
@@ -12,9 +13,17 @@
         @Body
     </div>
     <div class="navMenu_container">
-        @foreach (MainNavSectionViewModel mainNavSectionVM in _mainNavSectionVMs)
+        @if (_isLoading)
         {
-            <MainNavSection ViewModel="@mainNavSectionVM" />
+            <LineLoader
+                Height="100"/>
+        }
+        else
+        {
+            @foreach (MainNavSectionViewModel mainNavSectionVM in _mainNavSectionVMs)
+            {
+                <MainNavSection ViewModel="@mainNavSectionVM" />
+            }
         }
     </div>
 </div>
