@@ -52,7 +52,7 @@ namespace WSOA.Test.Business
         [TestMethod]
         public void ShouldDontLoadMainMenu_WhenNoMainNavSectionInDB()
         {
-            _menuRepositoryMock.Setup(m => m.GetMainNavSubSectionsBySectionAndProfileCode(It.IsAny<string>()))
+            _menuRepositoryMock.Setup(m => m.GetMainNavSubSectionsInSectionByProfileCode(It.IsAny<string>()))
                 .Returns(() => null);
 
             MainNavMenuResult result = _menuBusiness.LoadMainNavMenu(_sessionMock.Object);
@@ -63,7 +63,7 @@ namespace WSOA.Test.Business
         [TestMethod]
         public void ShouldDontLoadMainMenu_WhenNoMainNavSubSectionInDB()
         {
-            _menuRepositoryMock.Setup(m => m.GetMainNavSubSectionsBySectionAndProfileCode(It.IsAny<string>()))
+            _menuRepositoryMock.Setup(m => m.GetMainNavSubSectionsInSectionByProfileCode(It.IsAny<string>()))
                 .Returns(new Dictionary<MainNavSection, List<MainNavSubSection>>
                 {
                     { new MainNavSection(), null }

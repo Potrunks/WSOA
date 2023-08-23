@@ -1,4 +1,9 @@
 ﻿@using WSOA.Client.Shared.Buttons.Main.Components;
 @inherits MainButtonComponent
 
-<button class="mainButton @_primaryCssClassName" type="@Type">@Label</button>
+<button
+    class="mainButton @_primaryCssClassName"
+    type="@Type"
+    onclick="@OnClick">
+        @Label
+</button>

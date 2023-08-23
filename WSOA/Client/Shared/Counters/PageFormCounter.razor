@@ -1,0 +1,20 @@
+﻿@using WSOA.Client.Shared.Counters.Components;
+@inherits PageFormCounterComponent
+
+@if (MaxPages >= 2)
+{
+    <div class="pageFormCounter_mainContainer">
+        @for (int pageCounter = 1; pageCounter <= MaxPages; pageCounter++)
+        {
+            if (pageCounter == 1)
+            {
+                <img class="pageFormCounter_pageLogo @IsSelected(pageCounter)" />
+            }
+            else
+            {
+                <div class="pageFormCounter_pageLogoConnector @IsSelected(pageCounter)" />
+                <img class="pageFormCounter_pageLogo @IsSelected(pageCounter)" />
+            }
+        }
+    </div>
+}

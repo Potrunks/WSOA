@@ -3,6 +3,7 @@
 @using WSOA.Client.Shared.Buttons.Main
 @using WSOA.Client.Shared.Fields.Inputs.Text
 @using WSOA.Client.Shared.Fields.Selects.CodeText
+@using WSOA.Client.Shared.Forms
 @using WSOA.Client.Shared.Forms.PromptForm
 @using WSOA.Client.Shared.Loaders
 @using WSOA.Client.Shared.Resources;
@@ -15,13 +16,9 @@
 }
 else
 {
-    <PromptForm Title="@_inviteVM.SubSectionDescription"
-            OnSubmit="@CreateLinkAccountCreation"
-            EditContext="@_editContext"
-            ErrorMessageListerner="@_errorMessage"
-            IsProcessingListener="@_isProcessing"
-            IsProcessSuccessListener="@_isSuccessProcessing"
-            WarningMessageListerner="@_warningMessage">
+    <SinglePageForm Model="@_formVM"
+                Title="@_inviteVM.SubSectionDescription"
+                OnSubmit="CreateLinkAccountCreation()">
         <Fields>
             <TextInputField Label="@MainLabelResources.MAIL"
                         @bind-InputValue="_formVM.RecipientMail" />
@@ -30,5 +27,5 @@ else
                              Options="@_inviteVM.ProfileLabelsByCode"
                              @bind-InputValue="_formVM.ProfileCodeSelected" />
         </Fields>
-    </PromptForm>
+    </SinglePageForm>
 }

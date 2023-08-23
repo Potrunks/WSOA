@@ -23,35 +23,19 @@ namespace WSOA.Client.Pages.Account.Invite.Components
 
         public EditContext _editContext;
 
-        public string? _errorMessage = null;
-
-        public string? _warningMessage = null;
-
         public bool _isLoading = true;
-
-        public bool _isProcessing = false;
-
-        public bool _isSuccessProcessing = false;
 
         protected override async Task OnInitializedAsync()
         {
-            // TODO : Faire un component Loading qui permet de ne pas avoir acces a la page tant qu'elle est pas chargé
             _isLoading = true;
 
             _editContext = new EditContext(_formVM);
             _editContext.EnableDataAnnotationsValidation();
 
             InviteCallResult result = await AccountService.LoadInviteDatas(SubSectionId);
-            if (!result.Success)
+            if (!string.IsNullOrWhiteSpace(result.RedirectUrl))
             {
-                if (result.RedirectUrl != null)
-                {
-                    NavigationManager.NavigateTo(result.RedirectUrl);
-                    return;
-                }
-
-                _errorMessage = result.ErrorMessage;
-                _isLoading = false;
+                NavigationManager.NavigateTo(result.RedirectUrl);
                 return;
             }
 
@@ -62,33 +46,9 @@ namespace WSOA.Client.Pages.Account.Invite.Components
             _isLoading = false;
         }
 
-        public async Task CreateLinkAccountCreation()
+        public Func<Task<APICallResult>> CreateLinkAccountCreation()
         {
-            _isProcessing = true;
-
-            _isSuccessProcessing = false;
-            _errorMessage = null;
-            _warningMessage = null;
-
-            if (!_editContext.Validate())
-            {
-                _isProcessing = false;
-                return;
-            }
-
-            APICallResult result = await AccountService.CreateLinkAccountCreation(_formVM);
-
-            if (result.RedirectUrl != null)
-            {
-                NavigationManager.NavigateTo(result.RedirectUrl);
-                return;
-            }
-
-            _errorMessage = result.ErrorMessage;
-            _warningMessage = result.WarningMessage;
-            _isSuccessProcessing = result.Success;
-
-            _isProcessing = false;
+            return () => AccountService.CreateLinkAccountCreation(_formVM);
         }
     }
 }

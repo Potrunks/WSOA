@@ -4,8 +4,7 @@
 
 <div class="mainSelectField_mainContainer">
     <span>@Label</span>
-    <InputSelect @bind-Value="InputValue"
-                 style="height: 50px; border-radius: 10px; border: 1px solid;">
+    <InputSelect @bind-Value="InputValue">
         @if (IsLoadingListener)
         {
             <option value="">@MainLabelResources.LOADING_LABEL</option>

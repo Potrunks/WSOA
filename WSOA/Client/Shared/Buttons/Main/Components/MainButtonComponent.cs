@@ -17,6 +17,9 @@ namespace WSOA.Client.Shared.Buttons.Main.Components
 
         public string? _primaryCssClassName;
 
+        [Parameter]
+        public object OnClick { get; set; }
+
         protected override void OnInitialized()
         {
             Type = Type == null ? ButtonTypeResources.BUTTON : Type.ToLower();

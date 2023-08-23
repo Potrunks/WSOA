@@ -1,0 +1,35 @@
+﻿@using WSOA.Client.Shared.Buttons.Main
+@using WSOA.Client.Shared.Buttons.Resources;
+@using WSOA.Client.Shared.Forms.Components;
+@using WSOA.Client.Shared.Loaders
+@inherits SinglePageFormComponent
+
+<div class="singlePageForm_mainContainer">
+    <span class="singlePageForm_title">@Title</span>
+    <EditForm EditContext="@EditContext">
+        @if (!IsProcessing && !HaveProcessDone)
+        {
+            <PageFormContainer>
+                <Fields>
+                    @Fields
+                </Fields>
+                <Buttons>
+                    <MainButton IsPrimary="true"
+                            Label="@ButtonLabelResources.SUBMIT"
+                            OnClick="Submit" />
+                </Buttons>
+            </PageFormContainer>
+        }
+        @if (IsProcessing)
+        {
+            <CardLessCoinLoader />
+        }
+        @if (HaveProcessDone)
+        {
+            <PagePromptForm ErrorMessageListener="@ErrorMessage"
+                        SuccessListener="@IsSuccess"
+                        WarningMessageListener="@WarningMessage"
+                        OnBackClick="Reset" />
+        }
+    </EditForm>
+</div>

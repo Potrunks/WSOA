@@ -1,0 +1,31 @@
+﻿@using WSOA.Client.Shared.Buttons.Main
+@using WSOA.Client.Shared.Buttons.Resources;
+@using WSOA.Client.Shared.Forms.Components;
+@inherits PagePromptFormComponent
+
+<div class="pagePromptForm_mainContainer">
+    <div class="pagePromptForm_result">
+        @if (SuccessListener)
+        {
+            <img class="pagePromptForm_logoResult" src="images/success_logo.png" />
+        }
+        @if (!SuccessListener)
+        {
+            <img class="pagePromptForm_logoResult" src="images/error_logo.png" />
+        }
+        @if (!string.IsNullOrWhiteSpace(ErrorMessageListener))
+        {
+            <span class="pagePromptForm_msgResult error">@ErrorMessageListener</span>
+        }
+        @if (!string.IsNullOrWhiteSpace(WarningMessageListener))
+        {
+            <span class="pagePromptForm_msgResult warning">@WarningMessageListener</span>
+        }
+        <ValidationSummary />
+    </div>
+    <div class="pagePromptForm_buttons">
+        <MainButton Label="@ButtonLabelResources.BACK"
+                    IsPrimary="true"
+                    OnClick="Back" />
+    </div>
+</div>

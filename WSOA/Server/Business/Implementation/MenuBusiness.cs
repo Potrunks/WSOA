@@ -33,8 +33,7 @@ namespace WSOA.Server.Business.Implementation
                     return new MainNavMenuResult(errorMsg, string.Format(RouteBusinessResources.SIGN_IN_WITH_ERROR_MESSAGE, errorMsg));
                 }
 
-                // TODO : recupérer direct section et subsection dans une seule requete
-                IDictionary<MainNavSection, List<MainNavSubSection>> subSectionsBySection = _menuRepository.GetMainNavSubSectionsBySectionAndProfileCode(currentProfileCode);
+                IDictionary<MainNavSection, List<MainNavSubSection>> subSectionsBySection = _menuRepository.GetMainNavSubSectionsInSectionByProfileCode(currentProfileCode);
                 if (subSectionsBySection.IsNullOrEmpty() || subSectionsBySection.Values.All(ss => ss.IsNullOrEmpty()))
                 {
                     throw new Exception(string.Format(MainBusinessResources.NULL_OR_EMPTY_OBJ_NOT_ALLOWED, nameof(subSectionsBySection), nameof(MenuBusiness.LoadMainNavMenu)));

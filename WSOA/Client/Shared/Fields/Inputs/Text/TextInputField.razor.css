@@ -4,6 +4,16 @@
     width: 100%;
 }
 
+span {
+    font-size: 14px;
+}
+
+::deep input {
+    height: 40px;
+    border-radius: 10px;
+    border: 1px solid;
+}
+
 @media only screen and (min-width: 360px) and (min-height: 740px) {
     .mainInputField_mainContainer > span {
         font-size: 25px;

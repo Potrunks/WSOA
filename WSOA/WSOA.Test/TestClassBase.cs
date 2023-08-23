@@ -62,7 +62,7 @@ namespace WSOA.Test
         {
             Mock<IMenuRepository> mock = new Mock<IMenuRepository>();
 
-            mock.Setup(m => m.GetMainNavSubSectionsBySectionAndProfileCode(It.IsAny<string>()))
+            mock.Setup(m => m.GetMainNavSubSectionsInSectionByProfileCode(It.IsAny<string>()))
                 .Returns(new Dictionary<MainNavSection, List<MainNavSubSection>>
                 {
                     { new MainNavSection(), new List<MainNavSubSection> { new MainNavSubSection() } }

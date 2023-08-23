@@ -26,7 +26,7 @@ namespace WSOA.Server.Data.Implementation
             .SingleOrDefault();
         }
 
-        public IDictionary<MainNavSection, List<MainNavSubSection>> GetMainNavSubSectionsBySectionAndProfileCode(string profileCode)
+        public IDictionary<MainNavSection, List<MainNavSubSection>> GetMainNavSubSectionsInSectionByProfileCode(string profileCode)
         {
             return
             (
