@@ -4,7 +4,7 @@ using WSOA.Shared.Result;
 
 namespace WSOA.Client.Shared.Forms.Components
 {
-    public class SinglePageFormComponent : ComponentBase
+    public class MultiPageFormComponent : ComponentBase
     {
         [Inject]
         public NavigationManager NavigationManager { get; set; }
@@ -23,7 +23,11 @@ namespace WSOA.Client.Shared.Forms.Components
 
         [Parameter]
         [EditorRequired]
-        public RenderFragment Fields { get; set; }
+        public RenderFragment PageForms { get; set; }
+
+        [Parameter]
+        [EditorRequired]
+        public int MaxPages { get; set; }
 
         public EditContext EditContext { get; set; }
 
@@ -37,15 +41,23 @@ namespace WSOA.Client.Shared.Forms.Components
 
         public string? WarningMessage { get; set; }
 
+        public int CurrentPageDisplay { get; set; }
+
+        public EventCallback SubmitCallback => EventCallback.Factory.Create(this, Submit);
+
+        public EventCallback<int> ChangePageCallback => EventCallback.Factory.Create(this, (int newPage) => ChangePage(newPage));
+
         protected override void OnInitialized()
         {
+            CurrentPageDisplay = 1;
             EditContext = new EditContext(Model);
             EditContext.EnableDataAnnotationsValidation();
         }
 
-        public async Task Submit()
+        private async Task Submit()
         {
             IsProcessing = true;
+            CurrentPageDisplay = 0;
 
             if (EditContext.Validate())
             {
@@ -67,7 +79,12 @@ namespace WSOA.Client.Shared.Forms.Components
         public void Reset()
         {
             HaveProcessDone = false;
-            StateHasChanged();
+            CurrentPageDisplay = 1;
+        }
+
+        public void ChangePage(int newPage)
+        {
+            CurrentPageDisplay = newPage;
         }
     }
 }

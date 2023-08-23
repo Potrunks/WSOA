@@ -18,14 +18,11 @@ namespace WSOA.Client.Shared.Forms.Components
 
         [Parameter]
         [EditorRequired]
-        public Action OnBackClick { get; set; }
+        public EventCallback OnExit { get; set; }
 
-        public async Task Back()
+        public void Exit()
         {
-            SuccessListener = false;
-            ErrorMessageListener = null;
-            WarningMessageListener = null;
-            OnBackClick.Invoke();
+            OnExit.InvokeAsync();
         }
     }
 }

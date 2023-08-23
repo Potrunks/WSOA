@@ -2,34 +2,33 @@
 @using WSOA.Client.Shared.Buttons.Resources;
 @using WSOA.Client.Shared.Forms.Components;
 @using WSOA.Client.Shared.Loaders
-@inherits SinglePageFormComponent
+@inherits MultiPageFormComponent
 
 <div class="singlePageForm_mainContainer">
     <span class="singlePageForm_title">@Title</span>
     <EditForm EditContext="@EditContext">
-        @if (!IsProcessing && !HaveProcessDone)
-        {
-            <PageFormContainer>
-                <Fields>
-                    @Fields
-                </Fields>
-                <Buttons>
-                    <MainButton IsPrimary="true"
-                            Label="@ButtonLabelResources.SUBMIT"
-                            OnClick="Submit" />
-                </Buttons>
-            </PageFormContainer>
-        }
+
+        <CascadingValue Value="@MaxPages" Name="MaxPages">
+            <CascadingValue Value="@SubmitCallback" Name="Submit">
+                <CascadingValue Value="@ChangePageCallback" Name="ChangePage">
+                    <CascadingValue Value="@CurrentPageDisplay" Name="CurrentPageDisplay">
+                        @PageForms
+                    </CascadingValue>
+                </CascadingValue>
+            </CascadingValue>
+        </CascadingValue>
+
         @if (IsProcessing)
         {
             <CardLessCoinLoader />
         }
+
         @if (HaveProcessDone)
         {
             <PagePromptForm ErrorMessageListener="@ErrorMessage"
                         SuccessListener="@IsSuccess"
                         WarningMessageListener="@WarningMessage"
-                        OnBackClick="Reset" />
+                        OnExit="Reset" />
         }
     </EditForm>
 </div>
