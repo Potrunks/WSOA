@@ -1,11 +1,14 @@
 ﻿@using WSOA.Client.Shared.Buttons.Main
 @using WSOA.Client.Shared.Buttons.Resources;
+@using WSOA.Client.Shared.Counters
 @using WSOA.Client.Shared.Forms.Components;
 @inherits PageFormContainerComponent
 
 @if (CurrentPageDisplay == PageForm)
 {
     <div class="pageFormContainer_mainContainer">
+        <PageFormCounter MaxPages="@MaxPages"
+                     CurrentPageListener="@CurrentPageDisplay" />
         <div class="pageFormContainer_fields">
             @Fields
         </div>

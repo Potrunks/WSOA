@@ -135,22 +135,6 @@ namespace WSOA.Test.Business
         }
 
         [TestMethod]
-        public void ShouldDontCreateLinkAccountCreation_WhenMailFormatNotValid()
-        {
-            _linkAccountCreationVM.RecipientMail = "mauvais format";
-
-            APICallResult result = _accountBusiness.CreateLinkAccountCreation(_linkAccountCreationVM, _sessionMock.Object);
-
-            Assert.AreEqual(false, result.Success);
-            Assert.AreEqual(MainBusinessResources.MAIL_FORMAT_NO_VALID, result.ErrorMessage);
-            Assert.AreEqual(null, result.WarningMessage);
-            Assert.AreEqual(null, result.RedirectUrl);
-            _transactionManagerMock.Verify(t => t.BeginTransaction(), Times.Once());
-            _transactionManagerMock.Verify(t => t.CommitTransaction(), Times.Never());
-            _mailServiceMock.Verify(m => m.SendMailAccountCreation(It.IsAny<LinkAccountCreation>()), Times.Never());
-        }
-
-        [TestMethod]
         public void ShouldExtendLinkAccountCreation_WhenLinkAlreadyExistsAndOver()
         {
             LinkAccountCreation currentLink = new LinkAccountCreation

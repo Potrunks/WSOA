@@ -7,6 +7,5 @@
         public const string NULL_OR_EMPTY_OBJ_NOT_ALLOWED = "L'objet {0} ne peut pas être null ou vide dans la méthode {1}";
         public const string USER_NOT_CONNECTED = "Vous êtes deconnecté";
         public const string USER_CANNOT_PERFORM_ACTION = "Action non permise";
-        public const string MAIL_FORMAT_NO_VALID = "Format du mail invalide";
     }
 }

@@ -5,7 +5,6 @@ using WSOA.Server.Business.Resources;
 using WSOA.Server.Data.Interface;
 using WSOA.Shared.Entity;
 using WSOA.Shared.Result;
-using WSOA.Shared.Utils;
 using WSOA.Shared.ViewModel;
 
 namespace WSOA.Server.Business.Implementation
@@ -55,11 +54,6 @@ namespace WSOA.Server.Business.Implementation
                 if (subSection == null)
                 {
                     return new APICallResult(MainBusinessResources.USER_CANNOT_PERFORM_ACTION, null);
-                }
-
-                if (!link.RecipientMail.IsValidMailFormat())
-                {
-                    return new APICallResult(MainBusinessResources.MAIL_FORMAT_NO_VALID, null);
                 }
 
                 LinkAccountCreation currentLink = _accountRepository.GetLinkAccountCreationByMail(link.RecipientMail);
