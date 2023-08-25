@@ -57,6 +57,7 @@ namespace WSOA.Client.Shared.Forms.Components
         private async Task Submit()
         {
             IsProcessing = true;
+            IsSuccess = false;
             CurrentPageDisplay = 0;
 
             if (EditContext.Validate())

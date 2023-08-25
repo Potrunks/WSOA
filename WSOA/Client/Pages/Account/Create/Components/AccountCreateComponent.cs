@@ -27,7 +27,7 @@ namespace WSOA.Client.Pages.Account.Create.Components
 
         public Func<Task<APICallResult>> CreateNewAccount()
         {
-            return () => null;
+            return () => Task.Run(() => { return new APICallResult(null); });
         }
     }
 }
