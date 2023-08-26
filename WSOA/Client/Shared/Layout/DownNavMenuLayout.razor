@@ -15,15 +15,18 @@
     <div class="navMenu_container">
         @if (_isLoading)
         {
-            <LineLoader
-                Height="100"/>
+            <LineLoader Height="100" />
         }
         else
         {
-            @foreach (MainNavSectionViewModel mainNavSectionVM in _mainNavSectionVMs)
-            {
-                <MainNavSection ViewModel="@mainNavSectionVM" />
-            }
+            <CascadingValue Value="SectionEventHandler" Name="SectionEventHandler">
+                <CascadingValue Value="SubSectionEventHandler" Name="SubSectionEventHandler">
+                    @foreach (MainNavSectionViewModel mainNavSectionVM in _mainNavSectionVMs)
+                    {
+                        <MainNavSection ViewModel="@mainNavSectionVM" />
+                    }
+                </CascadingValue>
+            </CascadingValue>
         }
     </div>
 </div>

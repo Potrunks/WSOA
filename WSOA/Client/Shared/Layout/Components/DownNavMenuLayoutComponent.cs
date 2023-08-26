@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Components;
 using WSOA.Client.Services.Interface;
+using WSOA.Client.Shared.EventHandlers;
 using WSOA.Shared.Result;
 using WSOA.Shared.ViewModel;
 
@@ -12,6 +13,10 @@ namespace WSOA.Client.Shared.Layout.Components
 
         [Inject]
         public NavigationManager NavigationManager { get; set; }
+
+        public MainNavSectionEventHandler SectionEventHandler { get; set; } = new MainNavSectionEventHandler();
+
+        public MainNavSubSectionEventHandler SubSectionEventHandler { get; set; } = new MainNavSubSectionEventHandler();
 
         public List<MainNavSectionViewModel> _mainNavSectionVMs = new List<MainNavSectionViewModel>();
 

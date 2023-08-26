@@ -14,7 +14,8 @@ namespace WSOA.Client.Shared.NavMenus.Main.Components
         [Parameter]
         public Action? OnSubSectionSelected { get; set; }
 
-        [Inject]
+        [CascadingParameter(Name = "SubSectionEventHandler")]
+        [EditorRequired]
         public MainNavSubSectionEventHandler EventHandler { get; set; }
 
         [Inject]

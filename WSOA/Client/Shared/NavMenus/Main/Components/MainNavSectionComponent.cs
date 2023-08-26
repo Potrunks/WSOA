@@ -11,7 +11,8 @@ namespace WSOA.Client.Shared.NavMenus.Main.Components
         [EditorRequired]
         public MainNavSectionViewModel ViewModel { get; set; }
 
-        [Inject]
+        [CascadingParameter(Name = "SectionEventHandler")]
+        [EditorRequired]
         public MainNavSectionEventHandler EventHandler { get; set; }
 
         public string _selectedStateCssClassName = CssClassNameResources.EMPTY_CLASS;
