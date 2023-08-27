@@ -16,14 +16,19 @@ span {
 
 @media only screen and (min-width: 360px) and (min-height: 740px) {
     .mainSelectField_mainContainer > span {
-        font-size: 25px;
+        font-size: 20px;
         margin-bottom: 5px;
+    }
+
+    ::deep select {
+        height: 50px !important;
+        font-size: 20px !important;
     }
 }
 
 @media only screen and (min-width: 768px) and (min-height: 1024px) {
     .mainSelectField_mainContainer > span {
-        font-size: 35px;
+        font-size: 25px;
         margin-bottom: 8px;
     }
 

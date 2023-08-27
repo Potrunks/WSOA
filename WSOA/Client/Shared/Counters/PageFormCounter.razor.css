@@ -25,3 +25,15 @@
     .pageFormCounter_pageLogoConnector.selected {
         opacity: 1;
     }
+
+@media only screen and (min-height: 800px) {
+    .pageFormCounter_pageLogo {
+        height: 45px;
+    }
+}
+
+@media only screen and (min-height: 1180px) {
+    .pageFormCounter_pageLogo {
+        height: 60px;
+    }
+}
