@@ -8,7 +8,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace WSOA.Server.Migrations
 {
     /// <inheritdoc />
-    public partial class SeedDb_v010 : Migration
+    public partial class SeedDB_v010 : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -101,6 +101,7 @@ namespace WSOA.Server.Migrations
                         .Annotation("SqlServer:Identity", "1, 1"),
                     FirstName = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     LastName = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Email = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     AccountId = table.Column<int>(type: "int", nullable: false),
                     ProfileCode = table.Column<string>(type: "nvarchar(450)", nullable: false)
                 },
@@ -150,7 +151,7 @@ namespace WSOA.Server.Migrations
             migrationBuilder.InsertData(
                 table: "Accounts",
                 columns: new[] { "Id", "Login", "Password" },
-                values: new object[] { 1, "Potrunks", "Trunks92!" });
+                values: new object[] { 1, "Potrunks", "1a753d495dab76bf6288f5b5f9736c3af6b60a5bb819f4de4bf75f79af085181" });
 
             migrationBuilder.InsertData(
                 table: "MainNavSections",
@@ -181,8 +182,8 @@ namespace WSOA.Server.Migrations
 
             migrationBuilder.InsertData(
                 table: "Users",
-                columns: new[] { "Id", "AccountId", "FirstName", "LastName", "ProfileCode" },
-                values: new object[] { 1, 1, "Alexis", "ARRIAL", "ADMIN" });
+                columns: new[] { "Id", "AccountId", "Email", "FirstName", "LastName", "ProfileCode" },
+                values: new object[] { 1, 1, "potrunks@hotmail.com", "Alexis", "ARRIAL", "ADMIN" });
 
             migrationBuilder.InsertData(
                 table: "MainNavSubSectionsByProfileCode",

@@ -2,6 +2,7 @@
 using Microsoft.IdentityModel.Tokens;
 using WSOA.Server.Business.Interface;
 using WSOA.Server.Business.Resources;
+using WSOA.Server.Business.Utils;
 using WSOA.Server.Data.Interface;
 using WSOA.Shared.Entity;
 using WSOA.Shared.Result;
@@ -35,6 +36,68 @@ namespace WSOA.Server.Business.Implementation
             _mailService = mailService;
         }
 
+        public APICallResult CreateAccount(AccountCreationFormViewModel form)
+        {
+            // TODO : faire TU
+            APICallResult result = new APICallResult(RouteBusinessResources.HOME);
+
+            try
+            {
+                _transactionManager.BeginTransaction();
+
+                LinkAccountCreation? link = _accountRepository.GetLinkAccountCreationByMail(form.Email);
+                if (link == null || link.ExpirationDate < DateTime.UtcNow)
+                {
+                    _transactionManager.RollbackTransaction();
+                    return new APICallResult(AccountBusinessResources.LINK_ACCOUNT_CREATION_NOT_EXIST_OR_EXPIRED, null);
+                }
+
+                if (_accountRepository.ExistsAccountByLogin(form.Login))
+                {
+                    _transactionManager.RollbackTransaction();
+                    string errorMsg = AccountBusinessResources.LOGIN_ALREADY_EXISTS;
+                    return new APICallResult(errorMsg, string.Format(RouteBusinessResources.SIGN_IN_WITH_ERROR_MESSAGE, errorMsg));
+                }
+
+                if (_userRepository.ExistsUserByMail(form.Email))
+                {
+                    _transactionManager.RollbackTransaction();
+                    string errorMsg = UserBusinessResources.MAIL_ALREADY_EXISTS;
+                    return new APICallResult(errorMsg, string.Format(RouteBusinessResources.SIGN_IN_WITH_ERROR_MESSAGE, errorMsg));
+                }
+
+                Account newAccount = new Account
+                {
+                    Login = form.Login,
+                    Password = form.Password.ToSha256()
+                };
+                _accountRepository.SaveAccount(newAccount);
+
+                User newUser = new User
+                {
+                    AccountId = newAccount.Id,
+                    Email = form.Email,
+                    FirstName = form.FirstName,
+                    LastName = form.LastName,
+                    ProfileCode = link.ProfileCode
+                };
+                _userRepository.SaveUser(newUser);
+
+                // TODO : Supprimer le lien de creation de compte
+
+                _transactionManager.CommitTransaction();
+            }
+            catch (Exception ex)
+            {
+                _transactionManager.RollbackTransaction();
+                _log.Error(string.Format(AccountBusinessResources.TECHNICAL_ERROR_ACCOUNT_CREATION, ex.Message));
+                string errorMsg = MainBusinessResources.TECHNICAL_ERROR;
+                return new APICallResult(errorMsg, null);
+            }
+
+            return result;
+        }
+
         public APICallResult CreateLinkAccountCreation(LinkAccountCreationFormViewModel link, ISession currentSession)
         {
             APICallResult result = new APICallResult(null);
@@ -46,6 +109,7 @@ namespace WSOA.Server.Business.Implementation
                 string currentProfileCode = currentSession.GetString(HttpSessionResources.KEY_PROFILE_CODE);
                 if (currentProfileCode == null)
                 {
+                    _transactionManager.RollbackTransaction();
                     string errorMsg = MainBusinessResources.USER_NOT_CONNECTED;
                     return new APICallResult(errorMsg, string.Format(RouteBusinessResources.SIGN_IN_WITH_ERROR_MESSAGE, errorMsg));
                 }
@@ -53,7 +117,14 @@ namespace WSOA.Server.Business.Implementation
                 MainNavSubSection? subSection = _menuRepository.GetMainNavSubSectionByIdAndProfileCode(currentProfileCode, link.SubSectionIdConcerned);
                 if (subSection == null)
                 {
+                    _transactionManager.RollbackTransaction();
                     return new APICallResult(MainBusinessResources.USER_CANNOT_PERFORM_ACTION, null);
+                }
+
+                if (_userRepository.ExistsUserByMail(link.RecipientMail))
+                {
+                    _transactionManager.RollbackTransaction();
+                    return new APICallResult(UserBusinessResources.MAIL_ALREADY_EXISTS, null);
                 }
 
                 LinkAccountCreation currentLink = _accountRepository.GetLinkAccountCreationByMail(link.RecipientMail);
@@ -144,7 +215,7 @@ namespace WSOA.Server.Business.Implementation
                     throw new NullReferenceException(string.Format(MainBusinessResources.NULL_OBJ_NOT_ALLOWED, typeof(SignInFormViewModel), nameof(AccountBusiness.SignIn)));
                 }
 
-                Account? account = _accountRepository.GetByLoginAndPassword(signInFormVM);
+                Account? account = _accountRepository.GetByLoginAndPassword(signInFormVM.Login, signInFormVM.Password.ToSha256());
                 if (account == null)
                 {
                     return new APICallResult(AccountBusinessResources.ERROR_SIGN_IN, null);

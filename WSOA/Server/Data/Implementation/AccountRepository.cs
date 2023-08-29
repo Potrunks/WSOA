@@ -1,6 +1,5 @@
 ﻿using WSOA.Server.Data.Interface;
 using WSOA.Shared.Entity;
-using WSOA.Shared.ViewModel;
 
 namespace WSOA.Server.Data.Implementation
 {
@@ -13,12 +12,12 @@ namespace WSOA.Server.Data.Implementation
             _dbContext = dbContext;
         }
 
-        public Account? GetByLoginAndPassword(SignInFormViewModel signInFormVM)
+        public Account? GetByLoginAndPassword(string login, string hashedPassword)
         {
             return (
                 from account in _dbContext.Accounts
-                where account.Login == signInFormVM.Login
-                        && account.Password == signInFormVM.Password
+                where account.Login == login
+                        && account.Password == hashedPassword
                 select account
                 )
                 .SingleOrDefault();
@@ -27,6 +26,21 @@ namespace WSOA.Server.Data.Implementation
         public LinkAccountCreation? GetLinkAccountCreationByMail(string mail)
         {
             return _dbContext.LinkAccountCreations.SingleOrDefault(l => l.RecipientMail == mail);
+        }
+
+        public bool ExistsAccountByLogin(string login)
+        {
+            return _dbContext.Accounts.Any(a => a.Login == login);
+        }
+
+        public Account SaveAccount(Account account)
+        {
+            if (account.Id == 0)
+            {
+                _dbContext.Accounts.Add(account);
+            }
+            _dbContext.SaveChanges();
+            return account;
         }
 
         public LinkAccountCreation SaveLinkAccountCreation(LinkAccountCreation link)

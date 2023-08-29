@@ -72,7 +72,7 @@ namespace WSOA.Test.Business
         [TestMethod]
         public void ShouldFailSignIn_WhenAccountNotFound()
         {
-            _accountRepositoryMock.Setup(m => m.GetByLoginAndPassword(It.IsAny<SignInFormViewModel>()))
+            _accountRepositoryMock.Setup(m => m.GetByLoginAndPassword(It.IsAny<string>(), It.IsAny<string>()))
                                     .Returns(() => null);
             APICallResult result = _accountBusiness.SignIn(_signInFormVM, _sessionMock.Object);
             Assert.AreEqual(false, result.Success);
@@ -243,6 +243,20 @@ namespace WSOA.Test.Business
             Assert.AreEqual(MainBusinessResources.TECHNICAL_ERROR, result.ErrorMessage);
             Assert.AreEqual(null, result.RedirectUrl);
             Assert.AreEqual(0, result.InviteVM.ProfileLabelsByCode.Count());
+        }
+
+        [TestMethod]
+        public void ShouldNotCreateLinkAccountCreation_WhenMailAlreadyExists()
+        {
+            _userRepositoryMock.Setup(m => m.ExistsUserByMail(It.IsAny<string>()))
+                                .Returns(true);
+
+            APICallResult result = _accountBusiness.CreateLinkAccountCreation(_linkAccountCreationVM, _sessionMock.Object);
+
+            _transactionManagerMock.Verify(t => t.CommitTransaction(), Times.Never());
+            _transactionManagerMock.Verify(t => t.RollbackTransaction(), Times.Once());
+            Assert.AreEqual(UserBusinessResources.MAIL_ALREADY_EXISTS, result.ErrorMessage);
+            Assert.AreEqual(null, result.RedirectUrl);
         }
     }
 }

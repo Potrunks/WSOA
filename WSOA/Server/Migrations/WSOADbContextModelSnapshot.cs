@@ -47,7 +47,7 @@ namespace WSOA.Server.Migrations
                         {
                             Id = 1,
                             Login = "Potrunks",
-                            Password = "Trunks92!"
+                            Password = "1a753d495dab76bf6288f5b5f9736c3af6b60a5bb819f4de4bf75f79af085181"
                         });
                 });
 
@@ -260,6 +260,10 @@ namespace WSOA.Server.Migrations
                     b.Property<int>("AccountId")
                         .HasColumnType("int");
 
+                    b.Property<string>("Email")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<string>("FirstName")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
@@ -285,6 +289,7 @@ namespace WSOA.Server.Migrations
                         {
                             Id = 1,
                             AccountId = 1,
+                            Email = "potrunks@hotmail.com",
                             FirstName = "Alexis",
                             LastName = "ARRIAL",
                             ProfileCode = "ADMIN"

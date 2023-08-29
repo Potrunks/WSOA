@@ -7,11 +7,21 @@ namespace WSOA.Server.Data.Interface
         /// <summary>
         /// Get user by account ID.
         /// </summary>
-        public User GetUserByAccountId(int accountId);
+        User GetUserByAccountId(int accountId);
+
+        /// <summary>
+        /// Verify if user already exists by mail.
+        /// </summary>
+        bool ExistsUserByMail(string mail);
 
         /// <summary>
         /// Get all existing profile in DB.
         /// </summary>
-        public IEnumerable<Profile> GetAllProfiles();
+        IEnumerable<Profile> GetAllProfiles();
+
+        /// <summary>
+        /// Save user.
+        /// </summary>
+        User SaveUser(User user);
     }
 }

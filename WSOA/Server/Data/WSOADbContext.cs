@@ -101,7 +101,7 @@ namespace WSOA.Server.Data
                 {
                     Id = 1,
                     Login = "Potrunks",
-                    Password = "Trunks92!"
+                    Password = "1a753d495dab76bf6288f5b5f9736c3af6b60a5bb819f4de4bf75f79af085181"
                 }
             );
 
@@ -113,7 +113,8 @@ namespace WSOA.Server.Data
                     LastName = "ARRIAL",
                     AccountId = 1,
                     Id = 1,
-                    ProfileCode = "ADMIN"
+                    ProfileCode = "ADMIN",
+                    Email = "potrunks@hotmail.com"
                 }
             );
         }

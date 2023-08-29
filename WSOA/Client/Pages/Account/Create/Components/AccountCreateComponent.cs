@@ -7,9 +7,6 @@ namespace WSOA.Client.Pages.Account.Create.Components
 {
     public class AccountCreateComponent : ComponentBase
     {
-        [Parameter]
-        public int LinkId { get; set; }
-
         public AccountCreationFormViewModel AccountCreationFormVM { get; set; }
 
         public EditContext EditContext { get; set; }

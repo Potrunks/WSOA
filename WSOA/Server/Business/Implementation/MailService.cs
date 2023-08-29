@@ -14,7 +14,8 @@ namespace WSOA.Server.Business.Implementation
             message.From = new MailAddress(MailServiceResources.MAIL_LOGIN);
             message.To.Add(new MailAddress(link.RecipientMail));
             message.Subject = AccountBusinessResources.LINK_ACCOUNT_CREATION_MAIL_SUBJECT;
-            message.Body = "https://localhost:7235" + string.Format(RouteBusinessResources.ACCOUNT_CREATION, link.Id);
+            // TODO : base URL dans web.config
+            message.Body = "https://localhost:7235" + RouteBusinessResources.ACCOUNT_CREATION;
             SmtpClient smtpClient = new SmtpClient();
             smtpClient.Host = MailServiceResources.SMTP_HOST;
             smtpClient.Port = MailServiceResources.PORT;

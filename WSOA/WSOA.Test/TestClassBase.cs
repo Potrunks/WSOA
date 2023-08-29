@@ -5,7 +5,6 @@ using WSOA.Server.Business.Interface;
 using WSOA.Server.Data.Interface;
 using WSOA.Shared.Entity;
 using WSOA.Shared.Resources;
-using WSOA.Shared.ViewModel;
 
 namespace WSOA.Test
 {
@@ -26,7 +25,7 @@ namespace WSOA.Test
         {
             Mock<IAccountRepository> mock = new Mock<IAccountRepository>();
 
-            mock.Setup(m => m.GetByLoginAndPassword(It.IsAny<SignInFormViewModel>()))
+            mock.Setup(m => m.GetByLoginAndPassword(It.IsAny<string>(), It.IsAny<string>()))
                 .Returns(new Account { Id = 1, Login = "Login", Password = "Password" });
 
             mock.Setup(m => m.SaveLinkAccountCreation(It.IsAny<LinkAccountCreation>()))
@@ -54,6 +53,9 @@ namespace WSOA.Test
                         Name = ProfileResources.ADMINISTRATOR_NAME
                     }
                 });
+
+            mock.Setup(m => m.ExistsUserByMail(It.IsAny<string>()))
+                .Returns(false);
 
             return mock;
         }

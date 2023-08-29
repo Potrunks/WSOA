@@ -20,5 +20,10 @@ namespace WSOA.Server.Business.Interface
         /// Load all data for the Invite page.
         /// </summary>
         InviteCallResult LoadInviteDatas(int subSectionId, ISession currentSession);
+
+        /// <summary>
+        /// Create a new account.
+        /// </summary>
+        APICallResult CreateAccount(AccountCreationFormViewModel form);
     }
 }

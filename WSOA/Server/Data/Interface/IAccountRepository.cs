@@ -1,5 +1,4 @@
 ﻿using WSOA.Shared.Entity;
-using WSOA.Shared.ViewModel;
 
 namespace WSOA.Server.Data.Interface
 {
@@ -8,16 +7,26 @@ namespace WSOA.Server.Data.Interface
         /// <summary>
         /// Get an entity Account by Login and Password.
         /// </summary>
-        public Account? GetByLoginAndPassword(SignInFormViewModel signInFormVM);
+        Account? GetByLoginAndPassword(string login, string hashedPassword);
 
         /// <summary>
         /// Save a link account creation in DB.
         /// </summary>
-        public LinkAccountCreation SaveLinkAccountCreation(LinkAccountCreation link);
+        LinkAccountCreation SaveLinkAccountCreation(LinkAccountCreation link);
 
         /// <summary>
         /// Get link account creation by mail.
         /// </summary>
-        public LinkAccountCreation? GetLinkAccountCreationByMail(string mail);
+        LinkAccountCreation? GetLinkAccountCreationByMail(string mail);
+
+        /// <summary>
+        /// Verify if new user has already an account.
+        /// </summary>
+        bool ExistsAccountByLogin(string login);
+
+        /// <summary>
+        /// Save account.
+        /// </summary>
+        Account SaveAccount(Account account);
     }
 }
