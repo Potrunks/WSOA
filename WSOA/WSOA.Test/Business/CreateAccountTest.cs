@@ -78,7 +78,7 @@ namespace WSOA.Test.Business
             _transactionManagerMock.Verify(m => m.CommitTransaction(), Times.Once());
             _transactionManagerMock.Verify(m => m.RollbackTransaction(), Times.Never());
             Assert.AreEqual(true, result.Success);
-            Assert.AreEqual(RouteBusinessResources.HOME, result.RedirectUrl);
+            Assert.AreEqual(RouteBusinessResources.SIGN_IN, result.RedirectUrl);
         }
 
         [TestMethod]

@@ -54,5 +54,15 @@ namespace WSOA.Server.Controllers
         {
             return _accountBusiness.CreateAccount(form);
         }
+
+        /// <summary>
+        /// Log out the user.
+        /// </summary>
+        [HttpGet]
+        [Route("api/account/logOut")]
+        public APICallResult LogOut()
+        {
+            return _accountBusiness.LogOut(HttpContext.Session);
+        }
     }
 }

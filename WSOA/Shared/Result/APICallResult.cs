@@ -29,9 +29,9 @@
         public APICallResult(bool isSuccess, string warningMsg, string? redirectUrl)
         {
             Success = isSuccess;
-            WarningMessage = warningMsg;
+            ErrorMessage = null;
             RedirectUrl = redirectUrl;
-            WarningMessage = null;
+            WarningMessage = warningMsg;
         }
 
         public bool Success { get; set; }

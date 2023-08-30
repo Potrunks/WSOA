@@ -8,7 +8,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace WSOA.Server.Migrations
 {
     /// <inheritdoc />
-    public partial class SeedDB_v010 : Migration
+    public partial class SeedDb_v010 : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -178,7 +178,11 @@ namespace WSOA.Server.Migrations
             migrationBuilder.InsertData(
                 table: "MainNavSubSections",
                 columns: new[] { "Id", "Description", "Label", "MainNavSectionId", "Order", "Url" },
-                values: new object[] { 1, "Inviter un nouvel utilisateur", "Inviter", 4, 0, "/account/invite" });
+                values: new object[,]
+                {
+                    { 1, "Inviter un nouvel utilisateur", "Inviter", 4, 0, "/account/invite" },
+                    { 2, "Deconnexion", "Deconnexion", 4, 1, "/account/logOut" }
+                });
 
             migrationBuilder.InsertData(
                 table: "Users",
@@ -188,7 +192,14 @@ namespace WSOA.Server.Migrations
             migrationBuilder.InsertData(
                 table: "MainNavSubSectionsByProfileCode",
                 columns: new[] { "Id", "MainNavSubSectionId", "ProfileCode" },
-                values: new object[] { 1, 1, "ADMIN" });
+                values: new object[,]
+                {
+                    { 1, 1, "ADMIN" },
+                    { 2, 2, "ADMIN" },
+                    { 3, 2, "ORGA" },
+                    { 4, 2, "PLAYER" },
+                    { 5, 2, "GUEST" }
+                });
 
             migrationBuilder.CreateIndex(
                 name: "IX_MainNavSubSections_MainNavSectionId",

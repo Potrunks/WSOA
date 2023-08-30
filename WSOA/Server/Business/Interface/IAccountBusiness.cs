@@ -25,5 +25,10 @@ namespace WSOA.Server.Business.Interface
         /// Create a new account.
         /// </summary>
         APICallResult CreateAccount(AccountCreationFormViewModel form);
+
+        /// <summary>
+        /// Log out the user.
+        /// </summary>
+        APICallResult LogOut(ISession currentSession);
     }
 }
