@@ -82,6 +82,15 @@ namespace WSOA.Server.Data
                     Description = "Inviter un nouvel utilisateur",
                     Order = 0,
                     Url = "/account/invite"
+                },
+                new MainNavSubSection
+                {
+                    Id = 2,
+                    Label = "Deconnexion",
+                    MainNavSectionId = 4,
+                    Description = "Deconnexion",
+                    Order = 1,
+                    Url = "/account/logOut"
                 }
             );
 
@@ -92,6 +101,30 @@ namespace WSOA.Server.Data
                     Id = 1,
                     MainNavSubSectionId = 1,
                     ProfileCode = "ADMIN"
+                },
+                new MainNavSubSectionByProfileCode
+                {
+                    Id = 2,
+                    MainNavSubSectionId = 2,
+                    ProfileCode = "ADMIN"
+                },
+                new MainNavSubSectionByProfileCode
+                {
+                    Id = 3,
+                    MainNavSubSectionId = 2,
+                    ProfileCode = "ORGA"
+                },
+                new MainNavSubSectionByProfileCode
+                {
+                    Id = 4,
+                    MainNavSubSectionId = 2,
+                    ProfileCode = "PLAYER"
+                },
+                new MainNavSubSectionByProfileCode
+                {
+                    Id = 5,
+                    MainNavSubSectionId = 2,
+                    ProfileCode = "GUEST"
                 }
             );
 
