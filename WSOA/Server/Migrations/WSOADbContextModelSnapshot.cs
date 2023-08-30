@@ -178,6 +178,15 @@ namespace WSOA.Server.Migrations
                             MainNavSectionId = 4,
                             Order = 0,
                             Url = "/account/invite"
+                        },
+                        new
+                        {
+                            Id = 2,
+                            Description = "Deconnexion",
+                            Label = "Deconnexion",
+                            MainNavSectionId = 4,
+                            Order = 1,
+                            Url = "/account/logOut"
                         });
                 });
 
@@ -210,6 +219,30 @@ namespace WSOA.Server.Migrations
                             Id = 1,
                             MainNavSubSectionId = 1,
                             ProfileCode = "ADMIN"
+                        },
+                        new
+                        {
+                            Id = 2,
+                            MainNavSubSectionId = 2,
+                            ProfileCode = "ADMIN"
+                        },
+                        new
+                        {
+                            Id = 3,
+                            MainNavSubSectionId = 2,
+                            ProfileCode = "ORGA"
+                        },
+                        new
+                        {
+                            Id = 4,
+                            MainNavSubSectionId = 2,
+                            ProfileCode = "PLAYER"
+                        },
+                        new
+                        {
+                            Id = 5,
+                            MainNavSubSectionId = 2,
+                            ProfileCode = "GUEST"
                         });
                 });
 

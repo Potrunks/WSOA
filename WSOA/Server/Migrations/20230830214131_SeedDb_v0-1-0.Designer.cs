@@ -12,8 +12,8 @@ using WSOA.Server.Data;
 namespace WSOA.Server.Migrations
 {
     [DbContext(typeof(WSOADbContext))]
-    [Migration("20230827222804_SeedDB_v0-1-0")]
-    partial class SeedDB_v010
+    [Migration("20230830214131_SeedDb_v0-1-0")]
+    partial class SeedDb_v010
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -181,6 +181,15 @@ namespace WSOA.Server.Migrations
                             MainNavSectionId = 4,
                             Order = 0,
                             Url = "/account/invite"
+                        },
+                        new
+                        {
+                            Id = 2,
+                            Description = "Deconnexion",
+                            Label = "Deconnexion",
+                            MainNavSectionId = 4,
+                            Order = 1,
+                            Url = "/account/logOut"
                         });
                 });
 
@@ -213,6 +222,30 @@ namespace WSOA.Server.Migrations
                             Id = 1,
                             MainNavSubSectionId = 1,
                             ProfileCode = "ADMIN"
+                        },
+                        new
+                        {
+                            Id = 2,
+                            MainNavSubSectionId = 2,
+                            ProfileCode = "ADMIN"
+                        },
+                        new
+                        {
+                            Id = 3,
+                            MainNavSubSectionId = 2,
+                            ProfileCode = "ORGA"
+                        },
+                        new
+                        {
+                            Id = 4,
+                            MainNavSubSectionId = 2,
+                            ProfileCode = "PLAYER"
+                        },
+                        new
+                        {
+                            Id = 5,
+                            MainNavSubSectionId = 2,
+                            ProfileCode = "GUEST"
                         });
                 });
 
