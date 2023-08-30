@@ -24,5 +24,10 @@ namespace WSOA.Client.Services.Interface
         /// Create account.
         /// </summary>
         Task<APICallResult> CreateAccount(AccountCreationFormViewModel form);
+
+        /// <summary>
+        /// Log out the user.
+        /// </summary>
+        Task<APICallResult> LogOut();
     }
 }

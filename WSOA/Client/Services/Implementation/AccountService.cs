@@ -33,6 +33,12 @@ namespace WSOA.Client.Services.Implementation
             return rep.Content.ToObject<InviteCallResult>();
         }
 
+        public async Task<APICallResult> LogOut()
+        {
+            HttpResponseMessage rep = await _httpClient.GetAsync(ApiRouteResources.LOG_OUT);
+            return rep.Content.ToObject<APICallResult>();
+        }
+
         public async Task<APICallResult> SignIn(SignInFormViewModel signInFormVM)
         {
             HttpResponseMessage rep = await _httpClient.PostAsync(ApiRouteResources.SIGN_IN, signInFormVM.ToJsonUtf8());

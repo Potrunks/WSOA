@@ -13,5 +13,6 @@
         public const string LINK_ACCOUNT_CREATION_RE_SEND = "Lien déjà généré. Renvoie du lien par mail";
         public const string LINK_ACCOUNT_CREATION_NOT_EXIST_OR_EXPIRED = "Création de compte non autorisée ou expirée.";
         public const string LOGIN_ALREADY_EXISTS = "Ce login est déjà utilisé";
+        public const string LOG_OUT = "Vous êtes deconnecté";
     }
 }

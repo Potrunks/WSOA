@@ -205,6 +205,15 @@ namespace WSOA.Server.Business.Implementation
             return result;
         }
 
+        public APICallResult LogOut(ISession currentSession)
+        {
+            APICallResult result = new APICallResult(AccountBusinessResources.LOG_OUT, string.Format(RouteBusinessResources.SIGN_IN_WITH_ERROR_MESSAGE, AccountBusinessResources.LOG_OUT));
+
+            currentSession.Clear();
+
+            return result;
+        }
+
         public APICallResult SignIn(SignInFormViewModel signInFormVM, ISession currentSession)
         {
             try
