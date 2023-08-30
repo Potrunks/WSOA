@@ -16,8 +16,16 @@ namespace WSOA.Shared.Entity
         public string LastName { get; set; }
 
         [Required]
+        public string Email { get; set; }
+
+        [Required]
         [ForeignKey(nameof(Account))]
         public int AccountId { get; set; }
         public Account Account { get; set; }
+
+        [Required]
+        [ForeignKey(nameof(Profile))]
+        public string ProfileCode { get; set; }
+        public Profile Profile { get; set; }
     }
 }

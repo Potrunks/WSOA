@@ -1,0 +1,37 @@
+﻿.mainInputField_mainContainer {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+}
+
+span {
+    font-size: 14px;
+}
+
+::deep input {
+    height: 40px;
+    border-radius: 10px;
+    border: 1px solid;
+}
+
+@media only screen and (min-width: 360px) and (min-height: 740px) {
+    .mainInputField_mainContainer > span {
+        font-size: 20px;
+        margin-bottom: 5px;
+    }
+
+    ::deep input {
+        height: 50px !important;
+    }
+}
+
+@media only screen and (min-width: 768px) and (min-height: 1024px) {
+    .mainInputField_mainContainer > span {
+        font-size: 25px;
+        margin-bottom: 8px;
+    }
+
+    ::deep input {
+        height: 70px !important;
+    }
+}

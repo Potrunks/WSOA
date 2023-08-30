@@ -1,0 +1,33 @@
+﻿@page "/account/invite/{SubSectionId:int}"
+@using WSOA.Client.Pages.Account.Invite.Components;
+@using WSOA.Client.Shared.Fields.Inputs.Text
+@using WSOA.Client.Shared.Fields.Selects.CodeText
+@using WSOA.Client.Shared.Forms
+@using WSOA.Client.Shared.Loaders
+@using WSOA.Client.Shared.Resources;
+@layout DownNavMenuLayout
+@inherits InviteComponent
+
+@if (_isLoading)
+{
+    <CardCoinLoader />
+}
+else
+{
+    <MultiPageForm Model="@_formVM"
+                Title="@_inviteVM.SubSectionDescription"
+                OnSubmit="CreateLinkAccountCreation()"
+                MaxPages="1">
+        <PageForms>
+            <PageFormContainer PageForm="1">
+                <Fields>
+                    <TextInputField Label="@MainLabelResources.MAIL"
+                                @bind-InputValue="_formVM.RecipientMail" />
+                    <CodeTextSelectField Label="@MainLabelResources.PROFILE"
+                                     Options="@_inviteVM.ProfileLabelsByCode"
+                                     @bind-InputValue="_formVM.ProfileCodeSelected" />
+                </Fields>
+            </PageFormContainer>
+        </PageForms>
+    </MultiPageForm>
+}

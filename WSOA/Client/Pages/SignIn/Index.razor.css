@@ -9,20 +9,6 @@
     box-shadow: 12px 12px 2px 1px rgba(0, 0, 0, 0.15);
 }
 
-@media only screen and (max-width: 375px) and (min-width: 321px) {
-    .signIn_mainContainer {
-        width: 350px;
-        height: 550px;
-    }
-}
-
-@media only screen and (min-width: 376px) {
-    .signIn_mainContainer {
-        width: 375px;
-        height: 600px;
-    }
-}
-
 .signIn_borderLeft,
 .signIn_borderRight {
     display: flex;
@@ -71,50 +57,71 @@
 .signIn_form {
     display: flex;
     flex-direction: column;
-    margin-bottom: 33px;
-}
-
-.signIn_form-field {
-    display: flex;
-    flex-direction: column;
-}
-
-.signIn_form-field.login {
-    margin-bottom: 10px;
+    height: 42%;
+    width: 100%;
+    justify-content: space-evenly;
 }
 
 .signIn_buttonsPanel {
     display: flex;
     flex-direction: column;
-    margin-bottom: 25px;
+    justify-content: space-evenly;
+    height: 31%;
+    width: 100%;
 }
 
-.signIn_buttonsPanel-button {
-    height: 50px;
-    border-radius: 10px;
-    border: 1px solid;
-    background-color: white;
+@media only screen and (max-width: 414px) and (max-height: 915px) {
+    ::deep span {
+        font-size: initial !important;
+    }
 }
 
-.signIn_buttonsPanel-button.submit {
-    margin-bottom: 10px;
-    background-color: #276347;
-    color: white;
+@media only screen and (min-width: 414px) and (min-height: 896px) {
+    .signIn_mainContainer {
+        width: 350px;
+        height: 550px;
+    }
 }
 
-.signIn_buttonsPanel-button:hover {
-    background-color: seagreen;
-    color: white;
-    transition: background-color 0.5s, color 0.5s;
+@media only screen and (min-width: 390px) and (min-height: 844px) {
+    .signIn_mainContainer {
+        width: 375px;
+        height: 607px;
+    }
+
+    .signIn_buttonsPanel {
+        height: 30%;
+    }
 }
 
-.signIn_container-prompt {
-    display: flex;
-    justify-content: center;
-    align-items: center;
+@media only screen and (min-width: 412px) and (min-height: 892px) {
+    .signIn_mainContainer {
+        width: 378px;
+        height: 752px;
+    }
+
+    .signIn_buttonsPanel {
+        height: 31%;
+    }
 }
 
-.signIn_container-prompt.errorMsg {
-    text-align: center;
-    color: red;
+@media only screen and (max-width: 280px) and (max-height: 653px) {
+    .signIn_mainContainer {
+        width: 263px;
+        height: 532px;
+    }
+
+    .signIn_form,
+    .signIn_buttonsPanel {
+        width: 90%;
+    }
+
+    ::deep .promptForm_container {
+        width: 90% !important;
+    }
+
+    .signIn_borderLeft,
+    .signIn_borderRight {
+        display: none;
+    }
 }

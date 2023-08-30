@@ -1,0 +1,15 @@
+﻿.fullPageLoader_mainContainer {
+    background-color: #EDE8DF;
+    width: 150px;
+    height: 225px;
+    border-radius: 30px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+    box-shadow: 12px 12px 2px 1px rgba(0, 0, 0, 0.15);
+}
+
+.fullPageLoader_animation {
+    height: 150px;
+}

@@ -1,0 +1,32 @@
+﻿@using WSOA.Client.Shared.Layout.Components;
+@using WSOA.Client.Shared.Loaders
+@using WSOA.Client.Shared.NavMenus.Main;
+@using WSOA.Shared.ViewModel;
+@inherits DownNavMenuLayoutComponent
+
+<head>
+    <link rel="stylesheet" href="https://unicons.iconscout.com/release/v4.0.8/css/line.css">
+</head>
+
+<div class="layout_container">
+    <div class="body_container">
+        @Body
+    </div>
+    <div class="navMenu_container">
+        @if (_isLoading)
+        {
+            <LineLoader Height="100" />
+        }
+        else
+        {
+            <CascadingValue Value="SectionEventHandler" Name="SectionEventHandler">
+                <CascadingValue Value="SubSectionEventHandler" Name="SubSectionEventHandler">
+                    @foreach (MainNavSectionViewModel mainNavSectionVM in _mainNavSectionVMs)
+                    {
+                        <MainNavSection ViewModel="@mainNavSectionVM" />
+                    }
+                </CascadingValue>
+            </CascadingValue>
+        }
+    </div>
+</div>

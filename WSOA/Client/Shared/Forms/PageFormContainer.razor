@@ -1,0 +1,40 @@
+﻿@using WSOA.Client.Shared.Buttons.Main
+@using WSOA.Client.Shared.Buttons.Resources;
+@using WSOA.Client.Shared.Counters
+@using WSOA.Client.Shared.Forms.Components;
+@inherits PageFormContainerComponent
+
+@if (CurrentPageDisplay == PageForm)
+{
+    <div class="pageFormContainer_mainContainer">
+        <PageFormCounter MaxPages="@MaxPages"
+                     CurrentPageListener="@CurrentPageDisplay" />
+        <div class="pageFormContainer_fields">
+            @Fields
+        </div>
+        <div class="pageFormContainer_buttons">
+            @if (PageForm > 0)
+            {
+                @if (PageForm < MaxPages)
+                {
+                    <MainButton Label="@ButtonLabelResources.NEXT"
+                    IsPrimary="true"
+                    OnClick="NextPage" />
+                }
+
+                @if (PageForm == MaxPages)
+                {
+                    <MainButton Label="@ButtonLabelResources.SUBMIT"
+                    IsPrimary="true"
+                    OnClick="Submit" />
+                }
+
+                @if (PageForm > 1 && PageForm <= MaxPages)
+                {
+                    <MainButton Label="@ButtonLabelResources.BACK"
+                    OnClick="PreviousPage" />
+                }
+            }
+        </div>
+    </div>
+}

@@ -1,0 +1,37 @@
+﻿@using WSOA.Client.Shared.Buttons.Main
+@using WSOA.Client.Shared.Forms.PromptForm.Components;
+@using WSOA.Client.Shared.Prompts.Prompt
+@using WSOA.Client.Shared.Resources;
+@inherits PromptFormComponent
+
+<div class="mainContainer">
+    <span class="title">@Title</span>
+    <EditForm OnSubmit="@OnSubmit"
+              EditContext="@EditContext"
+              style="
+            background-color: #EDE8DF;
+            border-radius: 30px;
+            height: 82%;
+            width: 90%;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-evenly;
+            align-items: center;">
+        <div class="fields_container">
+            @Fields
+        </div>
+        <div class="buttonsPanel_container">
+            <MainButton Label="Label SUP"
+                        IsPrimary="true"
+                        Type="submit" />
+            <MainButton Label="@MainLabelResources.CLEAR_FIELDS"
+                        Type="reset" />
+            @AdditionnalButtons
+        </div>
+        <Prompt IsProcessingListener="@IsProcessingListener"
+                IsProcessSuccessListener="@IsProcessSuccessListener"
+                ErrorMessageListerner="@ErrorMessageListerner"
+                WarningMessageListerner="@WarningMessageListerner"
+                Width="75"/>
+    </EditForm>
+</div>

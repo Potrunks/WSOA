@@ -1,0 +1,39 @@
+﻿.pageFormCounter_mainContainer {
+    display: flex;
+    align-items: center;
+    justify-content: space-around;
+}
+
+.pageFormCounter_pageLogo {
+    height: 33px;
+    opacity: 0.2;
+    content: url(images/back_card.png);
+}
+
+    .pageFormCounter_pageLogo.selected {
+        content: url(images/card_square.png);
+        opacity: 1;
+    }
+
+.pageFormCounter_pageLogoConnector {
+    height: 3px;
+    background-color: black;
+    width: 50%;
+    opacity: 0.2;
+}
+
+    .pageFormCounter_pageLogoConnector.selected {
+        opacity: 1;
+    }
+
+@media only screen and (min-height: 800px) {
+    .pageFormCounter_pageLogo {
+        height: 45px;
+    }
+}
+
+@media only screen and (min-height: 1180px) {
+    .pageFormCounter_pageLogo {
+        height: 60px;
+    }
+}

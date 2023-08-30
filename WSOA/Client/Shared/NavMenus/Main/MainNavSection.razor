@@ -1,0 +1,19 @@
+﻿@using WSOA.Client.Shared.NavMenus.Main.Components;
+@using WSOA.Client.Shared.Resources;
+@using WSOA.Shared.ViewModel;
+@inherits MainNavSectionComponent
+
+<div>
+    <i class="@ViewModel.ClassIcon @_selectedStateCssClassName" @onclick="SelectSection"></i>
+    <div class="highlighter @_selectedStateCssClassName" />
+    <div class="subSections_mainContainer @_openSubSectionsCssClassName"
+        @onclick="CloseSubSectionWindow">
+        <div class="subSections_container">
+            @foreach (MainNavSubSectionViewModel subSectionVM in ViewModel.MainNavSubSectionVMs)
+            {
+                <MainNavSubSection ViewModel="@subSectionVM"
+                               OnSubSectionSelected="CloseSubSectionWindow" />
+            }
+        </div>
+    </div>
+</div>
