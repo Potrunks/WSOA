@@ -19,5 +19,10 @@ namespace WSOA.Client.Services.Interface
         /// Create and send a link account creation for new user.
         /// </summary>
         Task<APICallResult> CreateLinkAccountCreation(LinkAccountCreationFormViewModel formViewModel);
+
+        /// <summary>
+        /// Create account.
+        /// </summary>
+        Task<APICallResult> CreateAccount(AccountCreationFormViewModel form);
     }
 }

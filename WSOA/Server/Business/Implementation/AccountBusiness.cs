@@ -38,8 +38,7 @@ namespace WSOA.Server.Business.Implementation
 
         public APICallResult CreateAccount(AccountCreationFormViewModel form)
         {
-            // TODO : faire TU
-            APICallResult result = new APICallResult(RouteBusinessResources.HOME);
+            APICallResult result = new APICallResult(RouteBusinessResources.SIGN_IN);
 
             try
             {
@@ -83,7 +82,7 @@ namespace WSOA.Server.Business.Implementation
                 };
                 _userRepository.SaveUser(newUser);
 
-                // TODO : Supprimer le lien de creation de compte
+                _accountRepository.DeleteLinkAccountCreation(link);
 
                 _transactionManager.CommitTransaction();
             }

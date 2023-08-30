@@ -32,7 +32,7 @@ namespace WSOA.Test.Business
             _accountRepositoryMock = CreateIAccountRepositoryMock();
             _userRepositoryMock = CreateIUserRepositoryMock();
             _menuRepositoryMock = CreateIMenuRepositoryMock();
-            _transactionManagerMock = CreateITransactionManager();
+            _transactionManagerMock = CreateITransactionManagerMock();
             _mailServiceMock = CreateIMailServiceMock();
             _accountBusiness = new AccountBusiness(_accountRepositoryMock.Object, _userRepositoryMock.Object, _menuRepositoryMock.Object, _transactionManagerMock.Object, _mailServiceMock.Object);
             _sessionMock = CreateISessionMock(ProfileResources.ADMINISTRATOR_CODE);

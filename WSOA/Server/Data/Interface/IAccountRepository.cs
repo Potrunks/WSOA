@@ -28,5 +28,10 @@ namespace WSOA.Server.Data.Interface
         /// Save account.
         /// </summary>
         Account SaveAccount(Account account);
+
+        /// <summary>
+        /// Delete Link Account Creation from DB.
+        /// </summary>
+        void DeleteLinkAccountCreation(LinkAccountCreation link);
     }
 }

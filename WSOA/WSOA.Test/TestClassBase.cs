@@ -2,9 +2,11 @@
 using Moq;
 using System.Text;
 using WSOA.Server.Business.Interface;
+using WSOA.Server.Business.Resources;
 using WSOA.Server.Data.Interface;
 using WSOA.Shared.Entity;
 using WSOA.Shared.Resources;
+using WSOA.Shared.ViewModel;
 
 namespace WSOA.Test
 {
@@ -76,7 +78,7 @@ namespace WSOA.Test
             return mock;
         }
 
-        public Mock<ITransactionManager> CreateITransactionManager()
+        public Mock<ITransactionManager> CreateITransactionManagerMock()
         {
             Mock<ITransactionManager> mock = new Mock<ITransactionManager>();
 
@@ -96,6 +98,30 @@ namespace WSOA.Test
             mock.Setup(m => m.SendMailAccountCreation(It.IsAny<LinkAccountCreation>()));
 
             return mock;
+        }
+
+        public LinkAccountCreation CreateLinkAccountCreation()
+        {
+            return new LinkAccountCreation
+            {
+                ExpirationDate = DateTime.UtcNow.AddDays(AccountBusinessResources.LINK_ACCOUNT_CREATION_EXPIRATION_DAY_DELAY),
+                Id = 1,
+                ProfileCode = ProfileResources.ADMINISTRATOR_CODE,
+                RecipientMail = "test@test.test"
+            };
+        }
+
+        public AccountCreationFormViewModel CreateAccountCreationFormVM()
+        {
+            return new AccountCreationFormViewModel
+            {
+                Email = "test@test.test",
+                FirstName = "Prénom",
+                LastName = "Nom",
+                Login = "Login",
+                Password = "Password",
+                PasswordConfirmation = "Password"
+            };
         }
     }
 }

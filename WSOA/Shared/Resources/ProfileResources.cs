@@ -7,9 +7,9 @@
         public const string PLAYER_CODE = "PLAYER";
         public const string GUEST_CODE = "GUEST";
 
-        public const string ADMINISTRATOR_NAME = "Administrator";
-        public const string ORGANIZER_NAME = "Organizer";
-        public const string PLAYER_NAME = "Player";
-        public const string GUEST_NAME = "Guest";
+        public const string ADMINISTRATOR_NAME = "Administrateur";
+        public const string ORGANIZER_NAME = "Organisateur";
+        public const string PLAYER_NAME = "Joueur";
+        public const string GUEST_NAME = "Invité";
     }
 }

@@ -44,5 +44,15 @@ namespace WSOA.Server.Controllers
         {
             return _accountBusiness.CreateLinkAccountCreation(formViewModel, HttpContext.Session);
         }
+
+        /// <summary>
+        /// Create account.
+        /// </summary>
+        [HttpPost]
+        [Route("api/account/create")]
+        public APICallResult CreateAccount([FromBody] AccountCreationFormViewModel form)
+        {
+            return _accountBusiness.CreateAccount(form);
+        }
     }
 }

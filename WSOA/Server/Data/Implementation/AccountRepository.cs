@@ -52,5 +52,11 @@ namespace WSOA.Server.Data.Implementation
             _dbContext.SaveChanges();
             return link;
         }
+
+        public void DeleteLinkAccountCreation(LinkAccountCreation link)
+        {
+            _dbContext.LinkAccountCreations.Remove(link);
+            _dbContext.SaveChanges();
+        }
     }
 }
