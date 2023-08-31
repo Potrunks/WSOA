@@ -1,22 +1,13 @@
 ﻿using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Forms;
-using WSOA.Client.Services.Interface;
+using WSOA.Client.Shared.Components;
 using WSOA.Shared.Result;
 using WSOA.Shared.ViewModel;
 
 namespace WSOA.Client.Pages.Account.Invite.Components
 {
-    public class InviteComponent : ComponentBase
+    public class InviteComponent : ActionMenuComponentBase
     {
-        [Inject]
-        public IAccountService AccountService { get; set; }
-
-        [Inject]
-        public NavigationManager NavigationManager { get; set; }
-
-        [Parameter]
-        public int SubSectionId { get; set; }
-
         public LinkAccountCreationFormViewModel _formVM = new LinkAccountCreationFormViewModel();
 
         public InviteViewModel _inviteVM = new InviteViewModel();

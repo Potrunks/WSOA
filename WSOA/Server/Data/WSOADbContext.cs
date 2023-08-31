@@ -91,6 +91,15 @@ namespace WSOA.Server.Data
                     Description = "Deconnexion",
                     Order = 1,
                     Url = "/account/logOut"
+                },
+                new MainNavSubSection
+                {
+                    Id = 3,
+                    Label = "Créer tournoi",
+                    MainNavSectionId = 3,
+                    Description = "Créer un tournoi",
+                    Order = 0,
+                    Url = "/tournament/create"
                 }
             );
 
@@ -125,6 +134,12 @@ namespace WSOA.Server.Data
                     Id = 5,
                     MainNavSubSectionId = 2,
                     ProfileCode = "GUEST"
+                },
+                new MainNavSubSectionByProfileCode
+                {
+                    Id = 6,
+                    MainNavSubSectionId = 3,
+                    ProfileCode = "ORGA"
                 }
             );
 
