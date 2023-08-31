@@ -42,6 +42,7 @@ namespace WSOA.Client.Pages.Account.Invite.Components
             _inviteVM = result.InviteVM;
             _formVM.ProfileCodeSelected = result.InviteVM.ProfileLabelsByCode.First().Key;
             _formVM.SubSectionIdConcerned = SubSectionId;
+            _formVM.BaseUri = NavigationManager.BaseUri;
 
             _isLoading = false;
         }

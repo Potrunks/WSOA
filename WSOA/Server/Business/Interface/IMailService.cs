@@ -4,6 +4,9 @@ namespace WSOA.Server.Business.Interface
 {
     public interface IMailService
     {
-        void SendMailAccountCreation(LinkAccountCreation link);
+        /// <summary>
+        /// Send mail for account creation.
+        /// </summary>
+        void SendMailAccountCreation(LinkAccountCreation link, string baseUri);
     }
 }

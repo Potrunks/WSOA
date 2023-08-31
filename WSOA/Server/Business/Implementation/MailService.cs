@@ -8,14 +8,13 @@ namespace WSOA.Server.Business.Implementation
 {
     public class MailService : IMailService
     {
-        public void SendMailAccountCreation(LinkAccountCreation link)
+        public void SendMailAccountCreation(LinkAccountCreation link, string baseUri)
         {
             MailMessage message = new MailMessage();
             message.From = new MailAddress(MailServiceResources.MAIL_LOGIN);
             message.To.Add(new MailAddress(link.RecipientMail));
             message.Subject = AccountBusinessResources.LINK_ACCOUNT_CREATION_MAIL_SUBJECT;
-            // TODO : base URL dans web.config
-            message.Body = "https://localhost:7235" + RouteBusinessResources.ACCOUNT_CREATION;
+            message.Body = baseUri + RouteBusinessResources.ACCOUNT_CREATION;
             SmtpClient smtpClient = new SmtpClient();
             smtpClient.Host = MailServiceResources.SMTP_HOST;
             smtpClient.Port = MailServiceResources.PORT;
