@@ -174,5 +174,9 @@ namespace WSOA.Server.Data
         public DbSet<MainNavSubSection> MainNavSubSections { get; set; }
         public DbSet<MainNavSubSectionByProfileCode> MainNavSubSectionsByProfileCode { get; set; }
         public DbSet<LinkAccountCreation> LinkAccountCreations { get; set; }
+        public DbSet<BonusTournament> BonusTournaments { get; set; }
+        public DbSet<BonusTournamentEarned> BonusTournamentEarneds { get; set; }
+        public DbSet<Player> Players { get; set; }
+        public DbSet<Tournament> Tournaments { get; set; }
     }
 }

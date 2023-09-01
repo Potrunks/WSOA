@@ -1,0 +1,13 @@
+﻿@page "/tournament/create/{SubSectionId:int}"
+@using WSOA.Client.Pages.Tournament.Components;
+@using WSOA.Client.Shared.Loaders
+@inherits CreateTournamentComponent
+
+@if (IsLoading)
+{
+    <CardCoinLoader />
+}
+else
+{
+    <span>Créer tournoi</span>
+}

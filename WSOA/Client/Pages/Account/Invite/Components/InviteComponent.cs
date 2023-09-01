@@ -14,11 +14,9 @@ namespace WSOA.Client.Pages.Account.Invite.Components
 
         public EditContext _editContext;
 
-        public bool _isLoading = true;
-
         protected override async Task OnInitializedAsync()
         {
-            _isLoading = true;
+            IsLoading = true;
 
             _editContext = new EditContext(_formVM);
             _editContext.EnableDataAnnotationsValidation();
@@ -35,7 +33,7 @@ namespace WSOA.Client.Pages.Account.Invite.Components
             _formVM.SubSectionIdConcerned = SubSectionId;
             _formVM.BaseUri = NavigationManager.BaseUri;
 
-            _isLoading = false;
+            IsLoading = false;
         }
 
         public Func<Task<APICallResult>> CreateLinkAccountCreation()

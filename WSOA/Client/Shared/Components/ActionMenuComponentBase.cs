@@ -13,5 +13,7 @@ namespace WSOA.Client.Shared.Components
 
         [Parameter]
         public int SubSectionId { get; set; }
+
+        public bool IsLoading { get; set; }
     }
 }

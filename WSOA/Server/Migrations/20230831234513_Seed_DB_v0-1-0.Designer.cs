@@ -12,8 +12,8 @@ using WSOA.Server.Data;
 namespace WSOA.Server.Migrations
 {
     [DbContext(typeof(WSOADbContext))]
-    [Migration("20230830214131_SeedDb_v0-1-0")]
-    partial class SeedDb_v010
+    [Migration("20230831234513_Seed_DB_v0-1-0")]
+    partial class Seed_DB_v010
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -52,6 +52,50 @@ namespace WSOA.Server.Migrations
                             Login = "Potrunks",
                             Password = "1a753d495dab76bf6288f5b5f9736c3af6b60a5bb819f4de4bf75f79af085181"
                         });
+                });
+
+            modelBuilder.Entity("WSOA.Shared.Entity.BonusTournament", b =>
+                {
+                    b.Property<string>("Code")
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<string>("Label")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("PointAmount")
+                        .HasColumnType("int");
+
+                    b.HasKey("Code");
+
+                    b.ToTable("BonusTournaments");
+                });
+
+            modelBuilder.Entity("WSOA.Shared.Entity.BonusTournamentEarned", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("BonusTournamentCode")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<int>("PlayerId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("PointAmount")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("BonusTournamentCode");
+
+                    b.HasIndex("PlayerId");
+
+                    b.ToTable("BonusTournamentEarneds");
                 });
 
             modelBuilder.Entity("WSOA.Shared.Entity.LinkAccountCreation", b =>
@@ -190,6 +234,15 @@ namespace WSOA.Server.Migrations
                             MainNavSectionId = 4,
                             Order = 1,
                             Url = "/account/logOut"
+                        },
+                        new
+                        {
+                            Id = 3,
+                            Description = "Créer un tournoi",
+                            Label = "Créer tournoi",
+                            MainNavSectionId = 3,
+                            Order = 0,
+                            Url = "/tournament/create"
                         });
                 });
 
@@ -246,7 +299,60 @@ namespace WSOA.Server.Migrations
                             Id = 5,
                             MainNavSubSectionId = 2,
                             ProfileCode = "GUEST"
+                        },
+                        new
+                        {
+                            Id = 6,
+                            MainNavSubSectionId = 3,
+                            ProfileCode = "ORGA"
                         });
+                });
+
+            modelBuilder.Entity("WSOA.Shared.Entity.Player", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<int?>("CurrentTournamentPosition")
+                        .HasColumnType("int");
+
+                    b.Property<int?>("EliminatorPlayerId")
+                        .HasColumnType("int");
+
+                    b.Property<int?>("PreviousTournamentPosition")
+                        .HasColumnType("int");
+
+                    b.Property<int?>("TotalAddOn")
+                        .HasColumnType("int");
+
+                    b.Property<int?>("TotalReBuy")
+                        .HasColumnType("int");
+
+                    b.Property<int?>("TotalWinningsAmount")
+                        .HasColumnType("int");
+
+                    b.Property<int?>("TotalWinningsPoint")
+                        .HasColumnType("int");
+
+                    b.Property<int>("UserId")
+                        .HasColumnType("int");
+
+                    b.Property<bool>("WasFinalTable")
+                        .HasColumnType("bit");
+
+                    b.Property<bool>("WasPresent")
+                        .HasColumnType("bit");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("EliminatorPlayerId");
+
+                    b.HasIndex("UserId");
+
+                    b.ToTable("Players");
                 });
 
             modelBuilder.Entity("WSOA.Shared.Entity.Profile", b =>
@@ -332,6 +438,25 @@ namespace WSOA.Server.Migrations
                         });
                 });
 
+            modelBuilder.Entity("WSOA.Shared.Entity.BonusTournamentEarned", b =>
+                {
+                    b.HasOne("WSOA.Shared.Entity.BonusTournament", "BonusTournament")
+                        .WithMany()
+                        .HasForeignKey("BonusTournamentCode")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("WSOA.Shared.Entity.Player", "Player")
+                        .WithMany()
+                        .HasForeignKey("PlayerId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("BonusTournament");
+
+                    b.Navigation("Player");
+                });
+
             modelBuilder.Entity("WSOA.Shared.Entity.MainNavSubSection", b =>
                 {
                     b.HasOne("WSOA.Shared.Entity.MainNavSection", "MainNavSection")
@@ -360,6 +485,23 @@ namespace WSOA.Server.Migrations
                     b.Navigation("MainNavSubSection");
 
                     b.Navigation("Profile");
+                });
+
+            modelBuilder.Entity("WSOA.Shared.Entity.Player", b =>
+                {
+                    b.HasOne("WSOA.Shared.Entity.Player", "EliminatorPlayer")
+                        .WithMany()
+                        .HasForeignKey("EliminatorPlayerId");
+
+                    b.HasOne("WSOA.Shared.Entity.User", "User")
+                        .WithMany()
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("EliminatorPlayer");
+
+                    b.Navigation("User");
                 });
 
             modelBuilder.Entity("WSOA.Shared.Entity.User", b =>
