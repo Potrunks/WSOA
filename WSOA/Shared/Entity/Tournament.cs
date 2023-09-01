@@ -24,6 +24,9 @@ namespace WSOA.Shared.Entity
         public bool IsOver { get; set; }
 
         [Required]
-        public int BuyInAmount { get; set; }
+        public int BuyIn { get; set; }
+
+        [Required]
+        public string Address { get; set; }
     }
 }
