@@ -16,12 +16,14 @@ builder.Services.AddDbContext<WSOADbContext>(options =>
 builder.Services.AddScoped<IAccountRepository, AccountRepository>();
 builder.Services.AddScoped<IUserRepository, UserRepository>();
 builder.Services.AddScoped<IMenuRepository, MenuRepository>();
+builder.Services.AddScoped<ITournamentRepository, TournamentRepository>();
 
 builder.Services.AddScoped<ITransactionManager, TransactionManager>();
 builder.Services.AddScoped<IMailService, MailService>();
 
 builder.Services.AddScoped<IAccountBusiness, AccountBusiness>();
 builder.Services.AddScoped<IMenuBusiness, MenuBusiness>();
+builder.Services.AddScoped<ITournamentBusiness, TournamentBusiness>();
 
 builder.Services.AddControllersWithViews();
 builder.Services.AddRazorPages();

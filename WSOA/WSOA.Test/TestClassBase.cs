@@ -95,7 +95,7 @@ namespace WSOA.Test
         {
             Mock<IMailService> mock = new Mock<IMailService>();
 
-            mock.Setup(m => m.SendMailAccountCreation(It.IsAny<LinkAccountCreation>(), It.IsAny<string>()));
+            mock.Setup(m => m.SendMailAccountCreationLink(It.IsAny<string>(), It.IsAny<string>()));
 
             return mock;
         }

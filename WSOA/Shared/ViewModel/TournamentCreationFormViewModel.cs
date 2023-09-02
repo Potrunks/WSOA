@@ -19,6 +19,9 @@ namespace WSOA.Shared.ViewModel
         public int SubSectionId { get; set; }
 
         [Required(ErrorMessage = DataValidationResources.ADDRESS_MISSING)]
-        public string Address { get; set; }
+        public int AddressId { get; set; }
+
+        [Required]
+        public string BaseUri { get; set; }
     }
 }

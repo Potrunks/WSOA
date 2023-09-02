@@ -152,7 +152,7 @@ namespace WSOA.Server.Business.Implementation
 
                 _accountRepository.SaveLinkAccountCreation(currentLink);
 
-                _mailService.SendMailAccountCreation(currentLink, link.BaseUri);
+                _mailService.SendMailAccountCreationLink(currentLink.RecipientMail, link.BaseUri);
 
                 _transactionManager.CommitTransaction();
             }

@@ -36,5 +36,10 @@ namespace WSOA.Server.Data.Implementation
             _dbContext.SaveChanges();
             return user;
         }
+
+        public IEnumerable<User> GetAllUsers()
+        {
+            return _dbContext.Users;
+        }
     }
 }

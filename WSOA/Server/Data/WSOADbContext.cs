@@ -178,5 +178,6 @@ namespace WSOA.Server.Data
         public DbSet<BonusTournamentEarned> BonusTournamentEarneds { get; set; }
         public DbSet<Player> Players { get; set; }
         public DbSet<Tournament> Tournaments { get; set; }
+        public DbSet<Address> Address { get; set; }
     }
 }

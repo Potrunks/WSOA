@@ -98,7 +98,7 @@ namespace WSOA.Test.Business
             Assert.AreEqual(DateTime.UtcNow.AddDays(AccountBusinessResources.LINK_ACCOUNT_CREATION_EXPIRATION_DAY_DELAY).Day, linkCreated.ExpirationDate.Day);
             _transactionManagerMock.Verify(t => t.BeginTransaction(), Times.Once());
             _transactionManagerMock.Verify(t => t.CommitTransaction(), Times.Once());
-            _mailServiceMock.Verify(m => m.SendMailAccountCreation(It.IsAny<LinkAccountCreation>(), It.IsAny<string>()), Times.Once());
+            _mailServiceMock.Verify(m => m.SendMailAccountCreationLink(It.IsAny<string>(), It.IsAny<string>()), Times.Once());
         }
 
         [TestMethod]
@@ -114,7 +114,7 @@ namespace WSOA.Test.Business
             Assert.AreEqual(string.Format(RouteBusinessResources.SIGN_IN_WITH_ERROR_MESSAGE, MainBusinessResources.USER_NOT_CONNECTED), result.RedirectUrl);
             _transactionManagerMock.Verify(t => t.BeginTransaction(), Times.Once());
             _transactionManagerMock.Verify(t => t.CommitTransaction(), Times.Never());
-            _mailServiceMock.Verify(m => m.SendMailAccountCreation(It.IsAny<LinkAccountCreation>(), It.IsAny<string>()), Times.Never());
+            _mailServiceMock.Verify(m => m.SendMailAccountCreationLink(It.IsAny<string>(), It.IsAny<string>()), Times.Never());
         }
 
         [TestMethod]
@@ -131,7 +131,7 @@ namespace WSOA.Test.Business
             Assert.AreEqual(null, result.RedirectUrl);
             _transactionManagerMock.Verify(t => t.BeginTransaction(), Times.Once());
             _transactionManagerMock.Verify(t => t.CommitTransaction(), Times.Never());
-            _mailServiceMock.Verify(m => m.SendMailAccountCreation(It.IsAny<LinkAccountCreation>(), It.IsAny<string>()), Times.Never());
+            _mailServiceMock.Verify(m => m.SendMailAccountCreationLink(It.IsAny<string>(), It.IsAny<string>()), Times.Never());
         }
 
         [TestMethod]
@@ -156,7 +156,7 @@ namespace WSOA.Test.Business
             Assert.AreEqual(DateTime.UtcNow.AddDays(AccountBusinessResources.LINK_ACCOUNT_CREATION_EXPIRATION_DAY_DELAY).Day, currentLink.ExpirationDate.Day);
             _transactionManagerMock.Verify(t => t.BeginTransaction(), Times.Once());
             _transactionManagerMock.Verify(t => t.CommitTransaction(), Times.Once());
-            _mailServiceMock.Verify(m => m.SendMailAccountCreation(It.IsAny<LinkAccountCreation>(), It.IsAny<string>()), Times.Once());
+            _mailServiceMock.Verify(m => m.SendMailAccountCreationLink(It.IsAny<string>(), It.IsAny<string>()), Times.Once());
         }
 
         [TestMethod]
@@ -180,7 +180,7 @@ namespace WSOA.Test.Business
             Assert.AreEqual(null, result.RedirectUrl);
             _transactionManagerMock.Verify(t => t.BeginTransaction(), Times.Once());
             _transactionManagerMock.Verify(t => t.CommitTransaction(), Times.Once());
-            _mailServiceMock.Verify(m => m.SendMailAccountCreation(It.IsAny<LinkAccountCreation>(), It.IsAny<string>()), Times.Once());
+            _mailServiceMock.Verify(m => m.SendMailAccountCreationLink(It.IsAny<string>(), It.IsAny<string>()), Times.Once());
         }
 
         [TestMethod]
