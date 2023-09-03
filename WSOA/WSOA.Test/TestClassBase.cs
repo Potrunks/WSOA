@@ -100,6 +100,13 @@ namespace WSOA.Test
             return mock;
         }
 
+        public Mock<ITournamentRepository> CreateITournamentRepositoryMock()
+        {
+            Mock<ITournamentRepository> mock = new Mock<ITournamentRepository>();
+
+            return mock;
+        }
+
         public LinkAccountCreation CreateLinkAccountCreation()
         {
             return new LinkAccountCreation
@@ -122,6 +129,56 @@ namespace WSOA.Test
                 Password = "Password",
                 PasswordConfirmation = "Password"
             };
+        }
+
+        public TournamentCreationFormViewModel CreateTournamentCreationFormVM()
+        {
+            return new TournamentCreationFormViewModel
+            {
+                AddressId = 1,
+                BaseUri = "www.youporn.com",
+                BuyIn = 2000,
+                Season = "2560",
+                StartDate = DateTime.UtcNow.AddDays(7),
+                SubSectionId = 1
+            };
+        }
+
+        public User CreateUser(int id)
+        {
+            return new User
+            {
+                Id = id,
+                AccountId = id,
+                Email = "test@test.test",
+                FirstName = "Alexis",
+                LastName = "ARRIAL",
+                ProfileCode = ProfileResources.PLAYER_CODE
+            };
+        }
+
+        public List<User> CreateUsers(int number)
+        {
+            List<User> users = new List<User>();
+            for (int i = 1; i <= number; i++)
+            {
+                users.Add(CreateUser(i));
+            }
+            return users;
+        }
+
+        public void VerifyTransactionManagerCommit(Mock<ITransactionManager> transactionManagerMock)
+        {
+            transactionManagerMock.Verify(m => m.BeginTransaction(), Times.Once);
+            transactionManagerMock.Verify(m => m.CommitTransaction(), Times.Once);
+            transactionManagerMock.Verify(m => m.RollbackTransaction(), Times.Never);
+        }
+
+        public void VerifyTransactionManagerRollback(Mock<ITransactionManager> transactionManagerMock)
+        {
+            transactionManagerMock.Verify(m => m.BeginTransaction(), Times.Once);
+            transactionManagerMock.Verify(m => m.CommitTransaction(), Times.Never);
+            transactionManagerMock.Verify(m => m.RollbackTransaction(), Times.Once);
         }
     }
 }
