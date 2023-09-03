@@ -12,5 +12,6 @@ builder.Services.AddScoped(sp => new HttpClient { BaseAddress = new Uri(builder.
 
 builder.Services.AddScoped<IAccountService, AccountService>();
 builder.Services.AddScoped<IMenuService, MenuService>();
+builder.Services.AddScoped<ITournamentService, TournamentService>();
 
 await builder.Build().RunAsync();

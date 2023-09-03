@@ -1,13 +1,9 @@
 ﻿using Microsoft.AspNetCore.Components;
-using WSOA.Client.Services.Interface;
 
 namespace WSOA.Client.Shared.Components
 {
-    public class ActionMenuComponentBase : ComponentBase
+    public class SubSectionComponentBase : ComponentBase
     {
-        [Inject]
-        public IAccountService AccountService { get; set; }
-
         [Inject]
         public NavigationManager NavigationManager { get; set; }
 
