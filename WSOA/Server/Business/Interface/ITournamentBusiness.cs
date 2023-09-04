@@ -9,5 +9,10 @@ namespace WSOA.Server.Business.Interface
         /// Create new tournament and prevent all users in app.
         /// </summary>
         APICallResult CreateTournament(TournamentCreationFormViewModel form, ISession session);
+
+        /// <summary>
+        /// Load datas for tournament creation.
+        /// </summary>
+        APICallResult LoadTournamentCreationDatas(int subSectionId, ISession session);
     }
 }

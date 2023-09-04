@@ -21,6 +21,8 @@ namespace WSOA.Client.Pages.Tournament.Components
             IsLoading = true;
 
             Form = new TournamentCreationFormViewModel();
+            Form.BaseUri = NavigationManager.BaseUri;
+            Form.SubSectionId = SubSectionId;
 
             EditContext = new EditContext(Form);
             EditContext.EnableDataAnnotationsValidation();

@@ -27,5 +27,15 @@ namespace WSOA.Server.Controllers
         {
             return _tournamentBusiness.CreateTournament(form, HttpContext.Session);
         }
+
+        /// <summary>
+        /// Load datas for tournament creation.
+        /// </summary>
+        [HttpGet]
+        [Route("api/tournament/create/load/{subSectionId}")]
+        public APICallResult LoadTournamentCreationDatas(int subSectionId)
+        {
+            return _tournamentBusiness.LoadTournamentCreationDatas(subSectionId, HttpContext.Session);
+        }
     }
 }

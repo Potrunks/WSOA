@@ -41,5 +41,7 @@
         public string? RedirectUrl { get; set; }
 
         public string? WarningMessage { get; set; }
+
+        public object Data { get; set; }
     }
 }

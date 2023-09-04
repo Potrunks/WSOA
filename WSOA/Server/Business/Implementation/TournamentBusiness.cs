@@ -1,4 +1,5 @@
 ﻿using log4net;
+using Microsoft.IdentityModel.Tokens;
 using WSOA.Server.Business.Interface;
 using WSOA.Server.Business.Resources;
 using WSOA.Server.Business.Utils;
@@ -18,6 +19,7 @@ namespace WSOA.Server.Business.Implementation
         private readonly ITournamentRepository _tournamentRepository;
         private readonly IMailService _mailService;
         private readonly IUserRepository _userRepository;
+        private readonly IAddressRepository _addressRepository;
 
         private readonly ILog _log = LogManager.GetLogger(nameof(TournamentBusiness));
 
@@ -27,7 +29,8 @@ namespace WSOA.Server.Business.Implementation
             IMenuRepository menuRepository,
             ITournamentRepository tournamentRepository,
             IMailService mailService,
-            IUserRepository userRepository
+            IUserRepository userRepository,
+            IAddressRepository addressRepository
         )
         {
             _transactionManager = transactionManager;
@@ -35,6 +38,7 @@ namespace WSOA.Server.Business.Implementation
             _tournamentRepository = tournamentRepository;
             _mailService = mailService;
             _userRepository = userRepository;
+            _addressRepository = addressRepository;
         }
 
         public APICallResult CreateTournament(TournamentCreationFormViewModel form, ISession session)
@@ -45,17 +49,19 @@ namespace WSOA.Server.Business.Implementation
             {
                 _transactionManager.BeginTransaction();
 
-                // Verifier User connecté
-                // Verifier que le User peut faire l'action
                 session.CanUserPerformAction(_menuRepository, form.SubSectionId);
-                // Valider date de debut
                 form.StartDate.IsAfterOrEqualUtcNow();
-                // Creer le tournoi si tout va bien
+
                 Tournament newTournament = new Tournament(form);
                 _tournamentRepository.SaveTournament(newTournament);
-                // Prevenir tous les utilisateur de l'application
+
                 IEnumerable<User> allUsers = _userRepository.GetAllUsers();
-                _mailService.SendMails(allUsers.Select(usr => usr.Email), TournamentBusinessResources.MAIL_SUBJECT_NEW_TOURNAMENT, string.Format(TournamentBusinessResources.MAIL_BODY_NEW_TOURNAMENT, form.BaseUri));
+                _mailService.SendMails
+                (
+                    allUsers.Select(usr => usr.Email),
+                    TournamentBusinessResources.MAIL_SUBJECT_NEW_TOURNAMENT,
+                    string.Format(TournamentBusinessResources.MAIL_BODY_NEW_TOURNAMENT, form.BaseUri)
+                );
 
                 _transactionManager.CommitTransaction();
             }
@@ -69,6 +75,37 @@ namespace WSOA.Server.Business.Implementation
             catch (Exception e)
             {
                 _transactionManager.RollbackTransaction();
+                _log.Error(e.Message);
+                return new APICallResult(MainBusinessResources.TECHNICAL_ERROR, null);
+            }
+
+            return result;
+        }
+
+        public APICallResult LoadTournamentCreationDatas(int subSectionId, ISession session)
+        {
+            APICallResult result = new APICallResult(null);
+
+            try
+            {
+                session.CanUserPerformAction(_menuRepository, subSectionId);
+
+                IEnumerable<Address> addresses = _addressRepository.GetAllAddresses();
+                if (addresses.IsNullOrEmpty())
+                {
+                    throw new FunctionalException(MainBusinessResources.NULL_OR_EMPTY_OBJ_NOT_ALLOWED, null);
+                }
+
+                result.Data = new TournamentCreationDataViewModel(addresses);
+            }
+            catch (FunctionalException e)
+            {
+                string errorMsg = e.Message;
+                _log.Error(errorMsg);
+                return new APICallResult(errorMsg, e.RedirectUrl);
+            }
+            catch (Exception e)
+            {
                 _log.Error(e.Message);
                 return new APICallResult(MainBusinessResources.TECHNICAL_ERROR, null);
             }

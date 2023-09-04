@@ -165,6 +165,20 @@ namespace WSOA.Server.Data
                     Email = "potrunks@hotmail.com"
                 }
             );
+
+            modelBuilder.Entity<Address>().HasData
+            (
+                new Address
+                {
+                    Id = 1,
+                    Content = "2 allée Bourvil 94000 Créteil"
+                },
+                new Address
+                {
+                    Id = 2,
+                    Content = "3 rue Sebastopol 94600 Choisy-Le-Roi"
+                }
+            );
         }
 
         public DbSet<Account> Accounts { get; set; }
@@ -178,6 +192,6 @@ namespace WSOA.Server.Data
         public DbSet<BonusTournamentEarned> BonusTournamentEarneds { get; set; }
         public DbSet<Player> Players { get; set; }
         public DbSet<Tournament> Tournaments { get; set; }
-        public DbSet<Address> Address { get; set; }
+        public DbSet<Address> Addresses { get; set; }
     }
 }

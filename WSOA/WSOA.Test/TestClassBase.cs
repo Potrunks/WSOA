@@ -107,6 +107,12 @@ namespace WSOA.Test
             return mock;
         }
 
+        public Mock<IAddressRepository> CreateIAddressRepositoryMock()
+        {
+            Mock<IAddressRepository> mock = new Mock<IAddressRepository>();
+            return mock;
+        }
+
         public LinkAccountCreation CreateLinkAccountCreation()
         {
             return new LinkAccountCreation
@@ -165,6 +171,25 @@ namespace WSOA.Test
                 users.Add(CreateUser(i));
             }
             return users;
+        }
+
+        public Address CreateAddress(int id)
+        {
+            return new Address
+            {
+                Id = id,
+                Content = "Adresse " + id.ToString()
+            };
+        }
+
+        public List<Address> CreateAddresses(int number)
+        {
+            List<Address> addresses = new List<Address>();
+            for (int i = 1; i <= number; i++)
+            {
+                addresses.Add(CreateAddress(i));
+            }
+            return addresses;
         }
 
         public void VerifyTransactionManagerCommit(Mock<ITransactionManager> transactionManagerMock)
