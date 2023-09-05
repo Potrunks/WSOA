@@ -1,21 +1,16 @@
 ﻿using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Forms;
 using WSOA.Client.Services.Interface;
+using WSOA.Client.Shared.Components;
 using WSOA.Shared.Result;
 using WSOA.Shared.ViewModel;
 
 namespace WSOA.Client.Pages.Account.Invite.Components
 {
-    public class InviteComponent : ComponentBase
+    public class InviteComponent : SubSectionComponentBase
     {
         [Inject]
         public IAccountService AccountService { get; set; }
-
-        [Inject]
-        public NavigationManager NavigationManager { get; set; }
-
-        [Parameter]
-        public int SubSectionId { get; set; }
 
         public LinkAccountCreationFormViewModel _formVM = new LinkAccountCreationFormViewModel();
 
@@ -23,11 +18,9 @@ namespace WSOA.Client.Pages.Account.Invite.Components
 
         public EditContext _editContext;
 
-        public bool _isLoading = true;
-
         protected override async Task OnInitializedAsync()
         {
-            _isLoading = true;
+            IsLoading = true;
 
             _editContext = new EditContext(_formVM);
             _editContext.EnableDataAnnotationsValidation();
@@ -42,8 +35,9 @@ namespace WSOA.Client.Pages.Account.Invite.Components
             _inviteVM = result.InviteVM;
             _formVM.ProfileCodeSelected = result.InviteVM.ProfileLabelsByCode.First().Key;
             _formVM.SubSectionIdConcerned = SubSectionId;
+            _formVM.BaseUri = NavigationManager.BaseUri;
 
-            _isLoading = false;
+            IsLoading = false;
         }
 
         public Func<Task<APICallResult>> CreateLinkAccountCreation()

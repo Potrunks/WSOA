@@ -91,6 +91,15 @@ namespace WSOA.Server.Data
                     Description = "Deconnexion",
                     Order = 1,
                     Url = "/account/logOut"
+                },
+                new MainNavSubSection
+                {
+                    Id = 3,
+                    Label = "Créer tournoi",
+                    MainNavSectionId = 3,
+                    Description = "Créer un tournoi",
+                    Order = 0,
+                    Url = "/tournament/create"
                 }
             );
 
@@ -125,6 +134,12 @@ namespace WSOA.Server.Data
                     Id = 5,
                     MainNavSubSectionId = 2,
                     ProfileCode = "GUEST"
+                },
+                new MainNavSubSectionByProfileCode
+                {
+                    Id = 6,
+                    MainNavSubSectionId = 3,
+                    ProfileCode = "ORGA"
                 }
             );
 
@@ -134,6 +149,12 @@ namespace WSOA.Server.Data
                 {
                     Id = 1,
                     Login = "Potrunks",
+                    Password = "1a753d495dab76bf6288f5b5f9736c3af6b60a5bb819f4de4bf75f79af085181"
+                },
+                new Account
+                {
+                    Id = 2,
+                    Login = "PotrunksOrga",
                     Password = "1a753d495dab76bf6288f5b5f9736c3af6b60a5bb819f4de4bf75f79af085181"
                 }
             );
@@ -148,6 +169,29 @@ namespace WSOA.Server.Data
                     Id = 1,
                     ProfileCode = "ADMIN",
                     Email = "potrunks@hotmail.com"
+                },
+                new User
+                {
+                    FirstName = "Alexis",
+                    LastName = "ARRIAL",
+                    AccountId = 2,
+                    Id = 2,
+                    ProfileCode = "ORGA",
+                    Email = "arrial.alexis@hotmail.fr"
+                }
+            );
+
+            modelBuilder.Entity<Address>().HasData
+            (
+                new Address
+                {
+                    Id = 1,
+                    Content = "2 allée Bourvil 94000 Créteil"
+                },
+                new Address
+                {
+                    Id = 2,
+                    Content = "3 rue Sebastopol 94600 Choisy-Le-Roi"
                 }
             );
         }
@@ -159,5 +203,10 @@ namespace WSOA.Server.Data
         public DbSet<MainNavSubSection> MainNavSubSections { get; set; }
         public DbSet<MainNavSubSectionByProfileCode> MainNavSubSectionsByProfileCode { get; set; }
         public DbSet<LinkAccountCreation> LinkAccountCreations { get; set; }
+        public DbSet<BonusTournament> BonusTournaments { get; set; }
+        public DbSet<BonusTournamentEarned> BonusTournamentEarneds { get; set; }
+        public DbSet<Player> Players { get; set; }
+        public DbSet<Tournament> Tournaments { get; set; }
+        public DbSet<Address> Addresses { get; set; }
     }
 }

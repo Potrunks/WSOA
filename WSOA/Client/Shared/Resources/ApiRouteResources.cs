@@ -7,5 +7,7 @@
         public const string SIGN_IN = "api/account/signIn";
         public const string CREATE_ACCOUNT = "api/account/create";
         public const string LOG_OUT = "api/account/logOut";
+        public const string CREATE_TOURNAMENT = "api/tournament/create";
+        public const string LOAD_CREATE_TOURNAMENT_DATAS = "api/tournament/create/load/{0}";
     }
 }

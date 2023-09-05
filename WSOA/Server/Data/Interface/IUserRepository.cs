@@ -23,5 +23,10 @@ namespace WSOA.Server.Data.Interface
         /// Save user.
         /// </summary>
         User SaveUser(User user);
+
+        /// <summary>
+        /// Get all users in DB.
+        /// </summary>
+        IEnumerable<User> GetAllUsers();
     }
 }

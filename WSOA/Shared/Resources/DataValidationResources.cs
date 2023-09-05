@@ -15,5 +15,11 @@
         public const string PASSWORD_FORMAT_NO_VALID = "Format mot de passe invalide. Une lettre majuscule, un caractère spécial, un chiffre et minimum 8 caractères";
         public const string PASSWORD_CONFIRMATION_MISSING = "Mot de passe de confirmation manquant";
         public const string PASSWORD_CONFIRMATION_NO_VALID = "Mot de passe de confirmation ne correspond pas au mot de passe saisi";
+        public const string STARTDATE_MISSING = "Date de début manquante";
+        public const string STARTDATE_PAST_ERROR = "Date de début dans le passé interdit";
+        public const string SEASON_MISSING = "Saison manquante";
+        public const string BUY_IN_MISSING = "Buy-In manquant";
+        public const string BUY_IN_ERROR_RANGE = "Buy-In doit être supérieur ou égale à 1";
+        public const string ADDRESS_MISSING = "Adresse manquante";
     }
 }

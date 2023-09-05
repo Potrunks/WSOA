@@ -10,6 +10,7 @@ namespace WSOA.Shared.ViewModel
             RecipientMail = null;
             ProfileCodeSelected = null;
             SubSectionIdConcerned = 0;
+            BaseUri = null;
         }
 
         [Required(ErrorMessage = DataValidationResources.MAIL_MISSING)]
@@ -20,5 +21,7 @@ namespace WSOA.Shared.ViewModel
         public string ProfileCodeSelected { get; set; }
 
         public int SubSectionIdConcerned { get; set; }
+
+        public string BaseUri { get; set; }
     }
 }
