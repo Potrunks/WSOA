@@ -150,6 +150,12 @@ namespace WSOA.Server.Data
                     Id = 1,
                     Login = "Potrunks",
                     Password = "1a753d495dab76bf6288f5b5f9736c3af6b60a5bb819f4de4bf75f79af085181"
+                },
+                new Account
+                {
+                    Id = 2,
+                    Login = "PotrunksOrga",
+                    Password = "1a753d495dab76bf6288f5b5f9736c3af6b60a5bb819f4de4bf75f79af085181"
                 }
             );
 
@@ -163,6 +169,15 @@ namespace WSOA.Server.Data
                     Id = 1,
                     ProfileCode = "ADMIN",
                     Email = "potrunks@hotmail.com"
+                },
+                new User
+                {
+                    FirstName = "Alexis",
+                    LastName = "ARRIAL",
+                    AccountId = 2,
+                    Id = 2,
+                    ProfileCode = "ORGA",
+                    Email = "arrial.alexis@hotmail.fr"
                 }
             );
 

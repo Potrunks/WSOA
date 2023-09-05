@@ -9,5 +9,10 @@ namespace WSOA.Client.Services.Interface
         /// Create tournament.
         /// </summary>
         Task<APICallResult> CreateTournament(TournamentCreationFormViewModel form);
+
+        /// <summary>
+        /// Load datas for tournament creation.
+        /// </summary>
+        Task<CreateTournamentCallResult> LoadTournamentCreationDatas(int subSectionId);
     }
 }

@@ -19,6 +19,7 @@ namespace WSOA.Test.Business
         private Tournament _tournamentCreated;
         private IEnumerable<string> _expectedSeasons;
         private List<Address> _expectedAddresses;
+        private MainNavSubSection _mainNavSubSectionConcerned;
 
         private Mock<ISession> _sessionMock;
         private Mock<ITransactionManager> _transactionManagerMock;
@@ -45,13 +46,15 @@ namespace WSOA.Test.Business
 
             _expectedAddresses = CreateAddresses(3);
 
+            _mainNavSubSectionConcerned = CreateMainNavSubSection();
+
             _sessionMock = CreateISessionMock(ProfileResources.ORGANIZER_CODE);
 
             _transactionManagerMock = CreateITransactionManagerMock();
 
             _menuRepositoryMock = CreateIMenuRepositoryMock();
             _menuRepositoryMock.Setup(m => m.GetMainNavSubSectionByIdAndProfileCode(ProfileResources.ORGANIZER_CODE, It.IsAny<int>()))
-                               .Returns(new MainNavSubSection());
+                               .Returns(_mainNavSubSectionConcerned);
 
             _tournamentRepository = CreateITournamentRepositoryMock();
             _tournamentRepository.Setup(m => m.SaveTournament(It.IsAny<Tournament>()))
@@ -145,8 +148,8 @@ namespace WSOA.Test.Business
         [TestMethod]
         public void ShouldLoadTournamentCreationDatas()
         {
-            APICallResult result = _tournamentBusiness.LoadTournamentCreationDatas(1, _sessionMock.Object);
-            TournamentCreationDataViewModel viewModelResult = (TournamentCreationDataViewModel)result.Data;
+            CreateTournamentCallResult result = _tournamentBusiness.LoadTournamentCreationDatas(1, _sessionMock.Object);
+            TournamentCreationDataViewModel viewModelResult = result.Data;
 
             Assert.AreEqual(true, result.Success);
             Assert.AreEqual(null, result.ErrorMessage);
@@ -154,6 +157,7 @@ namespace WSOA.Test.Business
             Assert.AreEqual(null, result.RedirectUrl);
             Assert.AreEqual(true, viewModelResult.SelectableSeasons.All(sea => _expectedSeasons.Any(exp => exp == sea)));
             Assert.AreEqual(true, viewModelResult.SelectableAddresses.All(sea => _expectedAddresses.Any(exp => exp.Id == sea.Id)));
+            Assert.AreEqual(_mainNavSubSectionConcerned.Description, viewModelResult.Description);
         }
 
         [TestMethod]
@@ -161,7 +165,7 @@ namespace WSOA.Test.Business
         {
             _sessionMock = CreateISessionMock(null);
 
-            APICallResult result = _tournamentBusiness.LoadTournamentCreationDatas(1, _sessionMock.Object);
+            CreateTournamentCallResult result = _tournamentBusiness.LoadTournamentCreationDatas(1, _sessionMock.Object);
 
             Assert.AreEqual(false, result.Success);
             Assert.AreEqual(MainBusinessResources.USER_NOT_CONNECTED, result.ErrorMessage);
@@ -177,7 +181,7 @@ namespace WSOA.Test.Business
             _menuRepositoryMock.Setup(m => m.GetMainNavSubSectionByIdAndProfileCode(It.Is<string>(s => s != ProfileResources.ORGANIZER_CODE), It.IsAny<int>()))
                                .Returns(() => null);
 
-            APICallResult result = _tournamentBusiness.LoadTournamentCreationDatas(1, _sessionMock.Object);
+            CreateTournamentCallResult result = _tournamentBusiness.LoadTournamentCreationDatas(1, _sessionMock.Object);
 
             Assert.AreEqual(false, result.Success);
             Assert.AreEqual(MainBusinessResources.USER_CANNOT_PERFORM_ACTION, result.ErrorMessage);
@@ -192,12 +196,13 @@ namespace WSOA.Test.Business
             _addressRepositoryMock.Setup(m => m.GetAllAddresses())
                                   .Returns(new List<Address>());
 
-            APICallResult result = _tournamentBusiness.LoadTournamentCreationDatas(1, _sessionMock.Object);
+            CreateTournamentCallResult result = _tournamentBusiness.LoadTournamentCreationDatas(1, _sessionMock.Object);
 
             Assert.AreEqual(false, result.Success);
-            Assert.AreEqual(MainBusinessResources.NULL_OR_EMPTY_OBJ_NOT_ALLOWED, result.ErrorMessage);
+            string expectedErrorMsg = string.Format(MainBusinessResources.NULL_OR_EMPTY_OBJ_NOT_ALLOWED, "addresses", nameof(TournamentBusiness.LoadTournamentCreationDatas));
+            Assert.AreEqual(expectedErrorMsg, result.ErrorMessage);
             Assert.AreEqual(null, result.WarningMessage);
-            Assert.AreEqual(null, result.RedirectUrl);
+            Assert.AreEqual(string.Format(RouteBusinessResources.ERROR, expectedErrorMsg), result.RedirectUrl);
             Assert.AreEqual(null, result.Data);
         }
 
@@ -207,12 +212,13 @@ namespace WSOA.Test.Business
             _addressRepositoryMock.Setup(m => m.GetAllAddresses())
                                   .Returns(() => null);
 
-            APICallResult result = _tournamentBusiness.LoadTournamentCreationDatas(1, _sessionMock.Object);
+            CreateTournamentCallResult result = _tournamentBusiness.LoadTournamentCreationDatas(1, _sessionMock.Object);
 
             Assert.AreEqual(false, result.Success);
-            Assert.AreEqual(MainBusinessResources.NULL_OR_EMPTY_OBJ_NOT_ALLOWED, result.ErrorMessage);
+            string expectedErrorMsg = string.Format(MainBusinessResources.NULL_OR_EMPTY_OBJ_NOT_ALLOWED, "addresses", nameof(TournamentBusiness.LoadTournamentCreationDatas));
+            Assert.AreEqual(expectedErrorMsg, result.ErrorMessage);
             Assert.AreEqual(null, result.WarningMessage);
-            Assert.AreEqual(null, result.RedirectUrl);
+            Assert.AreEqual(string.Format(RouteBusinessResources.ERROR, expectedErrorMsg), result.RedirectUrl);
             Assert.AreEqual(null, result.Data);
         }
     }

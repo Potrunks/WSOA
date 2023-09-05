@@ -1,5 +1,4 @@
 ﻿using Microsoft.AspNetCore.Components;
-using Microsoft.AspNetCore.Components.Forms;
 using WSOA.Client.Services.Interface;
 using WSOA.Client.Shared.Components;
 using WSOA.Shared.Result;
@@ -12,27 +11,30 @@ namespace WSOA.Client.Pages.Tournament.Components
         [Inject]
         public ITournamentService TournamentService { get; set; }
 
-        public TournamentCreationFormViewModel Form { get; set; }
+        public TournamentCreationFormViewModel FormVM { get; set; }
 
-        public EditContext EditContext { get; set; }
+        public TournamentCreationDataViewModel DataVM { get; set; }
 
-        protected override void OnInitialized()
+        protected override async Task OnInitializedAsync()
         {
             IsLoading = true;
 
-            Form = new TournamentCreationFormViewModel();
-            Form.BaseUri = NavigationManager.BaseUri;
-            Form.SubSectionId = SubSectionId;
+            CreateTournamentCallResult result = await TournamentService.LoadTournamentCreationDatas(SubSectionId);
+            if (!string.IsNullOrWhiteSpace(result.RedirectUrl))
+            {
+                NavigationManager.NavigateTo(result.RedirectUrl);
+                return;
+            }
+            DataVM = result.Data;
 
-            EditContext = new EditContext(Form);
-            EditContext.EnableDataAnnotationsValidation();
+            FormVM = new TournamentCreationFormViewModel(NavigationManager.BaseUri, SubSectionId, DataVM);
 
             IsLoading = false;
         }
 
         public Func<Task<APICallResult>> CreateTournament()
         {
-            return () => TournamentService.CreateTournament(Form);
+            return () => TournamentService.CreateTournament(FormVM);
         }
     }
 }

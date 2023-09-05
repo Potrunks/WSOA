@@ -8,5 +8,9 @@
         public const string PROFILE = "Profile";
         public const string PROCESSING = "Traitement en cours...";
         public const string PROCESS_DONE = "Traitement effectué";
+        public const string SEASON = "Saison";
+        public const string START_DATE = "Date de début";
+        public const string BUY_IN = "Buy-In";
+        public const string ADDRESS = "Adresse";
     }
 }

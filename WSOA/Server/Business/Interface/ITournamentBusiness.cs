@@ -13,6 +13,6 @@ namespace WSOA.Server.Business.Interface
         /// <summary>
         /// Load datas for tournament creation.
         /// </summary>
-        APICallResult LoadTournamentCreationDatas(int subSectionId, ISession session);
+        CreateTournamentCallResult LoadTournamentCreationDatas(int subSectionId, ISession session);
     }
 }

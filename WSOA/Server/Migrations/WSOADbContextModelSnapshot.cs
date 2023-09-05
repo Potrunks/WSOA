@@ -48,6 +48,41 @@ namespace WSOA.Server.Migrations
                             Id = 1,
                             Login = "Potrunks",
                             Password = "1a753d495dab76bf6288f5b5f9736c3af6b60a5bb819f4de4bf75f79af085181"
+                        },
+                        new
+                        {
+                            Id = 2,
+                            Login = "PotrunksOrga",
+                            Password = "1a753d495dab76bf6288f5b5f9736c3af6b60a5bb819f4de4bf75f79af085181"
+                        });
+                });
+
+            modelBuilder.Entity("WSOA.Shared.Entity.Address", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("Content")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Addresses");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = 1,
+                            Content = "2 allée Bourvil 94000 Créteil"
+                        },
+                        new
+                        {
+                            Id = 2,
+                            Content = "3 rue Sebastopol 94600 Choisy-Le-Roi"
                         });
                 });
 
@@ -319,7 +354,7 @@ namespace WSOA.Server.Migrations
                     b.Property<int?>("EliminatorPlayerId")
                         .HasColumnType("int");
 
-                    b.Property<int?>("PreviousTournamentPosition")
+                    b.Property<int>("PlayedTournamentId")
                         .HasColumnType("int");
 
                     b.Property<int?>("TotalAddOn")
@@ -346,6 +381,8 @@ namespace WSOA.Server.Migrations
                     b.HasKey("Id");
 
                     b.HasIndex("EliminatorPlayerId");
+
+                    b.HasIndex("PlayedTournamentId");
 
                     b.HasIndex("UserId");
 
@@ -386,6 +423,40 @@ namespace WSOA.Server.Migrations
                             Code = "GUEST",
                             Name = "Invité"
                         });
+                });
+
+            modelBuilder.Entity("WSOA.Shared.Entity.Tournament", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<int>("AddressId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("BuyIn")
+                        .HasColumnType("int");
+
+                    b.Property<bool>("IsInProgress")
+                        .HasColumnType("bit");
+
+                    b.Property<bool>("IsOver")
+                        .HasColumnType("bit");
+
+                    b.Property<string>("Season")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime>("StartDate")
+                        .HasColumnType("datetime2");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("AddressId");
+
+                    b.ToTable("Tournaments");
                 });
 
             modelBuilder.Entity("WSOA.Shared.Entity.User", b =>
@@ -432,6 +503,15 @@ namespace WSOA.Server.Migrations
                             FirstName = "Alexis",
                             LastName = "ARRIAL",
                             ProfileCode = "ADMIN"
+                        },
+                        new
+                        {
+                            Id = 2,
+                            AccountId = 2,
+                            Email = "arrial.alexis@hotmail.fr",
+                            FirstName = "Alexis",
+                            LastName = "ARRIAL",
+                            ProfileCode = "ORGA"
                         });
                 });
 
@@ -490,6 +570,12 @@ namespace WSOA.Server.Migrations
                         .WithMany()
                         .HasForeignKey("EliminatorPlayerId");
 
+                    b.HasOne("WSOA.Shared.Entity.Tournament", "PlayedTournament")
+                        .WithMany()
+                        .HasForeignKey("PlayedTournamentId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
                     b.HasOne("WSOA.Shared.Entity.User", "User")
                         .WithMany()
                         .HasForeignKey("UserId")
@@ -498,7 +584,20 @@ namespace WSOA.Server.Migrations
 
                     b.Navigation("EliminatorPlayer");
 
+                    b.Navigation("PlayedTournament");
+
                     b.Navigation("User");
+                });
+
+            modelBuilder.Entity("WSOA.Shared.Entity.Tournament", b =>
+                {
+                    b.HasOne("WSOA.Shared.Entity.Address", "Address")
+                        .WithMany()
+                        .HasForeignKey("AddressId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Address");
                 });
 
             modelBuilder.Entity("WSOA.Shared.Entity.User", b =>

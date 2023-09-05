@@ -82,32 +82,34 @@ namespace WSOA.Server.Business.Implementation
             return result;
         }
 
-        public APICallResult LoadTournamentCreationDatas(int subSectionId, ISession session)
+        public CreateTournamentCallResult LoadTournamentCreationDatas(int subSectionId, ISession session)
         {
-            APICallResult result = new APICallResult(null);
+            CreateTournamentCallResult result = new CreateTournamentCallResult(null);
 
             try
             {
-                session.CanUserPerformAction(_menuRepository, subSectionId);
+                MainNavSubSection subSection = session.CanUserPerformAction(_menuRepository, subSectionId);
 
                 IEnumerable<Address> addresses = _addressRepository.GetAllAddresses();
                 if (addresses.IsNullOrEmpty())
                 {
-                    throw new FunctionalException(MainBusinessResources.NULL_OR_EMPTY_OBJ_NOT_ALLOWED, null);
+                    string errorMsg = string.Format(MainBusinessResources.NULL_OR_EMPTY_OBJ_NOT_ALLOWED, nameof(addresses), nameof(LoadTournamentCreationDatas));
+                    throw new FunctionalException(errorMsg, string.Format(RouteBusinessResources.ERROR, errorMsg));
                 }
 
-                result.Data = new TournamentCreationDataViewModel(addresses);
+                result.Data = new TournamentCreationDataViewModel(addresses, subSection.Description);
             }
             catch (FunctionalException e)
             {
                 string errorMsg = e.Message;
                 _log.Error(errorMsg);
-                return new APICallResult(errorMsg, e.RedirectUrl);
+                return new CreateTournamentCallResult(errorMsg, e.RedirectUrl);
             }
             catch (Exception e)
             {
                 _log.Error(e.Message);
-                return new APICallResult(MainBusinessResources.TECHNICAL_ERROR, null);
+                string errorMsg = MainBusinessResources.TECHNICAL_ERROR;
+                return new CreateTournamentCallResult(errorMsg, string.Format(RouteBusinessResources.ERROR, errorMsg));
             }
 
             return result;

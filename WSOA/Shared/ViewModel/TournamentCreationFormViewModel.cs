@@ -5,6 +5,21 @@ namespace WSOA.Shared.ViewModel
 {
     public class TournamentCreationFormViewModel
     {
+        public TournamentCreationFormViewModel()
+        {
+
+        }
+
+        public TournamentCreationFormViewModel(string baseUri, int subSectionId, TournamentCreationDataViewModel dataVm)
+        {
+            BaseUri = baseUri;
+            SubSectionId = subSectionId;
+            Season = dataVm.SelectableSeasons.First();
+            StartDate = DateTime.UtcNow;
+            BuyIn = 0;
+            AddressId = dataVm.SelectableAddresses.First().Id;
+        }
+
         [Required(ErrorMessage = DataValidationResources.SEASON_MISSING)]
         public string Season { get; set; }
 
@@ -12,7 +27,7 @@ namespace WSOA.Shared.ViewModel
         public DateTime StartDate { get; set; }
 
         [Required(ErrorMessage = DataValidationResources.BUY_IN_MISSING)]
-        [Range(0, int.MaxValue, ErrorMessage = DataValidationResources.BUY_IN_ERROR_RANGE)]
+        [Range(1, int.MaxValue, ErrorMessage = DataValidationResources.BUY_IN_ERROR_RANGE)]
         public int BuyIn { get; set; }
 
         [Required]

@@ -1,0 +1,39 @@
+﻿.selectField_mainContainer {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+}
+
+span {
+    font-size: 14px;
+}
+
+::deep select {
+    height: 40px;
+    border-radius: 10px;
+    border: 1px solid;
+}
+
+@media only screen and (min-width: 360px) and (min-height: 740px) {
+    .selectField_mainContainer > span {
+        font-size: 20px;
+        margin-bottom: 5px;
+    }
+
+    ::deep select {
+        height: 50px !important;
+        font-size: 20px !important;
+    }
+}
+
+@media only screen and (min-width: 768px) and (min-height: 1024px) {
+    .selectField_mainContainer > span {
+        font-size: 25px;
+        margin-bottom: 8px;
+    }
+
+    ::deep select {
+        height: 70px !important;
+        font-size: 25px !important;
+    }
+}

@@ -30,9 +30,9 @@ namespace WSOA.Server.Business.Utils
         }
 
         /// <summary>
-        /// Check if user can perform action.
+        /// Check if user can perform action and return sub section performing.
         /// </summary>
-        public static void CanUserPerformAction(this ISession session, IMenuRepository menuRepository, int subSectionId)
+        public static MainNavSubSection? CanUserPerformAction(this ISession session, IMenuRepository menuRepository, int subSectionId)
         {
             string? profileCode = session.GetString(HttpSessionResources.KEY_PROFILE_CODE);
             if (string.IsNullOrWhiteSpace(profileCode))
@@ -47,6 +47,8 @@ namespace WSOA.Server.Business.Utils
                 string errorMsg = MainBusinessResources.USER_CANNOT_PERFORM_ACTION;
                 throw new FunctionalException(errorMsg, string.Format(RouteBusinessResources.SIGN_IN_WITH_ERROR_MESSAGE, errorMsg));
             }
+
+            return subSection;
         }
     }
 }

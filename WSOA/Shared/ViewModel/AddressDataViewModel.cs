@@ -4,6 +4,11 @@ namespace WSOA.Shared.ViewModel
 {
     public class AddressDataViewModel
     {
+        public AddressDataViewModel()
+        {
+
+        }
+
         public AddressDataViewModel(Address address)
         {
             Id = address.Id;

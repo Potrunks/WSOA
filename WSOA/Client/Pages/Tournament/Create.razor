@@ -1,7 +1,12 @@
 ﻿@page "/tournament/create/{SubSectionId:int}"
 @using WSOA.Client.Pages.Tournament.Components;
+@using WSOA.Client.Shared.Fields.Inputs.Date
+@using WSOA.Client.Shared.Fields.Inputs.Number
+@using WSOA.Client.Shared.Fields.Selects.NumberText
 @using WSOA.Client.Shared.Forms
 @using WSOA.Client.Shared.Loaders
+@using WSOA.Client.Shared.Resources;
+@using WSOA.Client.Shared.Fields.Selects.CodeText
 @inherits CreateTournamentComponent
 
 @if (IsLoading)
@@ -10,13 +15,23 @@
 }
 else
 {
-    <MultiPageForm Model="@Form"
-               Title="Sub Section Title"
+    <MultiPageForm Model="@FormVM"
+               Title="@DataVM.Description"
                OnSubmit="CreateTournament()"
                MaxPages="1">
         <PageForms>
             <PageFormContainer PageForm="1">
                 <Fields>
+                    <CodeTextSelectField Label="@MainLabelResources.SEASON"
+                                     Options="@DataVM.SelectableSeasons.ToDictionary(sea => sea, sea => sea)"
+                                     @bind-InputValue="@FormVM.Season" />
+                    <DatePickerField Label="@MainLabelResources.START_DATE"
+                                 @bind-InputValue="@FormVM.StartDate" />
+                    <IntegerInputField Label="@MainLabelResources.BUY_IN"
+                                   @bind-InputValue="@FormVM.BuyIn" />
+                    <IntegerTextSelectField Label="@MainLabelResources.ADDRESS"
+                                        Options="@DataVM.SelectableAddresses.ToDictionary(adr => adr.Id, adr => adr.Content)"
+                                        @bind-InputValue="@FormVM.AddressId"/>
                 </Fields>
             </PageFormContainer>
         </PageForms>

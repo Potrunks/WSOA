@@ -192,6 +192,19 @@ namespace WSOA.Test
             return addresses;
         }
 
+        public MainNavSubSection CreateMainNavSubSection()
+        {
+            return new MainNavSubSection
+            {
+                Id = 1,
+                Description = "Faire un truc",
+                Label = "Truc",
+                MainNavSectionId = 1,
+                Order = 0,
+                Url = "/url"
+            };
+        }
+
         public void VerifyTransactionManagerCommit(Mock<ITransactionManager> transactionManagerMock)
         {
             transactionManagerMock.Verify(m => m.BeginTransaction(), Times.Once);
