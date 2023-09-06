@@ -64,5 +64,15 @@ namespace WSOA.Server.Controllers
         {
             return _accountBusiness.LogOut(HttpContext.Session);
         }
+
+        /// <summary>
+        /// Clear all token in session.
+        /// </summary>
+        [HttpGet]
+        [Route("api/account/clearSession")]
+        public APICallResult ClearSession()
+        {
+            return _accountBusiness.ClearSession(HttpContext.Session);
+        }
     }
 }

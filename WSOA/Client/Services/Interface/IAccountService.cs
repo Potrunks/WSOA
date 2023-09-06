@@ -29,5 +29,10 @@ namespace WSOA.Client.Services.Interface
         /// Log out the user.
         /// </summary>
         Task<APICallResult> LogOut();
+
+        /// <summary>
+        /// Clear all token in session.
+        /// </summary>
+        Task<APICallResult> ClearSession();
     }
 }

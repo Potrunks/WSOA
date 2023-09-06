@@ -39,6 +39,12 @@ namespace WSOA.Client.Services.Implementation
             return rep.Content.ToObject<APICallResult>();
         }
 
+        public async Task<APICallResult> ClearSession()
+        {
+            HttpResponseMessage rep = await _httpClient.GetAsync(ApiRouteResources.CLEAR_SESSION);
+            return rep.Content.ToObject<APICallResult>();
+        }
+
         public async Task<APICallResult> SignIn(SignInFormViewModel signInFormVM)
         {
             HttpResponseMessage rep = await _httpClient.PostAsync(ApiRouteResources.SIGN_IN, signInFormVM.ToJsonUtf8());
