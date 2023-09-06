@@ -35,16 +35,13 @@ namespace WSOA.Server.Data.Implementation
                 from ss in left_ss.DefaultIfEmpty()
                 join ss_pc in _dbContext.MainNavSubSectionsByProfileCode on ss.Id equals ss_pc.MainNavSubSectionId into left_ss_pc
                 from ss_pc in left_ss_pc.DefaultIfEmpty()
-                where
-                    ss_pc.ProfileCode == profileCode
-                    || ss.Id == null
-                group new { mns, ss } by mns into grouped
+                group new { ss, ss_pc } by mns into grouped
                 select new
                 {
                     MainNavSection = grouped.Key,
-                    MainNavSubSections = grouped.All(g => g.ss == null) ? new List<MainNavSubSection>() : grouped.Select(x => x.ss).ToList()
+                    MainNavSubSections = grouped.All(g => g.ss == null) ? new List<MainNavSubSection>() : grouped.Where(g => g.ss_pc.ProfileCode == profileCode).Select(g => g.ss).ToList()
                 }
-            ).ToDictionary(x => x.MainNavSection, x => x.MainNavSubSections);
+            ).ToDictionary(s => s.MainNavSection, s => s.MainNavSubSections);
         }
     }
 }
