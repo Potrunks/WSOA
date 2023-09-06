@@ -207,9 +207,21 @@ namespace WSOA.Server.Business.Implementation
 
         public APICallResult LogOut(ISession currentSession)
         {
-            APICallResult result = new APICallResult(AccountBusinessResources.LOG_OUT, string.Format(RouteBusinessResources.SIGN_IN_WITH_ERROR_MESSAGE, AccountBusinessResources.LOG_OUT));
+            APICallResult result = new APICallResult(string.Format(RouteBusinessResources.SIGN_IN_WITH_ERROR_MESSAGE, AccountBusinessResources.LOG_OUT));
 
-            currentSession.Clear();
+            ClearSession(currentSession);
+
+            return result;
+        }
+
+        public APICallResult ClearSession(ISession currentSession)
+        {
+            APICallResult result = new APICallResult(null);
+
+            if (!currentSession.Keys.IsNullOrEmpty())
+            {
+                currentSession.Clear();
+            }
 
             return result;
         }

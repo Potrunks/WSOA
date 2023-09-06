@@ -9,5 +9,6 @@
         public const string LOG_OUT = "api/account/logOut";
         public const string CREATE_TOURNAMENT = "api/tournament/create";
         public const string LOAD_CREATE_TOURNAMENT_DATAS = "api/tournament/create/load/{0}";
+        public const string CLEAR_SESSION = "api/account/clearSession";
     }
 }

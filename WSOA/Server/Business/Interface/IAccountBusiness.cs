@@ -30,5 +30,10 @@ namespace WSOA.Server.Business.Interface
         /// Log out the user.
         /// </summary>
         APICallResult LogOut(ISession currentSession);
+
+        /// <summary>
+        /// Clear all token in session.
+        /// </summary>
+        APICallResult ClearSession(ISession currentSession);
     }
 }

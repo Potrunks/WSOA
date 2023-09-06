@@ -36,7 +36,7 @@ namespace WSOA.Client.Pages.SignIn.Component
         {
             _isLoading = true;
 
-            // TODO : Vider token en back
+            AccountService.ClearSession();
             _editContext = new EditContext(_signInFormVM);
             _editContext.EnableDataAnnotationsValidation();
 
