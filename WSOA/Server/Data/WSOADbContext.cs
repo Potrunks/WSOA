@@ -12,6 +12,25 @@ namespace WSOA.Server.Data
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
+            modelBuilder.Entity<PresenceState>().HasData
+            (
+                new PresenceState
+                {
+                    Code = "PRESENT",
+                    Label = "Présent"
+                },
+                new PresenceState
+                {
+                    Code = "MAYBE",
+                    Label = "Peut-être"
+                },
+                new PresenceState
+                {
+                    Code = "ABSENT",
+                    Label = "Absent"
+                }
+            );
+
             modelBuilder.Entity<Profile>().HasData
             (
                 new Profile

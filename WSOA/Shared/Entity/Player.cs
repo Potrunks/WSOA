@@ -28,6 +28,11 @@ namespace WSOA.Shared.Entity
         public int? TotalAddOn { get; set; }
 
         [Required]
+        [ForeignKey(nameof(PresenceState))]
+        public string PresenceStateCode { get; set; }
+        public PresenceState PresenceState { get; set; }
+
+        [Required]
         [DefaultValue(false)]
         public bool WasPresent { get; set; }
 
