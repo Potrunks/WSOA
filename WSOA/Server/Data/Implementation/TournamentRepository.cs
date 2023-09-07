@@ -1,4 +1,5 @@
 ﻿using WSOA.Server.Data.Interface;
+using WSOA.Shared.Dtos;
 using WSOA.Shared.Entity;
 
 namespace WSOA.Server.Data.Implementation
@@ -19,6 +20,24 @@ namespace WSOA.Server.Data.Implementation
                 _dbContext.Tournaments.Add(tournament);
             }
             _dbContext.SaveChanges();
+        }
+
+        public List<TournamentDto> GetTournamentsByIsOver(bool isOver)
+        {
+            return
+            (
+                from tournament in _dbContext.Tournaments
+                join player in _dbContext.Players on tournament.Id equals player.PlayedTournamentId into left_player
+                from player in left_player.DefaultIfEmpty()
+                where tournament.IsOver == isOver
+                group new { player } by tournament into grouped
+                select new TournamentDto
+                {
+                    Tournament = grouped.Key,
+                    Players = grouped.Select(g => g.player)
+                }
+            )
+            .ToList();
         }
     }
 }
