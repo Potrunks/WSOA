@@ -114,5 +114,30 @@ namespace WSOA.Server.Business.Implementation
 
             return result;
         }
+
+        public LoadFutureTournamentCallResult LoadFutureTournamentDatas(int subSectionId, ISession session)
+        {
+            LoadFutureTournamentCallResult result = new LoadFutureTournamentCallResult();
+
+            try
+            {
+                session.CanUserPerformAction(_menuRepository, subSectionId);
+                // TODO : Charger les données
+            }
+            catch (FunctionalException e)
+            {
+                string errorMsg = e.Message;
+                _log.Error(errorMsg);
+                return new LoadFutureTournamentCallResult(errorMsg, e.RedirectUrl);
+            }
+            catch (Exception e)
+            {
+                _log.Error(e.Message);
+                string errorMsg = MainBusinessResources.TECHNICAL_ERROR;
+                return new LoadFutureTournamentCallResult(errorMsg, string.Format(RouteBusinessResources.ERROR, errorMsg));
+            }
+
+            return result;
+        }
     }
 }
