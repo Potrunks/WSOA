@@ -4,6 +4,7 @@ using WSOA.Server.Business.Interface;
 using WSOA.Server.Business.Resources;
 using WSOA.Server.Business.Utils;
 using WSOA.Server.Data.Interface;
+using WSOA.Shared.Dtos;
 using WSOA.Shared.Entity;
 using WSOA.Shared.Exceptions;
 using WSOA.Shared.Result;
@@ -122,7 +123,9 @@ namespace WSOA.Server.Business.Implementation
             try
             {
                 session.CanUserPerformAction(_menuRepository, subSectionId);
-                // TODO : Charger les données
+                int currentUserId = session.GetCurrentUserId();
+                List<TournamentDto> tournamentDtos = _tournamentRepository.GetTournamentDtosByIsOver(false);
+                result.Datas = tournamentDtos.Select(t => new FutureTournamentDataViewModel(t, currentUserId)).ToList();
             }
             catch (FunctionalException e)
             {

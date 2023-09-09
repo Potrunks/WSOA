@@ -13,6 +13,6 @@ namespace WSOA.Server.Data.Interface
         /// <summary>
         /// Get tournaments and players attached by is over value.
         /// </summary>
-        List<TournamentDto> GetTournamentsByIsOver(bool isOver);
+        List<TournamentDto> GetTournamentDtosByIsOver(bool isOver);
     }
 }

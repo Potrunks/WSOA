@@ -22,7 +22,7 @@ namespace WSOA.Server.Data.Implementation
             _dbContext.SaveChanges();
         }
 
-        public List<TournamentDto> GetTournamentsByIsOver(bool isOver)
+        public List<TournamentDto> GetTournamentDtosByIsOver(bool isOver)
         {
             return
             (

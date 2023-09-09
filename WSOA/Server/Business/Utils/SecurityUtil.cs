@@ -50,5 +50,16 @@ namespace WSOA.Server.Business.Utils
 
             return subSection;
         }
+
+        public static int GetCurrentUserId(this ISession session)
+        {
+            string? currentUserId = session.GetString(HttpSessionResources.KEY_USER_ID);
+            if (currentUserId == null)
+            {
+                string errorMsg = MainBusinessResources.USER_NOT_CONNECTED;
+                throw new FunctionalException(errorMsg, string.Format(RouteBusinessResources.SIGN_IN_WITH_ERROR_MESSAGE, errorMsg));
+            }
+            return int.Parse(currentUserId);
+        }
     }
 }

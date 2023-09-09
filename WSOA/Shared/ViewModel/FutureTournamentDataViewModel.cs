@@ -15,7 +15,7 @@ namespace WSOA.Shared.ViewModel
             StartDate = tournamentDto.Tournament.StartDate;
             BuyIn = tournamentDto.Tournament.BuyIn;
             Address = tournamentDto.Address.Content;
-            PlayersDataVM = tournamentDto.Players.Select(p => new PlayerDataViewModel(p.User, p.Player.PresenceStateCode));
+            PlayerDatasVM = tournamentDto.Players.Select(p => new PlayerDataViewModel(p.User, p.Player.PresenceStateCode));
             CurrentUserPresenceStateCode = tournamentDto.Players.SingleOrDefault(p => p.User.Id == currentUserId)?.Player.PresenceStateCode;
         }
 
@@ -27,7 +27,7 @@ namespace WSOA.Shared.ViewModel
 
         public string Address { get; set; }
 
-        public IEnumerable<PlayerDataViewModel> PlayersDataVM { get; set; }
+        public IEnumerable<PlayerDataViewModel> PlayerDatasVM { get; set; }
 
         public string? CurrentUserPresenceStateCode { get; set; }
     }

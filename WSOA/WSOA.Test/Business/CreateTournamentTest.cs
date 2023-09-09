@@ -48,7 +48,7 @@ namespace WSOA.Test.Business
 
             _mainNavSubSectionConcerned = CreateMainNavSubSection();
 
-            _sessionMock = CreateISessionMock(ProfileResources.ORGANIZER_CODE);
+            _sessionMock = CreateISessionMock(ProfileResources.ORGANIZER_CODE, null);
 
             _transactionManagerMock = CreateITransactionManagerMock();
 
@@ -101,7 +101,7 @@ namespace WSOA.Test.Business
         [TestMethod]
         public void ShouldNotCreateTournament_WhenUserNotConnected()
         {
-            _sessionMock = CreateISessionMock(null);
+            _sessionMock = CreateISessionMock(null, null);
 
             APICallResult result = _tournamentBusiness.CreateTournament(_form, _sessionMock.Object);
 
@@ -116,7 +116,7 @@ namespace WSOA.Test.Business
         [TestMethod]
         public void ShouldNotCreateTournament_WhenUserCannotPerformAction()
         {
-            _sessionMock = CreateISessionMock(ProfileResources.ADMINISTRATOR_CODE);
+            _sessionMock = CreateISessionMock(ProfileResources.ADMINISTRATOR_CODE, null);
             _menuRepositoryMock.Setup(m => m.GetMainNavSubSectionByIdAndProfileCode(It.Is<string>(s => s != ProfileResources.ORGANIZER_CODE), It.IsAny<int>()))
                                .Returns(() => null);
 
@@ -163,7 +163,7 @@ namespace WSOA.Test.Business
         [TestMethod]
         public void ShouldDontLoadTournamentCreationDatas_WhenUserNotConnected()
         {
-            _sessionMock = CreateISessionMock(null);
+            _sessionMock = CreateISessionMock(null, null);
 
             CreateTournamentCallResult result = _tournamentBusiness.LoadTournamentCreationDatas(1, _sessionMock.Object);
 
@@ -177,7 +177,7 @@ namespace WSOA.Test.Business
         [TestMethod]
         public void ShouldNotLoadTournamentCreationDatas_WhenUserCannotPerformAction()
         {
-            _sessionMock = CreateISessionMock(ProfileResources.ADMINISTRATOR_CODE);
+            _sessionMock = CreateISessionMock(ProfileResources.ADMINISTRATOR_CODE, null);
             _menuRepositoryMock.Setup(m => m.GetMainNavSubSectionByIdAndProfileCode(It.Is<string>(s => s != ProfileResources.ORGANIZER_CODE), It.IsAny<int>()))
                                .Returns(() => null);
 
