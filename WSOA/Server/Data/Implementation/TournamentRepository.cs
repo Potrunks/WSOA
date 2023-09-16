@@ -48,5 +48,16 @@ namespace WSOA.Server.Data.Implementation
             )
             .ToList();
         }
+
+        public Tournament GetTournamentById(int tournamentId)
+        {
+            return
+            (
+                from tournament in _dbContext.Tournaments
+                where tournament.Id == tournamentId
+                select tournament
+            )
+            .Single();
+        }
     }
 }

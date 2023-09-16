@@ -119,6 +119,12 @@ namespace WSOA.Test
             return mock;
         }
 
+        public Mock<IPlayerRepository> CreateIPlayerRepositoryMock()
+        {
+            Mock<IPlayerRepository> mock = new Mock<IPlayerRepository>();
+            return mock;
+        }
+
         public LinkAccountCreation CreateLinkAccountCreation()
         {
             return new LinkAccountCreation
@@ -245,12 +251,12 @@ namespace WSOA.Test
             };
         }
 
-        public Player CreatePlayer(int id)
+        public Player CreatePlayer(int id, string? presenceStateCode = null)
         {
             return new Player
             {
                 Id = id,
-                PresenceStateCode = PresenceStateResources.PRESENT_CODE
+                PresenceStateCode = presenceStateCode != null ? presenceStateCode : PresenceStateResources.PRESENT_CODE
             };
         }
 
@@ -271,6 +277,15 @@ namespace WSOA.Test
                 result.Add(CreatePlayerDto(i));
             }
             return result;
+        }
+
+        public SignUpTournamentFormViewModel CreateSignUpTournamentFormViewModel(int tournamentId, string presenceStateCode)
+        {
+            return new SignUpTournamentFormViewModel
+            {
+                TournamentId = tournamentId,
+                PresenceStateCode = presenceStateCode
+            };
         }
 
         public void VerifyTransactionManagerCommit(Mock<ITransactionManager> transactionManagerMock)

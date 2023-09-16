@@ -21,6 +21,7 @@ namespace WSOA.Server.Business.Implementation
         private readonly IMailService _mailService;
         private readonly IUserRepository _userRepository;
         private readonly IAddressRepository _addressRepository;
+        private readonly IPlayerRepository _playerRepository;
 
         private readonly ILog _log = LogManager.GetLogger(nameof(TournamentBusiness));
 
@@ -31,7 +32,8 @@ namespace WSOA.Server.Business.Implementation
             ITournamentRepository tournamentRepository,
             IMailService mailService,
             IUserRepository userRepository,
-            IAddressRepository addressRepository
+            IAddressRepository addressRepository,
+            IPlayerRepository playerRepository
         )
         {
             _transactionManager = transactionManager;
@@ -40,6 +42,7 @@ namespace WSOA.Server.Business.Implementation
             _mailService = mailService;
             _userRepository = userRepository;
             _addressRepository = addressRepository;
+            _playerRepository = playerRepository;
         }
 
         public APICallResult CreateTournament(TournamentCreationFormViewModel form, ISession session)
@@ -122,10 +125,10 @@ namespace WSOA.Server.Business.Implementation
 
             try
             {
-                session.CanUserPerformAction(_menuRepository, subSectionId);
+                MainNavSubSection mainNavSubSection = session.CanUserPerformAction(_menuRepository, subSectionId);
                 int currentUserId = session.GetCurrentUserId();
                 List<TournamentDto> tournamentDtos = _tournamentRepository.GetTournamentDtosByIsOver(false);
-                result.Datas = tournamentDtos.Select(t => new FutureTournamentDataViewModel(t, currentUserId)).ToList();
+                result.Datas = tournamentDtos.Select(t => new FutureTournamentDataViewModel(t, currentUserId, mainNavSubSection.Description)).ToList();
             }
             catch (FunctionalException e)
             {
@@ -140,6 +143,59 @@ namespace WSOA.Server.Business.Implementation
                 return new LoadFutureTournamentCallResult(errorMsg, string.Format(RouteBusinessResources.ERROR, errorMsg));
             }
 
+            return result;
+        }
+
+        public SignUpTournamentCallResult SignUpTournament(SignUpTournamentFormViewModel formVM, ISession session)
+        {
+            SignUpTournamentCallResult result = new SignUpTournamentCallResult(null);
+
+            int tournamentId = formVM.TournamentId;
+            string presenceStateCode = formVM.PresenceStateCode;
+
+            try
+            {
+                _transactionManager.BeginTransaction();
+
+                int currentUsrId = session.GetCurrentUserId();
+
+                Tournament currentTournament = _tournamentRepository.GetTournamentById(tournamentId);
+                if (currentTournament.IsOver)
+                {
+                    string errorMsg = TournamentBusinessResources.TOURNAMENT_ALREADY_OVER;
+                    throw new Exception(errorMsg);
+                }
+
+                Player? player = _playerRepository.GetPlayerByTournamentIdAndUserId(tournamentId, currentUsrId);
+                if (player == null)
+                {
+                    player = new Player
+                    {
+                        PlayedTournamentId = tournamentId,
+                        UserId = currentUsrId
+                    };
+                }
+                player.PresenceStateCode = presenceStateCode;
+                _playerRepository.SavePlayer(player);
+
+                result.PlayerSignedUp = new PlayerDataViewModel(_userRepository.GetUserById(currentUsrId), presenceStateCode);
+
+                _transactionManager.CommitTransaction();
+            }
+            catch (FunctionalException e)
+            {
+                _transactionManager.RollbackTransaction();
+                string errorMsg = e.Message;
+                _log.Error(errorMsg);
+                return new SignUpTournamentCallResult(errorMsg, e.RedirectUrl);
+            }
+            catch (Exception e)
+            {
+                _transactionManager.RollbackTransaction();
+                _log.Error(e.Message);
+                string errorMsg = MainBusinessResources.TECHNICAL_ERROR;
+                return new SignUpTournamentCallResult(errorMsg, string.Format(RouteBusinessResources.ERROR, errorMsg));
+            }
             return result;
         }
     }

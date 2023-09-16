@@ -78,7 +78,8 @@ namespace WSOA.Test.Business
                 _tournamentRepository.Object,
                 _mailServiceMock.Object,
                 _userRepositoryMock.Object,
-                _addressRepositoryMock.Object
+                _addressRepositoryMock.Object,
+                null
             );
         }
 

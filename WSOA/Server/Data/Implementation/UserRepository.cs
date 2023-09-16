@@ -41,5 +41,10 @@ namespace WSOA.Server.Data.Implementation
         {
             return _dbContext.Users;
         }
+
+        public User GetUserById(int usrId)
+        {
+            return _dbContext.Users.Single(usr => usr.Id == usrId);
+        }
     }
 }

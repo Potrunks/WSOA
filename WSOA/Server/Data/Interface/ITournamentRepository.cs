@@ -14,5 +14,10 @@ namespace WSOA.Server.Data.Interface
         /// Get tournaments and players attached by is over value.
         /// </summary>
         List<TournamentDto> GetTournamentDtosByIsOver(bool isOver);
+
+        /// <summary>
+        /// Get tournament by ID.
+        /// </summary>
+        Tournament GetTournamentById(int tournamentId);
     }
 }

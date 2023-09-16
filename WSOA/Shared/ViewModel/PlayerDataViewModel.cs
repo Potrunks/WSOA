@@ -14,7 +14,10 @@ namespace WSOA.Shared.ViewModel
             FirstName = user.FirstName;
             LastName = user.LastName;
             PresenceStateCode = presenceStateCode;
+            UserId = user.Id;
         }
+
+        public int UserId { get; set; }
 
         public string FirstName { get; set; }
 

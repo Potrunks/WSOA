@@ -11,5 +11,6 @@
         public const string LOAD_CREATE_TOURNAMENT_DATAS = "api/tournament/create/load/{0}";
         public const string LOAD_FUTURE_TOURNAMENT_DATAS = "api/tournament/future/load/{0}";
         public const string CLEAR_SESSION = "api/account/clearSession";
+        public const string SIGN_UP_TOURNAMENT = "api/tournament/future/signUp";
     }
 }

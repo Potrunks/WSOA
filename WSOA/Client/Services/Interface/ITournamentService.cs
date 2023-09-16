@@ -19,5 +19,10 @@ namespace WSOA.Client.Services.Interface
         /// Load future tournament datas.
         /// </summary>
         Task<LoadFutureTournamentCallResult> LoadFutureTournamentDatas(int subSectionId);
+
+        /// <summary>
+        /// Sign up tournament.
+        /// </summary>
+        Task<SignUpTournamentCallResult> SignUpTournament(SignUpTournamentFormViewModel form);
     }
 }

@@ -32,7 +32,7 @@ namespace WSOA.Server.Business.Utils
         /// <summary>
         /// Check if user can perform action and return sub section performing.
         /// </summary>
-        public static MainNavSubSection? CanUserPerformAction(this ISession session, IMenuRepository menuRepository, int subSectionId)
+        public static MainNavSubSection CanUserPerformAction(this ISession session, IMenuRepository menuRepository, int subSectionId)
         {
             string? profileCode = session.GetString(HttpSessionResources.KEY_PROFILE_CODE);
             if (string.IsNullOrWhiteSpace(profileCode))

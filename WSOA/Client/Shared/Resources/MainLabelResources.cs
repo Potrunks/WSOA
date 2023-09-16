@@ -12,5 +12,6 @@
         public const string START_DATE = "Date de début";
         public const string BUY_IN = "Buy-In";
         public const string ADDRESS = "Adresse";
+        public const string NO_FUTURE_TOURNAMENT = "Pas de tournoi prévu";
     }
 }

@@ -47,5 +47,15 @@ namespace WSOA.Server.Controllers
         {
             return _tournamentBusiness.LoadFutureTournamentDatas(subSectionId, HttpContext.Session);
         }
+
+        /// <summary>
+        /// Sign up current user into the tournament
+        /// </summary>
+        [HttpPost]
+        [Route("api/tournament/future/signUp")]
+        public SignUpTournamentCallResult SignUpTournament([FromBody] SignUpTournamentFormViewModel form)
+        {
+            return _tournamentBusiness.SignUpTournament(form, HttpContext.Session);
+        }
     }
 }

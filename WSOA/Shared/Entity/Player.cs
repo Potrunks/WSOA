@@ -6,6 +6,11 @@ namespace WSOA.Shared.Entity
 {
     public class Player
     {
+        public Player()
+        {
+
+        }
+
         [Key]
         [Required]
         public int Id { get; set; }

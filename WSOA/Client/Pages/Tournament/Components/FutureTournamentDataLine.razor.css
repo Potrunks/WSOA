@@ -1,0 +1,78 @@
+﻿.container__main {
+    background-color: #EDE8DF;
+    width: 300px;
+    border-radius: 5px;
+}
+
+.panelButtons__collapsable {
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+}
+
+    .panelButtons__collapsable > img {
+        height: 33px;
+    }
+
+.container__data-noCollapsable {
+    display: flex;
+    flex-direction: column;
+    padding-left: 10px;
+    padding-bottom: 10px;
+}
+
+.container__data-presenceCounter {
+    display: flex;
+    align-items: center;
+}
+
+.presenceCounter__maybe {
+    margin-left: 10px;
+}
+
+    .presenceCounter__presence > img,
+    .presenceCounter__maybe > img {
+        width: 25px;
+    }
+
+    .presenceCounter__maybe > img {
+        opacity: 0.33;
+    }
+
+.container__data-players {
+    padding-left: 10px;
+    padding-bottom: 10px;
+}
+
+    .container__data-players > .title {
+        font-weight: 500;
+        border-bottom: 2px solid red;
+    }
+
+.players__block {
+    margin-top: 10px;
+}
+
+.panelButtons__actions {
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+    padding-bottom: 10px;
+}
+
+.action {
+    width: 92px;
+    height: 40px;
+    border-radius: 5px;
+    border: 1px solid;
+    background-color: white;
+    font-size: 16px;
+}
+
+.action.present {
+    color: seagreen;
+}
+
+.action.absent {
+    color: indianred;
+}
