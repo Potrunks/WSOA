@@ -2,6 +2,7 @@
     background-color: #EDE8DF;
     width: 300px;
     border-radius: 5px;
+    margin-bottom: 10px;
 }
 
 .panelButtons__collapsable {
@@ -58,6 +59,7 @@
     justify-content: space-around;
     align-items: center;
     padding-bottom: 10px;
+    height: 50px;
 }
 
 .action {
@@ -75,4 +77,19 @@
 
 .action.absent {
     color: indianred;
+}
+
+.presenceState__response-logo {
+    width: 25px;
+}
+
+@media only screen and (max-width: 280px) {
+    .container__main {
+        width: 266px;
+    }
+
+    .action {
+        width: 84px;
+        font-size: 14px;
+    }
 }

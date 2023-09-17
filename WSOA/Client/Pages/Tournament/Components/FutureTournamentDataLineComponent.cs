@@ -25,10 +25,13 @@ namespace WSOA.Client.Pages.Tournament.Components
 
         public bool IsCollapse { get; set; }
 
+        public bool IsProcess { get; set; }
+
         public SignUpTournamentFormViewModel SignUpForm { get; set; }
 
         protected override void OnInitialized()
         {
+            IsProcess = false;
             LoadPlayersByPresenceStateCode();
             IsCollapse = true;
             SignUpForm = new SignUpTournamentFormViewModel
@@ -60,6 +63,8 @@ namespace WSOA.Client.Pages.Tournament.Components
 
         private async Task SignUpTournament(string presenceStateCode)
         {
+            IsProcess = true;
+
             SignUpForm.PresenceStateCode = presenceStateCode;
 
             SignUpTournamentCallResult result = await TournamentService.SignUpTournament(SignUpForm);
@@ -83,6 +88,8 @@ namespace WSOA.Client.Pages.Tournament.Components
                 }
                 LoadPlayersByPresenceStateCode();
             }
+
+            IsProcess = false;
         }
 
         public async Task UpdateSignUpTournament()

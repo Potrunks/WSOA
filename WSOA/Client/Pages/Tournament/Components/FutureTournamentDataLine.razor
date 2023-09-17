@@ -1,4 +1,6 @@
-﻿@using WSOA.Shared.Resources;
+﻿@using WSOA.Client.Shared.Buttons.Resources;
+@using WSOA.Client.Shared.Loaders
+@using WSOA.Shared.Resources;
 @using WSOA.Shared.ViewModel;
 @inherits FutureTournamentDataLineComponent
 
@@ -63,18 +65,27 @@
             }
         </div>
     }
-    @*// TODO : Mettre en place un loader*@
     <div class="panelButtons__actions">
-        @if (SignUpForm.PresenceStateCode == null)
+        @if (IsProcess)
         {
-            <button class="action present" type="button" onclick="@SignUpPresentTournament">@PresenceStateResources.PRESENT_LABEL</button>
-            <button class="action" type="button" onclick="@SignUpMaybeTournament">@PresenceStateResources.MAYBE_LABEL</button>
-            <button class="action absent" type="button" onclick="@SignUpAbsentTournament">@PresenceStateResources.ABSENT_LABEL</button>
+            <LineLoader Height="40" />
         }
         else
         {
-            <span>@PresenceStateResources.PRESENCE_LABELS_BY_CODE[SignUpForm.PresenceStateCode]</span>
-            <button type="button" onclick="@UpdateSignUpTournament">Modifier</button>
+            @if (SignUpForm.PresenceStateCode == null)
+            {
+                <button class="action present" type="button" onclick="@SignUpPresentTournament">@PresenceStateResources.PRESENT_LABEL</button>
+                <button class="action" type="button" onclick="@SignUpMaybeTournament">@PresenceStateResources.MAYBE_LABEL</button>
+                <button class="action absent" type="button" onclick="@SignUpAbsentTournament">@PresenceStateResources.ABSENT_LABEL</button>
+            }
+            else
+            {
+                <div class="presenceState__response">
+                    <img class="presenceState__response-logo" src="images/calendar_response_event.png" />
+                    <span class="presenceState__response-label">@PresenceStateResources.PRESENCE_LABELS_BY_CODE[SignUpForm.PresenceStateCode]</span>
+                </div>
+                <button class="action" type="button" onclick="@UpdateSignUpTournament">@ButtonLabelResources.UPDATE</button>
+            }
         }
     </div>
 </div>
