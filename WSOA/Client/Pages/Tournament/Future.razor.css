@@ -14,13 +14,13 @@
     align-items: center;
     font-size: 18px;
     word-wrap: break-word;
-    height: 15%;
+    height: 10%;
     text-align: center;
 }
 
 .container__datas {
     overflow: auto;
-    height: 85%;
+    height: 90%;
 }
 
 .container__prompt {
@@ -74,7 +74,19 @@
 
 @media only screen and (min-height: 1024px) {
     .container__main {
-        height: 100%;
+        height: 916px;
+    }
+}
+
+@media only screen and (min-height: 1180px) {
+    .container__main {
+        height: 1058px;
+    }
+}
+
+@media only screen and (min-height: 1368px) {
+    .container__main {
+        height: 1229px;
     }
 }
 
