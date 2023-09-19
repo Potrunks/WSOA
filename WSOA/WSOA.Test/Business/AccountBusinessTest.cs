@@ -35,7 +35,7 @@ namespace WSOA.Test.Business
             _transactionManagerMock = CreateITransactionManagerMock();
             _mailServiceMock = CreateIMailServiceMock();
             _accountBusiness = new AccountBusiness(_accountRepositoryMock.Object, _userRepositoryMock.Object, _menuRepositoryMock.Object, _transactionManagerMock.Object, _mailServiceMock.Object);
-            _sessionMock = CreateISessionMock(ProfileResources.ADMINISTRATOR_CODE);
+            _sessionMock = CreateISessionMock(ProfileResources.ADMINISTRATOR_CODE, null);
 
             _signInFormVM = new SignInFormViewModel
             {
@@ -104,7 +104,7 @@ namespace WSOA.Test.Business
         [TestMethod]
         public void ShouldDontCreateLinkAccountCreation_WhenUserNotConnected()
         {
-            _sessionMock = CreateISessionMock(null);
+            _sessionMock = CreateISessionMock(null, null);
 
             APICallResult result = _accountBusiness.CreateLinkAccountCreation(_linkAccountCreationVM, _sessionMock.Object);
 
@@ -211,7 +211,7 @@ namespace WSOA.Test.Business
         [TestMethod]
         public void ShouldNotLoadInviteData_WhenUserNotConnected()
         {
-            _sessionMock = CreateISessionMock(null);
+            _sessionMock = CreateISessionMock(null, null);
 
             InviteCallResult result = _accountBusiness.LoadInviteDatas(1, _sessionMock.Object);
 

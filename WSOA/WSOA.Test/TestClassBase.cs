@@ -1,24 +1,30 @@
 ﻿using Microsoft.AspNetCore.Http;
+using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Moq;
 using System.Text;
 using WSOA.Server.Business.Interface;
 using WSOA.Server.Business.Resources;
 using WSOA.Server.Data.Interface;
+using WSOA.Shared.Dtos;
 using WSOA.Shared.Entity;
 using WSOA.Shared.Resources;
+using WSOA.Shared.Result;
 using WSOA.Shared.ViewModel;
 
 namespace WSOA.Test
 {
+    [TestClass]
     public class TestClassBase
     {
-        public Mock<ISession> CreateISessionMock(string currentProfileCodeIntoSession)
+        public Mock<ISession> CreateISessionMock(string? currentProfileCodeIntoSession, int? currentUserIdIntoSession)
         {
             Mock<ISession> mock = new Mock<ISession>();
 
-            byte[] profileCodeIntoBytes = !string.IsNullOrWhiteSpace(currentProfileCodeIntoSession) ? Encoding.UTF8.GetBytes(currentProfileCodeIntoSession) : null;
-            mock.Setup(m => m.TryGetValue(It.IsAny<string>(), out profileCodeIntoBytes))
-                .Returns(true);
+            byte[]? profileCodeIntoBytes = !string.IsNullOrWhiteSpace(currentProfileCodeIntoSession) ? Encoding.UTF8.GetBytes(currentProfileCodeIntoSession) : null;
+            mock.Setup(m => m.TryGetValue(HttpSessionResources.KEY_PROFILE_CODE, out profileCodeIntoBytes));
+
+            byte[]? currentUserIdIntoBytes = currentUserIdIntoSession != null ? Encoding.UTF8.GetBytes(currentUserIdIntoSession.ToString()) : null;
+            mock.Setup(m => m.TryGetValue(HttpSessionResources.KEY_USER_ID, out currentUserIdIntoBytes));
 
             return mock;
         }
@@ -110,6 +116,12 @@ namespace WSOA.Test
         public Mock<IAddressRepository> CreateIAddressRepositoryMock()
         {
             Mock<IAddressRepository> mock = new Mock<IAddressRepository>();
+            return mock;
+        }
+
+        public Mock<IPlayerRepository> CreateIPlayerRepositoryMock()
+        {
+            Mock<IPlayerRepository> mock = new Mock<IPlayerRepository>();
             return mock;
         }
 
@@ -205,6 +217,77 @@ namespace WSOA.Test
             };
         }
 
+        public Tournament CreateTournament(int id)
+        {
+            return new Tournament
+            {
+                Id = id,
+                AddressId = id,
+                BuyIn = 1,
+                IsInProgress = false,
+                IsOver = false,
+                Season = "Season " + id.ToString(),
+                StartDate = DateTime.UtcNow.AddDays(1)
+            };
+        }
+
+        public IEnumerable<TournamentDto> CreateTournamentDtos(int number, int nbPlayersByTournament)
+        {
+            List<TournamentDto> result = new List<TournamentDto>();
+            for (int i = 1; i <= number; i++)
+            {
+                result.Add(CreateTournamentDto(i, nbPlayersByTournament));
+            }
+            return result;
+        }
+
+        public TournamentDto CreateTournamentDto(int id, int nbPlayersByTournament)
+        {
+            return new TournamentDto
+            {
+                Address = CreateAddress(id),
+                Players = CreatePlayerDtos(nbPlayersByTournament),
+                Tournament = CreateTournament(id)
+            };
+        }
+
+        public Player CreatePlayer(int id, string? presenceStateCode = null)
+        {
+            return new Player
+            {
+                Id = id,
+                PresenceStateCode = presenceStateCode != null ? presenceStateCode : PresenceStateResources.PRESENT_CODE
+            };
+        }
+
+        public PlayerDto CreatePlayerDto(int id)
+        {
+            return new PlayerDto
+            {
+                Player = CreatePlayer(id),
+                User = CreateUser(id)
+            };
+        }
+
+        public IEnumerable<PlayerDto> CreatePlayerDtos(int number)
+        {
+            List<PlayerDto> result = new List<PlayerDto>();
+            for (int i = 1; i <= number; i++)
+            {
+                result.Add(CreatePlayerDto(i));
+            }
+            return result;
+        }
+
+        public SignUpTournamentFormViewModel CreateSignUpTournamentFormViewModel(int tournamentId, string presenceStateCode)
+        {
+            return new SignUpTournamentFormViewModel
+            {
+                TournamentId = tournamentId,
+                PresenceStateCode = presenceStateCode
+            };
+        }
+
         public void VerifyTransactionManagerCommit(Mock<ITransactionManager> transactionManagerMock)
         {
             transactionManagerMock.Verify(m => m.BeginTransaction(), Times.Once);
@@ -217,6 +300,22 @@ namespace WSOA.Test
             transactionManagerMock.Verify(m => m.BeginTransaction(), Times.Once);
             transactionManagerMock.Verify(m => m.CommitTransaction(), Times.Never);
             transactionManagerMock.Verify(m => m.RollbackTransaction(), Times.Once);
+        }
+
+        public void VerifyAPICallResultSuccess(APICallResult result, string? expectedRedirectUrl)
+        {
+            Assert.AreEqual(true, result.Success);
+            Assert.AreEqual(expectedRedirectUrl, result.RedirectUrl);
+            Assert.AreEqual(null, result.WarningMessage);
+            Assert.AreEqual(null, result.ErrorMessage);
+        }
+
+        public void VerifyAPICallResultError(APICallResult result, string? expectedRedirectUrl, string expectedErrorMsg)
+        {
+            Assert.AreEqual(false, result.Success);
+            Assert.AreEqual(expectedRedirectUrl, result.RedirectUrl);
+            Assert.AreEqual(null, result.WarningMessage);
+            Assert.AreEqual(expectedErrorMsg, result.ErrorMessage);
         }
     }
 }

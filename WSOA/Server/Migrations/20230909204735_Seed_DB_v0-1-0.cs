@@ -85,6 +85,18 @@ namespace WSOA.Server.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "PresenceStates",
+                columns: table => new
+                {
+                    Code = table.Column<string>(type: "nvarchar(450)", nullable: false),
+                    Label = table.Column<string>(type: "nvarchar(max)", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_PresenceStates", x => x.Code);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "Profiles",
                 columns: table => new
                 {
@@ -210,6 +222,7 @@ namespace WSOA.Server.Migrations
                     EliminatorPlayerId = table.Column<int>(type: "int", nullable: true),
                     TotalReBuy = table.Column<int>(type: "int", nullable: true),
                     TotalAddOn = table.Column<int>(type: "int", nullable: true),
+                    PresenceStateCode = table.Column<string>(type: "nvarchar(450)", nullable: false),
                     WasPresent = table.Column<bool>(type: "bit", nullable: false),
                     WasFinalTable = table.Column<bool>(type: "bit", nullable: false),
                     TotalWinningsAmount = table.Column<int>(type: "int", nullable: true),
@@ -223,6 +236,12 @@ namespace WSOA.Server.Migrations
                         column: x => x.EliminatorPlayerId,
                         principalTable: "Players",
                         principalColumn: "Id");
+                    table.ForeignKey(
+                        name: "FK_Players_PresenceStates_PresenceStateCode",
+                        column: x => x.PresenceStateCode,
+                        principalTable: "PresenceStates",
+                        principalColumn: "Code",
+                        onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
                         name: "FK_Players_Tournaments_PlayedTournamentId",
                         column: x => x.PlayedTournamentId,
@@ -267,11 +286,7 @@ namespace WSOA.Server.Migrations
             migrationBuilder.InsertData(
                 table: "Accounts",
                 columns: new[] { "Id", "Login", "Password" },
-                values: new object[,]
-                {
-                    { 1, "Potrunks", "1a753d495dab76bf6288f5b5f9736c3af6b60a5bb819f4de4bf75f79af085181" },
-                    { 2, "PotrunksOrga", "1a753d495dab76bf6288f5b5f9736c3af6b60a5bb819f4de4bf75f79af085181" }
-                });
+                values: new object[] { 1, "Potrunks", "1a753d495dab76bf6288f5b5f9736c3af6b60a5bb819f4de4bf75f79af085181" });
 
             migrationBuilder.InsertData(
                 table: "Addresses",
@@ -294,6 +309,16 @@ namespace WSOA.Server.Migrations
                 });
 
             migrationBuilder.InsertData(
+                table: "PresenceStates",
+                columns: new[] { "Code", "Label" },
+                values: new object[,]
+                {
+                    { "ABSENT", "Absent" },
+                    { "MAYBE", "Peut-être" },
+                    { "PRESENT", "Présent" }
+                });
+
+            migrationBuilder.InsertData(
                 table: "Profiles",
                 columns: new[] { "Code", "Name" },
                 values: new object[,]
@@ -311,17 +336,14 @@ namespace WSOA.Server.Migrations
                 {
                     { 1, "Inviter un nouvel utilisateur", "Inviter", 4, 0, "/account/invite" },
                     { 2, "Deconnexion", "Deconnexion", 4, 1, "/account/logOut" },
-                    { 3, "Créer un tournoi", "Créer tournoi", 3, 0, "/tournament/create" }
+                    { 3, "Créer un tournoi", "Créer tournoi", 3, 0, "/tournament/create" },
+                    { 4, "Futurs tournois", "Futurs tournois", 3, 1, "/tournament/future" }
                 });
 
             migrationBuilder.InsertData(
                 table: "Users",
                 columns: new[] { "Id", "AccountId", "Email", "FirstName", "LastName", "ProfileCode" },
-                values: new object[,]
-                {
-                    { 1, 1, "potrunks@hotmail.com", "Alexis", "ARRIAL", "ADMIN" },
-                    { 2, 2, "arrial.alexis@hotmail.fr", "Alexis", "ARRIAL", "ORGA" }
-                });
+                values: new object[] { 1, 1, "potrunks@hotmail.com", "Alexis", "ARRIAL", "ADMIN" });
 
             migrationBuilder.InsertData(
                 table: "MainNavSubSectionsByProfileCode",
@@ -333,7 +355,11 @@ namespace WSOA.Server.Migrations
                     { 3, 2, "ORGA" },
                     { 4, 2, "PLAYER" },
                     { 5, 2, "GUEST" },
-                    { 6, 3, "ORGA" }
+                    { 6, 3, "ORGA" },
+                    { 7, 4, "ADMIN" },
+                    { 8, 4, "ORGA" },
+                    { 9, 4, "PLAYER" },
+                    { 10, 4, "GUEST" }
                 });
 
             migrationBuilder.CreateIndex(
@@ -370,6 +396,11 @@ namespace WSOA.Server.Migrations
                 name: "IX_Players_PlayedTournamentId",
                 table: "Players",
                 column: "PlayedTournamentId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Players_PresenceStateCode",
+                table: "Players",
+                column: "PresenceStateCode");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Players_UserId",
@@ -412,6 +443,9 @@ namespace WSOA.Server.Migrations
 
             migrationBuilder.DropTable(
                 name: "MainNavSubSections");
+
+            migrationBuilder.DropTable(
+                name: "PresenceStates");
 
             migrationBuilder.DropTable(
                 name: "Tournaments");

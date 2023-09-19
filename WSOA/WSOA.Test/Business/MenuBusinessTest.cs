@@ -22,7 +22,7 @@ namespace WSOA.Test.Business
         public void Init()
         {
             _menuRepositoryMock = CreateIMenuRepositoryMock();
-            _sessionMock = CreateISessionMock(ProfileResources.ADMINISTRATOR_CODE);
+            _sessionMock = CreateISessionMock(ProfileResources.ADMINISTRATOR_CODE, null);
 
             _menuBusiness = new MenuBusiness(_menuRepositoryMock.Object);
         }
@@ -40,7 +40,7 @@ namespace WSOA.Test.Business
         [TestMethod]
         public void ShouldDontLoadMainMenu_WhenUserSessionProfileCodeIsNull()
         {
-            _sessionMock = CreateISessionMock(null);
+            _sessionMock = CreateISessionMock(null, null);
 
             MainNavMenuResult result = _menuBusiness.LoadMainNavMenu(_sessionMock.Object);
 

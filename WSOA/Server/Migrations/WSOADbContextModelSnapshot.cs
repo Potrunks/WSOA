@@ -48,12 +48,6 @@ namespace WSOA.Server.Migrations
                             Id = 1,
                             Login = "Potrunks",
                             Password = "1a753d495dab76bf6288f5b5f9736c3af6b60a5bb819f4de4bf75f79af085181"
-                        },
-                        new
-                        {
-                            Id = 2,
-                            Login = "PotrunksOrga",
-                            Password = "1a753d495dab76bf6288f5b5f9736c3af6b60a5bb819f4de4bf75f79af085181"
                         });
                 });
 
@@ -275,6 +269,15 @@ namespace WSOA.Server.Migrations
                             MainNavSectionId = 3,
                             Order = 0,
                             Url = "/tournament/create"
+                        },
+                        new
+                        {
+                            Id = 4,
+                            Description = "Futurs tournois",
+                            Label = "Futurs tournois",
+                            MainNavSectionId = 3,
+                            Order = 1,
+                            Url = "/tournament/future"
                         });
                 });
 
@@ -337,6 +340,30 @@ namespace WSOA.Server.Migrations
                             Id = 6,
                             MainNavSubSectionId = 3,
                             ProfileCode = "ORGA"
+                        },
+                        new
+                        {
+                            Id = 7,
+                            MainNavSubSectionId = 4,
+                            ProfileCode = "ADMIN"
+                        },
+                        new
+                        {
+                            Id = 8,
+                            MainNavSubSectionId = 4,
+                            ProfileCode = "ORGA"
+                        },
+                        new
+                        {
+                            Id = 9,
+                            MainNavSubSectionId = 4,
+                            ProfileCode = "PLAYER"
+                        },
+                        new
+                        {
+                            Id = 10,
+                            MainNavSubSectionId = 4,
+                            ProfileCode = "GUEST"
                         });
                 });
 
@@ -356,6 +383,10 @@ namespace WSOA.Server.Migrations
 
                     b.Property<int>("PlayedTournamentId")
                         .HasColumnType("int");
+
+                    b.Property<string>("PresenceStateCode")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(450)");
 
                     b.Property<int?>("TotalAddOn")
                         .HasColumnType("int");
@@ -384,9 +415,42 @@ namespace WSOA.Server.Migrations
 
                     b.HasIndex("PlayedTournamentId");
 
+                    b.HasIndex("PresenceStateCode");
+
                     b.HasIndex("UserId");
 
                     b.ToTable("Players");
+                });
+
+            modelBuilder.Entity("WSOA.Shared.Entity.PresenceState", b =>
+                {
+                    b.Property<string>("Code")
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<string>("Label")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Code");
+
+                    b.ToTable("PresenceStates");
+
+                    b.HasData(
+                        new
+                        {
+                            Code = "PRESENT",
+                            Label = "Présent"
+                        },
+                        new
+                        {
+                            Code = "MAYBE",
+                            Label = "Peut-être"
+                        },
+                        new
+                        {
+                            Code = "ABSENT",
+                            Label = "Absent"
+                        });
                 });
 
             modelBuilder.Entity("WSOA.Shared.Entity.Profile", b =>
@@ -503,15 +567,6 @@ namespace WSOA.Server.Migrations
                             FirstName = "Alexis",
                             LastName = "ARRIAL",
                             ProfileCode = "ADMIN"
-                        },
-                        new
-                        {
-                            Id = 2,
-                            AccountId = 2,
-                            Email = "arrial.alexis@hotmail.fr",
-                            FirstName = "Alexis",
-                            LastName = "ARRIAL",
-                            ProfileCode = "ORGA"
                         });
                 });
 
@@ -576,6 +631,12 @@ namespace WSOA.Server.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
+                    b.HasOne("WSOA.Shared.Entity.PresenceState", "PresenceState")
+                        .WithMany()
+                        .HasForeignKey("PresenceStateCode")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
                     b.HasOne("WSOA.Shared.Entity.User", "User")
                         .WithMany()
                         .HasForeignKey("UserId")
@@ -585,6 +646,8 @@ namespace WSOA.Server.Migrations
                     b.Navigation("EliminatorPlayer");
 
                     b.Navigation("PlayedTournament");
+
+                    b.Navigation("PresenceState");
 
                     b.Navigation("User");
                 });

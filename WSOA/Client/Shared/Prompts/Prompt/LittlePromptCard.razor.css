@@ -1,0 +1,21 @@
+﻿.panel__container {
+    background-color: #EDE8DF;
+    width: 200px;
+    height: 250px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-evenly;
+    align-items: center;
+    border-radius: 10px;
+    padding: 10px;
+    box-shadow: 12px 12px 2px 1px rgba(0, 0, 0, 0.15);
+}
+
+.panel__logo {
+    width: 100px;
+}
+
+.panel__message {
+    text-align: center;
+    font-size: 18px;
+}

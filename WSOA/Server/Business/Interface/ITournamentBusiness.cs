@@ -14,5 +14,15 @@ namespace WSOA.Server.Business.Interface
         /// Load datas for tournament creation.
         /// </summary>
         CreateTournamentCallResult LoadTournamentCreationDatas(int subSectionId, ISession session);
+
+        /// <summary>
+        /// Load future tournament datas.
+        /// </summary>
+        LoadFutureTournamentCallResult LoadFutureTournamentDatas(int subSectionId, ISession session);
+
+        /// <summary>
+        /// Sign up the current user to the tournament selected.
+        /// </summary>
+        SignUpTournamentCallResult SignUpTournament(SignUpTournamentFormViewModel formVM, ISession session);
     }
 }

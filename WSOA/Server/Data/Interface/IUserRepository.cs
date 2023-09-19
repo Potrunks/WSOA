@@ -28,5 +28,10 @@ namespace WSOA.Server.Data.Interface
         /// Get all users in DB.
         /// </summary>
         IEnumerable<User> GetAllUsers();
+
+        /// <summary>
+        /// Get user by ID.
+        /// </summary>
+        User GetUserById(int usrId);
     }
 }

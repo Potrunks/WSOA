@@ -12,6 +12,25 @@ namespace WSOA.Server.Data
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
+            modelBuilder.Entity<PresenceState>().HasData
+            (
+                new PresenceState
+                {
+                    Code = "PRESENT",
+                    Label = "Présent"
+                },
+                new PresenceState
+                {
+                    Code = "MAYBE",
+                    Label = "Peut-être"
+                },
+                new PresenceState
+                {
+                    Code = "ABSENT",
+                    Label = "Absent"
+                }
+            );
+
             modelBuilder.Entity<Profile>().HasData
             (
                 new Profile
@@ -74,6 +93,7 @@ namespace WSOA.Server.Data
 
             modelBuilder.Entity<MainNavSubSection>().HasData
             (
+                // ACCOUNT MAIN NAV SECTION
                 new MainNavSubSection
                 {
                     Id = 1,
@@ -92,6 +112,7 @@ namespace WSOA.Server.Data
                     Order = 1,
                     Url = "/account/logOut"
                 },
+                // TOURNAMENT MAIN NAV SECTION
                 new MainNavSubSection
                 {
                     Id = 3,
@@ -100,17 +121,28 @@ namespace WSOA.Server.Data
                     Description = "Créer un tournoi",
                     Order = 0,
                     Url = "/tournament/create"
+                },
+                new MainNavSubSection
+                {
+                    Id = 4,
+                    Label = "Futurs tournois",
+                    MainNavSectionId = 3,
+                    Description = "Futurs tournois",
+                    Order = 1,
+                    Url = "/tournament/future"
                 }
             );
 
             modelBuilder.Entity<MainNavSubSectionByProfileCode>().HasData
             (
+                // INVITER
                 new MainNavSubSectionByProfileCode
                 {
                     Id = 1,
                     MainNavSubSectionId = 1,
                     ProfileCode = "ADMIN"
                 },
+                // DECONNEXION
                 new MainNavSubSectionByProfileCode
                 {
                     Id = 2,
@@ -135,11 +167,37 @@ namespace WSOA.Server.Data
                     MainNavSubSectionId = 2,
                     ProfileCode = "GUEST"
                 },
+                // CREER TOURNOI
                 new MainNavSubSectionByProfileCode
                 {
                     Id = 6,
                     MainNavSubSectionId = 3,
                     ProfileCode = "ORGA"
+                },
+                // FUTURS TOURNOIS
+                new MainNavSubSectionByProfileCode
+                {
+                    Id = 7,
+                    MainNavSubSectionId = 4,
+                    ProfileCode = "ADMIN"
+                },
+                new MainNavSubSectionByProfileCode
+                {
+                    Id = 8,
+                    MainNavSubSectionId = 4,
+                    ProfileCode = "ORGA"
+                },
+                new MainNavSubSectionByProfileCode
+                {
+                    Id = 9,
+                    MainNavSubSectionId = 4,
+                    ProfileCode = "PLAYER"
+                },
+                new MainNavSubSectionByProfileCode
+                {
+                    Id = 10,
+                    MainNavSubSectionId = 4,
+                    ProfileCode = "GUEST"
                 }
             );
 
@@ -149,12 +207,6 @@ namespace WSOA.Server.Data
                 {
                     Id = 1,
                     Login = "Potrunks",
-                    Password = "1a753d495dab76bf6288f5b5f9736c3af6b60a5bb819f4de4bf75f79af085181"
-                },
-                new Account
-                {
-                    Id = 2,
-                    Login = "PotrunksOrga",
                     Password = "1a753d495dab76bf6288f5b5f9736c3af6b60a5bb819f4de4bf75f79af085181"
                 }
             );
@@ -169,15 +221,6 @@ namespace WSOA.Server.Data
                     Id = 1,
                     ProfileCode = "ADMIN",
                     Email = "potrunks@hotmail.com"
-                },
-                new User
-                {
-                    FirstName = "Alexis",
-                    LastName = "ARRIAL",
-                    AccountId = 2,
-                    Id = 2,
-                    ProfileCode = "ORGA",
-                    Email = "arrial.alexis@hotmail.fr"
                 }
             );
 
@@ -208,5 +251,6 @@ namespace WSOA.Server.Data
         public DbSet<Player> Players { get; set; }
         public DbSet<Tournament> Tournaments { get; set; }
         public DbSet<Address> Addresses { get; set; }
+        public DbSet<PresenceState> PresenceStates { get; set; }
     }
 }

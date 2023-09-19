@@ -6,6 +6,11 @@ namespace WSOA.Shared.Entity
 {
     public class Player
     {
+        public Player()
+        {
+
+        }
+
         [Key]
         [Required]
         public int Id { get; set; }
@@ -26,6 +31,11 @@ namespace WSOA.Shared.Entity
         public int? TotalReBuy { get; set; }
 
         public int? TotalAddOn { get; set; }
+
+        [Required]
+        [ForeignKey(nameof(PresenceState))]
+        public string PresenceStateCode { get; set; }
+        public PresenceState PresenceState { get; set; }
 
         [Required]
         [DefaultValue(false)]
