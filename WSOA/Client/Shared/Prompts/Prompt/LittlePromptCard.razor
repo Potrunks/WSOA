@@ -3,5 +3,5 @@
 
 <div class="panel__container">
     <img class="panel__logo" src="@LogoPath" />
-    <span class="panel__message">@Message</span>
+    <span class="panel__message @(IsErrorMessage ? "error" : "")">@Message</span>
 </div>

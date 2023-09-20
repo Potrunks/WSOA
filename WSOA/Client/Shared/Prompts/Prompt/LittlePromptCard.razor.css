@@ -19,3 +19,7 @@
     text-align: center;
     font-size: 18px;
 }
+
+.panel__message.error {
+    color: red;
+}

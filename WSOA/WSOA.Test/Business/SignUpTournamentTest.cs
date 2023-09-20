@@ -102,7 +102,7 @@ namespace WSOA.Test.Business
 
             SignUpTournamentCallResult result = _tournamentBusiness.SignUpTournament(_formVM, _sessionMock.Object);
 
-            VerifyAPICallResultError(result, string.Format(RouteBusinessResources.ERROR, MainBusinessResources.TECHNICAL_ERROR), MainBusinessResources.TECHNICAL_ERROR);
+            VerifyAPICallResultError(result, string.Format(RouteBusinessResources.MAIN_ERROR, MainBusinessResources.TECHNICAL_ERROR), MainBusinessResources.TECHNICAL_ERROR);
             VerifyTransactionManagerRollback(_transactionManagerMock);
         }
 
@@ -114,7 +114,7 @@ namespace WSOA.Test.Business
 
             SignUpTournamentCallResult result = _tournamentBusiness.SignUpTournament(_formVM, _sessionMock.Object);
 
-            VerifyAPICallResultError(result, string.Format(RouteBusinessResources.ERROR, MainBusinessResources.TECHNICAL_ERROR), MainBusinessResources.TECHNICAL_ERROR);
+            VerifyAPICallResultError(result, string.Format(RouteBusinessResources.MAIN_ERROR, MainBusinessResources.TECHNICAL_ERROR), MainBusinessResources.TECHNICAL_ERROR);
             VerifyTransactionManagerRollback(_transactionManagerMock);
         }
 
@@ -126,7 +126,7 @@ namespace WSOA.Test.Business
 
             SignUpTournamentCallResult result = _tournamentBusiness.SignUpTournament(_formVM, _sessionMock.Object);
 
-            VerifyAPICallResultError(result, string.Format(RouteBusinessResources.ERROR, MainBusinessResources.TECHNICAL_ERROR), MainBusinessResources.TECHNICAL_ERROR);
+            VerifyAPICallResultError(result, string.Format(RouteBusinessResources.MAIN_ERROR, MainBusinessResources.TECHNICAL_ERROR), MainBusinessResources.TECHNICAL_ERROR);
             VerifyTransactionManagerRollback(_transactionManagerMock);
         }
 
@@ -155,7 +155,7 @@ namespace WSOA.Test.Business
 
             SignUpTournamentCallResult result = _tournamentBusiness.SignUpTournament(_formVM, _sessionMock.Object);
 
-            VerifyAPICallResultError(result, string.Format(RouteBusinessResources.ERROR, MainBusinessResources.TECHNICAL_ERROR), MainBusinessResources.TECHNICAL_ERROR);
+            VerifyAPICallResultError(result, string.Format(RouteBusinessResources.MAIN_ERROR, MainBusinessResources.TECHNICAL_ERROR), MainBusinessResources.TECHNICAL_ERROR);
             VerifyTransactionManagerRollback(_transactionManagerMock);
         }
     }

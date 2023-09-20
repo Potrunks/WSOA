@@ -98,7 +98,7 @@ namespace WSOA.Server.Business.Implementation
                 if (addresses.IsNullOrEmpty())
                 {
                     string errorMsg = string.Format(MainBusinessResources.NULL_OR_EMPTY_OBJ_NOT_ALLOWED, nameof(addresses), nameof(LoadTournamentCreationDatas));
-                    throw new FunctionalException(errorMsg, string.Format(RouteBusinessResources.ERROR, errorMsg));
+                    throw new FunctionalException(errorMsg, string.Format(RouteBusinessResources.MAIN_ERROR, errorMsg));
                 }
 
                 result.Data = new TournamentCreationDataViewModel(addresses, subSection.Description);
@@ -113,7 +113,7 @@ namespace WSOA.Server.Business.Implementation
             {
                 _log.Error(e.Message);
                 string errorMsg = MainBusinessResources.TECHNICAL_ERROR;
-                return new CreateTournamentCallResult(errorMsg, string.Format(RouteBusinessResources.ERROR, errorMsg));
+                return new CreateTournamentCallResult(errorMsg, string.Format(RouteBusinessResources.MAIN_ERROR, errorMsg));
             }
 
             return result;
@@ -140,7 +140,7 @@ namespace WSOA.Server.Business.Implementation
             {
                 _log.Error(e.Message);
                 string errorMsg = MainBusinessResources.TECHNICAL_ERROR;
-                return new LoadFutureTournamentCallResult(errorMsg, string.Format(RouteBusinessResources.ERROR, errorMsg));
+                return new LoadFutureTournamentCallResult(errorMsg, string.Format(RouteBusinessResources.MAIN_ERROR, errorMsg));
             }
 
             return result;
@@ -194,7 +194,7 @@ namespace WSOA.Server.Business.Implementation
                 _transactionManager.RollbackTransaction();
                 _log.Error(e.Message);
                 string errorMsg = MainBusinessResources.TECHNICAL_ERROR;
-                return new SignUpTournamentCallResult(errorMsg, string.Format(RouteBusinessResources.ERROR, errorMsg));
+                return new SignUpTournamentCallResult(errorMsg, string.Format(RouteBusinessResources.MAIN_ERROR, errorMsg));
             }
             return result;
         }

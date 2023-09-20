@@ -1,0 +1,8 @@
+﻿@page "/main/error/{ErrorMessage}"
+@using WSOA.Client.Pages.Error.Components;
+@using WSOA.Client.Shared.Prompts.Prompt
+@inherits MainErrorPageComponent
+
+<LittlePromptCard LogoPath="images/emoji_angry.png"
+                  Message="@ErrorMessage"
+                  IsErrorMessage=true />
