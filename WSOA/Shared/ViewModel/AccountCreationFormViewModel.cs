@@ -11,12 +11,12 @@ namespace WSOA.Shared.ViewModel
         {
             get
             {
-                string firstNameTrimed = _firstName?.Trim();
-                return char.ToUpper(firstNameTrimed[0]) + firstNameTrimed.Substring(1);
+                return _firstName;
             }
             set
             {
-                _firstName = value;
+                string firstNameTrimed = value?.Trim();
+                _firstName = firstNameTrimed == null ? null : char.ToUpper(firstNameTrimed[0]) + firstNameTrimed.Substring(1);
             }
         }
         private string _firstName;
@@ -27,11 +27,11 @@ namespace WSOA.Shared.ViewModel
         {
             get
             {
-                return _lastName?.ToUpper().Trim();
+                return _lastName;
             }
             set
             {
-                _lastName = value;
+                _lastName = value?.ToUpper().Trim();
             }
         }
         private string _lastName;
@@ -42,11 +42,11 @@ namespace WSOA.Shared.ViewModel
         {
             get
             {
-                return _email?.Trim();
+                return _email;
             }
             set
             {
-                _email = value;
+                _email = value?.Trim();
             }
         }
         private string _email;
@@ -57,11 +57,11 @@ namespace WSOA.Shared.ViewModel
         {
             get
             {
-                return _login?.Trim();
+                return _login;
             }
             set
             {
-                _login = value;
+                _login = value?.Trim();
             }
         }
         private string _login;
@@ -72,11 +72,11 @@ namespace WSOA.Shared.ViewModel
         {
             get
             {
-                return _password?.Trim();
+                return _password;
             }
             set
             {
-                _password = value;
+                _password = value?.Trim();
             }
         }
         private string _password;
@@ -87,11 +87,11 @@ namespace WSOA.Shared.ViewModel
         {
             get
             {
-                return _passwordConfirmation?.Trim();
+                return _passwordConfirmation;
             }
             set
             {
-                _passwordConfirmation = value;
+                _passwordConfirmation = value?.Trim();
             }
         }
         private string _passwordConfirmation;

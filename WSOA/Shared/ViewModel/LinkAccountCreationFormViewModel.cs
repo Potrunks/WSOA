@@ -15,7 +15,18 @@ namespace WSOA.Shared.ViewModel
 
         [Required(ErrorMessage = DataValidationResources.MAIL_MISSING)]
         [RegularExpression(RegexResources.MAIL, ErrorMessage = DataValidationResources.MAIL_FORMAT_NO_VALID)]
-        public string RecipientMail { get; set; }
+        public string RecipientMail
+        {
+            get
+            {
+                return _recipientMail;
+            }
+            set
+            {
+                _recipientMail = value?.Trim();
+            }
+        }
+        private string _recipientMail;
 
         [Required(ErrorMessage = DataValidationResources.PROFILE_MISSING)]
         public string ProfileCodeSelected { get; set; }

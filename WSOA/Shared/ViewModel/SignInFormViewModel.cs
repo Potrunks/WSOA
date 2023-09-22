@@ -10,11 +10,11 @@ namespace WSOA.Shared.ViewModel
         {
             get
             {
-                return _login?.Trim();
+                return _login;
             }
             set
             {
-                _login = value;
+                _login = value?.Trim();
             }
         }
         private string? _login;
@@ -24,11 +24,11 @@ namespace WSOA.Shared.ViewModel
         {
             get
             {
-                return _password?.Trim();
+                return _password;
             }
             set
             {
-                _password = value;
+                _password = value?.Trim();
             }
         }
         private string? _password;
