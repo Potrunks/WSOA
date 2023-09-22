@@ -12,8 +12,8 @@ using WSOA.Server.Data;
 namespace WSOA.Server.Migrations
 {
     [DbContext(typeof(WSOADbContext))]
-    [Migration("20230909204735_Seed_DB_v0-1-0")]
-    partial class Seed_DB_v010
+    [Migration("20230922224134_Seed_Db_v0-1-0")]
+    partial class Seed_Db_v010
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -50,6 +50,18 @@ namespace WSOA.Server.Migrations
                         {
                             Id = 1,
                             Login = "Potrunks",
+                            Password = "1a753d495dab76bf6288f5b5f9736c3af6b60a5bb819f4de4bf75f79af085181"
+                        },
+                        new
+                        {
+                            Id = 2,
+                            Login = "PotrunksOrga",
+                            Password = "1a753d495dab76bf6288f5b5f9736c3af6b60a5bb819f4de4bf75f79af085181"
+                        },
+                        new
+                        {
+                            Id = 3,
+                            Login = "PotrunksPlayer",
                             Password = "1a753d495dab76bf6288f5b5f9736c3af6b60a5bb819f4de4bf75f79af085181"
                         });
                 });
@@ -570,6 +582,24 @@ namespace WSOA.Server.Migrations
                             FirstName = "Alexis",
                             LastName = "ARRIAL",
                             ProfileCode = "ADMIN"
+                        },
+                        new
+                        {
+                            Id = 2,
+                            AccountId = 2,
+                            Email = "potrunks@gmail.com",
+                            FirstName = "Organisateur",
+                            LastName = "ORGANISATEUR",
+                            ProfileCode = "ORGA"
+                        },
+                        new
+                        {
+                            Id = 3,
+                            AccountId = 3,
+                            Email = "arrial.alexis@hotmail.fr",
+                            FirstName = "Player",
+                            LastName = "PLAYER",
+                            ProfileCode = "PLAYER"
                         });
                 });
 

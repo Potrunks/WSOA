@@ -8,7 +8,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace WSOA.Server.Migrations
 {
     /// <inheritdoc />
-    public partial class Seed_DB_v010 : Migration
+    public partial class Seed_Db_v010 : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -286,7 +286,12 @@ namespace WSOA.Server.Migrations
             migrationBuilder.InsertData(
                 table: "Accounts",
                 columns: new[] { "Id", "Login", "Password" },
-                values: new object[] { 1, "Potrunks", "1a753d495dab76bf6288f5b5f9736c3af6b60a5bb819f4de4bf75f79af085181" });
+                values: new object[,]
+                {
+                    { 1, "Potrunks", "1a753d495dab76bf6288f5b5f9736c3af6b60a5bb819f4de4bf75f79af085181" },
+                    { 2, "PotrunksOrga", "1a753d495dab76bf6288f5b5f9736c3af6b60a5bb819f4de4bf75f79af085181" },
+                    { 3, "PotrunksPlayer", "1a753d495dab76bf6288f5b5f9736c3af6b60a5bb819f4de4bf75f79af085181" }
+                });
 
             migrationBuilder.InsertData(
                 table: "Addresses",
@@ -343,7 +348,12 @@ namespace WSOA.Server.Migrations
             migrationBuilder.InsertData(
                 table: "Users",
                 columns: new[] { "Id", "AccountId", "Email", "FirstName", "LastName", "ProfileCode" },
-                values: new object[] { 1, 1, "potrunks@hotmail.com", "Alexis", "ARRIAL", "ADMIN" });
+                values: new object[,]
+                {
+                    { 1, 1, "potrunks@hotmail.com", "Alexis", "ARRIAL", "ADMIN" },
+                    { 2, 2, "potrunks@gmail.com", "Organisateur", "ORGANISATEUR", "ORGA" },
+                    { 3, 3, "arrial.alexis@hotmail.fr", "Player", "PLAYER", "PLAYER" }
+                });
 
             migrationBuilder.InsertData(
                 table: "MainNavSubSectionsByProfileCode",
