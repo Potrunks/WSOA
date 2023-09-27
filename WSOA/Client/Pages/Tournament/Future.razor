@@ -13,7 +13,7 @@
 else
 {
     <div class="container__main">
-        <span class="title__main">@DatasVM.First().Description</span>
+        <span class="title__main">@Description</span>
         @if (DatasVM != null && DatasVM.Any())
         {
             <CascadingValue Value="@TournamentService" Name="TournamentService">

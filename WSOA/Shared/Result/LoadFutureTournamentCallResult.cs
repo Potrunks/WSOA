@@ -14,6 +14,6 @@ namespace WSOA.Shared.Result
 
         }
 
-        public List<FutureTournamentDataViewModel> Datas { get; set; }
+        public FutureTournamentsViewModel Data { get; set; }
     }
 }

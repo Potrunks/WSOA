@@ -2,14 +2,14 @@
 
 namespace WSOA.Shared.ViewModel
 {
-    public class FutureTournamentDataViewModel : SubSectionDataViewModel
+    public class FutureTournamentDataViewModel
     {
         public FutureTournamentDataViewModel()
         {
 
         }
 
-        public FutureTournamentDataViewModel(TournamentDto tournamentDto, int currentUserId, string description)
+        public FutureTournamentDataViewModel(TournamentDto tournamentDto, int currentUserId)
         {
             TournamentId = tournamentDto.Tournament.Id;
             Season = tournamentDto.Tournament.Season;
@@ -18,7 +18,6 @@ namespace WSOA.Shared.ViewModel
             Address = tournamentDto.Address.Content;
             PlayerDatasVM = tournamentDto.Players.Select(p => new PlayerDataViewModel(p.User, p.Player.PresenceStateCode)).ToList();
             CurrentUserPresenceStateCode = tournamentDto.Players.SingleOrDefault(p => p.User.Id == currentUserId)?.Player.PresenceStateCode;
-            Description = description;
         }
 
         public int TournamentId { get; set; }

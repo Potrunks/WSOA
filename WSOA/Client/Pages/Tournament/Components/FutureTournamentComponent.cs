@@ -23,7 +23,8 @@ namespace WSOA.Client.Pages.Tournament.Components
                 NavigationManager.NavigateTo(result.RedirectUrl);
                 return;
             }
-            DatasVM = result.Datas;
+            DatasVM = result.Data.FutureTournamentsVM;
+            Description = result.Data.Description;
 
             IsLoading = false;
         }
