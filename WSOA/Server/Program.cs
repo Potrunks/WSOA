@@ -8,9 +8,11 @@ using WSOA.Server.Data.Interface;
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
+string dbConnectionString = builder.Configuration.GetConnectionString("WSOA_DB_DEV");
+
 builder.Services.AddDbContext<WSOADbContext>(options =>
 {
-    options.UseSqlServer(builder.Configuration.GetConnectionString("WSOA_DB"));
+    options.UseMySql(dbConnectionString, ServerVersion.AutoDetect(dbConnectionString));
 });
 
 builder.Services.AddScoped<IAccountRepository, AccountRepository>();
