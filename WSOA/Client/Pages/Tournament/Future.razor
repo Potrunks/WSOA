@@ -13,13 +13,13 @@
 else
 {
     <div class="container__main">
-        <span class="title__main">@DatasVM.First().Description</span>
-        @if (DatasVM != null && DatasVM.Any())
+        <span class="title__main">@Description</span>
+        @if (FutureTournamentDatasVM != null && FutureTournamentDatasVM.Any())
         {
             <CascadingValue Value="@TournamentService" Name="TournamentService">
                 <CascadingValue Value="@NavigationManager" Name="NavigationManager">
                     <div class="container__datas">
-                        @foreach (FutureTournamentDataViewModel vm in DatasVM)
+                        @foreach (FutureTournamentDataViewModel vm in FutureTournamentDatasVM)
                         {
                             <FutureTournamentDataLine Data="vm" />
                         }

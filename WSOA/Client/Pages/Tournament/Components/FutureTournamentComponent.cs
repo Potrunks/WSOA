@@ -11,7 +11,7 @@ namespace WSOA.Client.Pages.Tournament.Components
         [Inject]
         public ITournamentService TournamentService { get; set; }
 
-        public List<FutureTournamentDataViewModel> DatasVM { get; set; }
+        public List<FutureTournamentDataViewModel> FutureTournamentDatasVM { get; set; }
 
         protected override async Task OnInitializedAsync()
         {
@@ -23,7 +23,8 @@ namespace WSOA.Client.Pages.Tournament.Components
                 NavigationManager.NavigateTo(result.RedirectUrl);
                 return;
             }
-            DatasVM = result.Datas;
+            FutureTournamentDatasVM = result.Data.FutureTournamentsVM;
+            Description = result.Data.Description;
 
             IsLoading = false;
         }

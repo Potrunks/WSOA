@@ -128,7 +128,7 @@ namespace WSOA.Server.Business.Implementation
                 MainNavSubSection mainNavSubSection = session.CanUserPerformAction(_menuRepository, subSectionId);
                 int currentUserId = session.GetCurrentUserId();
                 List<TournamentDto> tournamentDtos = _tournamentRepository.GetTournamentDtosByIsOver(false);
-                result.Datas = tournamentDtos.Select(t => new FutureTournamentDataViewModel(t, currentUserId, mainNavSubSection.Description)).ToList();
+                result.Data = new FutureTournamentsViewModel(tournamentDtos, currentUserId, mainNavSubSection.Description);
             }
             catch (FunctionalException e)
             {

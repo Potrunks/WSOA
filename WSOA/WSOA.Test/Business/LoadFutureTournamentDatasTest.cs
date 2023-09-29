@@ -53,21 +53,21 @@ namespace WSOA.Test.Business
             LoadFutureTournamentCallResult result = _tournamentBusiness.LoadFutureTournamentDatas(1, _sessionMock.Object);
 
             VerifyAPICallResultSuccess(result, null);
-            Assert.AreEqual(_tournamentDtos[0].Tournament.Id, result.Datas[0].TournamentId);
-            Assert.AreEqual(_tournamentDtos[0].Tournament.Season, result.Datas[0].Season);
-            Assert.AreEqual(_tournamentDtos[0].Tournament.StartDate, result.Datas[0].StartDate);
-            Assert.AreEqual(_tournamentDtos[0].Tournament.BuyIn, result.Datas[0].BuyIn);
-            Assert.AreEqual(_tournamentDtos[0].Address.Content, result.Datas[0].Address);
-            Assert.AreEqual(_tournamentDtos[0].Players.Count(), result.Datas[0].PlayerDatasVM.Count());
-            Assert.AreEqual(_tournamentDtos[0].Players.ToList()[0].User.Id, result.Datas[0].PlayerDatasVM.ToList()[0].UserId);
-            Assert.AreEqual(_tournamentDtos[0].Players.ToList()[0].User.FirstName, result.Datas[0].PlayerDatasVM.ToList()[0].FirstName);
-            Assert.AreEqual(_tournamentDtos[0].Players.ToList()[0].User.LastName, result.Datas[0].PlayerDatasVM.ToList()[0].LastName);
-            Assert.AreEqual(_tournamentDtos[0].Players.ToList()[0].Player.PresenceStateCode, result.Datas[0].PlayerDatasVM.ToList()[0].PresenceStateCode);
-            Assert.AreEqual(_tournamentDtos[0].Players.ToList()[1].User.Id, result.Datas[0].PlayerDatasVM.ToList()[1].UserId);
-            Assert.AreEqual(_tournamentDtos[0].Players.ToList()[1].User.FirstName, result.Datas[0].PlayerDatasVM.ToList()[1].FirstName);
-            Assert.AreEqual(_tournamentDtos[0].Players.ToList()[1].User.LastName, result.Datas[0].PlayerDatasVM.ToList()[1].LastName);
-            Assert.AreEqual(_tournamentDtos[0].Players.ToList()[1].Player.PresenceStateCode, result.Datas[0].PlayerDatasVM.ToList()[1].PresenceStateCode);
-            Assert.AreEqual(_tournamentDtos[0].Players.ToList()[0].Player.PresenceStateCode, result.Datas[0].CurrentUserPresenceStateCode);
+            Assert.AreEqual(_tournamentDtos[0].Tournament.Id, result.Data.FutureTournamentsVM[0].TournamentId);
+            Assert.AreEqual(_tournamentDtos[0].Tournament.Season, result.Data.FutureTournamentsVM[0].Season);
+            Assert.AreEqual(_tournamentDtos[0].Tournament.StartDate, result.Data.FutureTournamentsVM[0].StartDate);
+            Assert.AreEqual(_tournamentDtos[0].Tournament.BuyIn, result.Data.FutureTournamentsVM[0].BuyIn);
+            Assert.AreEqual(_tournamentDtos[0].Address.Content, result.Data.FutureTournamentsVM[0].Address);
+            Assert.AreEqual(_tournamentDtos[0].Players.Count(), result.Data.FutureTournamentsVM[0].PlayerDatasVM.Count());
+            Assert.AreEqual(_tournamentDtos[0].Players.ToList()[0].User.Id, result.Data.FutureTournamentsVM[0].PlayerDatasVM.ToList()[0].UserId);
+            Assert.AreEqual(_tournamentDtos[0].Players.ToList()[0].User.FirstName, result.Data.FutureTournamentsVM[0].PlayerDatasVM.ToList()[0].FirstName);
+            Assert.AreEqual(_tournamentDtos[0].Players.ToList()[0].User.LastName, result.Data.FutureTournamentsVM[0].PlayerDatasVM.ToList()[0].LastName);
+            Assert.AreEqual(_tournamentDtos[0].Players.ToList()[0].Player.PresenceStateCode, result.Data.FutureTournamentsVM[0].PlayerDatasVM.ToList()[0].PresenceStateCode);
+            Assert.AreEqual(_tournamentDtos[0].Players.ToList()[1].User.Id, result.Data.FutureTournamentsVM[0].PlayerDatasVM.ToList()[1].UserId);
+            Assert.AreEqual(_tournamentDtos[0].Players.ToList()[1].User.FirstName, result.Data.FutureTournamentsVM[0].PlayerDatasVM.ToList()[1].FirstName);
+            Assert.AreEqual(_tournamentDtos[0].Players.ToList()[1].User.LastName, result.Data.FutureTournamentsVM[0].PlayerDatasVM.ToList()[1].LastName);
+            Assert.AreEqual(_tournamentDtos[0].Players.ToList()[1].Player.PresenceStateCode, result.Data.FutureTournamentsVM[0].PlayerDatasVM.ToList()[1].PresenceStateCode);
+            Assert.AreEqual(_tournamentDtos[0].Players.ToList()[0].Player.PresenceStateCode, result.Data.FutureTournamentsVM[0].CurrentUserPresenceStateCode);
         }
 
         [TestMethod]
