@@ -11,7 +11,7 @@ using WSOA.Server.Data;
 namespace WSOA.Server.Migrations
 {
     [DbContext(typeof(WSOADbContext))]
-    [Migration("20230928215708_Seed_DB_v0-1-0")]
+    [Migration("20230929225125_Seed_DB_v0-1-0")]
     partial class Seed_DB_v010
     {
         /// <inheritdoc />
