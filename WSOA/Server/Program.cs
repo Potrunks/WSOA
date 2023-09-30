@@ -43,11 +43,11 @@ builder.Services.AddSession(option =>
 
 var app = builder.Build();
 
-//using (IServiceScope scope = app.Services.CreateScope())
-//{
-//    WSOADbContext dbContext = scope.ServiceProvider.GetRequiredService<WSOADbContext>();
-//    dbContext.Database.Migrate();
-//}
+using (IServiceScope scope = app.Services.CreateScope())
+{
+    WSOADbContext dbContext = scope.ServiceProvider.GetRequiredService<WSOADbContext>();
+    dbContext.Database.Migrate();
+}
 
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
