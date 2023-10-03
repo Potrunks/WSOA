@@ -130,6 +130,15 @@ namespace WSOA.Server.Data
                     Description = "Futurs tournois",
                     Order = 1,
                     Url = "/tournament/future"
+                },
+                new MainNavSubSection
+                {
+                    Id = 5,
+                    Label = "Lancer tournoi",
+                    MainNavSectionId = 3,
+                    Description = "Lancer un tournoi",
+                    Order = 2,
+                    Url = "/tournament/execute"
                 }
             );
 
@@ -198,6 +207,13 @@ namespace WSOA.Server.Data
                     Id = 10,
                     MainNavSubSectionId = 4,
                     ProfileCode = "GUEST"
+                },
+                // LANCER TOURNOI
+                new MainNavSubSectionByProfileCode
+                {
+                    Id = 11,
+                    MainNavSubSectionId = 5,
+                    ProfileCode = "ORGA"
                 }
             );
 
