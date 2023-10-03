@@ -1,0 +1,16 @@
+﻿@page "/tournament/execute/{SubSectionId:int}"
+@using WSOA.Client.Pages.Tournament.Components;
+@using WSOA.Client.Shared.Loaders
+@inherits PlayableTournamentsComponent
+
+@if (IsLoading)
+{
+    <CardCoinLoader />
+}
+else
+{
+    <div class="container__main">
+        <span class="title__main">@Description</span>
+        
+    </div>
+}
