@@ -2,14 +2,14 @@
 
 namespace WSOA.Shared.ViewModel
 {
-    public class TournamentDataViewModel
+    public class TournamentViewModel
     {
-        public TournamentDataViewModel()
+        public TournamentViewModel()
         {
 
         }
 
-        public TournamentDataViewModel(TournamentDto tournamentDto)
+        public TournamentViewModel(TournamentDto tournamentDto)
         {
             TournamentId = tournamentDto.Tournament.Id;
             Season = tournamentDto.Tournament.Season;

@@ -38,5 +38,11 @@ namespace WSOA.Client.Services.Implementation
             HttpResponseMessage response = await _httpClient.PostAsync(ApiRouteResources.SIGN_UP_TOURNAMENT, form.ToJsonUtf8());
             return response.Content.ToObject<SignUpTournamentCallResult>();
         }
+
+        public async Task<NewApiCallResult<PlayableTournamentsViewModel>> LoadPlayableTournaments(int subSectionId)
+        {
+            HttpResponseMessage response = await _httpClient.GetAsync(string.Format(ApiRouteResources.LOAD_PLAYABLE_TOURNAMENT_DATAS, subSectionId));
+            return response.Content.ToObject<NewApiCallResult<PlayableTournamentsViewModel>>();
+        }
     }
 }

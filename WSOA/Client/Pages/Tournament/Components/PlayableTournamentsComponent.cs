@@ -1,6 +1,8 @@
 ﻿using Microsoft.AspNetCore.Components;
 using WSOA.Client.Services.Interface;
 using WSOA.Client.Shared.Components;
+using WSOA.Shared.Result;
+using WSOA.Shared.ViewModel;
 
 namespace WSOA.Client.Pages.Tournament.Components
 {
@@ -9,11 +11,20 @@ namespace WSOA.Client.Pages.Tournament.Components
         [Inject]
         public ITournamentService TournamentService { get; set; }
 
+        public PlayableTournamentsViewModel ViewModel { get; set; }
+
         protected override async Task OnInitializedAsync()
         {
             IsLoading = true;
 
-            // TODO : Charger les données
+            NewApiCallResult<PlayableTournamentsViewModel> result = await TournamentService.LoadPlayableTournaments(SubSectionId);
+            if (!string.IsNullOrWhiteSpace(result.RedirectUrl))
+            {
+                NavigationManager.NavigateTo(result.RedirectUrl);
+                return;
+            }
+            ViewModel = result.Data;
+            Description = result.Data.Description;
 
             IsLoading = false;
         }

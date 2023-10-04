@@ -24,5 +24,10 @@ namespace WSOA.Server.Business.Interface
         /// Sign up the current user to the tournament selected.
         /// </summary>
         SignUpTournamentCallResult SignUpTournament(SignUpTournamentFormViewModel formVM, ISession session);
+
+        /// <summary>
+        /// Load all playable tournaments.
+        /// </summary>
+        NewApiCallResult<PlayableTournamentsViewModel> LoadPlayableTournaments(int subSectionId, ISession session);
     }
 }

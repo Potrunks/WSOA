@@ -198,5 +198,31 @@ namespace WSOA.Server.Business.Implementation
             }
             return result;
         }
+
+        public NewApiCallResult<PlayableTournamentsViewModel> LoadPlayableTournaments(int subSectionId, ISession session)
+        {
+            NewApiCallResult<PlayableTournamentsViewModel> result = new NewApiCallResult<PlayableTournamentsViewModel>(true);
+
+            try
+            {
+                MainNavSubSection subSection = session.CanUserPerformAction(_menuRepository, subSectionId);
+                List<TournamentDto> tournamentDtos = _tournamentRepository.GetTournamentDtosByIsOver(false);
+                result.Data = new PlayableTournamentsViewModel(tournamentDtos, subSection.Description);
+            }
+            catch (FunctionalException e)
+            {
+                string errorMsg = e.Message;
+                _log.Error(errorMsg);
+                return new NewApiCallResult<PlayableTournamentsViewModel>(errorMsg, e.RedirectUrl);
+            }
+            catch (Exception e)
+            {
+                string errorMsg = MainBusinessResources.TECHNICAL_ERROR;
+                _log.Error(e.Message);
+                return new NewApiCallResult<PlayableTournamentsViewModel>(errorMsg, string.Format(RouteBusinessResources.MAIN_ERROR, errorMsg));
+            }
+
+            return result;
+        }
     }
 }

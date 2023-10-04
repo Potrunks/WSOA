@@ -2,7 +2,7 @@
 
 namespace WSOA.Shared.ViewModel
 {
-    public class FutureTournamentDataViewModel : TournamentDataViewModel
+    public class FutureTournamentDataViewModel : TournamentViewModel
     {
         public FutureTournamentDataViewModel()
         {

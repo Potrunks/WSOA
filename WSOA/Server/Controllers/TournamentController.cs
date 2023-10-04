@@ -57,5 +57,15 @@ namespace WSOA.Server.Controllers
         {
             return _tournamentBusiness.SignUpTournament(form, HttpContext.Session);
         }
+
+        /// <summary>
+        /// Load playable tournaments.
+        /// </summary>
+        [HttpGet]
+        [Route("api/tournament/playable/load/{subSectionId}")]
+        public NewApiCallResult<PlayableTournamentsViewModel> LoadPlayableTournaments(int subSectionId)
+        {
+            return _tournamentBusiness.LoadPlayableTournaments(subSectionId, HttpContext.Session);
+        }
     }
 }
