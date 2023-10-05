@@ -15,40 +15,40 @@ namespace WSOA.Client.Services.Implementation
             _httpClient = httpClient;
         }
 
-        public async Task<APICallResult> CreateAccount(AccountCreationFormViewModel form)
+        public async Task<APICallResultBase> CreateAccount(AccountCreationFormViewModel form)
         {
             HttpResponseMessage rep = await _httpClient.PostAsync(ApiRouteResources.CREATE_ACCOUNT, form.ToJsonUtf8());
-            return rep.Content.ToObject<APICallResult>();
+            return rep.Content.ToObject<APICallResultBase>();
         }
 
-        public async Task<APICallResult> CreateLinkAccountCreation(LinkAccountCreationFormViewModel formViewModel)
+        public async Task<APICallResultBase> CreateLinkAccountCreation(LinkAccountCreationFormViewModel formViewModel)
         {
             HttpResponseMessage rep = await _httpClient.PostAsync(ApiRouteResources.CREATE_LINK_ACCOUNT_CREATION, formViewModel.ToJsonUtf8());
-            return rep.Content.ToObject<APICallResult>();
+            return rep.Content.ToObject<APICallResultBase>();
         }
 
-        public async Task<InviteCallResult> LoadInviteDatas(int subSectionId)
+        public async Task<APICallResult<InviteViewModel>> LoadInviteDatas(int subSectionId)
         {
             HttpResponseMessage rep = await _httpClient.GetAsync(string.Format(ApiRouteResources.LOAD_INVITE_DATAS, subSectionId));
-            return rep.Content.ToObject<InviteCallResult>();
+            return rep.Content.ToObject<APICallResult<InviteViewModel>>();
         }
 
-        public async Task<APICallResult> LogOut()
+        public async Task<APICallResultBase> LogOut()
         {
             HttpResponseMessage rep = await _httpClient.GetAsync(ApiRouteResources.LOG_OUT);
-            return rep.Content.ToObject<APICallResult>();
+            return rep.Content.ToObject<APICallResultBase>();
         }
 
-        public async Task<APICallResult> ClearSession()
+        public async Task<APICallResultBase> ClearSession()
         {
             HttpResponseMessage rep = await _httpClient.GetAsync(ApiRouteResources.CLEAR_SESSION);
-            return rep.Content.ToObject<APICallResult>();
+            return rep.Content.ToObject<APICallResultBase>();
         }
 
-        public async Task<APICallResult> SignIn(SignInFormViewModel signInFormVM)
+        public async Task<APICallResultBase> SignIn(SignInFormViewModel signInFormVM)
         {
             HttpResponseMessage rep = await _httpClient.PostAsync(ApiRouteResources.SIGN_IN, signInFormVM.ToJsonUtf8());
-            return rep.Content.ToObject<APICallResult>();
+            return rep.Content.ToObject<APICallResultBase>();
         }
     }
 }

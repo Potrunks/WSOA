@@ -3,18 +3,17 @@ using WSOA.Shared.Resources;
 
 namespace WSOA.Shared.ViewModel
 {
-    public class TournamentCreationDataViewModel : SubSectionDataViewModel
+    public class TournamentCreationDataViewModel : SubSectionViewModel
     {
         public TournamentCreationDataViewModel()
         {
 
         }
 
-        public TournamentCreationDataViewModel(IEnumerable<Address> addresses, string description)
+        public TournamentCreationDataViewModel(IEnumerable<Address> addresses, string description) : base(description)
         {
             SelectableSeasons = GenerateSelectableSeasons();
             SelectableAddresses = addresses.Select(adr => new AddressDataViewModel(adr));
-            Description = description;
         }
 
         public IEnumerable<string> SelectableSeasons { get; set; }

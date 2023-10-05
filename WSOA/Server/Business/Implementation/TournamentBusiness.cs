@@ -45,9 +45,9 @@ namespace WSOA.Server.Business.Implementation
             _playerRepository = playerRepository;
         }
 
-        public APICallResult CreateTournament(TournamentCreationFormViewModel form, ISession session)
+        public APICallResultBase CreateTournament(TournamentCreationFormViewModel form, ISession session)
         {
-            APICallResult result = new APICallResult(null);
+            APICallResultBase result = new APICallResultBase(true);
 
             try
             {
@@ -74,21 +74,21 @@ namespace WSOA.Server.Business.Implementation
                 _transactionManager.RollbackTransaction();
                 string errorMsg = e.Message;
                 _log.Error(errorMsg);
-                return new APICallResult(errorMsg, e.RedirectUrl);
+                return new APICallResultBase(errorMsg, e.RedirectUrl);
             }
             catch (Exception e)
             {
                 _transactionManager.RollbackTransaction();
                 _log.Error(e.Message);
-                return new APICallResult(MainBusinessResources.TECHNICAL_ERROR, null);
+                return new APICallResultBase(MainBusinessResources.TECHNICAL_ERROR);
             }
 
             return result;
         }
 
-        public CreateTournamentCallResult LoadTournamentCreationDatas(int subSectionId, ISession session)
+        public APICallResult<TournamentCreationDataViewModel> LoadTournamentCreationDatas(int subSectionId, ISession session)
         {
-            CreateTournamentCallResult result = new CreateTournamentCallResult(null);
+            APICallResult<TournamentCreationDataViewModel> result = new APICallResult<TournamentCreationDataViewModel>(true);
 
             try
             {
@@ -107,21 +107,21 @@ namespace WSOA.Server.Business.Implementation
             {
                 string errorMsg = e.Message;
                 _log.Error(errorMsg);
-                return new CreateTournamentCallResult(errorMsg, e.RedirectUrl);
+                return new APICallResult<TournamentCreationDataViewModel>(errorMsg, e.RedirectUrl);
             }
             catch (Exception e)
             {
                 _log.Error(e.Message);
                 string errorMsg = MainBusinessResources.TECHNICAL_ERROR;
-                return new CreateTournamentCallResult(errorMsg, string.Format(RouteBusinessResources.MAIN_ERROR, errorMsg));
+                return new APICallResult<TournamentCreationDataViewModel>(errorMsg, string.Format(RouteBusinessResources.MAIN_ERROR, errorMsg));
             }
 
             return result;
         }
 
-        public LoadFutureTournamentCallResult LoadFutureTournamentDatas(int subSectionId, ISession session)
+        public APICallResult<FutureTournamentsViewModel> LoadFutureTournamentDatas(int subSectionId, ISession session)
         {
-            LoadFutureTournamentCallResult result = new LoadFutureTournamentCallResult();
+            APICallResult<FutureTournamentsViewModel> result = new APICallResult<FutureTournamentsViewModel>(true);
 
             try
             {
@@ -134,21 +134,21 @@ namespace WSOA.Server.Business.Implementation
             {
                 string errorMsg = e.Message;
                 _log.Error(errorMsg);
-                return new LoadFutureTournamentCallResult(errorMsg, e.RedirectUrl);
+                return new APICallResult<FutureTournamentsViewModel>(errorMsg, e.RedirectUrl);
             }
             catch (Exception e)
             {
                 _log.Error(e.Message);
                 string errorMsg = MainBusinessResources.TECHNICAL_ERROR;
-                return new LoadFutureTournamentCallResult(errorMsg, string.Format(RouteBusinessResources.MAIN_ERROR, errorMsg));
+                return new APICallResult<FutureTournamentsViewModel>(errorMsg, string.Format(RouteBusinessResources.MAIN_ERROR, errorMsg));
             }
 
             return result;
         }
 
-        public SignUpTournamentCallResult SignUpTournament(SignUpTournamentFormViewModel formVM, ISession session)
+        public APICallResult<PlayerDataViewModel> SignUpTournament(SignUpTournamentFormViewModel formVM, ISession session)
         {
-            SignUpTournamentCallResult result = new SignUpTournamentCallResult(null);
+            APICallResult<PlayerDataViewModel> result = new APICallResult<PlayerDataViewModel>(true);
 
             int tournamentId = formVM.TournamentId;
             string presenceStateCode = formVM.PresenceStateCode;
@@ -178,7 +178,7 @@ namespace WSOA.Server.Business.Implementation
                 player.PresenceStateCode = presenceStateCode;
                 _playerRepository.SavePlayer(player);
 
-                result.PlayerSignedUp = new PlayerDataViewModel(_userRepository.GetUserById(currentUsrId), presenceStateCode);
+                result.Data = new PlayerDataViewModel(_userRepository.GetUserById(currentUsrId), presenceStateCode);
 
                 _transactionManager.CommitTransaction();
             }
@@ -187,21 +187,21 @@ namespace WSOA.Server.Business.Implementation
                 _transactionManager.RollbackTransaction();
                 string errorMsg = e.Message;
                 _log.Error(errorMsg);
-                return new SignUpTournamentCallResult(errorMsg, e.RedirectUrl);
+                return new APICallResult<PlayerDataViewModel>(errorMsg, e.RedirectUrl);
             }
             catch (Exception e)
             {
                 _transactionManager.RollbackTransaction();
                 _log.Error(e.Message);
                 string errorMsg = MainBusinessResources.TECHNICAL_ERROR;
-                return new SignUpTournamentCallResult(errorMsg, string.Format(RouteBusinessResources.MAIN_ERROR, errorMsg));
+                return new APICallResult<PlayerDataViewModel>(errorMsg, string.Format(RouteBusinessResources.MAIN_ERROR, errorMsg));
             }
             return result;
         }
 
-        public NewApiCallResult<PlayableTournamentsViewModel> LoadPlayableTournaments(int subSectionId, ISession session)
+        public APICallResult<PlayableTournamentsViewModel> LoadPlayableTournaments(int subSectionId, ISession session)
         {
-            NewApiCallResult<PlayableTournamentsViewModel> result = new NewApiCallResult<PlayableTournamentsViewModel>(true);
+            APICallResult<PlayableTournamentsViewModel> result = new APICallResult<PlayableTournamentsViewModel>(true);
 
             try
             {
@@ -213,13 +213,13 @@ namespace WSOA.Server.Business.Implementation
             {
                 string errorMsg = e.Message;
                 _log.Error(errorMsg);
-                return new NewApiCallResult<PlayableTournamentsViewModel>(errorMsg, e.RedirectUrl);
+                return new APICallResult<PlayableTournamentsViewModel>(errorMsg, e.RedirectUrl);
             }
             catch (Exception e)
             {
                 string errorMsg = MainBusinessResources.TECHNICAL_ERROR;
                 _log.Error(e.Message);
-                return new NewApiCallResult<PlayableTournamentsViewModel>(errorMsg, string.Format(RouteBusinessResources.MAIN_ERROR, errorMsg));
+                return new APICallResult<PlayableTournamentsViewModel>(errorMsg, string.Format(RouteBusinessResources.MAIN_ERROR, errorMsg));
             }
 
             return result;

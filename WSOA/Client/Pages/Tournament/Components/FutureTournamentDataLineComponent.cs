@@ -67,7 +67,7 @@ namespace WSOA.Client.Pages.Tournament.Components
 
             SignUpForm.PresenceStateCode = presenceStateCode;
 
-            SignUpTournamentCallResult result = await TournamentService.SignUpTournament(SignUpForm);
+            APICallResult<PlayerDataViewModel> result = await TournamentService.SignUpTournament(SignUpForm);
             if (!string.IsNullOrWhiteSpace(result.RedirectUrl))
             {
                 NavigationManager.NavigateTo(result.RedirectUrl);
@@ -76,15 +76,15 @@ namespace WSOA.Client.Pages.Tournament.Components
 
             if (result.Success)
             {
-                Data.CurrentUserPresenceStateCode = result.PlayerSignedUp.PresenceStateCode;
-                PlayerDataViewModel? currentPlayer = Data.PlayerDatasVM.SingleOrDefault(p => p.UserId == result.PlayerSignedUp.UserId);
+                Data.CurrentUserPresenceStateCode = result.Data.PresenceStateCode;
+                PlayerDataViewModel? currentPlayer = Data.PlayerDatasVM.SingleOrDefault(p => p.UserId == result.Data.UserId);
                 if (currentPlayer != null)
                 {
-                    currentPlayer.PresenceStateCode = result.PlayerSignedUp.PresenceStateCode;
+                    currentPlayer.PresenceStateCode = result.Data.PresenceStateCode;
                 }
                 else
                 {
-                    Data.PlayerDatasVM.Add(result.PlayerSignedUp);
+                    Data.PlayerDatasVM.Add(result.Data);
                 }
                 LoadPlayersByPresenceStateCode();
             }

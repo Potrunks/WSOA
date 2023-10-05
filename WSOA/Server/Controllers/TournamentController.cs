@@ -23,7 +23,7 @@ namespace WSOA.Server.Controllers
         /// </summary>
         [HttpPost]
         [Route("api/tournament/create")]
-        public APICallResult CreateTournament([FromBody] TournamentCreationFormViewModel form)
+        public APICallResultBase CreateTournament([FromBody] TournamentCreationFormViewModel form)
         {
             return _tournamentBusiness.CreateTournament(form, HttpContext.Session);
         }
@@ -33,7 +33,7 @@ namespace WSOA.Server.Controllers
         /// </summary>
         [HttpGet]
         [Route("api/tournament/create/load/{subSectionId}")]
-        public APICallResult LoadTournamentCreationDatas(int subSectionId)
+        public APICallResult<TournamentCreationDataViewModel> LoadTournamentCreationDatas(int subSectionId)
         {
             return _tournamentBusiness.LoadTournamentCreationDatas(subSectionId, HttpContext.Session);
         }
@@ -43,7 +43,7 @@ namespace WSOA.Server.Controllers
         /// </summary>
         [HttpGet]
         [Route("api/tournament/future/load/{subSectionId}")]
-        public LoadFutureTournamentCallResult LoadFutureTournamentDatas(int subSectionId)
+        public APICallResult<FutureTournamentsViewModel> LoadFutureTournamentDatas(int subSectionId)
         {
             return _tournamentBusiness.LoadFutureTournamentDatas(subSectionId, HttpContext.Session);
         }
@@ -53,7 +53,7 @@ namespace WSOA.Server.Controllers
         /// </summary>
         [HttpPost]
         [Route("api/tournament/future/signUp")]
-        public SignUpTournamentCallResult SignUpTournament([FromBody] SignUpTournamentFormViewModel form)
+        public APICallResult<PlayerDataViewModel> SignUpTournament([FromBody] SignUpTournamentFormViewModel form)
         {
             return _tournamentBusiness.SignUpTournament(form, HttpContext.Session);
         }
@@ -63,7 +63,7 @@ namespace WSOA.Server.Controllers
         /// </summary>
         [HttpGet]
         [Route("api/tournament/playable/load/{subSectionId}")]
-        public NewApiCallResult<PlayableTournamentsViewModel> LoadPlayableTournaments(int subSectionId)
+        public APICallResult<PlayableTournamentsViewModel> LoadPlayableTournaments(int subSectionId)
         {
             return _tournamentBusiness.LoadPlayableTournaments(subSectionId, HttpContext.Session);
         }

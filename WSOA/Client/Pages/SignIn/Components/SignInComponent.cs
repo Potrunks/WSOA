@@ -57,7 +57,7 @@ namespace WSOA.Client.Pages.SignIn.Component
                 return;
             }
 
-            APICallResult result = await AccountService.SignIn(_signInFormVM);
+            APICallResultBase result = await AccountService.SignIn(_signInFormVM);
 
             if (!string.IsNullOrWhiteSpace(result.RedirectUrl))
             {

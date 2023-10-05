@@ -302,7 +302,7 @@ namespace WSOA.Test
             transactionManagerMock.Verify(m => m.RollbackTransaction(), Times.Once);
         }
 
-        public void VerifyAPICallResultSuccess(APICallResult result, string? expectedRedirectUrl)
+        public void VerifyAPICallResultSuccess(APICallResultBase result, string? expectedRedirectUrl)
         {
             Assert.AreEqual(true, result.Success);
             Assert.AreEqual(expectedRedirectUrl, result.RedirectUrl);
@@ -310,7 +310,7 @@ namespace WSOA.Test
             Assert.AreEqual(null, result.ErrorMessage);
         }
 
-        public void VerifyAPICallResultError(APICallResult result, string? expectedRedirectUrl, string expectedErrorMsg)
+        public void VerifyAPICallResultError(APICallResultBase result, string? expectedRedirectUrl, string expectedErrorMsg)
         {
             Assert.AreEqual(false, result.Success);
             Assert.AreEqual(expectedRedirectUrl, result.RedirectUrl);

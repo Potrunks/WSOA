@@ -19,7 +19,7 @@ namespace WSOA.Client.Shared.Forms.Components
 
         [Parameter]
         [EditorRequired]
-        public Func<Task<APICallResult>> OnSubmit { get; set; }
+        public Func<Task<APICallResultBase>> OnSubmit { get; set; }
 
         [Parameter]
         [EditorRequired]
@@ -62,7 +62,7 @@ namespace WSOA.Client.Shared.Forms.Components
 
             if (EditContext.Validate())
             {
-                APICallResult result = await OnSubmit.Invoke();
+                APICallResultBase result = await OnSubmit.Invoke();
                 if (!string.IsNullOrWhiteSpace(result.RedirectUrl))
                 {
                     NavigationManager.NavigateTo(result.RedirectUrl);

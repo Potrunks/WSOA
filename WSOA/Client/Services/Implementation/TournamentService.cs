@@ -15,34 +15,34 @@ namespace WSOA.Client.Services.Implementation
             _httpClient = httpClient;
         }
 
-        public async Task<APICallResult> CreateTournament(TournamentCreationFormViewModel form)
+        public async Task<APICallResultBase> CreateTournament(TournamentCreationFormViewModel form)
         {
             HttpResponseMessage response = await _httpClient.PostAsync(ApiRouteResources.CREATE_TOURNAMENT, form.ToJsonUtf8());
-            return response.Content.ToObject<APICallResult>();
+            return response.Content.ToObject<APICallResultBase>();
         }
 
-        public async Task<CreateTournamentCallResult> LoadTournamentCreationDatas(int subSectionId)
+        public async Task<APICallResult<TournamentCreationDataViewModel>> LoadTournamentCreationDatas(int subSectionId)
         {
             HttpResponseMessage response = await _httpClient.GetAsync(string.Format(ApiRouteResources.LOAD_CREATE_TOURNAMENT_DATAS, subSectionId));
-            return response.Content.ToObject<CreateTournamentCallResult>();
+            return response.Content.ToObject<APICallResult<TournamentCreationDataViewModel>>();
         }
 
-        public async Task<LoadFutureTournamentCallResult> LoadFutureTournamentDatas(int subSectionId)
+        public async Task<APICallResult<FutureTournamentsViewModel>> LoadFutureTournamentDatas(int subSectionId)
         {
             HttpResponseMessage response = await _httpClient.GetAsync(string.Format(ApiRouteResources.LOAD_FUTURE_TOURNAMENT_DATAS, subSectionId));
-            return response.Content.ToObject<LoadFutureTournamentCallResult>();
+            return response.Content.ToObject<APICallResult<FutureTournamentsViewModel>>();
         }
 
-        public async Task<SignUpTournamentCallResult> SignUpTournament(SignUpTournamentFormViewModel form)
+        public async Task<APICallResult<PlayerDataViewModel>> SignUpTournament(SignUpTournamentFormViewModel form)
         {
             HttpResponseMessage response = await _httpClient.PostAsync(ApiRouteResources.SIGN_UP_TOURNAMENT, form.ToJsonUtf8());
-            return response.Content.ToObject<SignUpTournamentCallResult>();
+            return response.Content.ToObject<APICallResult<PlayerDataViewModel>>();
         }
 
-        public async Task<NewApiCallResult<PlayableTournamentsViewModel>> LoadPlayableTournaments(int subSectionId)
+        public async Task<APICallResult<PlayableTournamentsViewModel>> LoadPlayableTournaments(int subSectionId)
         {
             HttpResponseMessage response = await _httpClient.GetAsync(string.Format(ApiRouteResources.LOAD_PLAYABLE_TOURNAMENT_DATAS, subSectionId));
-            return response.Content.ToObject<NewApiCallResult<PlayableTournamentsViewModel>>();
+            return response.Content.ToObject<APICallResult<PlayableTournamentsViewModel>>();
         }
     }
 }

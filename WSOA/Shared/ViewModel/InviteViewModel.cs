@@ -1,15 +1,17 @@
 ﻿namespace WSOA.Shared.ViewModel
 {
-    public class InviteViewModel
+    public class InviteViewModel : SubSectionViewModel
     {
         public InviteViewModel()
         {
             ProfileLabelsByCode = new Dictionary<string, string>();
-            SubSectionDescription = null;
+        }
+
+        public InviteViewModel(IDictionary<string, string> profileLabelsByCode, string subSectionDescription) : base(subSectionDescription)
+        {
+            ProfileLabelsByCode = profileLabelsByCode;
         }
 
         public IDictionary<string, string> ProfileLabelsByCode { get; set; }
-
-        public string SubSectionDescription { get; set; }
     }
 }

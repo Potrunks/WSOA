@@ -1,6 +1,7 @@
 ﻿using WSOA.Client.Services.Interface;
 using WSOA.Client.Utils;
 using WSOA.Shared.Result;
+using WSOA.Shared.ViewModel;
 
 namespace WSOA.Client.Services.Implementation
 {
@@ -13,10 +14,10 @@ namespace WSOA.Client.Services.Implementation
             _httpClient = httpClient;
         }
 
-        public async Task<MainNavMenuResult> LoadMainMenu()
+        public async Task<APICallResult<MainNavMenuViewModel>> LoadMainMenu()
         {
             HttpResponseMessage rep = await _httpClient.GetAsync("api/menu/loadMainNavMenu");
-            return rep.Content.ToObject<MainNavMenuResult>();
+            return rep.Content.ToObject<APICallResult<MainNavMenuViewModel>>();
         }
     }
 }

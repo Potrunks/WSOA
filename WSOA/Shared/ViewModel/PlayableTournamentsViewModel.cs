@@ -2,7 +2,7 @@
 
 namespace WSOA.Shared.ViewModel
 {
-    public class PlayableTournamentsViewModel : SubSectionDataViewModel
+    public class PlayableTournamentsViewModel : SubSectionViewModel
     {
         public PlayableTournamentsViewModel()
         {

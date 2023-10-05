@@ -62,7 +62,7 @@ namespace WSOA.Test.Business
         [TestMethod]
         public void ShouldCreateAccount()
         {
-            APICallResult result = _accountBusiness.CreateAccount(_form);
+            APICallResultBase result = _accountBusiness.CreateAccount(_form);
 
             _transactionManagerMock.Verify(m => m.BeginTransaction(), Times.Once());
             _accountRepositoryMock.Verify(m => m.SaveAccount(_accountCreated), Times.Once());
@@ -87,7 +87,7 @@ namespace WSOA.Test.Business
             _accountRepositoryMock.Setup(m => m.GetLinkAccountCreationByMail(It.IsAny<string>()))
                                   .Returns(() => null);
 
-            APICallResult result = _accountBusiness.CreateAccount(_form);
+            APICallResultBase result = _accountBusiness.CreateAccount(_form);
 
             _transactionManagerMock.Verify(m => m.BeginTransaction(), Times.Once());
             _transactionManagerMock.Verify(m => m.CommitTransaction(), Times.Never());
@@ -101,7 +101,7 @@ namespace WSOA.Test.Business
         {
             _linkAccountCreation.ExpirationDate = DateTime.UtcNow.AddDays(-1);
 
-            APICallResult result = _accountBusiness.CreateAccount(_form);
+            APICallResultBase result = _accountBusiness.CreateAccount(_form);
 
             _transactionManagerMock.Verify(m => m.BeginTransaction(), Times.Once());
             _transactionManagerMock.Verify(m => m.CommitTransaction(), Times.Never());
@@ -116,7 +116,7 @@ namespace WSOA.Test.Business
             _accountRepositoryMock.Setup(m => m.ExistsAccountByLogin(It.IsAny<string>()))
                                   .Returns(true);
 
-            APICallResult result = _accountBusiness.CreateAccount(_form);
+            APICallResultBase result = _accountBusiness.CreateAccount(_form);
 
             _transactionManagerMock.Verify(m => m.BeginTransaction(), Times.Once());
             _transactionManagerMock.Verify(m => m.CommitTransaction(), Times.Never());
@@ -131,7 +131,7 @@ namespace WSOA.Test.Business
             _userRepositoryMock.Setup(m => m.ExistsUserByMail(It.IsAny<string>()))
                                   .Returns(true);
 
-            APICallResult result = _accountBusiness.CreateAccount(_form);
+            APICallResultBase result = _accountBusiness.CreateAccount(_form);
 
             _transactionManagerMock.Verify(m => m.BeginTransaction(), Times.Once());
             _transactionManagerMock.Verify(m => m.CommitTransaction(), Times.Never());

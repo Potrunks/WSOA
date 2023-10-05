@@ -17,7 +17,7 @@ namespace WSOA.Client.Pages.Tournament.Components
         {
             IsLoading = true;
 
-            NewApiCallResult<PlayableTournamentsViewModel> result = await TournamentService.LoadPlayableTournaments(SubSectionId);
+            APICallResult<PlayableTournamentsViewModel> result = await TournamentService.LoadPlayableTournaments(SubSectionId);
             if (!string.IsNullOrWhiteSpace(result.RedirectUrl))
             {
                 NavigationManager.NavigateTo(result.RedirectUrl);

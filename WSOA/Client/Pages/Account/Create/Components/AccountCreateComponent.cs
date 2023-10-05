@@ -26,7 +26,7 @@ namespace WSOA.Client.Pages.Account.Create.Components
             IsLoading = false;
         }
 
-        public Func<Task<APICallResult>> CreateNewAccount()
+        public Func<Task<APICallResultBase>> CreateNewAccount()
         {
             return () => AccountService.CreateAccount(AccountCreationFormVM);
         }

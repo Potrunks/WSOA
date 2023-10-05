@@ -8,26 +8,26 @@ namespace WSOA.Server.Business.Interface
         /// <summary>
         /// Create new tournament and prevent all users in app.
         /// </summary>
-        APICallResult CreateTournament(TournamentCreationFormViewModel form, ISession session);
+        APICallResultBase CreateTournament(TournamentCreationFormViewModel form, ISession session);
 
         /// <summary>
         /// Load datas for tournament creation.
         /// </summary>
-        CreateTournamentCallResult LoadTournamentCreationDatas(int subSectionId, ISession session);
+        APICallResult<TournamentCreationDataViewModel> LoadTournamentCreationDatas(int subSectionId, ISession session);
 
         /// <summary>
         /// Load future tournament datas.
         /// </summary>
-        LoadFutureTournamentCallResult LoadFutureTournamentDatas(int subSectionId, ISession session);
+        APICallResult<FutureTournamentsViewModel> LoadFutureTournamentDatas(int subSectionId, ISession session);
 
         /// <summary>
         /// Sign up the current user to the tournament selected.
         /// </summary>
-        SignUpTournamentCallResult SignUpTournament(SignUpTournamentFormViewModel formVM, ISession session);
+        APICallResult<PlayerDataViewModel> SignUpTournament(SignUpTournamentFormViewModel formVM, ISession session);
 
         /// <summary>
         /// Load all playable tournaments.
         /// </summary>
-        NewApiCallResult<PlayableTournamentsViewModel> LoadPlayableTournaments(int subSectionId, ISession session);
+        APICallResult<PlayableTournamentsViewModel> LoadPlayableTournaments(int subSectionId, ISession session);
     }
 }

@@ -9,6 +9,7 @@ using WSOA.Shared.Dtos;
 using WSOA.Shared.Entity;
 using WSOA.Shared.Resources;
 using WSOA.Shared.Result;
+using WSOA.Shared.ViewModel;
 
 namespace WSOA.Test.Business
 {
@@ -50,7 +51,7 @@ namespace WSOA.Test.Business
         [TestMethod]
         public void ShouldLoadFutureTournamentDatas()
         {
-            LoadFutureTournamentCallResult result = _tournamentBusiness.LoadFutureTournamentDatas(1, _sessionMock.Object);
+            APICallResult<FutureTournamentsViewModel> result = _tournamentBusiness.LoadFutureTournamentDatas(1, _sessionMock.Object);
 
             VerifyAPICallResultSuccess(result, null);
             Assert.AreEqual(_tournamentDtos[0].Tournament.Id, result.Data.FutureTournamentsVM[0].TournamentId);
@@ -75,7 +76,7 @@ namespace WSOA.Test.Business
         {
             _sessionMock = CreateISessionMock(null, _currentUserId);
 
-            LoadFutureTournamentCallResult result = _tournamentBusiness.LoadFutureTournamentDatas(1, _sessionMock.Object);
+            APICallResult<FutureTournamentsViewModel> result = _tournamentBusiness.LoadFutureTournamentDatas(1, _sessionMock.Object);
 
             VerifyAPICallResultError(result, string.Format(RouteBusinessResources.SIGN_IN_WITH_ERROR_MESSAGE, MainBusinessResources.USER_NOT_CONNECTED), MainBusinessResources.USER_NOT_CONNECTED);
         }
@@ -86,7 +87,7 @@ namespace WSOA.Test.Business
             _menuRepositoryMock.Setup(m => m.GetMainNavSubSectionByIdAndProfileCode(It.IsAny<string>(), It.IsAny<int>()))
                                .Returns(() => null);
 
-            LoadFutureTournamentCallResult result = _tournamentBusiness.LoadFutureTournamentDatas(1, _sessionMock.Object);
+            APICallResult<FutureTournamentsViewModel> result = _tournamentBusiness.LoadFutureTournamentDatas(1, _sessionMock.Object);
 
             VerifyAPICallResultError(result, string.Format(RouteBusinessResources.SIGN_IN_WITH_ERROR_MESSAGE, MainBusinessResources.USER_CANNOT_PERFORM_ACTION), MainBusinessResources.USER_CANNOT_PERFORM_ACTION);
         }
@@ -96,7 +97,7 @@ namespace WSOA.Test.Business
         {
             _sessionMock = CreateISessionMock(_currentProfileCode, null);
 
-            LoadFutureTournamentCallResult result = _tournamentBusiness.LoadFutureTournamentDatas(1, _sessionMock.Object);
+            APICallResult<FutureTournamentsViewModel> result = _tournamentBusiness.LoadFutureTournamentDatas(1, _sessionMock.Object);
 
             VerifyAPICallResultError(result, string.Format(RouteBusinessResources.SIGN_IN_WITH_ERROR_MESSAGE, MainBusinessResources.USER_NOT_CONNECTED), MainBusinessResources.USER_NOT_CONNECTED);
         }

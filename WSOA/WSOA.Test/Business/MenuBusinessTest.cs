@@ -8,6 +8,7 @@ using WSOA.Server.Data.Interface;
 using WSOA.Shared.Entity;
 using WSOA.Shared.Resources;
 using WSOA.Shared.Result;
+using WSOA.Shared.ViewModel;
 
 namespace WSOA.Test.Business
 {
@@ -30,7 +31,7 @@ namespace WSOA.Test.Business
         [TestMethod]
         public void ShouldLoadAppropriateMainMenu_WhenUserNeedAccessIt()
         {
-            MainNavMenuResult result = _menuBusiness.LoadMainNavMenu(_sessionMock.Object);
+            APICallResult<MainNavMenuViewModel> result = _menuBusiness.LoadMainNavMenu(_sessionMock.Object);
 
             Assert.AreEqual(true, result.Success);
             Assert.AreEqual(null, result.ErrorMessage);
@@ -42,7 +43,7 @@ namespace WSOA.Test.Business
         {
             _sessionMock = CreateISessionMock(null, null);
 
-            MainNavMenuResult result = _menuBusiness.LoadMainNavMenu(_sessionMock.Object);
+            APICallResult<MainNavMenuViewModel> result = _menuBusiness.LoadMainNavMenu(_sessionMock.Object);
 
             Assert.AreEqual(false, result.Success);
             Assert.AreEqual(MainBusinessResources.USER_NOT_CONNECTED, result.ErrorMessage);
@@ -55,7 +56,7 @@ namespace WSOA.Test.Business
             _menuRepositoryMock.Setup(m => m.GetMainNavSubSectionsInSectionByProfileCode(It.IsAny<string>()))
                 .Returns(() => null);
 
-            MainNavMenuResult result = _menuBusiness.LoadMainNavMenu(_sessionMock.Object);
+            APICallResult<MainNavMenuViewModel> result = _menuBusiness.LoadMainNavMenu(_sessionMock.Object);
 
             LoadMainMenuTestFail(result);
         }
@@ -69,12 +70,12 @@ namespace WSOA.Test.Business
                     { new MainNavSection(), null }
                 });
 
-            MainNavMenuResult result = _menuBusiness.LoadMainNavMenu(_sessionMock.Object);
+            APICallResult<MainNavMenuViewModel> result = _menuBusiness.LoadMainNavMenu(_sessionMock.Object);
 
             LoadMainMenuTestFail(result);
         }
 
-        private void LoadMainMenuTestFail(MainNavMenuResult result)
+        private void LoadMainMenuTestFail(APICallResult<MainNavMenuViewModel> result)
         {
             Assert.AreEqual(false, result.Success);
             Assert.AreEqual(MainBusinessResources.TECHNICAL_ERROR, result.ErrorMessage);

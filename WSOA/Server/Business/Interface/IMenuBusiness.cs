@@ -1,4 +1,5 @@
 ﻿using WSOA.Shared.Result;
+using WSOA.Shared.ViewModel;
 
 namespace WSOA.Server.Business.Interface
 {
@@ -7,6 +8,6 @@ namespace WSOA.Server.Business.Interface
         /// <summary>
         /// Load Main nav menu for the user connected.
         /// </summary>
-        MainNavMenuResult LoadMainNavMenu(ISession currentSession);
+        APICallResult<MainNavMenuViewModel> LoadMainNavMenu(ISession currentSession);
     }
 }

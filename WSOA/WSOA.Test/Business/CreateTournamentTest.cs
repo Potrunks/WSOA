@@ -86,7 +86,7 @@ namespace WSOA.Test.Business
         [TestMethod]
         public void ShouldCreateTournament()
         {
-            APICallResult result = _tournamentBusiness.CreateTournament(_form, _sessionMock.Object);
+            APICallResultBase result = _tournamentBusiness.CreateTournament(_form, _sessionMock.Object);
 
             VerifyTransactionManagerCommit(_transactionManagerMock);
             Assert.AreEqual(_form.Season, _tournamentCreated.Season);
@@ -104,7 +104,7 @@ namespace WSOA.Test.Business
         {
             _sessionMock = CreateISessionMock(null, null);
 
-            APICallResult result = _tournamentBusiness.CreateTournament(_form, _sessionMock.Object);
+            APICallResultBase result = _tournamentBusiness.CreateTournament(_form, _sessionMock.Object);
 
             VerifyTransactionManagerRollback(_transactionManagerMock);
             Assert.AreEqual(null, _tournamentCreated);
@@ -121,7 +121,7 @@ namespace WSOA.Test.Business
             _menuRepositoryMock.Setup(m => m.GetMainNavSubSectionByIdAndProfileCode(It.Is<string>(s => s != ProfileResources.ORGANIZER_CODE), It.IsAny<int>()))
                                .Returns(() => null);
 
-            APICallResult result = _tournamentBusiness.CreateTournament(_form, _sessionMock.Object);
+            APICallResultBase result = _tournamentBusiness.CreateTournament(_form, _sessionMock.Object);
 
             VerifyTransactionManagerRollback(_transactionManagerMock);
             Assert.AreEqual(null, _tournamentCreated);
@@ -136,7 +136,7 @@ namespace WSOA.Test.Business
         {
             _form.StartDate = DateTime.UtcNow.AddDays(-7);
 
-            APICallResult result = _tournamentBusiness.CreateTournament(_form, _sessionMock.Object);
+            APICallResultBase result = _tournamentBusiness.CreateTournament(_form, _sessionMock.Object);
 
             VerifyTransactionManagerRollback(_transactionManagerMock);
             Assert.AreEqual(null, _tournamentCreated);
@@ -149,7 +149,7 @@ namespace WSOA.Test.Business
         [TestMethod]
         public void ShouldLoadTournamentCreationDatas()
         {
-            CreateTournamentCallResult result = _tournamentBusiness.LoadTournamentCreationDatas(1, _sessionMock.Object);
+            APICallResult<TournamentCreationDataViewModel> result = _tournamentBusiness.LoadTournamentCreationDatas(1, _sessionMock.Object);
             TournamentCreationDataViewModel viewModelResult = result.Data;
 
             Assert.AreEqual(true, result.Success);
@@ -166,7 +166,7 @@ namespace WSOA.Test.Business
         {
             _sessionMock = CreateISessionMock(null, null);
 
-            CreateTournamentCallResult result = _tournamentBusiness.LoadTournamentCreationDatas(1, _sessionMock.Object);
+            APICallResult<TournamentCreationDataViewModel> result = _tournamentBusiness.LoadTournamentCreationDatas(1, _sessionMock.Object);
 
             Assert.AreEqual(false, result.Success);
             Assert.AreEqual(MainBusinessResources.USER_NOT_CONNECTED, result.ErrorMessage);
@@ -182,7 +182,7 @@ namespace WSOA.Test.Business
             _menuRepositoryMock.Setup(m => m.GetMainNavSubSectionByIdAndProfileCode(It.Is<string>(s => s != ProfileResources.ORGANIZER_CODE), It.IsAny<int>()))
                                .Returns(() => null);
 
-            CreateTournamentCallResult result = _tournamentBusiness.LoadTournamentCreationDatas(1, _sessionMock.Object);
+            APICallResult<TournamentCreationDataViewModel> result = _tournamentBusiness.LoadTournamentCreationDatas(1, _sessionMock.Object);
 
             Assert.AreEqual(false, result.Success);
             Assert.AreEqual(MainBusinessResources.USER_CANNOT_PERFORM_ACTION, result.ErrorMessage);
@@ -197,7 +197,7 @@ namespace WSOA.Test.Business
             _addressRepositoryMock.Setup(m => m.GetAllAddresses())
                                   .Returns(new List<Address>());
 
-            CreateTournamentCallResult result = _tournamentBusiness.LoadTournamentCreationDatas(1, _sessionMock.Object);
+            APICallResult<TournamentCreationDataViewModel> result = _tournamentBusiness.LoadTournamentCreationDatas(1, _sessionMock.Object);
 
             Assert.AreEqual(false, result.Success);
             string expectedErrorMsg = string.Format(MainBusinessResources.NULL_OR_EMPTY_OBJ_NOT_ALLOWED, "addresses", nameof(TournamentBusiness.LoadTournamentCreationDatas));
@@ -213,7 +213,7 @@ namespace WSOA.Test.Business
             _addressRepositoryMock.Setup(m => m.GetAllAddresses())
                                   .Returns(() => null);
 
-            CreateTournamentCallResult result = _tournamentBusiness.LoadTournamentCreationDatas(1, _sessionMock.Object);
+            APICallResult<TournamentCreationDataViewModel> result = _tournamentBusiness.LoadTournamentCreationDatas(1, _sessionMock.Object);
 
             Assert.AreEqual(false, result.Success);
             string expectedErrorMsg = string.Format(MainBusinessResources.NULL_OR_EMPTY_OBJ_NOT_ALLOWED, "addresses", nameof(TournamentBusiness.LoadTournamentCreationDatas));

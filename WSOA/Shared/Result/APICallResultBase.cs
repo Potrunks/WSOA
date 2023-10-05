@@ -1,18 +1,19 @@
 ﻿namespace WSOA.Shared.Result
 {
-    public class NewApiCallResult<T>
+    public class APICallResultBase
     {
-        public NewApiCallResult()
+        public APICallResultBase()
         {
 
         }
 
-        public NewApiCallResult(bool success)
+        public APICallResultBase(bool success, string? redirectUrl = null)
         {
             Success = success;
+            RedirectUrl = redirectUrl;
         }
 
-        public NewApiCallResult(string errorMsg, string? redirectUrl = null)
+        public APICallResultBase(string errorMsg, string? redirectUrl = null)
         {
             Success = false;
             ErrorMessage = errorMsg;
@@ -26,7 +27,5 @@
         public string? WarningMessage { get; set; }
 
         public string? RedirectUrl { get; set; }
-
-        public T Data { get; set; }
     }
 }

@@ -26,14 +26,14 @@ namespace WSOA.Client.Shared.Layout.Components
         {
             _isLoading = true;
 
-            MainNavMenuResult result = await MenuService.LoadMainMenu();
+            APICallResult<MainNavMenuViewModel> result = await MenuService.LoadMainMenu();
             if (!result.Success)
             {
                 NavigationManager.NavigateTo(result.RedirectUrl);
                 return;
             }
 
-            _mainNavSectionVMs = result.MainNavSectionVMs.OrderBy(sec => sec.Order).ToList();
+            _mainNavSectionVMs = result.Data.MainNavSectionVMs.OrderBy(sec => sec.Order).ToList();
 
             _isLoading = false;
         }

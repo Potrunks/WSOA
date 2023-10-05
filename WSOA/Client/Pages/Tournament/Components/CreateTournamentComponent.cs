@@ -19,7 +19,7 @@ namespace WSOA.Client.Pages.Tournament.Components
         {
             IsLoading = true;
 
-            CreateTournamentCallResult result = await TournamentService.LoadTournamentCreationDatas(SubSectionId);
+            APICallResult<TournamentCreationDataViewModel> result = await TournamentService.LoadTournamentCreationDatas(SubSectionId);
             if (!string.IsNullOrWhiteSpace(result.RedirectUrl))
             {
                 NavigationManager.NavigateTo(result.RedirectUrl);
@@ -32,7 +32,7 @@ namespace WSOA.Client.Pages.Tournament.Components
             IsLoading = false;
         }
 
-        public Func<Task<APICallResult>> CreateTournament()
+        public Func<Task<APICallResultBase>> CreateTournament()
         {
             return () => TournamentService.CreateTournament(FormVM);
         }

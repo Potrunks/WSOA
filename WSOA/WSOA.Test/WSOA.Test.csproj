@@ -4,7 +4,7 @@
     <TargetFramework>net6.0</TargetFramework>
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
-
+    <NoWarn>CS8618</NoWarn>
     <IsPackable>false</IsPackable>
     <TestResultsDirectory>$(TEMP)\WSOA_App\TestResults</TestResultsDirectory>
   </PropertyGroup>
