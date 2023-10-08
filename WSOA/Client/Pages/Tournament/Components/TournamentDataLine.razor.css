@@ -59,7 +59,10 @@
     justify-content: space-around;
     align-items: center;
     padding-bottom: 10px;
-    height: 50px;
+}
+
+.panelButtons__actions > ::deep .mainButton {
+    width: 30%;
 }
 
 .action {
@@ -91,5 +94,69 @@
     .action {
         width: 84px;
         font-size: 14px;
+    }
+
+    .panelButtons__actions > ::deep .mainButton {
+        font-size: 13px;
+    }
+}
+
+@media only screen and (min-width: 360px) {
+    .panelButtons__actions > ::deep .mainButton {
+        font-size: 17px;
+    }
+}
+
+@media only screen and (min-width: 390px) {
+    .panelButtons__actions > ::deep .mainButton {
+        font-size: 19px;
+    }
+}
+
+@media only screen and (min-width: 768px) {
+    .panelButtons__actions > ::deep .mainButton {
+        font-size: 25px;
+    }
+}
+
+@media only screen and (max-height: 600px) {
+    .container__data-noCollapsable {
+        font-size: 25px;
+    }
+
+    .panelButtons__actions > ::deep .mainButton {
+        height: 60px;
+    }
+
+    .presenceCounter__presence > img,
+    .presenceCounter__maybe > img {
+        width: 50px;
+    }
+}
+
+@media only screen and (min-height: 740px) {
+    .container__data-noCollapsable {
+        font-size: 20px;
+    }
+}
+
+@media only screen and (min-height: 1024px) {
+    .container__data-noCollapsable {
+        font-size: 25px;
+    }
+}
+
+@media only screen and (min-width: 1280px) and (min-height: 800px) {
+    .panelButtons__actions > ::deep .mainButton {
+        height: 60px;
+    }
+
+    .container__data-noCollapsable {
+        font-size: 25px;
+    }
+
+    .presenceCounter__presence > img,
+    .presenceCounter__maybe > img {
+        width: 50px;
     }
 }

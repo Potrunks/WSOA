@@ -1,20 +1,24 @@
-﻿@using WSOA.Client.Shared.Buttons.Resources;
+﻿@using WSOA.Client.Shared.Buttons.Main
+@using WSOA.Client.Shared.Buttons.Resources;
 @using WSOA.Client.Shared.Loaders
 @using WSOA.Shared.Resources;
 @using WSOA.Shared.ViewModel;
-@inherits FutureTournamentDataLineComponent
+@inherits TournamentDataLineComponent
 
 <div class="container__main">
-    <div class="panelButtons__collapsable">
-        @if (IsCollapse)
-        {
-            <img onclick="@SwitchCollapseState" src="images/chevron_up.png" />
-        }
-        else
-        {
-            <img onclick="@SwitchCollapseState" src="images/chevron_down.png" />
-        }
-    </div>
+    @if (PresencePlayers.Any() || MaybePlayers.Any())
+    {
+        <div class="panelButtons__collapsable">
+            @if (IsCollapse)
+            {
+                <img onclick="@SwitchCollapseState" src="images/chevron_up.png" />
+            }
+            else
+            {
+                <img onclick="@SwitchCollapseState" src="images/chevron_down.png" />
+            }
+        </div>
+    }
     <div class="container__data-noCollapsable">
         <span>@Data.StartDate.ToString("dd MMMM yyyy HH:mm")</span>
         <span>@Data.Address</span>
@@ -72,19 +76,32 @@
         }
         else
         {
-            @if (SignUpForm.PresenceStateCode == null)
+            switch (Mode)
             {
-                <button class="action present" type="button" onclick="@SignUpPresentTournament">@PresenceStateResources.PRESENT_LABEL</button>
-                <button class="action" type="button" onclick="@SignUpMaybeTournament">@PresenceStateResources.MAYBE_LABEL</button>
-                <button class="action absent" type="button" onclick="@SignUpAbsentTournament">@PresenceStateResources.ABSENT_LABEL</button>
-            }
-            else
-            {
-                <div class="presenceState__response">
-                    <img class="presenceState__response-logo" src="images/calendar_response_event.png" />
-                    <span class="presenceState__response-label">@PresenceStateResources.PRESENCE_LABELS_BY_CODE[SignUpForm.PresenceStateCode]</span>
-                </div>
-                <button class="action" type="button" onclick="@UpdateSignUpTournament">@ButtonLabelResources.UPDATE</button>
+                case TournamentActionMode.SIGN_UP:
+                    if (SignUpForm.PresenceStateCode == null)
+                    {
+                        <button class="action present" type="button" onclick="@SignUpPresentTournament">@PresenceStateResources.PRESENT_LABEL</button>
+                        <button class="action" type="button" onclick="@SignUpMaybeTournament">@PresenceStateResources.MAYBE_LABEL</button>
+                        <button class="action absent" type="button" onclick="@SignUpAbsentTournament">@PresenceStateResources.ABSENT_LABEL</button>
+                    }
+                    else
+                    {
+                        <div class="presenceState__response">
+                            <img class="presenceState__response-logo" src="images/calendar_response_event.png" />
+                            <span class="presenceState__response-label">@PresenceStateResources.PRESENCE_LABELS_BY_CODE[SignUpForm.PresenceStateCode]</span>
+                        </div>
+                        <button class="action" type="button" onclick="@UpdateSignUpTournament">@ButtonLabelResources.UPDATE</button>
+                    }
+                    break;
+                case TournamentActionMode.PLAY:
+                    <MainButton IsPrimary="true" Label="Lancer" Type="button" />
+                    <MainButton Label="Modifier" Type="button" />
+                    <MainButton Label="Supprimer" Type="button" />
+                    break;
+                default:
+                    <span>Erreur : Mode non implementé. Contactez un administrateur</span>
+                    break;
             }
         }
     </div>

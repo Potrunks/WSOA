@@ -3,6 +3,7 @@
 @using WSOA.Client.Shared.Loaders
 @using WSOA.Client.Shared.Prompts.Prompt
 @using WSOA.Client.Shared.Resources;
+@using WSOA.Shared.Resources;
 @using WSOA.Shared.ViewModel;
 @inherits FutureTournamentComponent
 
@@ -19,9 +20,9 @@ else
             <CascadingValue Value="@TournamentService" Name="TournamentService">
                 <CascadingValue Value="@NavigationManager" Name="NavigationManager">
                     <div class="container__datas">
-                        @foreach (FutureTournamentDataViewModel vm in FutureTournamentDatasVM)
+                        @foreach (TournamentViewModel vm in FutureTournamentDatasVM)
                         {
-                            <FutureTournamentDataLine Data="vm" />
+                            <TournamentDataLine Data="vm" Mode="TournamentActionMode.SIGN_UP"/>
                         }
                     </div>
                 </CascadingValue>

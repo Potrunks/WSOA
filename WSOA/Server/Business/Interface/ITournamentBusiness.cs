@@ -18,7 +18,7 @@ namespace WSOA.Server.Business.Interface
         /// <summary>
         /// Load future tournament datas.
         /// </summary>
-        APICallResult<FutureTournamentsViewModel> LoadFutureTournamentDatas(int subSectionId, ISession session);
+        APICallResult<TournamentsViewModel> LoadFutureTournamentDatas(int subSectionId, ISession session);
 
         /// <summary>
         /// Sign up the current user to the tournament selected.
@@ -28,6 +28,6 @@ namespace WSOA.Server.Business.Interface
         /// <summary>
         /// Load all playable tournaments.
         /// </summary>
-        APICallResult<PlayableTournamentsViewModel> LoadPlayableTournaments(int subSectionId, ISession session);
+        APICallResult<TournamentsViewModel> LoadPlayableTournaments(int subSectionId, ISession session);
     }
 }

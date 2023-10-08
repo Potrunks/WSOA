@@ -18,7 +18,7 @@ namespace WSOA.Client.Services.Interface
         /// <summary>
         /// Load future tournament datas.
         /// </summary>
-        Task<APICallResult<FutureTournamentsViewModel>> LoadFutureTournamentDatas(int subSectionId);
+        Task<APICallResult<TournamentsViewModel>> LoadFutureTournamentDatas(int subSectionId);
 
         /// <summary>
         /// Sign up tournament.
@@ -28,6 +28,6 @@ namespace WSOA.Client.Services.Interface
         /// <summary>
         /// Load playable tournaments.
         /// </summary>
-        Task<APICallResult<PlayableTournamentsViewModel>> LoadPlayableTournaments(int subSectionId);
+        Task<APICallResult<TournamentsViewModel>> LoadPlayableTournaments(int subSectionId);
     }
 }

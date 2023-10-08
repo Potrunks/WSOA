@@ -27,10 +27,10 @@ namespace WSOA.Client.Services.Implementation
             return response.Content.ToObject<APICallResult<TournamentCreationDataViewModel>>();
         }
 
-        public async Task<APICallResult<FutureTournamentsViewModel>> LoadFutureTournamentDatas(int subSectionId)
+        public async Task<APICallResult<TournamentsViewModel>> LoadFutureTournamentDatas(int subSectionId)
         {
             HttpResponseMessage response = await _httpClient.GetAsync(string.Format(ApiRouteResources.LOAD_FUTURE_TOURNAMENT_DATAS, subSectionId));
-            return response.Content.ToObject<APICallResult<FutureTournamentsViewModel>>();
+            return response.Content.ToObject<APICallResult<TournamentsViewModel>>();
         }
 
         public async Task<APICallResult<PlayerDataViewModel>> SignUpTournament(SignUpTournamentFormViewModel form)
@@ -39,10 +39,10 @@ namespace WSOA.Client.Services.Implementation
             return response.Content.ToObject<APICallResult<PlayerDataViewModel>>();
         }
 
-        public async Task<APICallResult<PlayableTournamentsViewModel>> LoadPlayableTournaments(int subSectionId)
+        public async Task<APICallResult<TournamentsViewModel>> LoadPlayableTournaments(int subSectionId)
         {
             HttpResponseMessage response = await _httpClient.GetAsync(string.Format(ApiRouteResources.LOAD_PLAYABLE_TOURNAMENT_DATAS, subSectionId));
-            return response.Content.ToObject<APICallResult<PlayableTournamentsViewModel>>();
+            return response.Content.ToObject<APICallResult<TournamentsViewModel>>();
         }
     }
 }

@@ -119,28 +119,28 @@ namespace WSOA.Server.Business.Implementation
             return result;
         }
 
-        public APICallResult<FutureTournamentsViewModel> LoadFutureTournamentDatas(int subSectionId, ISession session)
+        public APICallResult<TournamentsViewModel> LoadFutureTournamentDatas(int subSectionId, ISession session)
         {
-            APICallResult<FutureTournamentsViewModel> result = new APICallResult<FutureTournamentsViewModel>(true);
+            APICallResult<TournamentsViewModel> result = new APICallResult<TournamentsViewModel>(true);
 
             try
             {
                 MainNavSubSection mainNavSubSection = session.CanUserPerformAction(_menuRepository, subSectionId);
                 int currentUserId = session.GetCurrentUserId();
                 List<TournamentDto> tournamentDtos = _tournamentRepository.GetTournamentDtosByIsOver(false);
-                result.Data = new FutureTournamentsViewModel(tournamentDtos, currentUserId, mainNavSubSection.Description);
+                result.Data = new TournamentsViewModel(tournamentDtos, mainNavSubSection.Description, currentUserId);
             }
             catch (FunctionalException e)
             {
                 string errorMsg = e.Message;
                 _log.Error(errorMsg);
-                return new APICallResult<FutureTournamentsViewModel>(errorMsg, e.RedirectUrl);
+                return new APICallResult<TournamentsViewModel>(errorMsg, e.RedirectUrl);
             }
             catch (Exception e)
             {
                 _log.Error(e.Message);
                 string errorMsg = MainBusinessResources.TECHNICAL_ERROR;
-                return new APICallResult<FutureTournamentsViewModel>(errorMsg, string.Format(RouteBusinessResources.MAIN_ERROR, errorMsg));
+                return new APICallResult<TournamentsViewModel>(errorMsg, string.Format(RouteBusinessResources.MAIN_ERROR, errorMsg));
             }
 
             return result;
@@ -199,27 +199,28 @@ namespace WSOA.Server.Business.Implementation
             return result;
         }
 
-        public APICallResult<PlayableTournamentsViewModel> LoadPlayableTournaments(int subSectionId, ISession session)
+        public APICallResult<TournamentsViewModel> LoadPlayableTournaments(int subSectionId, ISession session)
         {
-            APICallResult<PlayableTournamentsViewModel> result = new APICallResult<PlayableTournamentsViewModel>(true);
+            APICallResult<TournamentsViewModel> result = new APICallResult<TournamentsViewModel>(true);
 
             try
             {
                 MainNavSubSection subSection = session.CanUserPerformAction(_menuRepository, subSectionId);
                 List<TournamentDto> tournamentDtos = _tournamentRepository.GetTournamentDtosByIsOver(false);
-                result.Data = new PlayableTournamentsViewModel(tournamentDtos, subSection.Description);
+                int currentUserId = session.GetCurrentUserId();
+                result.Data = new TournamentsViewModel(tournamentDtos, subSection.Description, currentUserId);
             }
             catch (FunctionalException e)
             {
                 string errorMsg = e.Message;
                 _log.Error(errorMsg);
-                return new APICallResult<PlayableTournamentsViewModel>(errorMsg, e.RedirectUrl);
+                return new APICallResult<TournamentsViewModel>(errorMsg, e.RedirectUrl);
             }
             catch (Exception e)
             {
                 string errorMsg = MainBusinessResources.TECHNICAL_ERROR;
                 _log.Error(e.Message);
-                return new APICallResult<PlayableTournamentsViewModel>(errorMsg, string.Format(RouteBusinessResources.MAIN_ERROR, errorMsg));
+                return new APICallResult<TournamentsViewModel>(errorMsg, string.Format(RouteBusinessResources.MAIN_ERROR, errorMsg));
             }
 
             return result;

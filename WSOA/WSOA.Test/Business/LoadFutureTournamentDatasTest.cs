@@ -51,24 +51,24 @@ namespace WSOA.Test.Business
         [TestMethod]
         public void ShouldLoadFutureTournamentDatas()
         {
-            APICallResult<FutureTournamentsViewModel> result = _tournamentBusiness.LoadFutureTournamentDatas(1, _sessionMock.Object);
+            APICallResult<TournamentsViewModel> result = _tournamentBusiness.LoadFutureTournamentDatas(1, _sessionMock.Object);
 
             VerifyAPICallResultSuccess(result, null);
-            Assert.AreEqual(_tournamentDtos[0].Tournament.Id, result.Data.FutureTournamentsVM[0].TournamentId);
-            Assert.AreEqual(_tournamentDtos[0].Tournament.Season, result.Data.FutureTournamentsVM[0].Season);
-            Assert.AreEqual(_tournamentDtos[0].Tournament.StartDate, result.Data.FutureTournamentsVM[0].StartDate);
-            Assert.AreEqual(_tournamentDtos[0].Tournament.BuyIn, result.Data.FutureTournamentsVM[0].BuyIn);
-            Assert.AreEqual(_tournamentDtos[0].Address.Content, result.Data.FutureTournamentsVM[0].Address);
-            Assert.AreEqual(_tournamentDtos[0].Players.Count(), result.Data.FutureTournamentsVM[0].PlayerDatasVM.Count());
-            Assert.AreEqual(_tournamentDtos[0].Players.ToList()[0].User.Id, result.Data.FutureTournamentsVM[0].PlayerDatasVM.ToList()[0].UserId);
-            Assert.AreEqual(_tournamentDtos[0].Players.ToList()[0].User.FirstName, result.Data.FutureTournamentsVM[0].PlayerDatasVM.ToList()[0].FirstName);
-            Assert.AreEqual(_tournamentDtos[0].Players.ToList()[0].User.LastName, result.Data.FutureTournamentsVM[0].PlayerDatasVM.ToList()[0].LastName);
-            Assert.AreEqual(_tournamentDtos[0].Players.ToList()[0].Player.PresenceStateCode, result.Data.FutureTournamentsVM[0].PlayerDatasVM.ToList()[0].PresenceStateCode);
-            Assert.AreEqual(_tournamentDtos[0].Players.ToList()[1].User.Id, result.Data.FutureTournamentsVM[0].PlayerDatasVM.ToList()[1].UserId);
-            Assert.AreEqual(_tournamentDtos[0].Players.ToList()[1].User.FirstName, result.Data.FutureTournamentsVM[0].PlayerDatasVM.ToList()[1].FirstName);
-            Assert.AreEqual(_tournamentDtos[0].Players.ToList()[1].User.LastName, result.Data.FutureTournamentsVM[0].PlayerDatasVM.ToList()[1].LastName);
-            Assert.AreEqual(_tournamentDtos[0].Players.ToList()[1].Player.PresenceStateCode, result.Data.FutureTournamentsVM[0].PlayerDatasVM.ToList()[1].PresenceStateCode);
-            Assert.AreEqual(_tournamentDtos[0].Players.ToList()[0].Player.PresenceStateCode, result.Data.FutureTournamentsVM[0].CurrentUserPresenceStateCode);
+            Assert.AreEqual(_tournamentDtos[0].Tournament.Id, result.Data.TournamentsVM[0].TournamentId);
+            Assert.AreEqual(_tournamentDtos[0].Tournament.Season, result.Data.TournamentsVM[0].Season);
+            Assert.AreEqual(_tournamentDtos[0].Tournament.StartDate, result.Data.TournamentsVM[0].StartDate);
+            Assert.AreEqual(_tournamentDtos[0].Tournament.BuyIn, result.Data.TournamentsVM[0].BuyIn);
+            Assert.AreEqual(_tournamentDtos[0].Address.Content, result.Data.TournamentsVM[0].Address);
+            Assert.AreEqual(_tournamentDtos[0].Players.Count(), result.Data.TournamentsVM[0].PlayerDatasVM.Count());
+            Assert.AreEqual(_tournamentDtos[0].Players.ToList()[0].User.Id, result.Data.TournamentsVM[0].PlayerDatasVM.ToList()[0].UserId);
+            Assert.AreEqual(_tournamentDtos[0].Players.ToList()[0].User.FirstName, result.Data.TournamentsVM[0].PlayerDatasVM.ToList()[0].FirstName);
+            Assert.AreEqual(_tournamentDtos[0].Players.ToList()[0].User.LastName, result.Data.TournamentsVM[0].PlayerDatasVM.ToList()[0].LastName);
+            Assert.AreEqual(_tournamentDtos[0].Players.ToList()[0].Player.PresenceStateCode, result.Data.TournamentsVM[0].PlayerDatasVM.ToList()[0].PresenceStateCode);
+            Assert.AreEqual(_tournamentDtos[0].Players.ToList()[1].User.Id, result.Data.TournamentsVM[0].PlayerDatasVM.ToList()[1].UserId);
+            Assert.AreEqual(_tournamentDtos[0].Players.ToList()[1].User.FirstName, result.Data.TournamentsVM[0].PlayerDatasVM.ToList()[1].FirstName);
+            Assert.AreEqual(_tournamentDtos[0].Players.ToList()[1].User.LastName, result.Data.TournamentsVM[0].PlayerDatasVM.ToList()[1].LastName);
+            Assert.AreEqual(_tournamentDtos[0].Players.ToList()[1].Player.PresenceStateCode, result.Data.TournamentsVM[0].PlayerDatasVM.ToList()[1].PresenceStateCode);
+            Assert.AreEqual(_tournamentDtos[0].Players.ToList()[0].Player.PresenceStateCode, result.Data.TournamentsVM[0].CurrentUserPresenceStateCode);
         }
 
         [TestMethod]
@@ -76,7 +76,7 @@ namespace WSOA.Test.Business
         {
             _sessionMock = CreateISessionMock(null, _currentUserId);
 
-            APICallResult<FutureTournamentsViewModel> result = _tournamentBusiness.LoadFutureTournamentDatas(1, _sessionMock.Object);
+            APICallResult<TournamentsViewModel> result = _tournamentBusiness.LoadFutureTournamentDatas(1, _sessionMock.Object);
 
             VerifyAPICallResultError(result, string.Format(RouteBusinessResources.SIGN_IN_WITH_ERROR_MESSAGE, MainBusinessResources.USER_NOT_CONNECTED), MainBusinessResources.USER_NOT_CONNECTED);
         }
@@ -87,7 +87,7 @@ namespace WSOA.Test.Business
             _menuRepositoryMock.Setup(m => m.GetMainNavSubSectionByIdAndProfileCode(It.IsAny<string>(), It.IsAny<int>()))
                                .Returns(() => null);
 
-            APICallResult<FutureTournamentsViewModel> result = _tournamentBusiness.LoadFutureTournamentDatas(1, _sessionMock.Object);
+            APICallResult<TournamentsViewModel> result = _tournamentBusiness.LoadFutureTournamentDatas(1, _sessionMock.Object);
 
             VerifyAPICallResultError(result, string.Format(RouteBusinessResources.SIGN_IN_WITH_ERROR_MESSAGE, MainBusinessResources.USER_CANNOT_PERFORM_ACTION), MainBusinessResources.USER_CANNOT_PERFORM_ACTION);
         }
@@ -97,7 +97,7 @@ namespace WSOA.Test.Business
         {
             _sessionMock = CreateISessionMock(_currentProfileCode, null);
 
-            APICallResult<FutureTournamentsViewModel> result = _tournamentBusiness.LoadFutureTournamentDatas(1, _sessionMock.Object);
+            APICallResult<TournamentsViewModel> result = _tournamentBusiness.LoadFutureTournamentDatas(1, _sessionMock.Object);
 
             VerifyAPICallResultError(result, string.Format(RouteBusinessResources.SIGN_IN_WITH_ERROR_MESSAGE, MainBusinessResources.USER_NOT_CONNECTED), MainBusinessResources.USER_NOT_CONNECTED);
         }

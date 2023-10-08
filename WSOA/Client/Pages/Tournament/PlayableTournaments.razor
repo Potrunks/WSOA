@@ -1,6 +1,7 @@
 ﻿@page "/tournament/execute/{SubSectionId:int}"
 @using WSOA.Client.Pages.Tournament.Components;
 @using WSOA.Client.Shared.Loaders
+@using WSOA.Shared.Resources;
 @using WSOA.Shared.ViewModel;
 @inherits PlayableTournamentsComponent
 
@@ -11,10 +12,14 @@
 else
 {
     <div class="container__main">
-        <span class="title__main">@Description</span>
-        @foreach (TournamentViewModel model in ViewModel.TournamentsVM)
-        {
-            <span>@model.TournamentId</span>
-        }
+        <CascadingValue Value="@TournamentService" Name="TournamentService">
+            <CascadingValue Value="@NavigationManager" Name="NavigationManager">
+                @foreach (TournamentViewModel model in ViewModel.TournamentsVM)
+                {
+                    <TournamentDataLine Data="model"
+                                Mode="TournamentActionMode.PLAY" />
+                }
+            </CascadingValue>
+        </CascadingValue>
     </div>
 }

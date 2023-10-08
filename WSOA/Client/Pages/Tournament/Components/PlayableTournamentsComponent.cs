@@ -11,13 +11,13 @@ namespace WSOA.Client.Pages.Tournament.Components
         [Inject]
         public ITournamentService TournamentService { get; set; }
 
-        public PlayableTournamentsViewModel ViewModel { get; set; }
+        public TournamentsViewModel ViewModel { get; set; }
 
         protected override async Task OnInitializedAsync()
         {
             IsLoading = true;
 
-            APICallResult<PlayableTournamentsViewModel> result = await TournamentService.LoadPlayableTournaments(SubSectionId);
+            APICallResult<TournamentsViewModel> result = await TournamentService.LoadPlayableTournaments(SubSectionId);
             if (!string.IsNullOrWhiteSpace(result.RedirectUrl))
             {
                 NavigationManager.NavigateTo(result.RedirectUrl);

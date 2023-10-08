@@ -43,7 +43,7 @@ namespace WSOA.Server.Controllers
         /// </summary>
         [HttpGet]
         [Route("api/tournament/future/load/{subSectionId}")]
-        public APICallResult<FutureTournamentsViewModel> LoadFutureTournamentDatas(int subSectionId)
+        public APICallResult<TournamentsViewModel> LoadFutureTournamentDatas(int subSectionId)
         {
             return _tournamentBusiness.LoadFutureTournamentDatas(subSectionId, HttpContext.Session);
         }
@@ -63,7 +63,7 @@ namespace WSOA.Server.Controllers
         /// </summary>
         [HttpGet]
         [Route("api/tournament/playable/load/{subSectionId}")]
-        public APICallResult<PlayableTournamentsViewModel> LoadPlayableTournaments(int subSectionId)
+        public APICallResult<TournamentsViewModel> LoadPlayableTournaments(int subSectionId)
         {
             return _tournamentBusiness.LoadPlayableTournaments(subSectionId, HttpContext.Session);
         }

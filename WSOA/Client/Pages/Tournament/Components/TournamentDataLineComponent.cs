@@ -6,10 +6,11 @@ using WSOA.Shared.ViewModel;
 
 namespace WSOA.Client.Pages.Tournament.Components
 {
-    public class FutureTournamentDataLineComponent : ComponentBase
+    public class TournamentDataLineComponent : ComponentBase
     {
         [Parameter]
-        public FutureTournamentDataViewModel Data { get; set; }
+        [EditorRequired]
+        public TournamentViewModel Data { get; set; }
 
         [CascadingParameter(Name = "TournamentService")]
         [EditorRequired]
@@ -18,6 +19,10 @@ namespace WSOA.Client.Pages.Tournament.Components
         [CascadingParameter(Name = "NavigationManager")]
         [EditorRequired]
         public NavigationManager NavigationManager { get; set; }
+
+        [Parameter]
+        [EditorRequired]
+        public TournamentActionMode Mode { get; set; }
 
         public IEnumerable<PlayerDataViewModel> PresencePlayers { get; set; }
 
