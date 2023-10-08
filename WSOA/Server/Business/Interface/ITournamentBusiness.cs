@@ -16,18 +16,13 @@ namespace WSOA.Server.Business.Interface
         APICallResult<TournamentCreationDataViewModel> LoadTournamentCreationDatas(int subSectionId, ISession session);
 
         /// <summary>
-        /// Load future tournament datas.
+        /// Load Tournaments not over.
         /// </summary>
-        APICallResult<TournamentsViewModel> LoadFutureTournamentDatas(int subSectionId, ISession session);
+        APICallResult<TournamentsViewModel> LoadTournamentsNotOver(int subSectionId, ISession session);
 
         /// <summary>
         /// Sign up the current user to the tournament selected.
         /// </summary>
         APICallResult<PlayerDataViewModel> SignUpTournament(SignUpTournamentFormViewModel formVM, ISession session);
-
-        /// <summary>
-        /// Load all playable tournaments.
-        /// </summary>
-        APICallResult<TournamentsViewModel> LoadPlayableTournaments(int subSectionId, ISession session);
     }
 }

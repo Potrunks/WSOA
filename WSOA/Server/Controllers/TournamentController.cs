@@ -43,9 +43,9 @@ namespace WSOA.Server.Controllers
         /// </summary>
         [HttpGet]
         [Route("api/tournament/future/load/{subSectionId}")]
-        public APICallResult<TournamentsViewModel> LoadFutureTournamentDatas(int subSectionId)
+        public APICallResult<TournamentsViewModel> LoadTournamentsNotOver(int subSectionId)
         {
-            return _tournamentBusiness.LoadFutureTournamentDatas(subSectionId, HttpContext.Session);
+            return _tournamentBusiness.LoadTournamentsNotOver(subSectionId, HttpContext.Session);
         }
 
         /// <summary>
@@ -56,16 +56,6 @@ namespace WSOA.Server.Controllers
         public APICallResult<PlayerDataViewModel> SignUpTournament([FromBody] SignUpTournamentFormViewModel form)
         {
             return _tournamentBusiness.SignUpTournament(form, HttpContext.Session);
-        }
-
-        /// <summary>
-        /// Load playable tournaments.
-        /// </summary>
-        [HttpGet]
-        [Route("api/tournament/playable/load/{subSectionId}")]
-        public APICallResult<TournamentsViewModel> LoadPlayableTournaments(int subSectionId)
-        {
-            return _tournamentBusiness.LoadPlayableTournaments(subSectionId, HttpContext.Session);
         }
     }
 }

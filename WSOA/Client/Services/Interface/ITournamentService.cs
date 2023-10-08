@@ -16,18 +16,13 @@ namespace WSOA.Client.Services.Interface
         Task<APICallResult<TournamentCreationDataViewModel>> LoadTournamentCreationDatas(int subSectionId);
 
         /// <summary>
-        /// Load future tournament datas.
+        /// Load tournaments not over.
         /// </summary>
-        Task<APICallResult<TournamentsViewModel>> LoadFutureTournamentDatas(int subSectionId);
+        Task<APICallResult<TournamentsViewModel>> LoadTournamentsNotOver(int subSectionId);
 
         /// <summary>
         /// Sign up tournament.
         /// </summary>
         Task<APICallResult<PlayerDataViewModel>> SignUpTournament(SignUpTournamentFormViewModel form);
-
-        /// <summary>
-        /// Load playable tournaments.
-        /// </summary>
-        Task<APICallResult<TournamentsViewModel>> LoadPlayableTournaments(int subSectionId);
     }
 }

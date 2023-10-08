@@ -51,7 +51,7 @@ namespace WSOA.Test.Business
         [TestMethod]
         public void ShouldLoadFutureTournamentDatas()
         {
-            APICallResult<TournamentsViewModel> result = _tournamentBusiness.LoadFutureTournamentDatas(1, _sessionMock.Object);
+            APICallResult<TournamentsViewModel> result = _tournamentBusiness.LoadTournamentsNotOver(1, _sessionMock.Object);
 
             VerifyAPICallResultSuccess(result, null);
             Assert.AreEqual(_tournamentDtos[0].Tournament.Id, result.Data.TournamentsVM[0].TournamentId);
@@ -76,7 +76,7 @@ namespace WSOA.Test.Business
         {
             _sessionMock = CreateISessionMock(null, _currentUserId);
 
-            APICallResult<TournamentsViewModel> result = _tournamentBusiness.LoadFutureTournamentDatas(1, _sessionMock.Object);
+            APICallResult<TournamentsViewModel> result = _tournamentBusiness.LoadTournamentsNotOver(1, _sessionMock.Object);
 
             VerifyAPICallResultError(result, string.Format(RouteBusinessResources.SIGN_IN_WITH_ERROR_MESSAGE, MainBusinessResources.USER_NOT_CONNECTED), MainBusinessResources.USER_NOT_CONNECTED);
         }
@@ -87,7 +87,7 @@ namespace WSOA.Test.Business
             _menuRepositoryMock.Setup(m => m.GetMainNavSubSectionByIdAndProfileCode(It.IsAny<string>(), It.IsAny<int>()))
                                .Returns(() => null);
 
-            APICallResult<TournamentsViewModel> result = _tournamentBusiness.LoadFutureTournamentDatas(1, _sessionMock.Object);
+            APICallResult<TournamentsViewModel> result = _tournamentBusiness.LoadTournamentsNotOver(1, _sessionMock.Object);
 
             VerifyAPICallResultError(result, string.Format(RouteBusinessResources.SIGN_IN_WITH_ERROR_MESSAGE, MainBusinessResources.USER_CANNOT_PERFORM_ACTION), MainBusinessResources.USER_CANNOT_PERFORM_ACTION);
         }
@@ -97,7 +97,7 @@ namespace WSOA.Test.Business
         {
             _sessionMock = CreateISessionMock(_currentProfileCode, null);
 
-            APICallResult<TournamentsViewModel> result = _tournamentBusiness.LoadFutureTournamentDatas(1, _sessionMock.Object);
+            APICallResult<TournamentsViewModel> result = _tournamentBusiness.LoadTournamentsNotOver(1, _sessionMock.Object);
 
             VerifyAPICallResultError(result, string.Format(RouteBusinessResources.SIGN_IN_WITH_ERROR_MESSAGE, MainBusinessResources.USER_NOT_CONNECTED), MainBusinessResources.USER_NOT_CONNECTED);
         }

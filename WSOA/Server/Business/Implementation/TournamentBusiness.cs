@@ -119,7 +119,7 @@ namespace WSOA.Server.Business.Implementation
             return result;
         }
 
-        public APICallResult<TournamentsViewModel> LoadFutureTournamentDatas(int subSectionId, ISession session)
+        public APICallResult<TournamentsViewModel> LoadTournamentsNotOver(int subSectionId, ISession session)
         {
             APICallResult<TournamentsViewModel> result = new APICallResult<TournamentsViewModel>(true);
 
@@ -196,33 +196,6 @@ namespace WSOA.Server.Business.Implementation
                 string errorMsg = MainBusinessResources.TECHNICAL_ERROR;
                 return new APICallResult<PlayerDataViewModel>(errorMsg, string.Format(RouteBusinessResources.MAIN_ERROR, errorMsg));
             }
-            return result;
-        }
-
-        public APICallResult<TournamentsViewModel> LoadPlayableTournaments(int subSectionId, ISession session)
-        {
-            APICallResult<TournamentsViewModel> result = new APICallResult<TournamentsViewModel>(true);
-
-            try
-            {
-                MainNavSubSection subSection = session.CanUserPerformAction(_menuRepository, subSectionId);
-                List<TournamentDto> tournamentDtos = _tournamentRepository.GetTournamentDtosByIsOver(false);
-                int currentUserId = session.GetCurrentUserId();
-                result.Data = new TournamentsViewModel(tournamentDtos, subSection.Description, currentUserId);
-            }
-            catch (FunctionalException e)
-            {
-                string errorMsg = e.Message;
-                _log.Error(errorMsg);
-                return new APICallResult<TournamentsViewModel>(errorMsg, e.RedirectUrl);
-            }
-            catch (Exception e)
-            {
-                string errorMsg = MainBusinessResources.TECHNICAL_ERROR;
-                _log.Error(e.Message);
-                return new APICallResult<TournamentsViewModel>(errorMsg, string.Format(RouteBusinessResources.MAIN_ERROR, errorMsg));
-            }
-
             return result;
         }
     }
