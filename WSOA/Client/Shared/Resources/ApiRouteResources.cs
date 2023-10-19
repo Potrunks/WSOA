@@ -12,5 +12,6 @@
         public const string LOAD_TOURNAMENTS_NOT_OVER = "api/tournament/future/load/{0}";
         public const string CLEAR_SESSION = "api/account/clearSession";
         public const string SIGN_UP_TOURNAMENT = "api/tournament/future/signUp";
+        public const string TOURNAMENT_PREPARATION_GET_PLAYERS = "api/tournament/load/presentPlayers/{0}";
     }
 }

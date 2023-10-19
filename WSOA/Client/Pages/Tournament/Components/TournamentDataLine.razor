@@ -42,7 +42,7 @@
                 <div class="container__data-players">
                     <span class="title">@PresenceStateResources.PRESENT_LABEL</span>
                     <div class="players__block">
-                        @foreach (PlayerDataViewModel vm in PresencePlayers)
+                        @foreach (PlayerViewModel vm in PresencePlayers)
                         {
                             <div class="player__line">
                                 <span>@vm.FirstName</span>
@@ -57,7 +57,7 @@
                 <div class="container__data-players">
                     <span class="title">@PresenceStateResources.MAYBE_LABEL</span>
                     <div class="players__block">
-                        @foreach (PlayerDataViewModel vm in MaybePlayers)
+                        @foreach (PlayerViewModel vm in MaybePlayers)
                         {
                             <div class="player__line">
                                 <span>@vm.FirstName</span>
@@ -95,7 +95,7 @@
                     }
                     break;
                 case TournamentActionMode.PLAY:
-                    <MainButton IsPrimary="true" Label="Lancer" Type="button" />
+                    <MainButton IsPrimary="true" Label="Lancer" Type="button" OnClick="SelectPlayers" />
                     <MainButton Label="Modifier" Type="button" />
                     <MainButton Label="Supprimer" Type="button" />
                     break;

@@ -24,9 +24,9 @@ namespace WSOA.Client.Pages.Tournament.Components
         [EditorRequired]
         public TournamentActionMode Mode { get; set; }
 
-        public IEnumerable<PlayerDataViewModel> PresencePlayers { get; set; }
+        public IEnumerable<PlayerViewModel> PresencePlayers { get; set; }
 
-        public IEnumerable<PlayerDataViewModel> MaybePlayers { get; set; }
+        public IEnumerable<PlayerViewModel> MaybePlayers { get; set; }
 
         public bool IsCollapse { get; set; }
 
@@ -72,7 +72,7 @@ namespace WSOA.Client.Pages.Tournament.Components
 
             SignUpForm.PresenceStateCode = presenceStateCode;
 
-            APICallResult<PlayerDataViewModel> result = await TournamentService.SignUpTournament(SignUpForm);
+            APICallResult<PlayerViewModel> result = await TournamentService.SignUpTournament(SignUpForm);
             if (!string.IsNullOrWhiteSpace(result.RedirectUrl))
             {
                 NavigationManager.NavigateTo(result.RedirectUrl);
@@ -82,7 +82,7 @@ namespace WSOA.Client.Pages.Tournament.Components
             if (result.Success)
             {
                 Data.CurrentUserPresenceStateCode = result.Data.PresenceStateCode;
-                PlayerDataViewModel? currentPlayer = Data.PlayerDatasVM.SingleOrDefault(p => p.UserId == result.Data.UserId);
+                PlayerViewModel? currentPlayer = Data.PlayerDatasVM.SingleOrDefault(p => p.UserId == result.Data.UserId);
                 if (currentPlayer != null)
                 {
                     currentPlayer.PresenceStateCode = result.Data.PresenceStateCode;
@@ -106,6 +106,11 @@ namespace WSOA.Client.Pages.Tournament.Components
         {
             PresencePlayers = Data.PlayerDatasVM.Where(p => p.PresenceStateCode == PresenceStateResources.PRESENT_CODE);
             MaybePlayers = Data.PlayerDatasVM.Where(p => p.PresenceStateCode == PresenceStateResources.MAYBE_CODE);
+        }
+
+        public async Task SelectPlayers()
+        {
+            NavigationManager.NavigateTo($"/tournament/select/players/{Data.TournamentId}");
         }
     }
 }

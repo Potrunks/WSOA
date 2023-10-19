@@ -53,9 +53,19 @@ namespace WSOA.Server.Controllers
         /// </summary>
         [HttpPost]
         [Route("api/tournament/future/signUp")]
-        public APICallResult<PlayerDataViewModel> SignUpTournament([FromBody] SignUpTournamentFormViewModel form)
+        public APICallResult<PlayerViewModel> SignUpTournament([FromBody] SignUpTournamentFormViewModel form)
         {
             return _tournamentBusiness.SignUpTournament(form, HttpContext.Session);
+        }
+
+        /// <summary>
+        /// Get present players and possible players for tournament in preparation
+        /// </summary>
+        [HttpGet]
+        [Route("api/tournament/load/presentPlayers/{tournamentId}")]
+        public APICallResult<PlayerSelectionViewModel> LoadPlayersForPlayingTournament(int tournamentId)
+        {
+            return _tournamentBusiness.LoadPlayersForPlayingTournament(tournamentId, HttpContext.Session);
         }
     }
 }

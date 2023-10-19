@@ -23,6 +23,11 @@ namespace WSOA.Client.Services.Interface
         /// <summary>
         /// Sign up tournament.
         /// </summary>
-        Task<APICallResult<PlayerDataViewModel>> SignUpTournament(SignUpTournamentFormViewModel form);
+        Task<APICallResult<PlayerViewModel>> SignUpTournament(SignUpTournamentFormViewModel form);
+
+        /// <summary>
+        /// Load present players and available players for tournament preparation.
+        /// </summary>
+        Task<APICallResult<PlayerSelectionViewModel>> LoadPlayersForPlayingTournament(int tournamentId);
     }
 }

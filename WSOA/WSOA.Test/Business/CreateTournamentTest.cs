@@ -61,7 +61,7 @@ namespace WSOA.Test.Business
                                  .Callback<Tournament>(t => _tournamentCreated = t);
 
             _userRepositoryMock = CreateIUserRepositoryMock();
-            _userRepositoryMock.Setup(m => m.GetAllUsers())
+            _userRepositoryMock.Setup(m => m.GetAllUsers(null))
                                .Returns(CreateUsers(3));
 
             _mailServiceMock = CreateIMailServiceMock();

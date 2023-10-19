@@ -39,10 +39,6 @@ namespace WSOA.Shared.Entity
 
         [Required]
         [DefaultValue(false)]
-        public bool WasPresent { get; set; }
-
-        [Required]
-        [DefaultValue(false)]
         public bool WasFinalTable { get; set; }
 
         public int? TotalWinningsAmount { get; set; }

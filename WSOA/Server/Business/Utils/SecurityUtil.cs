@@ -34,12 +34,7 @@ namespace WSOA.Server.Business.Utils
         /// </summary>
         public static MainNavSubSection CanUserPerformAction(this ISession session, IMenuRepository menuRepository, int subSectionId)
         {
-            string? profileCode = session.GetString(HttpSessionResources.KEY_PROFILE_CODE);
-            if (string.IsNullOrWhiteSpace(profileCode))
-            {
-                string errorMsg = MainBusinessResources.USER_NOT_CONNECTED;
-                throw new FunctionalException(errorMsg, string.Format(RouteBusinessResources.SIGN_IN_WITH_ERROR_MESSAGE, errorMsg));
-            }
+            string profileCode = session.GetCurrentProfileCode();
 
             MainNavSubSection? subSection = menuRepository.GetMainNavSubSectionByIdAndProfileCode(profileCode, subSectionId);
             if (subSection == null)
@@ -51,6 +46,24 @@ namespace WSOA.Server.Business.Utils
             return subSection;
         }
 
+        /// <summary>
+        /// Check if user can perform action.
+        /// </summary>
+        public static void CanUserPerformAction(this ISession session, IUserRepository userRepository, string businessActionCode)
+        {
+            string profileCode = session.GetCurrentProfileCode();
+
+            bool canPerform = userRepository.ExistsBusinessActionByProfileCode(profileCode, businessActionCode);
+            if (!canPerform)
+            {
+                string errorMsg = MainBusinessResources.USER_CANNOT_PERFORM_ACTION;
+                throw new FunctionalException(errorMsg, string.Format(RouteBusinessResources.SIGN_IN_WITH_ERROR_MESSAGE, errorMsg));
+            }
+        }
+
+        /// <summary>
+        /// Get the current User ID.
+        /// </summary>
         public static int GetCurrentUserId(this ISession session)
         {
             string? currentUserId = session.GetString(HttpSessionResources.KEY_USER_ID);
@@ -60,6 +73,20 @@ namespace WSOA.Server.Business.Utils
                 throw new FunctionalException(errorMsg, string.Format(RouteBusinessResources.SIGN_IN_WITH_ERROR_MESSAGE, errorMsg));
             }
             return int.Parse(currentUserId);
+        }
+
+        /// <summary>
+        /// Get current profile code.
+        /// </summary>
+        private static string GetCurrentProfileCode(this ISession session)
+        {
+            string? profileCode = session.GetString(HttpSessionResources.KEY_PROFILE_CODE);
+            if (string.IsNullOrWhiteSpace(profileCode))
+            {
+                string errorMsg = MainBusinessResources.USER_NOT_CONNECTED;
+                throw new FunctionalException(errorMsg, string.Format(RouteBusinessResources.SIGN_IN_WITH_ERROR_MESSAGE, errorMsg));
+            }
+            return profileCode;
         }
     }
 }

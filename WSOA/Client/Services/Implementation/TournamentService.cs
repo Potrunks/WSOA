@@ -33,10 +33,16 @@ namespace WSOA.Client.Services.Implementation
             return response.Content.ToObject<APICallResult<TournamentsViewModel>>();
         }
 
-        public async Task<APICallResult<PlayerDataViewModel>> SignUpTournament(SignUpTournamentFormViewModel form)
+        public async Task<APICallResult<PlayerViewModel>> SignUpTournament(SignUpTournamentFormViewModel form)
         {
             HttpResponseMessage response = await _httpClient.PostAsync(ApiRouteResources.SIGN_UP_TOURNAMENT, form.ToJsonUtf8());
-            return response.Content.ToObject<APICallResult<PlayerDataViewModel>>();
+            return response.Content.ToObject<APICallResult<PlayerViewModel>>();
+        }
+
+        public async Task<APICallResult<PlayerSelectionViewModel>> LoadPlayersForPlayingTournament(int tournamentId)
+        {
+            HttpResponseMessage response = await _httpClient.GetAsync(string.Format(ApiRouteResources.TOURNAMENT_PREPARATION_GET_PLAYERS, tournamentId));
+            return response.Content.ToObject<APICallResult<PlayerSelectionViewModel>>();
         }
     }
 }

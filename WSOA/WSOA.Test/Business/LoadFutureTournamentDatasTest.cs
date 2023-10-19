@@ -42,7 +42,7 @@ namespace WSOA.Test.Business
             _currentPlayerDto = _tournamentDtos.Single().Players.Single(p => p.User.Id == _currentUserId);
             _currentPlayerDto.Player.PresenceStateCode = PresenceStateResources.MAYBE_CODE;
             _tournamentRepositoryMock = CreateITournamentRepositoryMock();
-            _tournamentRepositoryMock.Setup(m => m.GetTournamentDtosByIsOver(false))
+            _tournamentRepositoryMock.Setup(m => m.GetTournamentDtosByIsOverAndIsInProgress(false, false))
                                      .Returns(_tournamentDtos);
 
             _tournamentBusiness = new TournamentBusiness(null, _menuRepositoryMock.Object, _tournamentRepositoryMock.Object, null, null, null, null);

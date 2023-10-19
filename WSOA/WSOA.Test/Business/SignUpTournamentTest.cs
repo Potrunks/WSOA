@@ -70,7 +70,7 @@ namespace WSOA.Test.Business
         [TestMethod]
         public void ShouldCreatePlayerAndSignUpTournament_WhenPlayerSignUpTournamentFirstTime()
         {
-            APICallResult<PlayerDataViewModel> result = _tournamentBusiness.SignUpTournament(_formVM, _sessionMock.Object);
+            APICallResult<PlayerViewModel> result = _tournamentBusiness.SignUpTournament(_formVM, _sessionMock.Object);
 
             VerifyAPICallResultSuccess(result, null);
             VerifyTransactionManagerCommit(_transactionManagerMock);
@@ -88,7 +88,7 @@ namespace WSOA.Test.Business
         {
             _sessionMock = CreateISessionMock(null, null);
 
-            APICallResult<PlayerDataViewModel> result = _tournamentBusiness.SignUpTournament(_formVM, _sessionMock.Object);
+            APICallResult<PlayerViewModel> result = _tournamentBusiness.SignUpTournament(_formVM, _sessionMock.Object);
 
             VerifyAPICallResultError(result, string.Format(RouteBusinessResources.SIGN_IN_WITH_ERROR_MESSAGE, MainBusinessResources.USER_NOT_CONNECTED), MainBusinessResources.USER_NOT_CONNECTED);
             VerifyTransactionManagerRollback(_transactionManagerMock);
@@ -100,7 +100,7 @@ namespace WSOA.Test.Business
             _tournamentRepositoryMock.Setup(m => m.GetTournamentById(It.IsAny<int>()))
                                      .Returns(() => throw new Exception("Le tournoi n'existe pas"));
 
-            APICallResult<PlayerDataViewModel> result = _tournamentBusiness.SignUpTournament(_formVM, _sessionMock.Object);
+            APICallResult<PlayerViewModel> result = _tournamentBusiness.SignUpTournament(_formVM, _sessionMock.Object);
 
             VerifyAPICallResultError(result, string.Format(RouteBusinessResources.MAIN_ERROR, MainBusinessResources.TECHNICAL_ERROR), MainBusinessResources.TECHNICAL_ERROR);
             VerifyTransactionManagerRollback(_transactionManagerMock);
@@ -112,7 +112,7 @@ namespace WSOA.Test.Business
             _playerRepositoryMock.Setup(m => m.SavePlayer(It.IsAny<Player>()))
                                  .Throws(() => new Exception("Erreur pendant la sauvegarde du joueur en base de données"));
 
-            APICallResult<PlayerDataViewModel> result = _tournamentBusiness.SignUpTournament(_formVM, _sessionMock.Object);
+            APICallResult<PlayerViewModel> result = _tournamentBusiness.SignUpTournament(_formVM, _sessionMock.Object);
 
             VerifyAPICallResultError(result, string.Format(RouteBusinessResources.MAIN_ERROR, MainBusinessResources.TECHNICAL_ERROR), MainBusinessResources.TECHNICAL_ERROR);
             VerifyTransactionManagerRollback(_transactionManagerMock);
@@ -124,7 +124,7 @@ namespace WSOA.Test.Business
             _userRepositoryMock.Setup(m => m.GetUserById(It.IsAny<int>()))
                                  .Throws(() => new Exception("L'utilisateur n'existe pas en base de données"));
 
-            APICallResult<PlayerDataViewModel> result = _tournamentBusiness.SignUpTournament(_formVM, _sessionMock.Object);
+            APICallResult<PlayerViewModel> result = _tournamentBusiness.SignUpTournament(_formVM, _sessionMock.Object);
 
             VerifyAPICallResultError(result, string.Format(RouteBusinessResources.MAIN_ERROR, MainBusinessResources.TECHNICAL_ERROR), MainBusinessResources.TECHNICAL_ERROR);
             VerifyTransactionManagerRollback(_transactionManagerMock);
@@ -135,7 +135,7 @@ namespace WSOA.Test.Business
         {
             _currentPlayer = CreatePlayer(1, PresenceStateResources.ABSENT_CODE);
 
-            APICallResult<PlayerDataViewModel> result = _tournamentBusiness.SignUpTournament(_formVM, _sessionMock.Object);
+            APICallResult<PlayerViewModel> result = _tournamentBusiness.SignUpTournament(_formVM, _sessionMock.Object);
 
             VerifyAPICallResultSuccess(result, null);
             VerifyTransactionManagerCommit(_transactionManagerMock);
@@ -153,7 +153,7 @@ namespace WSOA.Test.Business
         {
             _currentTournament.IsOver = true;
 
-            APICallResult<PlayerDataViewModel> result = _tournamentBusiness.SignUpTournament(_formVM, _sessionMock.Object);
+            APICallResult<PlayerViewModel> result = _tournamentBusiness.SignUpTournament(_formVM, _sessionMock.Object);
 
             VerifyAPICallResultError(result, string.Format(RouteBusinessResources.MAIN_ERROR, MainBusinessResources.TECHNICAL_ERROR), MainBusinessResources.TECHNICAL_ERROR);
             VerifyTransactionManagerRollback(_transactionManagerMock);

@@ -11,8 +11,8 @@ using WSOA.Server.Data;
 namespace WSOA.Server.Migrations
 {
     [DbContext(typeof(WSOADbContext))]
-    [Migration("20231004225356_Add_Playable_Tournament_Section")]
-    partial class Add_Playable_Tournament_Section
+    [Migration("20231010231201_32_play_tournament")]
+    partial class _32_play_tournament
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -128,6 +128,58 @@ namespace WSOA.Server.Migrations
                     b.HasIndex("PlayerId");
 
                     b.ToTable("BonusTournamentEarneds");
+                });
+
+            modelBuilder.Entity("WSOA.Shared.Entity.BusinessAction", b =>
+                {
+                    b.Property<string>("Code")
+                        .HasColumnType("varchar(255)");
+
+                    b.Property<string>("Label")
+                        .IsRequired()
+                        .HasColumnType("longtext");
+
+                    b.HasKey("Code");
+
+                    b.ToTable("BusinessActions");
+
+                    b.HasData(
+                        new
+                        {
+                            Code = "EXEC_TOURNAMENT",
+                            Label = "Executer un tournoi"
+                        });
+                });
+
+            modelBuilder.Entity("WSOA.Shared.Entity.BusinessActionByProfileCode", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    b.Property<string>("BusinessActionCode")
+                        .IsRequired()
+                        .HasColumnType("varchar(255)");
+
+                    b.Property<string>("ProfileCode")
+                        .IsRequired()
+                        .HasColumnType("varchar(255)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("BusinessActionCode");
+
+                    b.HasIndex("ProfileCode");
+
+                    b.ToTable("BusinessActionsByProfileCode");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = 1,
+                            BusinessActionCode = "EXEC_TOURNAMENT",
+                            ProfileCode = "ORGA"
+                        });
                 });
 
             modelBuilder.Entity("WSOA.Shared.Entity.LinkAccountCreation", b =>
@@ -612,6 +664,25 @@ namespace WSOA.Server.Migrations
                     b.Navigation("BonusTournament");
 
                     b.Navigation("Player");
+                });
+
+            modelBuilder.Entity("WSOA.Shared.Entity.BusinessActionByProfileCode", b =>
+                {
+                    b.HasOne("WSOA.Shared.Entity.BusinessAction", "BusinessAction")
+                        .WithMany()
+                        .HasForeignKey("BusinessActionCode")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("WSOA.Shared.Entity.Profile", "Profile")
+                        .WithMany()
+                        .HasForeignKey("ProfileCode")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("BusinessAction");
+
+                    b.Navigation("Profile");
                 });
 
             modelBuilder.Entity("WSOA.Shared.Entity.MainNavSubSection", b =>

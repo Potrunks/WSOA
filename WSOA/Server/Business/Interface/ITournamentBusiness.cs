@@ -23,6 +23,11 @@ namespace WSOA.Server.Business.Interface
         /// <summary>
         /// Sign up the current user to the tournament selected.
         /// </summary>
-        APICallResult<PlayerDataViewModel> SignUpTournament(SignUpTournamentFormViewModel formVM, ISession session);
+        APICallResult<PlayerViewModel> SignUpTournament(SignUpTournamentFormViewModel formVM, ISession session);
+
+        /// <summary>
+        /// Get present players and available players before execute tournament.
+        /// </summary>
+        APICallResult<PlayerSelectionViewModel> LoadPlayersForPlayingTournament(int tournamentId, ISession session);
     }
 }

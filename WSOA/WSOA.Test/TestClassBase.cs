@@ -65,6 +65,12 @@ namespace WSOA.Test
             mock.Setup(m => m.ExistsUserByMail(It.IsAny<string>()))
                 .Returns(false);
 
+            mock.Setup(m => m.ExistsBusinessActionByProfileCode(It.IsAny<string>(), It.IsAny<string>()))
+                .Returns(true);
+
+            mock.Setup(m => m.GetAllUsers(null))
+                .Returns(CreateUsers(1));
+
             return mock;
         }
 
@@ -110,6 +116,12 @@ namespace WSOA.Test
         {
             Mock<ITournamentRepository> mock = new Mock<ITournamentRepository>();
 
+            mock.Setup(m => m.ExistsTournamentByTournamentIdIsOverAndIsInProgress(It.IsAny<int>(), It.IsAny<bool>(), It.IsAny<bool>()))
+                .Returns(true);
+
+            mock.Setup(m => m.ExistsTournamentByIsInProgress(It.IsAny<bool>()))
+                .Returns(false);
+
             return mock;
         }
 
@@ -122,6 +134,10 @@ namespace WSOA.Test
         public Mock<IPlayerRepository> CreateIPlayerRepositoryMock()
         {
             Mock<IPlayerRepository> mock = new Mock<IPlayerRepository>();
+
+            mock.Setup(m => m.GetPlayersByTournamentIdAndPresenceStateCode(It.IsAny<int>(), It.IsAny<string>()))
+                .Returns(CreatePlayerDtos(1));
+
             return mock;
         }
 

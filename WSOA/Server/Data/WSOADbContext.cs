@@ -283,6 +283,25 @@ namespace WSOA.Server.Data
                     Content = "3 rue Sebastopol 94600 Choisy-Le-Roi"
                 }
             );
+
+            modelBuilder.Entity<BusinessAction>().HasData
+            (
+                new BusinessAction
+                {
+                    Code = "EXEC_TOURNAMENT",
+                    Label = "Executer un tournoi"
+                }
+            );
+
+            modelBuilder.Entity<BusinessActionByProfileCode>().HasData
+            (
+                new BusinessActionByProfileCode
+                {
+                    Id = 1,
+                    ProfileCode = "ORGA",
+                    BusinessActionCode = "EXEC_TOURNAMENT"
+                }
+            );
         }
 
         public DbSet<Account> Accounts { get; set; }
@@ -298,5 +317,7 @@ namespace WSOA.Server.Data
         public DbSet<Tournament> Tournaments { get; set; }
         public DbSet<Address> Addresses { get; set; }
         public DbSet<PresenceState> PresenceStates { get; set; }
+        public DbSet<BusinessAction> BusinessActions { get; set; }
+        public DbSet<BusinessActionByProfileCode> BusinessActionsByProfileCode { get; set; }
     }
 }

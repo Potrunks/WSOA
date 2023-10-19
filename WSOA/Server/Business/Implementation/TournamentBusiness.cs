@@ -7,6 +7,7 @@ using WSOA.Server.Data.Interface;
 using WSOA.Shared.Dtos;
 using WSOA.Shared.Entity;
 using WSOA.Shared.Exceptions;
+using WSOA.Shared.Resources;
 using WSOA.Shared.Result;
 using WSOA.Shared.Utils;
 using WSOA.Shared.ViewModel;
@@ -127,7 +128,7 @@ namespace WSOA.Server.Business.Implementation
             {
                 MainNavSubSection mainNavSubSection = session.CanUserPerformAction(_menuRepository, subSectionId);
                 int currentUserId = session.GetCurrentUserId();
-                List<TournamentDto> tournamentDtos = _tournamentRepository.GetTournamentDtosByIsOver(false);
+                List<TournamentDto> tournamentDtos = _tournamentRepository.GetTournamentDtosByIsOverAndIsInProgress(false, false);
                 result.Data = new TournamentsViewModel(tournamentDtos, mainNavSubSection.Description, currentUserId);
             }
             catch (FunctionalException e)
@@ -146,9 +147,9 @@ namespace WSOA.Server.Business.Implementation
             return result;
         }
 
-        public APICallResult<PlayerDataViewModel> SignUpTournament(SignUpTournamentFormViewModel formVM, ISession session)
+        public APICallResult<PlayerViewModel> SignUpTournament(SignUpTournamentFormViewModel formVM, ISession session)
         {
-            APICallResult<PlayerDataViewModel> result = new APICallResult<PlayerDataViewModel>(true);
+            APICallResult<PlayerViewModel> result = new APICallResult<PlayerViewModel>(true);
 
             int tournamentId = formVM.TournamentId;
             string presenceStateCode = formVM.PresenceStateCode;
@@ -178,7 +179,7 @@ namespace WSOA.Server.Business.Implementation
                 player.PresenceStateCode = presenceStateCode;
                 _playerRepository.SavePlayer(player);
 
-                result.Data = new PlayerDataViewModel(_userRepository.GetUserById(currentUsrId), presenceStateCode);
+                result.Data = new PlayerViewModel(_userRepository.GetUserById(currentUsrId), player);
 
                 _transactionManager.CommitTransaction();
             }
@@ -187,15 +188,86 @@ namespace WSOA.Server.Business.Implementation
                 _transactionManager.RollbackTransaction();
                 string errorMsg = e.Message;
                 _log.Error(errorMsg);
-                return new APICallResult<PlayerDataViewModel>(errorMsg, e.RedirectUrl);
+                return new APICallResult<PlayerViewModel>(errorMsg, e.RedirectUrl);
             }
             catch (Exception e)
             {
                 _transactionManager.RollbackTransaction();
                 _log.Error(e.Message);
                 string errorMsg = MainBusinessResources.TECHNICAL_ERROR;
-                return new APICallResult<PlayerDataViewModel>(errorMsg, string.Format(RouteBusinessResources.MAIN_ERROR, errorMsg));
+                return new APICallResult<PlayerViewModel>(errorMsg, string.Format(RouteBusinessResources.MAIN_ERROR, errorMsg));
             }
+            return result;
+        }
+
+        public APICallResult<PlayerSelectionViewModel> LoadPlayersForPlayingTournament(int tournamentId, ISession session)
+        {
+            APICallResult<PlayerSelectionViewModel> result = new APICallResult<PlayerSelectionViewModel>(true);
+
+            try
+            {
+                session.CanUserPerformAction(_userRepository, BusinessActionResources.EXECUTE_TOURNAMENT);
+                CanExecuteTournament(tournamentId);
+                IEnumerable<PlayerDto> presentPlayers = _playerRepository.GetPlayersByTournamentIdAndPresenceStateCode(tournamentId, PresenceStateResources.PRESENT_CODE);
+                IEnumerable<User> availableUsers = _userRepository.GetAllUsers(blacklistUserIds: presentPlayers.Select(pla => pla.User.Id));
+                result.Data = new PlayerSelectionViewModel(presentPlayers, availableUsers);
+            }
+            catch (FunctionalException e)
+            {
+                string errorMsg = e.Message;
+                _log.Error(errorMsg);
+                return new APICallResult<PlayerSelectionViewModel>(errorMsg, e.RedirectUrl);
+            }
+            catch (Exception e)
+            {
+                _log.Error(e.Message);
+                string errorMsg = MainBusinessResources.TECHNICAL_ERROR;
+                return new APICallResult<PlayerSelectionViewModel>(errorMsg, string.Format(RouteBusinessResources.MAIN_ERROR, errorMsg));
+            }
+
+            return result;
+        }
+
+        private void CanExecuteTournament(int tournamentId)
+        {
+            bool existsTournamentInProgress = _tournamentRepository.ExistsTournamentByIsInProgress(true);
+            if (existsTournamentInProgress)
+            {
+                string errorMsg = TournamentBusinessResources.EXISTS_TOURNAMENT_IN_PROGRESS;
+                throw new FunctionalException(errorMsg, string.Format(RouteBusinessResources.MAIN_ERROR, errorMsg));
+            }
+
+            bool canExecute = _tournamentRepository.ExistsTournamentByTournamentIdIsOverAndIsInProgress(tournamentId, false, false);
+            if (!canExecute)
+            {
+                string errorMsg = TournamentBusinessResources.CANNOT_EXECUTE_TOURNAMENT;
+                throw new FunctionalException(errorMsg, string.Format(RouteBusinessResources.MAIN_ERROR, errorMsg));
+            }
+        }
+
+        public APICallResultBase SaveTournamentPrepared(TournamentPreparedDto tournamentPrepared, ISession session)
+        {
+            APICallResultBase result = new APICallResultBase(true);
+
+            try
+            {
+                // Recup tournoi avec les joueurs
+                // Mettre a jour presence joueurs
+                // Passer le tournoi en "En cours"
+            }
+            catch (FunctionalException e)
+            {
+                string errorMsg = e.Message;
+                _log.Error(errorMsg);
+                return new APICallResultBase(errorMsg, e.RedirectUrl);
+            }
+            catch (Exception e)
+            {
+                string errorMsg = MainBusinessResources.TECHNICAL_ERROR;
+                _log.Error(e.Message);
+                return new APICallResultBase(errorMsg, string.Format(RouteBusinessResources.MAIN_ERROR, errorMsg));
+            }
+
             return result;
         }
     }

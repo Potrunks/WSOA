@@ -22,7 +22,7 @@ namespace WSOA.Server.Data.Implementation
             _dbContext.SaveChanges();
         }
 
-        public List<TournamentDto> GetTournamentDtosByIsOver(bool isOver)
+        public List<TournamentDto> GetTournamentDtosByIsOverAndIsInProgress(bool isOver, bool isInProgress)
         {
             return
             (
@@ -33,6 +33,7 @@ namespace WSOA.Server.Data.Implementation
                 from usr in left_usr.DefaultIfEmpty()
                 join address in _dbContext.Addresses on tournament.AddressId equals address.Id
                 where tournament.IsOver == isOver
+                        && tournament.IsInProgress == isInProgress
                 group new { player, usr, address } by tournament into grouped
                 select new TournamentDto
                 {
@@ -58,6 +59,30 @@ namespace WSOA.Server.Data.Implementation
                 select tournament
             )
             .Single();
+        }
+
+        public bool ExistsTournamentByTournamentIdIsOverAndIsInProgress(int tournamentId, bool isOver, bool isInProgress)
+        {
+            return
+                (
+                    from tou in _dbContext.Tournaments
+                    where tou.Id == tournamentId
+                            && tou.IsOver == isOver
+                            && tou.IsInProgress == isInProgress
+                    select tou
+                )
+                .Any();
+        }
+
+        public bool ExistsTournamentByIsInProgress(bool isInProgress)
+        {
+            return
+                (
+                    from tou in _dbContext.Tournaments
+                    where tou.IsInProgress == isInProgress
+                    select tou
+                )
+                .Any();
         }
     }
 }

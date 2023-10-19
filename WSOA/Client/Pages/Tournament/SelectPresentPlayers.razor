@@ -1,0 +1,82 @@
+﻿@page "/tournament/select/players/{TournamentId:int}"
+@using WSOA.Client.Pages.Tournament.Components;
+@using WSOA.Client.Shared.Buttons.Main
+@using WSOA.Client.Shared.Buttons.Resources;
+@using WSOA.Client.Shared.Loaders
+@using WSOA.Client.Shared.Resources;
+@using WSOA.Shared.ViewModel;
+@inherits SelectPresentPlayersComponent
+
+@if (IsLoading)
+{
+    <CardCoinLoader />
+}
+else
+{
+    <div class="c-selectPlayers__container-main @(IsDisplayingPopup ? "flood" : "")">
+        <div class="c-selectPlayers__container-sub">
+            <div class="c-selectPlayers__title">@MainLabelResources.PRESENT_PLAYERS</div>
+            <div class="c-selectPlayers__container-players">
+                @foreach (PlayerViewModel model in SelectedPlayers)
+                {
+                    <div class="c-selectPlayers__container-player">
+                        <img src="@(model.HasPaid ? "images/pay_cash_bill.png" : "images/error_logo.png")" onclick="@(() => OnPaymentClick.InvokeAsync(model))" />
+                        <div class="c-selectPlayers__label-playerFullName">@model.FirstName @model.LastName.ToUpper()</div>
+                        <img src="images/trash_bin.png" onclick="@(() => OnTrashPlayerClick.InvokeAsync(model))" />
+                    </div>
+                }
+                <div class="c-selectPlayers__panelButtons-addPlayer">
+                    <div class="c-selectPlayer__icon-blank" />
+                    <div class="c-selectPlayers__label">@ButtonLabelResources.ADD_PLAYERS</div>
+                    <img src="images/add_player.png" onclick="@(() => OnAddPlayersClick.InvokeAsync())" />
+                </div>
+            </div>
+        </div>
+        <div class="c-selectPlayers__panelButtons">
+            <MainButton IsPrimary="true" Label="@ButtonLabelResources.VALIDATE" Type="button" OnClick="() => OnValidSelectedPlayers.InvokeAsync()"/>
+        </div>
+    </div>
+    @if (IsDisplayingAddPlayersPopup)
+    {
+        <div class="c-selectPlayers__popup-addPlayers">
+            <div class="c-selectPlayers__popup-emptyZone">
+                <div class="c-selectPlayers__popup-containerZone">
+                    <div class="c-selectPlayers__popup-title">@MainLabelResources.AVAILABLE_PLAYERS</div>
+                    <div class="c-selectPlayers__popup-availablePlayers">
+                        @foreach (PlayerViewModel model in AvailablePlayers)
+                        {
+                            <div class="c-selectPlayers__popup-availablePlayer">
+                                <img class="c-selectPlayers__checkbox-addPlayer @(model.IsPreSelected ? "checked" : "")" src="images/success_logo.png" onclick="@(() => OnPreSelectPlayerClick.InvokeAsync(model))" />
+                                <div class="c-selectPlayers__label-playerFullName">@(char.ToUpper(model.FirstName[0]) + model.FirstName.Substring(1)) @(char.ToUpper(model.LastName[0])).</div>
+                            </div>
+                        }
+                    </div>
+                    <div class="c-selectPlayers__popup-panelButtons">
+                        <MainButton IsPrimary="true" Label="@ButtonLabelResources.VALIDATE" Type="button" OnClick="() => OnValidPreSelectedPlayers.InvokeAsync()" />
+                        <MainButton Label="@ButtonLabelResources.CLOSE" Type="button" OnClick="() => OnAddPlayersPopupExit.InvokeAsync()" />
+                    </div>
+                </div>
+            </div>
+        </div>
+    }
+    @if (IsDisplayingPaymentMissingPopup)
+    {
+        <div class="c-selectPlayers__popup-paymentMissing">
+            <div class="c-selectPlayers__popup-emptyZone">
+                <div class="c-selectPlayers__popup-containerZone">
+                    <div class="c-selectPlayers__popup-title">@MainLabelResources.PLAYERS_PAYMENT_MISSING</div>
+                    <div class="c-selectPlayers__popup-playersDontPaid">
+                        @foreach (PlayerViewModel model in SelectedPlayers.Where(pla => !pla.HasPaid))
+                        {
+                            <div class="c-selectPlayers__label-playerFullName">@(char.ToUpper(model.FirstName[0]) + model.FirstName.Substring(1)) @(char.ToUpper(model.LastName[0])).</div>
+                        }
+                    </div>
+                    <div class="c-selectPlayers__popup-panelButtons">
+                        <MainButton IsPrimary="true" Label="@ButtonLabelResources.PAID" Type="button" OnClick="() => OnConfirmPlayersPayment.InvokeAsync()" />
+                        <MainButton Label="@ButtonLabelResources.CLOSE" Type="button" OnClick="() => OnPlayersPaymentMissingPopupExit.InvokeAsync()" />
+                    </div>
+                </div>
+            </div>
+        </div>
+    }
+}

@@ -1,4 +1,5 @@
-﻿using WSOA.Shared.Entity;
+﻿using WSOA.Shared.Dtos;
+using WSOA.Shared.Entity;
 
 namespace WSOA.Server.Data.Interface
 {
@@ -13,5 +14,10 @@ namespace WSOA.Server.Data.Interface
         /// Save player.
         /// </summary>
         void SavePlayer(Player player);
+
+        /// <summary>
+        /// Get players into tournament and by presence state code.
+        /// </summary>
+        IEnumerable<PlayerDto> GetPlayersByTournamentIdAndPresenceStateCode(int tournamentId, string presenceStateCode);
     }
 }
