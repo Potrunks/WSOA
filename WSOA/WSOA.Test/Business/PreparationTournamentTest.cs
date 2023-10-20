@@ -13,7 +13,7 @@ using WSOA.Shared.ViewModel;
 namespace WSOA.Test.Business
 {
     [TestClass]
-    public class ExecuteTournamentTest : TestClassBase
+    public class PreparationTournamentTest : TestClassBase
     {
         private ITournamentBusiness _tournamentBusiness;
 

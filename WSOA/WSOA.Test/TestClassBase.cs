@@ -1,9 +1,11 @@
 ﻿using Microsoft.AspNetCore.Http;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Moq;
 using System.Text;
 using WSOA.Server.Business.Interface;
 using WSOA.Server.Business.Resources;
+using WSOA.Server.Data;
 using WSOA.Server.Data.Interface;
 using WSOA.Shared.Dtos;
 using WSOA.Shared.Entity;
@@ -16,6 +18,25 @@ namespace WSOA.Test
     [TestClass]
     public class TestClassBase
     {
+        private static DbContextOptions<WSOADbContext> _options = new DbContextOptionsBuilder<WSOADbContext>()
+                                                                     .UseInMemoryDatabase(databaseName: "WSOAUnitTest")
+                                                                     .Options;
+
+        public WSOADbContext _dbContext;
+
+        [TestInitialize]
+        public void Setup()
+        {
+            _dbContext = new WSOADbContext(_options);
+            _dbContext.Database.EnsureCreated();
+        }
+
+        [TestCleanup]
+        public void CleanUp()
+        {
+            _dbContext.Database.EnsureDeleted();
+        }
+
         public Mock<ISession> CreateISessionMock(string? currentProfileCodeIntoSession, int? currentUserIdIntoSession)
         {
             Mock<ISession> mock = new Mock<ISession>();
@@ -184,11 +205,19 @@ namespace WSOA.Test
             {
                 Id = id,
                 AccountId = id,
-                Email = "test@test.test",
-                FirstName = "Alexis",
-                LastName = "ARRIAL",
+                Email = $"test{id}@test.com",
+                FirstName = $"firstName{id}",
+                LastName = $"lastName{id}",
                 ProfileCode = ProfileResources.PLAYER_CODE
             };
+        }
+
+        public User SaveUser()
+        {
+            User usr = CreateUser(0);
+            _dbContext.Add(usr);
+            _dbContext.SaveChanges();
+            return usr;
         }
 
         public List<User> CreateUsers(int number)
@@ -198,6 +227,20 @@ namespace WSOA.Test
             {
                 users.Add(CreateUser(i));
             }
+            return users;
+        }
+
+        public List<User> SaveUsers(int number)
+        {
+            List<User> users = new List<User>();
+            for (int i = 1; i <= number; i++)
+            {
+                User user = CreateUser(i);
+                user.Id = 0;
+                users.Add(user);
+            }
+            _dbContext.Users.AddRange(users);
+            _dbContext.SaveChanges();
             return users;
         }
 
@@ -247,6 +290,15 @@ namespace WSOA.Test
             };
         }
 
+        public Tournament SaveTournament(int id)
+        {
+            Tournament tournament = CreateTournament(id);
+            tournament.Id = 0;
+            _dbContext.Tournaments.Add(tournament);
+            _dbContext.SaveChanges();
+            return tournament;
+        }
+
         public IEnumerable<TournamentDto> CreateTournamentDtos(int number, int nbPlayersByTournament)
         {
             List<TournamentDto> result = new List<TournamentDto>();
@@ -267,13 +319,39 @@ namespace WSOA.Test
             };
         }
 
-        public Player CreatePlayer(int id, string? presenceStateCode = null)
+        public Player CreatePlayer(int id, int tournamentId = 0, int usrId = 0, string? presenceStateCode = null)
         {
             return new Player
             {
                 Id = id,
+                UserId = usrId,
+                PlayedTournamentId = tournamentId,
                 PresenceStateCode = presenceStateCode != null ? presenceStateCode : PresenceStateResources.PRESENT_CODE
             };
+        }
+
+        public Player SavePlayer(int tournamentId, int usrId, string presenceStateCode)
+        {
+            Player player = CreatePlayer(0, tournamentId, usrId, presenceStateCode);
+            _dbContext.Players.Add(player);
+            _dbContext.SaveChanges();
+            return player;
+        }
+
+        public List<Player> SavePlayers(IEnumerable<int> usrIds, int tournamentId, string presenceStateCode)
+        {
+            List<Player> players = new List<Player>();
+            foreach (int usrId in usrIds)
+            {
+                Player player = new Player();
+                player.UserId = usrId;
+                player.PlayedTournamentId = tournamentId;
+                player.PresenceStateCode = presenceStateCode;
+                players.Add(player);
+            }
+            _dbContext.Players.AddRange(players);
+            _dbContext.SaveChanges();
+            return players;
         }
 
         public PlayerDto CreatePlayerDto(int id)
@@ -302,6 +380,34 @@ namespace WSOA.Test
                 TournamentId = tournamentId,
                 PresenceStateCode = presenceStateCode
             };
+        }
+
+        public TournamentPreparedDto CreateTournamentPreparedDto(int tournamentId, IEnumerable<int> selectedUsrIds)
+        {
+            return new TournamentPreparedDto
+            {
+                TournamentId = tournamentId,
+                SelectedUserIds = selectedUsrIds
+            };
+        }
+
+        public void SaveBusinessAction(string profileCode, string businessActionCode)
+        {
+            BusinessAction businessAction = new BusinessAction
+            {
+                Code = businessActionCode,
+                Label = "businessActionForTest"
+            };
+
+            BusinessActionByProfileCode businessActionByProfileCode = new BusinessActionByProfileCode
+            {
+                ProfileCode = profileCode,
+                BusinessActionCode = businessActionCode
+            };
+
+            _dbContext.BusinessActions.Add(businessAction);
+            _dbContext.BusinessActionsByProfileCode.Add(businessActionByProfileCode);
+            _dbContext.SaveChanges();
         }
 
         public void VerifyTransactionManagerCommit(Mock<ITransactionManager> transactionManagerMock)

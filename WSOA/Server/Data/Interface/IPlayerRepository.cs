@@ -16,8 +16,18 @@ namespace WSOA.Server.Data.Interface
         void SavePlayer(Player player);
 
         /// <summary>
+        /// Save Players.
+        /// </summary>
+        void SavePlayers(IEnumerable<Player> players);
+
+        /// <summary>
         /// Get players into tournament and by presence state code.
         /// </summary>
         IEnumerable<PlayerDto> GetPlayersByTournamentIdAndPresenceStateCode(int tournamentId, string presenceStateCode);
+
+        /// <summary>
+        /// Delete players.
+        /// </summary>
+        void DeletePlayers(IEnumerable<Player> players);
     }
 }

@@ -1,5 +1,4 @@
-﻿using Blazored.SessionStorage;
-using Microsoft.AspNetCore.Components;
+﻿using Microsoft.AspNetCore.Components;
 using Microsoft.JSInterop;
 using WSOA.Client.Services.Interface;
 using WSOA.Client.Shared.Components;
@@ -15,9 +14,6 @@ namespace WSOA.Client.Pages.Tournament.Components
 
         [Inject]
         public NavigationManager NavigationManager { get; set; }
-
-        [Inject]
-        public ISessionStorageService SessionStorageService { get; set; }
 
         [Inject]
         public IJSRuntime JSRuntime { get; set; }

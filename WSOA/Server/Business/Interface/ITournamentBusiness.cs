@@ -1,4 +1,5 @@
-﻿using WSOA.Shared.Result;
+﻿using WSOA.Shared.Dtos;
+using WSOA.Shared.Result;
 using WSOA.Shared.ViewModel;
 
 namespace WSOA.Server.Business.Interface
@@ -29,5 +30,10 @@ namespace WSOA.Server.Business.Interface
         /// Get present players and available players before execute tournament.
         /// </summary>
         APICallResult<PlayerSelectionViewModel> LoadPlayersForPlayingTournament(int tournamentId, ISession session);
+
+        /// <summary>
+        /// Save the tournament prepared and declare it as in progress.
+        /// </summary>
+        APICallResultBase PlayTournamentPrepared(TournamentPreparedDto tournamentPrepared, ISession session);
     }
 }

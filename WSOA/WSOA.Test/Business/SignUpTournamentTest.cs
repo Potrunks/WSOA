@@ -133,7 +133,7 @@ namespace WSOA.Test.Business
         [TestMethod]
         public void ShouldSignUpPlayer_WhenAlreadySignUp()
         {
-            _currentPlayer = CreatePlayer(1, PresenceStateResources.ABSENT_CODE);
+            _currentPlayer = CreatePlayer(1, presenceStateCode: PresenceStateResources.ABSENT_CODE);
 
             APICallResult<PlayerViewModel> result = _tournamentBusiness.SignUpTournament(_formVM, _sessionMock.Object);
 

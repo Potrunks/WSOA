@@ -29,5 +29,10 @@ namespace WSOA.Server.Data.Interface
         /// Check if exists tournament by is in progress status.
         /// </summary>
         bool ExistsTournamentByIsInProgress(bool isInProgress);
+
+        /// <summary>
+        /// Get tournament DTO by ID.
+        /// </summary>
+        TournamentDto GetTournamentDtoById(int tournamentId);
     }
 }

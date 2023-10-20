@@ -49,5 +49,21 @@ namespace WSOA.Server.Data.Implementation
             }
             _dbContext.SaveChanges();
         }
+
+        public void SavePlayers(IEnumerable<Player> players)
+        {
+            IEnumerable<Player> newPlayers = players.Where(pla => pla.Id == 0);
+            if (newPlayers.Any())
+            {
+                _dbContext.Players.AddRange(newPlayers);
+            }
+            _dbContext.SaveChanges();
+        }
+
+        public void DeletePlayers(IEnumerable<Player> players)
+        {
+            _dbContext.Players.RemoveRange(players);
+            _dbContext.SaveChanges();
+        }
     }
 }
