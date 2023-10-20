@@ -12,10 +12,6 @@
 }
 
 .c-selectPlayers__container-players {
-    display: flex;
-    flex-direction: column;
-    justify-content: start;
-    align-items: center;
     padding-top: 10px;
     overflow: auto;
 }
@@ -116,10 +112,6 @@
 .c-selectPlayers__popup-playersDontPaid {
     height: 80%;
     width: 100%;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: start;
     overflow: auto;
 }
 
