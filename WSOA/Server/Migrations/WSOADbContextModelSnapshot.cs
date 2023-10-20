@@ -466,9 +466,6 @@ namespace WSOA.Server.Migrations
                     b.Property<bool>("WasFinalTable")
                         .HasColumnType("tinyint(1)");
 
-                    b.Property<bool>("WasPresent")
-                        .HasColumnType("tinyint(1)");
-
                     b.HasKey("Id");
 
                     b.HasIndex("EliminatorPlayerId");

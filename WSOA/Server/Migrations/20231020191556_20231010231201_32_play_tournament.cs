@@ -6,11 +6,15 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace WSOA.Server.Migrations
 {
     /// <inheritdoc />
-    public partial class _32_play_tournament : Migration
+    public partial class _20231010231201_32_play_tournament : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
         {
+            migrationBuilder.DropColumn(
+                name: "WasPresent",
+                table: "Players");
+
             migrationBuilder.CreateTable(
                 name: "BusinessActions",
                 columns: table => new
@@ -104,6 +108,13 @@ namespace WSOA.Server.Migrations
                 table: "MainNavSubSections",
                 keyColumn: "Id",
                 keyValue: 5);
+
+            migrationBuilder.AddColumn<bool>(
+                name: "WasPresent",
+                table: "Players",
+                type: "tinyint(1)",
+                nullable: false,
+                defaultValue: false);
         }
     }
 }

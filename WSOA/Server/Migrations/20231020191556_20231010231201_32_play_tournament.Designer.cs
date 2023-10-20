@@ -11,8 +11,8 @@ using WSOA.Server.Data;
 namespace WSOA.Server.Migrations
 {
     [DbContext(typeof(WSOADbContext))]
-    [Migration("20231010231201_32_play_tournament")]
-    partial class _32_play_tournament
+    [Migration("20231020191556_20231010231201_32_play_tournament")]
+    partial class _20231010231201_32_play_tournament
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -467,9 +467,6 @@ namespace WSOA.Server.Migrations
                         .HasColumnType("int");
 
                     b.Property<bool>("WasFinalTable")
-                        .HasColumnType("tinyint(1)");
-
-                    b.Property<bool>("WasPresent")
                         .HasColumnType("tinyint(1)");
 
                     b.HasKey("Id");
