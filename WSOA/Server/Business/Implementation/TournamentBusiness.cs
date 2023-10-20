@@ -257,11 +257,7 @@ namespace WSOA.Server.Business.Implementation
 
                 TournamentDto currentTournament = _tournamentRepository.GetTournamentDtoById(tournamentPrepared.TournamentId);
 
-                if (currentTournament.Tournament.IsInProgress || currentTournament.Tournament.IsOver)
-                {
-                    string errorMsg = TournamentBusinessResources.CANNOT_EXECUTE_TOURNAMENT;
-                    throw new FunctionalException(errorMsg, string.Format(RouteBusinessResources.MAIN_ERROR, errorMsg));
-                }
+                CanExecuteTournament(currentTournament.Tournament.Id);
 
                 List<Player> newPlayers = new List<Player>();
                 IDictionary<int, Player> selectedPlayersAlreadySignUpByUsrId = currentTournament.Players.Where(pla => tournamentPrepared.SelectedUserIds.Contains(pla.Player.UserId)).ToDictionary(pla => pla.User.Id, pla => pla.Player);

@@ -158,10 +158,11 @@ namespace WSOA.Test.Business
         public void ShouldNotPlayTournament_WhenTournamentIsAlreadyInProgress()
         {
             _tournamentTargeted.IsInProgress = true;
+            _dbContext.SaveChanges();
 
             APICallResultBase result = ExecutePlayTournamentPreparedMethod();
 
-            string expectedErrorMsg = TournamentBusinessResources.CANNOT_EXECUTE_TOURNAMENT;
+            string expectedErrorMsg = TournamentBusinessResources.EXISTS_TOURNAMENT_IN_PROGRESS;
             VerifyAPICallResultError(result, string.Format(RouteBusinessResources.MAIN_ERROR, expectedErrorMsg), expectedErrorMsg);
             VerifyTransactionManagerRollback(_transactionManagerMock);
         }
@@ -170,6 +171,7 @@ namespace WSOA.Test.Business
         public void ShouldNotPlayTournament_WhenTournamentIsAlreadyOver()
         {
             _tournamentTargeted.IsOver = true;
+            _dbContext.SaveChanges();
 
             APICallResultBase result = ExecutePlayTournamentPreparedMethod();
 
