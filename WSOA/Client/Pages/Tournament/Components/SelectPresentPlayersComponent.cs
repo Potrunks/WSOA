@@ -2,6 +2,7 @@
 using Microsoft.JSInterop;
 using WSOA.Client.Services.Interface;
 using WSOA.Client.Shared.Components;
+using WSOA.Shared.Dtos;
 using WSOA.Shared.Result;
 using WSOA.Shared.ViewModel;
 
@@ -139,7 +140,15 @@ namespace WSOA.Client.Pages.Tournament.Components
             }
             else
             {
-                // TODO : Save tournament preparation
+                TournamentPreparedDto tournamentPrepared = new TournamentPreparedDto
+                {
+                    TournamentId = TournamentId,
+                    SelectedUserIds = SelectedPlayers.Select(pla => pla.UserId)
+                };
+
+                APICallResultBase result = await TournamentService.PlayTournamentPrepared(tournamentPrepared);
+
+                NavigationManager.NavigateTo(result.RedirectUrl);
             }
         }
 

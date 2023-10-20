@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using WSOA.Server.Business.Interface;
+using WSOA.Shared.Dtos;
 using WSOA.Shared.Result;
 using WSOA.Shared.ViewModel;
 
@@ -66,6 +67,16 @@ namespace WSOA.Server.Controllers
         public APICallResult<PlayerSelectionViewModel> LoadPlayersForPlayingTournament(int tournamentId)
         {
             return _tournamentBusiness.LoadPlayersForPlayingTournament(tournamentId, HttpContext.Session);
+        }
+
+        /// <summary>
+        /// Save and play the tournament selected.
+        /// </summary>
+        [HttpPost]
+        [Route("api/tournament/play")]
+        public APICallResultBase PlayTournamentPrepared([FromBody] TournamentPreparedDto tournamentPrepared)
+        {
+            return _tournamentBusiness.PlayTournamentPrepared(tournamentPrepared, HttpContext.Session);
         }
     }
 }

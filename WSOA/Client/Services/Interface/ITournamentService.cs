@@ -1,4 +1,5 @@
-﻿using WSOA.Shared.Result;
+﻿using WSOA.Shared.Dtos;
+using WSOA.Shared.Result;
 using WSOA.Shared.ViewModel;
 
 namespace WSOA.Client.Services.Interface
@@ -29,5 +30,10 @@ namespace WSOA.Client.Services.Interface
         /// Load present players and available players for tournament preparation.
         /// </summary>
         Task<APICallResult<PlayerSelectionViewModel>> LoadPlayersForPlayingTournament(int tournamentId);
+
+        /// <summary>
+        /// Save selected tournament and execute it.
+        /// </summary>
+        Task<APICallResultBase> PlayTournamentPrepared(TournamentPreparedDto tournamentPrepared);
     }
 }

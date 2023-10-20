@@ -1,6 +1,7 @@
 ﻿using WSOA.Client.Services.Interface;
 using WSOA.Client.Shared.Resources;
 using WSOA.Client.Utils;
+using WSOA.Shared.Dtos;
 using WSOA.Shared.Result;
 using WSOA.Shared.ViewModel;
 
@@ -43,6 +44,12 @@ namespace WSOA.Client.Services.Implementation
         {
             HttpResponseMessage response = await _httpClient.GetAsync(string.Format(ApiRouteResources.TOURNAMENT_PREPARATION_GET_PLAYERS, tournamentId));
             return response.Content.ToObject<APICallResult<PlayerSelectionViewModel>>();
+        }
+
+        public async Task<APICallResultBase> PlayTournamentPrepared(TournamentPreparedDto tournamentPrepared)
+        {
+            HttpResponseMessage response = await _httpClient.PostAsync(ApiRouteResources.PLAY_TOURNAMENT_PREPARED, tournamentPrepared.ToJsonUtf8());
+            return response.Content.ToObject<APICallResultBase>();
         }
     }
 }
