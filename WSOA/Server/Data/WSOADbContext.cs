@@ -130,6 +130,15 @@ namespace WSOA.Server.Data
                     Description = "Futurs tournois",
                     Order = 1,
                     Url = "/tournament/future"
+                },
+                new MainNavSubSection
+                {
+                    Id = 5,
+                    Label = "Lancer tournoi",
+                    MainNavSectionId = 3,
+                    Description = "Lancer un tournoi",
+                    Order = 2,
+                    Url = "/tournament/execute"
                 }
             );
 
@@ -198,6 +207,13 @@ namespace WSOA.Server.Data
                     Id = 10,
                     MainNavSubSectionId = 4,
                     ProfileCode = "GUEST"
+                },
+                // LANCER TOURNOI
+                new MainNavSubSectionByProfileCode
+                {
+                    Id = 11,
+                    MainNavSubSectionId = 5,
+                    ProfileCode = "ORGA"
                 }
             );
 
@@ -267,6 +283,25 @@ namespace WSOA.Server.Data
                     Content = "3 rue Sebastopol 94600 Choisy-Le-Roi"
                 }
             );
+
+            modelBuilder.Entity<BusinessAction>().HasData
+            (
+                new BusinessAction
+                {
+                    Code = "EXEC_TOURNAMENT",
+                    Label = "Executer un tournoi"
+                }
+            );
+
+            modelBuilder.Entity<BusinessActionByProfileCode>().HasData
+            (
+                new BusinessActionByProfileCode
+                {
+                    Id = 1,
+                    ProfileCode = "ORGA",
+                    BusinessActionCode = "EXEC_TOURNAMENT"
+                }
+            );
         }
 
         public DbSet<Account> Accounts { get; set; }
@@ -282,5 +317,7 @@ namespace WSOA.Server.Data
         public DbSet<Tournament> Tournaments { get; set; }
         public DbSet<Address> Addresses { get; set; }
         public DbSet<PresenceState> PresenceStates { get; set; }
+        public DbSet<BusinessAction> BusinessActions { get; set; }
+        public DbSet<BusinessActionByProfileCode> BusinessActionsByProfileCode { get; set; }
     }
 }

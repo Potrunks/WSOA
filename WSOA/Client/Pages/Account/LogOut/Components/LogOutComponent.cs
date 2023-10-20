@@ -12,7 +12,7 @@ namespace WSOA.Client.Pages.Account.LogOut.Components
 
         protected async override Task OnInitializedAsync()
         {
-            APICallResult result = await AccountService.LogOut();
+            APICallResultBase result = await AccountService.LogOut();
             NavigationManager.NavigateTo(result.RedirectUrl);
         }
     }

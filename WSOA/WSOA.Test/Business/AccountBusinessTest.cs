@@ -54,7 +54,7 @@ namespace WSOA.Test.Business
         [TestMethod]
         public void ShouldSuccessSignIn_WhenLoginAndPasswordIsOk()
         {
-            APICallResult result = _accountBusiness.SignIn(_signInFormVM, _sessionMock.Object);
+            APICallResultBase result = _accountBusiness.SignIn(_signInFormVM, _sessionMock.Object);
             Assert.AreEqual(true, result.Success);
             Assert.AreEqual(null, result.ErrorMessage);
             Assert.AreEqual(RouteBusinessResources.HOME, result.RedirectUrl);
@@ -63,7 +63,7 @@ namespace WSOA.Test.Business
         [TestMethod]
         public void ShouldFailSignIn_WhenFormModelIsNull()
         {
-            APICallResult result = _accountBusiness.SignIn(null, _sessionMock.Object);
+            APICallResultBase result = _accountBusiness.SignIn(null, _sessionMock.Object);
             Assert.AreEqual(false, result.Success);
             Assert.AreEqual(MainBusinessResources.TECHNICAL_ERROR, result.ErrorMessage);
             Assert.AreEqual(null, result.RedirectUrl);
@@ -74,7 +74,7 @@ namespace WSOA.Test.Business
         {
             _accountRepositoryMock.Setup(m => m.GetByLoginAndPassword(It.IsAny<string>(), It.IsAny<string>()))
                                     .Returns(() => null);
-            APICallResult result = _accountBusiness.SignIn(_signInFormVM, _sessionMock.Object);
+            APICallResultBase result = _accountBusiness.SignIn(_signInFormVM, _sessionMock.Object);
             Assert.AreEqual(false, result.Success);
             Assert.AreEqual(AccountBusinessResources.ERROR_SIGN_IN, result.ErrorMessage);
             Assert.AreEqual(null, result.RedirectUrl);
@@ -87,7 +87,7 @@ namespace WSOA.Test.Business
             _accountRepositoryMock.Setup(m => m.SaveLinkAccountCreation(It.IsAny<LinkAccountCreation>()))
                                     .Callback<LinkAccountCreation>((link) => linkCreated = link);
 
-            APICallResult result = _accountBusiness.CreateLinkAccountCreation(_linkAccountCreationVM, _sessionMock.Object);
+            APICallResultBase result = _accountBusiness.CreateLinkAccountCreation(_linkAccountCreationVM, _sessionMock.Object);
 
             Assert.AreEqual(true, result.Success);
             Assert.AreEqual(null, result.ErrorMessage);
@@ -106,7 +106,7 @@ namespace WSOA.Test.Business
         {
             _sessionMock = CreateISessionMock(null, null);
 
-            APICallResult result = _accountBusiness.CreateLinkAccountCreation(_linkAccountCreationVM, _sessionMock.Object);
+            APICallResultBase result = _accountBusiness.CreateLinkAccountCreation(_linkAccountCreationVM, _sessionMock.Object);
 
             Assert.AreEqual(false, result.Success);
             Assert.AreEqual(MainBusinessResources.USER_NOT_CONNECTED, result.ErrorMessage);
@@ -123,7 +123,7 @@ namespace WSOA.Test.Business
             _menuRepositoryMock.Setup(m => m.GetMainNavSubSectionByIdAndProfileCode(It.IsAny<string>(), It.IsAny<int>()))
                                 .Returns(() => null);
 
-            APICallResult result = _accountBusiness.CreateLinkAccountCreation(_linkAccountCreationVM, _sessionMock.Object);
+            APICallResultBase result = _accountBusiness.CreateLinkAccountCreation(_linkAccountCreationVM, _sessionMock.Object);
 
             Assert.AreEqual(false, result.Success);
             Assert.AreEqual(MainBusinessResources.USER_CANNOT_PERFORM_ACTION, result.ErrorMessage);
@@ -147,7 +147,7 @@ namespace WSOA.Test.Business
             _accountRepositoryMock.Setup(m => m.GetLinkAccountCreationByMail(It.IsAny<string>()))
                                     .Returns(currentLink);
 
-            APICallResult result = _accountBusiness.CreateLinkAccountCreation(_linkAccountCreationVM, _sessionMock.Object);
+            APICallResultBase result = _accountBusiness.CreateLinkAccountCreation(_linkAccountCreationVM, _sessionMock.Object);
 
             Assert.AreEqual(true, result.Success);
             Assert.AreEqual(null, result.ErrorMessage);
@@ -172,7 +172,7 @@ namespace WSOA.Test.Business
             _accountRepositoryMock.Setup(m => m.GetLinkAccountCreationByMail(It.IsAny<string>()))
                                     .Returns(currentLink);
 
-            APICallResult result = _accountBusiness.CreateLinkAccountCreation(_linkAccountCreationVM, _sessionMock.Object);
+            APICallResultBase result = _accountBusiness.CreateLinkAccountCreation(_linkAccountCreationVM, _sessionMock.Object);
 
             Assert.AreEqual(true, result.Success);
             Assert.AreEqual(null, result.ErrorMessage);
@@ -186,12 +186,12 @@ namespace WSOA.Test.Business
         [TestMethod]
         public void ShouldLoadInviteData()
         {
-            InviteCallResult result = _accountBusiness.LoadInviteDatas(1, _sessionMock.Object);
+            APICallResult<InviteViewModel> result = _accountBusiness.LoadInviteDatas(1, _sessionMock.Object);
 
             Assert.AreEqual(true, result.Success);
             Assert.AreEqual(null, result.ErrorMessage);
             Assert.AreEqual(null, result.RedirectUrl);
-            Assert.AreEqual(ProfileResources.ADMINISTRATOR_NAME, result.InviteVM.ProfileLabelsByCode.Single().Value);
+            Assert.AreEqual(ProfileResources.ADMINISTRATOR_NAME, result.Data.ProfileLabelsByCode.Single().Value);
         }
 
         [TestMethod]
@@ -200,12 +200,12 @@ namespace WSOA.Test.Business
             _menuRepositoryMock.Setup(m => m.GetMainNavSubSectionByIdAndProfileCode(It.IsAny<string>(), It.IsAny<int>()))
                                 .Returns(() => null);
 
-            InviteCallResult result = _accountBusiness.LoadInviteDatas(1, _sessionMock.Object);
+            APICallResult<InviteViewModel> result = _accountBusiness.LoadInviteDatas(1, _sessionMock.Object);
 
             Assert.AreEqual(false, result.Success);
             Assert.AreEqual(MainBusinessResources.USER_CANNOT_PERFORM_ACTION, result.ErrorMessage);
             Assert.AreEqual(null, result.RedirectUrl);
-            Assert.AreEqual(0, result.InviteVM.ProfileLabelsByCode.Count());
+            Assert.AreEqual(null, result.Data);
         }
 
         [TestMethod]
@@ -213,12 +213,12 @@ namespace WSOA.Test.Business
         {
             _sessionMock = CreateISessionMock(null, null);
 
-            InviteCallResult result = _accountBusiness.LoadInviteDatas(1, _sessionMock.Object);
+            APICallResult<InviteViewModel> result = _accountBusiness.LoadInviteDatas(1, _sessionMock.Object);
 
             Assert.AreEqual(false, result.Success);
             Assert.AreEqual(MainBusinessResources.USER_NOT_CONNECTED, result.ErrorMessage);
             Assert.AreEqual(string.Format(RouteBusinessResources.SIGN_IN_WITH_ERROR_MESSAGE, MainBusinessResources.USER_NOT_CONNECTED), result.RedirectUrl);
-            Assert.AreEqual(0, result.InviteVM.ProfileLabelsByCode.Count());
+            Assert.AreEqual(null, result.Data);
         }
 
         [TestMethod]
@@ -227,12 +227,12 @@ namespace WSOA.Test.Business
             _userRepositoryMock.Setup(m => m.GetAllProfiles())
                 .Returns(new List<Profile>());
 
-            InviteCallResult result = _accountBusiness.LoadInviteDatas(1, _sessionMock.Object);
+            APICallResult<InviteViewModel> result = _accountBusiness.LoadInviteDatas(1, _sessionMock.Object);
 
             Assert.AreEqual(false, result.Success);
             Assert.AreEqual(MainBusinessResources.TECHNICAL_ERROR, result.ErrorMessage);
             Assert.AreEqual(null, result.RedirectUrl);
-            Assert.AreEqual(0, result.InviteVM.ProfileLabelsByCode.Count());
+            Assert.AreEqual(null, result.Data);
 
             _userRepositoryMock.Setup(m => m.GetAllProfiles())
                 .Returns(() => null);
@@ -242,7 +242,7 @@ namespace WSOA.Test.Business
             Assert.AreEqual(false, result.Success);
             Assert.AreEqual(MainBusinessResources.TECHNICAL_ERROR, result.ErrorMessage);
             Assert.AreEqual(null, result.RedirectUrl);
-            Assert.AreEqual(0, result.InviteVM.ProfileLabelsByCode.Count());
+            Assert.AreEqual(null, result.Data);
         }
 
         [TestMethod]
@@ -251,7 +251,7 @@ namespace WSOA.Test.Business
             _userRepositoryMock.Setup(m => m.ExistsUserByMail(It.IsAny<string>()))
                                 .Returns(true);
 
-            APICallResult result = _accountBusiness.CreateLinkAccountCreation(_linkAccountCreationVM, _sessionMock.Object);
+            APICallResultBase result = _accountBusiness.CreateLinkAccountCreation(_linkAccountCreationVM, _sessionMock.Object);
 
             _transactionManagerMock.Verify(t => t.CommitTransaction(), Times.Never());
             _transactionManagerMock.Verify(t => t.RollbackTransaction(), Times.Once());

@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using WSOA.Server.Business.Interface;
 using WSOA.Shared.Result;
+using WSOA.Shared.ViewModel;
 
 namespace WSOA.Server.Controllers
 {
@@ -16,7 +17,7 @@ namespace WSOA.Server.Controllers
 
         [HttpGet]
         [Route("api/menu/loadMainNavMenu")]
-        public MainNavMenuResult LoadMainNavMenu()
+        public APICallResult<MainNavMenuViewModel> LoadMainNavMenu()
         {
             return _menuBusiness.LoadMainNavMenu(HttpContext.Session);
         }

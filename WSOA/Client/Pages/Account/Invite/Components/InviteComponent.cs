@@ -25,22 +25,22 @@ namespace WSOA.Client.Pages.Account.Invite.Components
             _editContext = new EditContext(_formVM);
             _editContext.EnableDataAnnotationsValidation();
 
-            InviteCallResult result = await AccountService.LoadInviteDatas(SubSectionId);
+            APICallResult<InviteViewModel> result = await AccountService.LoadInviteDatas(SubSectionId);
             if (!string.IsNullOrWhiteSpace(result.RedirectUrl))
             {
                 NavigationManager.NavigateTo(result.RedirectUrl);
                 return;
             }
 
-            _inviteVM = result.InviteVM;
-            _formVM.ProfileCodeSelected = result.InviteVM.ProfileLabelsByCode.First().Key;
+            _inviteVM = result.Data;
+            _formVM.ProfileCodeSelected = result.Data.ProfileLabelsByCode.First().Key;
             _formVM.SubSectionIdConcerned = SubSectionId;
             _formVM.BaseUri = NavigationManager.BaseUri;
 
             IsLoading = false;
         }
 
-        public Func<Task<APICallResult>> CreateLinkAccountCreation()
+        public Func<Task<APICallResultBase>> CreateLinkAccountCreation()
         {
             return () => AccountService.CreateLinkAccountCreation(_formVM);
         }

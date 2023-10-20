@@ -1,13 +1,13 @@
 ﻿namespace WSOA.Shared.ViewModel
 {
-    public class SubSectionDataViewModel
+    public class SubSectionViewModel
     {
-        public SubSectionDataViewModel()
+        public SubSectionViewModel()
         {
 
         }
 
-        public SubSectionDataViewModel(string description)
+        public SubSectionViewModel(string description)
         {
             Description = description;
         }

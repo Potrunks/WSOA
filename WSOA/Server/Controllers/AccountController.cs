@@ -20,7 +20,7 @@ namespace WSOA.Server.Controllers
         /// </summary>
         [HttpPost]
         [Route("api/account/signIn")]
-        public APICallResult SignIn([FromBody] SignInFormViewModel signInFormVM)
+        public APICallResultBase SignIn([FromBody] SignInFormViewModel signInFormVM)
         {
             return _accountBusiness.SignIn(signInFormVM, HttpContext.Session);
         }
@@ -30,7 +30,7 @@ namespace WSOA.Server.Controllers
         /// </summary>
         [HttpGet]
         [Route("api/account/invite/{subSectionId}")]
-        public InviteCallResult LoadInviteDatas(int subSectionId)
+        public APICallResult<InviteViewModel> LoadInviteDatas(int subSectionId)
         {
             return _accountBusiness.LoadInviteDatas(subSectionId, HttpContext.Session);
         }
@@ -40,7 +40,7 @@ namespace WSOA.Server.Controllers
         /// </summary>
         [HttpPost]
         [Route("api/account/invite/createLink")]
-        public APICallResult CreateLinkAccountCreation([FromBody] LinkAccountCreationFormViewModel formViewModel)
+        public APICallResultBase CreateLinkAccountCreation([FromBody] LinkAccountCreationFormViewModel formViewModel)
         {
             return _accountBusiness.CreateLinkAccountCreation(formViewModel, HttpContext.Session);
         }
@@ -50,7 +50,7 @@ namespace WSOA.Server.Controllers
         /// </summary>
         [HttpPost]
         [Route("api/account/create")]
-        public APICallResult CreateAccount([FromBody] AccountCreationFormViewModel form)
+        public APICallResultBase CreateAccount([FromBody] AccountCreationFormViewModel form)
         {
             return _accountBusiness.CreateAccount(form);
         }
@@ -60,7 +60,7 @@ namespace WSOA.Server.Controllers
         /// </summary>
         [HttpGet]
         [Route("api/account/logOut")]
-        public APICallResult LogOut()
+        public APICallResultBase LogOut()
         {
             return _accountBusiness.LogOut(HttpContext.Session);
         }
@@ -70,7 +70,7 @@ namespace WSOA.Server.Controllers
         /// </summary>
         [HttpGet]
         [Route("api/account/clearSession")]
-        public APICallResult ClearSession()
+        public APICallResultBase ClearSession()
         {
             return _accountBusiness.ClearSession(HttpContext.Session);
         }

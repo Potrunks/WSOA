@@ -7,6 +7,7 @@ using WSOA.Server.Data.Interface;
 using WSOA.Shared.Dtos;
 using WSOA.Shared.Entity;
 using WSOA.Shared.Exceptions;
+using WSOA.Shared.Resources;
 using WSOA.Shared.Result;
 using WSOA.Shared.Utils;
 using WSOA.Shared.ViewModel;
@@ -45,9 +46,9 @@ namespace WSOA.Server.Business.Implementation
             _playerRepository = playerRepository;
         }
 
-        public APICallResult CreateTournament(TournamentCreationFormViewModel form, ISession session)
+        public APICallResultBase CreateTournament(TournamentCreationFormViewModel form, ISession session)
         {
-            APICallResult result = new APICallResult(null);
+            APICallResultBase result = new APICallResultBase(true);
 
             try
             {
@@ -74,21 +75,21 @@ namespace WSOA.Server.Business.Implementation
                 _transactionManager.RollbackTransaction();
                 string errorMsg = e.Message;
                 _log.Error(errorMsg);
-                return new APICallResult(errorMsg, e.RedirectUrl);
+                return new APICallResultBase(errorMsg, e.RedirectUrl);
             }
             catch (Exception e)
             {
                 _transactionManager.RollbackTransaction();
                 _log.Error(e.Message);
-                return new APICallResult(MainBusinessResources.TECHNICAL_ERROR, null);
+                return new APICallResultBase(MainBusinessResources.TECHNICAL_ERROR);
             }
 
             return result;
         }
 
-        public CreateTournamentCallResult LoadTournamentCreationDatas(int subSectionId, ISession session)
+        public APICallResult<TournamentCreationDataViewModel> LoadTournamentCreationDatas(int subSectionId, ISession session)
         {
-            CreateTournamentCallResult result = new CreateTournamentCallResult(null);
+            APICallResult<TournamentCreationDataViewModel> result = new APICallResult<TournamentCreationDataViewModel>(true);
 
             try
             {
@@ -107,48 +108,48 @@ namespace WSOA.Server.Business.Implementation
             {
                 string errorMsg = e.Message;
                 _log.Error(errorMsg);
-                return new CreateTournamentCallResult(errorMsg, e.RedirectUrl);
+                return new APICallResult<TournamentCreationDataViewModel>(errorMsg, e.RedirectUrl);
             }
             catch (Exception e)
             {
                 _log.Error(e.Message);
                 string errorMsg = MainBusinessResources.TECHNICAL_ERROR;
-                return new CreateTournamentCallResult(errorMsg, string.Format(RouteBusinessResources.MAIN_ERROR, errorMsg));
+                return new APICallResult<TournamentCreationDataViewModel>(errorMsg, string.Format(RouteBusinessResources.MAIN_ERROR, errorMsg));
             }
 
             return result;
         }
 
-        public LoadFutureTournamentCallResult LoadFutureTournamentDatas(int subSectionId, ISession session)
+        public APICallResult<TournamentsViewModel> LoadTournamentsNotOver(int subSectionId, ISession session)
         {
-            LoadFutureTournamentCallResult result = new LoadFutureTournamentCallResult();
+            APICallResult<TournamentsViewModel> result = new APICallResult<TournamentsViewModel>(true);
 
             try
             {
                 MainNavSubSection mainNavSubSection = session.CanUserPerformAction(_menuRepository, subSectionId);
                 int currentUserId = session.GetCurrentUserId();
-                List<TournamentDto> tournamentDtos = _tournamentRepository.GetTournamentDtosByIsOver(false);
-                result.Data = new FutureTournamentsViewModel(tournamentDtos, currentUserId, mainNavSubSection.Description);
+                List<TournamentDto> tournamentDtos = _tournamentRepository.GetTournamentDtosByIsOverAndIsInProgress(false, false);
+                result.Data = new TournamentsViewModel(tournamentDtos, mainNavSubSection.Description, currentUserId);
             }
             catch (FunctionalException e)
             {
                 string errorMsg = e.Message;
                 _log.Error(errorMsg);
-                return new LoadFutureTournamentCallResult(errorMsg, e.RedirectUrl);
+                return new APICallResult<TournamentsViewModel>(errorMsg, e.RedirectUrl);
             }
             catch (Exception e)
             {
                 _log.Error(e.Message);
                 string errorMsg = MainBusinessResources.TECHNICAL_ERROR;
-                return new LoadFutureTournamentCallResult(errorMsg, string.Format(RouteBusinessResources.MAIN_ERROR, errorMsg));
+                return new APICallResult<TournamentsViewModel>(errorMsg, string.Format(RouteBusinessResources.MAIN_ERROR, errorMsg));
             }
 
             return result;
         }
 
-        public SignUpTournamentCallResult SignUpTournament(SignUpTournamentFormViewModel formVM, ISession session)
+        public APICallResult<PlayerViewModel> SignUpTournament(SignUpTournamentFormViewModel formVM, ISession session)
         {
-            SignUpTournamentCallResult result = new SignUpTournamentCallResult(null);
+            APICallResult<PlayerViewModel> result = new APICallResult<PlayerViewModel>(true);
 
             int tournamentId = formVM.TournamentId;
             string presenceStateCode = formVM.PresenceStateCode;
@@ -178,7 +179,7 @@ namespace WSOA.Server.Business.Implementation
                 player.PresenceStateCode = presenceStateCode;
                 _playerRepository.SavePlayer(player);
 
-                result.PlayerSignedUp = new PlayerDataViewModel(_userRepository.GetUserById(currentUsrId), presenceStateCode);
+                result.Data = new PlayerViewModel(_userRepository.GetUserById(currentUsrId), player);
 
                 _transactionManager.CommitTransaction();
             }
@@ -187,15 +188,127 @@ namespace WSOA.Server.Business.Implementation
                 _transactionManager.RollbackTransaction();
                 string errorMsg = e.Message;
                 _log.Error(errorMsg);
-                return new SignUpTournamentCallResult(errorMsg, e.RedirectUrl);
+                return new APICallResult<PlayerViewModel>(errorMsg, e.RedirectUrl);
             }
             catch (Exception e)
             {
                 _transactionManager.RollbackTransaction();
                 _log.Error(e.Message);
                 string errorMsg = MainBusinessResources.TECHNICAL_ERROR;
-                return new SignUpTournamentCallResult(errorMsg, string.Format(RouteBusinessResources.MAIN_ERROR, errorMsg));
+                return new APICallResult<PlayerViewModel>(errorMsg, string.Format(RouteBusinessResources.MAIN_ERROR, errorMsg));
             }
+            return result;
+        }
+
+        public APICallResult<PlayerSelectionViewModel> LoadPlayersForPlayingTournament(int tournamentId, ISession session)
+        {
+            APICallResult<PlayerSelectionViewModel> result = new APICallResult<PlayerSelectionViewModel>(true);
+
+            try
+            {
+                session.CanUserPerformAction(_userRepository, BusinessActionResources.EXECUTE_TOURNAMENT);
+                CanExecuteTournament(tournamentId);
+                IEnumerable<PlayerDto> presentPlayers = _playerRepository.GetPlayersByTournamentIdAndPresenceStateCode(tournamentId, PresenceStateResources.PRESENT_CODE);
+                IEnumerable<User> availableUsers = _userRepository.GetAllUsers(blacklistUserIds: presentPlayers.Select(pla => pla.User.Id));
+                result.Data = new PlayerSelectionViewModel(presentPlayers, availableUsers);
+            }
+            catch (FunctionalException e)
+            {
+                string errorMsg = e.Message;
+                _log.Error(errorMsg);
+                return new APICallResult<PlayerSelectionViewModel>(errorMsg, e.RedirectUrl);
+            }
+            catch (Exception e)
+            {
+                _log.Error(e.Message);
+                string errorMsg = MainBusinessResources.TECHNICAL_ERROR;
+                return new APICallResult<PlayerSelectionViewModel>(errorMsg, string.Format(RouteBusinessResources.MAIN_ERROR, errorMsg));
+            }
+
+            return result;
+        }
+
+        private void CanExecuteTournament(int tournamentId)
+        {
+            bool existsTournamentInProgress = _tournamentRepository.ExistsTournamentByIsInProgress(true);
+            if (existsTournamentInProgress)
+            {
+                string errorMsg = TournamentBusinessResources.EXISTS_TOURNAMENT_IN_PROGRESS;
+                throw new FunctionalException(errorMsg, string.Format(RouteBusinessResources.MAIN_ERROR, errorMsg));
+            }
+
+            bool canExecute = _tournamentRepository.ExistsTournamentByTournamentIdIsOverAndIsInProgress(tournamentId, false, false);
+            if (!canExecute)
+            {
+                string errorMsg = TournamentBusinessResources.CANNOT_EXECUTE_TOURNAMENT;
+                throw new FunctionalException(errorMsg, string.Format(RouteBusinessResources.MAIN_ERROR, errorMsg));
+            }
+        }
+
+        public APICallResultBase PlayTournamentPrepared(TournamentPreparedDto tournamentPrepared, ISession session)
+        {
+            APICallResultBase result = new APICallResultBase(false);
+
+            try
+            {
+                _transactionManager.BeginTransaction();
+
+                session.CanUserPerformAction(_userRepository, BusinessActionResources.EXECUTE_TOURNAMENT);
+
+                TournamentDto currentTournament = _tournamentRepository.GetTournamentDtoById(tournamentPrepared.TournamentId);
+
+                CanExecuteTournament(currentTournament.Tournament.Id);
+
+                List<Player> newPlayers = new List<Player>();
+                IDictionary<int, Player> selectedPlayersAlreadySignUpByUsrId = currentTournament.Players.Where(pla => tournamentPrepared.SelectedUserIds.Contains(pla.Player.UserId)).ToDictionary(pla => pla.User.Id, pla => pla.Player);
+                foreach (int selectedUsrId in tournamentPrepared.SelectedUserIds)
+                {
+                    Player selectedPlayer;
+                    if (selectedPlayersAlreadySignUpByUsrId.TryGetValue(selectedUsrId, out selectedPlayer))
+                    {
+                        selectedPlayer.PresenceStateCode = PresenceStateResources.PRESENT_CODE;
+                    }
+                    else
+                    {
+                        selectedPlayer = new Player
+                        {
+                            UserId = selectedUsrId,
+                            PlayedTournamentId = currentTournament.Tournament.Id,
+                            PresenceStateCode = PresenceStateResources.PRESENT_CODE
+                        };
+                        newPlayers.Add(selectedPlayer);
+                    }
+                }
+
+                IEnumerable<Player> playersToDelete = currentTournament.Players.Where(pla => !tournamentPrepared.SelectedUserIds.Contains(pla.User.Id))
+                                                                               .Select(pla => pla.Player);
+
+                currentTournament.Tournament.IsInProgress = true;
+
+                _playerRepository.DeletePlayers(playersToDelete);
+                _playerRepository.SavePlayers(currentTournament.Players.Select(pla => pla.Player).Concat(newPlayers));
+                _tournamentRepository.SaveTournament(currentTournament.Tournament);
+
+                result.Success = true;
+                result.RedirectUrl = RouteBusinessResources.TOURNAMENT_IN_PROGRESS;
+
+                _transactionManager.CommitTransaction();
+            }
+            catch (FunctionalException e)
+            {
+                _transactionManager.RollbackTransaction();
+                string errorMsg = e.Message;
+                _log.Error(errorMsg);
+                return new APICallResultBase(errorMsg, e.RedirectUrl);
+            }
+            catch (Exception e)
+            {
+                _transactionManager.RollbackTransaction();
+                string errorMsg = MainBusinessResources.TECHNICAL_ERROR;
+                _log.Error(e.Message);
+                return new APICallResultBase(errorMsg, string.Format(RouteBusinessResources.MAIN_ERROR, errorMsg));
+            }
+
             return result;
         }
     }

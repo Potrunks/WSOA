@@ -127,6 +127,58 @@ namespace WSOA.Server.Migrations
                     b.ToTable("BonusTournamentEarneds");
                 });
 
+            modelBuilder.Entity("WSOA.Shared.Entity.BusinessAction", b =>
+                {
+                    b.Property<string>("Code")
+                        .HasColumnType("varchar(255)");
+
+                    b.Property<string>("Label")
+                        .IsRequired()
+                        .HasColumnType("longtext");
+
+                    b.HasKey("Code");
+
+                    b.ToTable("BusinessActions");
+
+                    b.HasData(
+                        new
+                        {
+                            Code = "EXEC_TOURNAMENT",
+                            Label = "Executer un tournoi"
+                        });
+                });
+
+            modelBuilder.Entity("WSOA.Shared.Entity.BusinessActionByProfileCode", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    b.Property<string>("BusinessActionCode")
+                        .IsRequired()
+                        .HasColumnType("varchar(255)");
+
+                    b.Property<string>("ProfileCode")
+                        .IsRequired()
+                        .HasColumnType("varchar(255)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("BusinessActionCode");
+
+                    b.HasIndex("ProfileCode");
+
+                    b.ToTable("BusinessActionsByProfileCode");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = 1,
+                            BusinessActionCode = "EXEC_TOURNAMENT",
+                            ProfileCode = "ORGA"
+                        });
+                });
+
             modelBuilder.Entity("WSOA.Shared.Entity.LinkAccountCreation", b =>
                 {
                     b.Property<int>("Id")
@@ -275,6 +327,15 @@ namespace WSOA.Server.Migrations
                             MainNavSectionId = 3,
                             Order = 1,
                             Url = "/tournament/future"
+                        },
+                        new
+                        {
+                            Id = 5,
+                            Description = "Lancer un tournoi",
+                            Label = "Lancer tournoi",
+                            MainNavSectionId = 3,
+                            Order = 2,
+                            Url = "/tournament/execute"
                         });
                 });
 
@@ -359,6 +420,12 @@ namespace WSOA.Server.Migrations
                             Id = 10,
                             MainNavSubSectionId = 4,
                             ProfileCode = "GUEST"
+                        },
+                        new
+                        {
+                            Id = 11,
+                            MainNavSubSectionId = 5,
+                            ProfileCode = "ORGA"
                         });
                 });
 
@@ -397,9 +464,6 @@ namespace WSOA.Server.Migrations
                         .HasColumnType("int");
 
                     b.Property<bool>("WasFinalTable")
-                        .HasColumnType("tinyint(1)");
-
-                    b.Property<bool>("WasPresent")
                         .HasColumnType("tinyint(1)");
 
                     b.HasKey("Id");
@@ -594,6 +658,25 @@ namespace WSOA.Server.Migrations
                     b.Navigation("BonusTournament");
 
                     b.Navigation("Player");
+                });
+
+            modelBuilder.Entity("WSOA.Shared.Entity.BusinessActionByProfileCode", b =>
+                {
+                    b.HasOne("WSOA.Shared.Entity.BusinessAction", "BusinessAction")
+                        .WithMany()
+                        .HasForeignKey("BusinessActionCode")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("WSOA.Shared.Entity.Profile", "Profile")
+                        .WithMany()
+                        .HasForeignKey("ProfileCode")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("BusinessAction");
+
+                    b.Navigation("Profile");
                 });
 
             modelBuilder.Entity("WSOA.Shared.Entity.MainNavSubSection", b =>

@@ -1,4 +1,5 @@
-﻿using WSOA.Shared.Result;
+﻿using WSOA.Shared.Dtos;
+using WSOA.Shared.Result;
 using WSOA.Shared.ViewModel;
 
 namespace WSOA.Server.Business.Interface
@@ -8,21 +9,31 @@ namespace WSOA.Server.Business.Interface
         /// <summary>
         /// Create new tournament and prevent all users in app.
         /// </summary>
-        APICallResult CreateTournament(TournamentCreationFormViewModel form, ISession session);
+        APICallResultBase CreateTournament(TournamentCreationFormViewModel form, ISession session);
 
         /// <summary>
         /// Load datas for tournament creation.
         /// </summary>
-        CreateTournamentCallResult LoadTournamentCreationDatas(int subSectionId, ISession session);
+        APICallResult<TournamentCreationDataViewModel> LoadTournamentCreationDatas(int subSectionId, ISession session);
 
         /// <summary>
-        /// Load future tournament datas.
+        /// Load Tournaments not over.
         /// </summary>
-        LoadFutureTournamentCallResult LoadFutureTournamentDatas(int subSectionId, ISession session);
+        APICallResult<TournamentsViewModel> LoadTournamentsNotOver(int subSectionId, ISession session);
 
         /// <summary>
         /// Sign up the current user to the tournament selected.
         /// </summary>
-        SignUpTournamentCallResult SignUpTournament(SignUpTournamentFormViewModel formVM, ISession session);
+        APICallResult<PlayerViewModel> SignUpTournament(SignUpTournamentFormViewModel formVM, ISession session);
+
+        /// <summary>
+        /// Get present players and available players before execute tournament.
+        /// </summary>
+        APICallResult<PlayerSelectionViewModel> LoadPlayersForPlayingTournament(int tournamentId, ISession session);
+
+        /// <summary>
+        /// Save the tournament prepared and declare it as in progress.
+        /// </summary>
+        APICallResultBase PlayTournamentPrepared(TournamentPreparedDto tournamentPrepared, ISession session);
     }
 }

@@ -8,31 +8,31 @@ namespace WSOA.Client.Services.Interface
         /// <summary>
         /// Call SignIn method from API controller.
         /// </summary>
-        Task<APICallResult> SignIn(SignInFormViewModel signInFormVM);
+        Task<APICallResultBase> SignIn(SignInFormViewModel signInFormVM);
 
         /// <summary>
         /// Call for loading all Invite page datas.
         /// </summary>
-        Task<InviteCallResult> LoadInviteDatas(int subSectionId);
+        Task<APICallResult<InviteViewModel>> LoadInviteDatas(int subSectionId);
 
         /// <summary>
         /// Create and send a link account creation for new user.
         /// </summary>
-        Task<APICallResult> CreateLinkAccountCreation(LinkAccountCreationFormViewModel formViewModel);
+        Task<APICallResultBase> CreateLinkAccountCreation(LinkAccountCreationFormViewModel formViewModel);
 
         /// <summary>
         /// Create account.
         /// </summary>
-        Task<APICallResult> CreateAccount(AccountCreationFormViewModel form);
+        Task<APICallResultBase> CreateAccount(AccountCreationFormViewModel form);
 
         /// <summary>
         /// Log out the user.
         /// </summary>
-        Task<APICallResult> LogOut();
+        Task<APICallResultBase> LogOut();
 
         /// <summary>
         /// Clear all token in session.
         /// </summary>
-        Task<APICallResult> ClearSession();
+        Task<APICallResultBase> ClearSession();
     }
 }

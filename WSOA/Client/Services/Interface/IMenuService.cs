@@ -1,4 +1,5 @@
 ﻿using WSOA.Shared.Result;
+using WSOA.Shared.ViewModel;
 
 namespace WSOA.Client.Services.Interface
 {
@@ -7,6 +8,6 @@ namespace WSOA.Client.Services.Interface
         /// <summary>
         /// Load the main nav menu for the current user.
         /// </summary>
-        Task<MainNavMenuResult> LoadMainMenu();
+        Task<APICallResult<MainNavMenuViewModel>> LoadMainMenu();
     }
 }

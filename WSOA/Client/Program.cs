@@ -1,3 +1,4 @@
+using Blazored.SessionStorage;
 using Microsoft.AspNetCore.Components.Web;
 using Microsoft.AspNetCore.Components.WebAssembly.Hosting;
 using WSOA.Client;
@@ -13,5 +14,7 @@ builder.Services.AddScoped(sp => new HttpClient { BaseAddress = new Uri(builder.
 builder.Services.AddScoped<IAccountService, AccountService>();
 builder.Services.AddScoped<IMenuService, MenuService>();
 builder.Services.AddScoped<ITournamentService, TournamentService>();
+
+builder.Services.AddBlazoredSessionStorage();
 
 await builder.Build().RunAsync();

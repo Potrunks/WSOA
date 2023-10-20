@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using WSOA.Server.Business.Interface;
+using WSOA.Shared.Dtos;
 using WSOA.Shared.Result;
 using WSOA.Shared.ViewModel;
 
@@ -23,7 +24,7 @@ namespace WSOA.Server.Controllers
         /// </summary>
         [HttpPost]
         [Route("api/tournament/create")]
-        public APICallResult CreateTournament([FromBody] TournamentCreationFormViewModel form)
+        public APICallResultBase CreateTournament([FromBody] TournamentCreationFormViewModel form)
         {
             return _tournamentBusiness.CreateTournament(form, HttpContext.Session);
         }
@@ -33,7 +34,7 @@ namespace WSOA.Server.Controllers
         /// </summary>
         [HttpGet]
         [Route("api/tournament/create/load/{subSectionId}")]
-        public APICallResult LoadTournamentCreationDatas(int subSectionId)
+        public APICallResult<TournamentCreationDataViewModel> LoadTournamentCreationDatas(int subSectionId)
         {
             return _tournamentBusiness.LoadTournamentCreationDatas(subSectionId, HttpContext.Session);
         }
@@ -43,9 +44,9 @@ namespace WSOA.Server.Controllers
         /// </summary>
         [HttpGet]
         [Route("api/tournament/future/load/{subSectionId}")]
-        public LoadFutureTournamentCallResult LoadFutureTournamentDatas(int subSectionId)
+        public APICallResult<TournamentsViewModel> LoadTournamentsNotOver(int subSectionId)
         {
-            return _tournamentBusiness.LoadFutureTournamentDatas(subSectionId, HttpContext.Session);
+            return _tournamentBusiness.LoadTournamentsNotOver(subSectionId, HttpContext.Session);
         }
 
         /// <summary>
@@ -53,9 +54,29 @@ namespace WSOA.Server.Controllers
         /// </summary>
         [HttpPost]
         [Route("api/tournament/future/signUp")]
-        public SignUpTournamentCallResult SignUpTournament([FromBody] SignUpTournamentFormViewModel form)
+        public APICallResult<PlayerViewModel> SignUpTournament([FromBody] SignUpTournamentFormViewModel form)
         {
             return _tournamentBusiness.SignUpTournament(form, HttpContext.Session);
+        }
+
+        /// <summary>
+        /// Get present players and possible players for tournament in preparation
+        /// </summary>
+        [HttpGet]
+        [Route("api/tournament/load/presentPlayers/{tournamentId}")]
+        public APICallResult<PlayerSelectionViewModel> LoadPlayersForPlayingTournament(int tournamentId)
+        {
+            return _tournamentBusiness.LoadPlayersForPlayingTournament(tournamentId, HttpContext.Session);
+        }
+
+        /// <summary>
+        /// Save and play the tournament selected.
+        /// </summary>
+        [HttpPost]
+        [Route("api/tournament/play")]
+        public APICallResultBase PlayTournamentPrepared([FromBody] TournamentPreparedDto tournamentPrepared)
+        {
+            return _tournamentBusiness.PlayTournamentPrepared(tournamentPrepared, HttpContext.Session);
         }
     }
 }

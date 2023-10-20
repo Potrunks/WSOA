@@ -37,14 +37,32 @@ namespace WSOA.Server.Data.Implementation
             return user;
         }
 
-        public IEnumerable<User> GetAllUsers()
+        public IEnumerable<User> GetAllUsers(IEnumerable<int>? blacklistUserIds = null)
         {
-            return _dbContext.Users;
+            blacklistUserIds = blacklistUserIds ?? new List<int>();
+            return
+                (
+                    from usr in _dbContext.Users
+                    where !blacklistUserIds.Contains(usr.Id)
+                    select usr
+                );
         }
 
         public User GetUserById(int usrId)
         {
             return _dbContext.Users.Single(usr => usr.Id == usrId);
+        }
+
+        public bool ExistsBusinessActionByProfileCode(string profileCode, string businessActionCode)
+        {
+            return
+                (
+                    from ba_by_prof in _dbContext.BusinessActionsByProfileCode
+                    where ba_by_prof.ProfileCode == profileCode
+                            && ba_by_prof.BusinessActionCode == businessActionCode
+                    select ba_by_prof
+                )
+                .Any();
         }
     }
 }

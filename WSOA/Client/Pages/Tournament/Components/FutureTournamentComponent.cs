@@ -11,19 +11,19 @@ namespace WSOA.Client.Pages.Tournament.Components
         [Inject]
         public ITournamentService TournamentService { get; set; }
 
-        public List<FutureTournamentDataViewModel> FutureTournamentDatasVM { get; set; }
+        public List<TournamentViewModel> FutureTournamentDatasVM { get; set; }
 
         protected override async Task OnInitializedAsync()
         {
             IsLoading = true;
 
-            LoadFutureTournamentCallResult result = await TournamentService.LoadFutureTournamentDatas(SubSectionId);
+            APICallResult<TournamentsViewModel> result = await TournamentService.LoadTournamentsNotOver(SubSectionId);
             if (!string.IsNullOrWhiteSpace(result.RedirectUrl))
             {
                 NavigationManager.NavigateTo(result.RedirectUrl);
                 return;
             }
-            FutureTournamentDatasVM = result.Data.FutureTournamentsVM;
+            FutureTournamentDatasVM = result.Data.TournamentsVM;
             Description = result.Data.Description;
 
             IsLoading = false;

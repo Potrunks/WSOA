@@ -20,9 +20,9 @@ namespace WSOA.Server.Business.Implementation
             _menuRepository = menuRepository;
         }
 
-        public MainNavMenuResult LoadMainNavMenu(ISession currentSession)
+        public APICallResult<MainNavMenuViewModel> LoadMainNavMenu(ISession currentSession)
         {
-            MainNavMenuResult result = new MainNavMenuResult(null);
+            APICallResult<MainNavMenuViewModel> result = new APICallResult<MainNavMenuViewModel>(true);
 
             try
             {
@@ -30,7 +30,7 @@ namespace WSOA.Server.Business.Implementation
                 if (currentProfileCode == null)
                 {
                     string errorMsg = MainBusinessResources.USER_NOT_CONNECTED;
-                    return new MainNavMenuResult(errorMsg, string.Format(RouteBusinessResources.SIGN_IN_WITH_ERROR_MESSAGE, errorMsg));
+                    return new APICallResult<MainNavMenuViewModel>(errorMsg, string.Format(RouteBusinessResources.SIGN_IN_WITH_ERROR_MESSAGE, errorMsg));
                 }
 
                 IDictionary<MainNavSection, List<MainNavSubSection>> subSectionsBySection = _menuRepository.GetMainNavSubSectionsInSectionByProfileCode(currentProfileCode);
@@ -39,13 +39,13 @@ namespace WSOA.Server.Business.Implementation
                     throw new Exception(string.Format(MainBusinessResources.NULL_OR_EMPTY_OBJ_NOT_ALLOWED, nameof(subSectionsBySection), nameof(MenuBusiness.LoadMainNavMenu)));
                 }
 
-                result.MainNavSectionVMs.AddRange(subSectionsBySection.Select(kvp => new MainNavSectionViewModel(kvp)));
+                result.Data = new MainNavMenuViewModel(subSectionsBySection);
             }
             catch (Exception exception)
             {
                 _log.Error(string.Format(MenuBusinessResources.LOAD_MENU_TECH_ERROR, exception.Message));
                 string errorMsg = MainBusinessResources.TECHNICAL_ERROR;
-                return new MainNavMenuResult(errorMsg, string.Format(RouteBusinessResources.SIGN_IN_WITH_ERROR_MESSAGE, errorMsg));
+                return new APICallResult<MainNavMenuViewModel>(errorMsg, string.Format(RouteBusinessResources.SIGN_IN_WITH_ERROR_MESSAGE, errorMsg));
             }
 
             return result;

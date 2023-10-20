@@ -36,9 +36,9 @@ namespace WSOA.Server.Business.Implementation
             _mailService = mailService;
         }
 
-        public APICallResult CreateAccount(AccountCreationFormViewModel form)
+        public APICallResultBase CreateAccount(AccountCreationFormViewModel form)
         {
-            APICallResult result = new APICallResult(RouteBusinessResources.SIGN_IN);
+            APICallResultBase result = new APICallResultBase(true, RouteBusinessResources.SIGN_IN);
 
             try
             {
@@ -48,21 +48,21 @@ namespace WSOA.Server.Business.Implementation
                 if (link == null || link.ExpirationDate < DateTime.UtcNow)
                 {
                     _transactionManager.RollbackTransaction();
-                    return new APICallResult(AccountBusinessResources.LINK_ACCOUNT_CREATION_NOT_EXIST_OR_EXPIRED, null);
+                    return new APICallResultBase(AccountBusinessResources.LINK_ACCOUNT_CREATION_NOT_EXIST_OR_EXPIRED);
                 }
 
                 if (_accountRepository.ExistsAccountByLogin(form.Login))
                 {
                     _transactionManager.RollbackTransaction();
                     string errorMsg = AccountBusinessResources.LOGIN_ALREADY_EXISTS;
-                    return new APICallResult(errorMsg, string.Format(RouteBusinessResources.SIGN_IN_WITH_ERROR_MESSAGE, errorMsg));
+                    return new APICallResultBase(errorMsg, string.Format(RouteBusinessResources.SIGN_IN_WITH_ERROR_MESSAGE, errorMsg));
                 }
 
                 if (_userRepository.ExistsUserByMail(form.Email))
                 {
                     _transactionManager.RollbackTransaction();
                     string errorMsg = UserBusinessResources.MAIL_ALREADY_EXISTS;
-                    return new APICallResult(errorMsg, string.Format(RouteBusinessResources.SIGN_IN_WITH_ERROR_MESSAGE, errorMsg));
+                    return new APICallResultBase(errorMsg, string.Format(RouteBusinessResources.SIGN_IN_WITH_ERROR_MESSAGE, errorMsg));
                 }
 
                 Account newAccount = new Account
@@ -91,15 +91,15 @@ namespace WSOA.Server.Business.Implementation
                 _transactionManager.RollbackTransaction();
                 _log.Error(string.Format(AccountBusinessResources.TECHNICAL_ERROR_ACCOUNT_CREATION, ex.Message));
                 string errorMsg = MainBusinessResources.TECHNICAL_ERROR;
-                return new APICallResult(errorMsg, null);
+                return new APICallResultBase(errorMsg);
             }
 
             return result;
         }
 
-        public APICallResult CreateLinkAccountCreation(LinkAccountCreationFormViewModel link, ISession currentSession)
+        public APICallResultBase CreateLinkAccountCreation(LinkAccountCreationFormViewModel link, ISession currentSession)
         {
-            APICallResult result = new APICallResult(null);
+            APICallResultBase result = new APICallResultBase(true);
 
             try
             {
@@ -110,20 +110,20 @@ namespace WSOA.Server.Business.Implementation
                 {
                     _transactionManager.RollbackTransaction();
                     string errorMsg = MainBusinessResources.USER_NOT_CONNECTED;
-                    return new APICallResult(errorMsg, string.Format(RouteBusinessResources.SIGN_IN_WITH_ERROR_MESSAGE, errorMsg));
+                    return new APICallResultBase(errorMsg, string.Format(RouteBusinessResources.SIGN_IN_WITH_ERROR_MESSAGE, errorMsg));
                 }
 
                 MainNavSubSection? subSection = _menuRepository.GetMainNavSubSectionByIdAndProfileCode(currentProfileCode, link.SubSectionIdConcerned);
                 if (subSection == null)
                 {
                     _transactionManager.RollbackTransaction();
-                    return new APICallResult(MainBusinessResources.USER_CANNOT_PERFORM_ACTION, null);
+                    return new APICallResultBase(MainBusinessResources.USER_CANNOT_PERFORM_ACTION);
                 }
 
                 if (_userRepository.ExistsUserByMail(link.RecipientMail))
                 {
                     _transactionManager.RollbackTransaction();
-                    return new APICallResult(UserBusinessResources.MAIL_ALREADY_EXISTS, null);
+                    return new APICallResultBase(UserBusinessResources.MAIL_ALREADY_EXISTS);
                 }
 
                 LinkAccountCreation currentLink = _accountRepository.GetLinkAccountCreationByMail(link.RecipientMail);
@@ -161,15 +161,15 @@ namespace WSOA.Server.Business.Implementation
                 _transactionManager.RollbackTransaction();
                 _log.Error(string.Format(AccountBusinessResources.TECHNICAL_ERROR_LINK_ACCOUNT_CREATION, ex.Message));
                 string errorMsg = MainBusinessResources.TECHNICAL_ERROR;
-                return new APICallResult(errorMsg, string.Format(RouteBusinessResources.SIGN_IN_WITH_ERROR_MESSAGE, errorMsg));
+                return new APICallResultBase(errorMsg, string.Format(RouteBusinessResources.SIGN_IN_WITH_ERROR_MESSAGE, errorMsg));
             }
 
             return result;
         }
 
-        public InviteCallResult LoadInviteDatas(int subSectionId, ISession currentSession)
+        public APICallResult<InviteViewModel> LoadInviteDatas(int subSectionId, ISession currentSession)
         {
-            InviteCallResult result = new InviteCallResult();
+            APICallResult<InviteViewModel> result = new APICallResult<InviteViewModel>(true);
 
             try
             {
@@ -177,13 +177,13 @@ namespace WSOA.Server.Business.Implementation
                 if (currentProfileCode == null)
                 {
                     string errorMsg = MainBusinessResources.USER_NOT_CONNECTED;
-                    return new InviteCallResult(errorMsg, string.Format(RouteBusinessResources.SIGN_IN_WITH_ERROR_MESSAGE, errorMsg));
+                    return new APICallResult<InviteViewModel>(errorMsg, string.Format(RouteBusinessResources.SIGN_IN_WITH_ERROR_MESSAGE, errorMsg));
                 }
 
                 MainNavSubSection? subSection = _menuRepository.GetMainNavSubSectionByIdAndProfileCode(currentProfileCode, subSectionId);
                 if (subSection == null)
                 {
-                    return new InviteCallResult(MainBusinessResources.USER_CANNOT_PERFORM_ACTION, null);
+                    return new APICallResult<InviteViewModel>(MainBusinessResources.USER_CANNOT_PERFORM_ACTION);
                 }
 
                 Dictionary<string, string> allProfileNames = _userRepository.GetAllProfiles().ToDictionary(p => p.Code, p => p.Name);
@@ -192,31 +192,29 @@ namespace WSOA.Server.Business.Implementation
                     throw new Exception(string.Format(MainBusinessResources.NULL_OR_EMPTY_OBJ_NOT_ALLOWED, nameof(allProfileNames), nameof(AccountBusiness.LoadInviteDatas)));
                 }
 
-                result.InviteVM.ProfileLabelsByCode = allProfileNames;
-                result.InviteVM.SubSectionDescription = subSection.Description;
-                result.Success = true;
+                result.Data = new InviteViewModel(allProfileNames, subSection.Description);
             }
             catch (Exception exception)
             {
                 _log.Error(string.Format(AccountBusinessResources.TECHNICAL_ERROR_INVITE_PAGE_LOADING, exception.Message));
-                return new InviteCallResult(MainBusinessResources.TECHNICAL_ERROR, null);
+                return new APICallResult<InviteViewModel>(MainBusinessResources.TECHNICAL_ERROR);
             }
 
             return result;
         }
 
-        public APICallResult LogOut(ISession currentSession)
+        public APICallResultBase LogOut(ISession currentSession)
         {
-            APICallResult result = new APICallResult(string.Format(RouteBusinessResources.SIGN_IN_WITH_ERROR_MESSAGE, AccountBusinessResources.LOG_OUT));
+            APICallResultBase result = new APICallResultBase(true, string.Format(RouteBusinessResources.SIGN_IN_WITH_ERROR_MESSAGE, AccountBusinessResources.LOG_OUT));
 
             ClearSession(currentSession);
 
             return result;
         }
 
-        public APICallResult ClearSession(ISession currentSession)
+        public APICallResultBase ClearSession(ISession currentSession)
         {
-            APICallResult result = new APICallResult(null);
+            APICallResultBase result = new APICallResultBase(true);
 
             if (!currentSession.Keys.IsNullOrEmpty())
             {
@@ -226,7 +224,7 @@ namespace WSOA.Server.Business.Implementation
             return result;
         }
 
-        public APICallResult SignIn(SignInFormViewModel signInFormVM, ISession currentSession)
+        public APICallResultBase SignIn(SignInFormViewModel signInFormVM, ISession currentSession)
         {
             try
             {
@@ -238,7 +236,7 @@ namespace WSOA.Server.Business.Implementation
                 Account? account = _accountRepository.GetByLoginAndPassword(signInFormVM.Login, signInFormVM.Password.ToSha256());
                 if (account == null)
                 {
-                    return new APICallResult(AccountBusinessResources.ERROR_SIGN_IN, null);
+                    return new APICallResultBase(AccountBusinessResources.ERROR_SIGN_IN);
                 }
 
                 User currentUser = _userRepository.GetUserByAccountId(account.Id);
@@ -249,10 +247,10 @@ namespace WSOA.Server.Business.Implementation
             catch (Exception ex)
             {
                 _log.Error(string.Format(AccountBusinessResources.TECHNICAL_ERROR_SIGN_IN, ex.Message));
-                return new APICallResult(MainBusinessResources.TECHNICAL_ERROR, null);
+                return new APICallResultBase(MainBusinessResources.TECHNICAL_ERROR);
             }
 
-            return new APICallResult(RouteBusinessResources.HOME);
+            return new APICallResultBase(true, RouteBusinessResources.HOME);
         }
     }
 }

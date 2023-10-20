@@ -27,11 +27,16 @@ namespace WSOA.Server.Data.Interface
         /// <summary>
         /// Get all users in DB.
         /// </summary>
-        IEnumerable<User> GetAllUsers();
+        IEnumerable<User> GetAllUsers(IEnumerable<int>? blacklistUserIds = null);
 
         /// <summary>
         /// Get user by ID.
         /// </summary>
         User GetUserById(int usrId);
+
+        /// <summary>
+        /// Check if exists business action with profile code wanted.
+        /// </summary>
+        bool ExistsBusinessActionByProfileCode(string profileCode, string businessActionCode);
     }
 }

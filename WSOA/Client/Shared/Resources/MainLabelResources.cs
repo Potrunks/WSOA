@@ -13,5 +13,8 @@
         public const string BUY_IN = "Buy-In";
         public const string ADDRESS = "Adresse";
         public const string NO_FUTURE_TOURNAMENT = "Pas de tournoi prévu";
+        public const string PRESENT_PLAYERS = "Joueurs présents";
+        public const string AVAILABLE_PLAYERS = "Joueurs disponibles";
+        public const string PLAYERS_PAYMENT_MISSING = "Mauvais payeurs";
     }
 }

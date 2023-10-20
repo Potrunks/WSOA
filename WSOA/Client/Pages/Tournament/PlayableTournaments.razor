@@ -1,0 +1,25 @@
+﻿@page "/tournament/execute/{SubSectionId:int}"
+@using WSOA.Client.Pages.Tournament.Components;
+@using WSOA.Client.Shared.Loaders
+@using WSOA.Shared.Resources;
+@using WSOA.Shared.ViewModel;
+@inherits PlayableTournamentsComponent
+
+@if (IsLoading)
+{
+    <CardCoinLoader />
+}
+else
+{
+    <div class="container__main">
+        <CascadingValue Value="@TournamentService" Name="TournamentService">
+            <CascadingValue Value="@NavigationManager" Name="NavigationManager">
+                @foreach (TournamentViewModel model in ViewModel.TournamentsVM)
+                {
+                    <TournamentDataLine Data="model"
+                                Mode="TournamentActionMode.PLAY" />
+                }
+            </CascadingValue>
+        </CascadingValue>
+    </div>
+}

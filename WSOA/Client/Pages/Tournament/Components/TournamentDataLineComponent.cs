@@ -6,10 +6,11 @@ using WSOA.Shared.ViewModel;
 
 namespace WSOA.Client.Pages.Tournament.Components
 {
-    public class FutureTournamentDataLineComponent : ComponentBase
+    public class TournamentDataLineComponent : ComponentBase
     {
         [Parameter]
-        public FutureTournamentDataViewModel Data { get; set; }
+        [EditorRequired]
+        public TournamentViewModel Data { get; set; }
 
         [CascadingParameter(Name = "TournamentService")]
         [EditorRequired]
@@ -19,9 +20,13 @@ namespace WSOA.Client.Pages.Tournament.Components
         [EditorRequired]
         public NavigationManager NavigationManager { get; set; }
 
-        public IEnumerable<PlayerDataViewModel> PresencePlayers { get; set; }
+        [Parameter]
+        [EditorRequired]
+        public TournamentActionMode Mode { get; set; }
 
-        public IEnumerable<PlayerDataViewModel> MaybePlayers { get; set; }
+        public IEnumerable<PlayerViewModel> PresencePlayers { get; set; }
+
+        public IEnumerable<PlayerViewModel> MaybePlayers { get; set; }
 
         public bool IsCollapse { get; set; }
 
@@ -67,7 +72,7 @@ namespace WSOA.Client.Pages.Tournament.Components
 
             SignUpForm.PresenceStateCode = presenceStateCode;
 
-            SignUpTournamentCallResult result = await TournamentService.SignUpTournament(SignUpForm);
+            APICallResult<PlayerViewModel> result = await TournamentService.SignUpTournament(SignUpForm);
             if (!string.IsNullOrWhiteSpace(result.RedirectUrl))
             {
                 NavigationManager.NavigateTo(result.RedirectUrl);
@@ -76,15 +81,15 @@ namespace WSOA.Client.Pages.Tournament.Components
 
             if (result.Success)
             {
-                Data.CurrentUserPresenceStateCode = result.PlayerSignedUp.PresenceStateCode;
-                PlayerDataViewModel? currentPlayer = Data.PlayerDatasVM.SingleOrDefault(p => p.UserId == result.PlayerSignedUp.UserId);
+                Data.CurrentUserPresenceStateCode = result.Data.PresenceStateCode;
+                PlayerViewModel? currentPlayer = Data.PlayerDatasVM.SingleOrDefault(p => p.UserId == result.Data.UserId);
                 if (currentPlayer != null)
                 {
-                    currentPlayer.PresenceStateCode = result.PlayerSignedUp.PresenceStateCode;
+                    currentPlayer.PresenceStateCode = result.Data.PresenceStateCode;
                 }
                 else
                 {
-                    Data.PlayerDatasVM.Add(result.PlayerSignedUp);
+                    Data.PlayerDatasVM.Add(result.Data);
                 }
                 LoadPlayersByPresenceStateCode();
             }
@@ -101,6 +106,11 @@ namespace WSOA.Client.Pages.Tournament.Components
         {
             PresencePlayers = Data.PlayerDatasVM.Where(p => p.PresenceStateCode == PresenceStateResources.PRESENT_CODE);
             MaybePlayers = Data.PlayerDatasVM.Where(p => p.PresenceStateCode == PresenceStateResources.MAYBE_CODE);
+        }
+
+        public async Task SelectPlayers()
+        {
+            NavigationManager.NavigateTo($"/tournament/select/players/{Data.TournamentId}");
         }
     }
 }
