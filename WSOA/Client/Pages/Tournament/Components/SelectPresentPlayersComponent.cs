@@ -140,6 +140,8 @@ namespace WSOA.Client.Pages.Tournament.Components
             }
             else
             {
+                IsLoading = true;
+
                 TournamentPreparedDto tournamentPrepared = new TournamentPreparedDto
                 {
                     TournamentId = TournamentId,
@@ -149,6 +151,8 @@ namespace WSOA.Client.Pages.Tournament.Components
                 APICallResultBase result = await TournamentService.PlayTournamentPrepared(tournamentPrepared);
 
                 NavigationManager.NavigateTo(result.RedirectUrl);
+
+                IsLoading = false;
             }
         }
 
