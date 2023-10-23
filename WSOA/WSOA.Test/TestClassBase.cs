@@ -263,16 +263,16 @@ namespace WSOA.Test
             return addresses;
         }
 
-        public MainNavSubSection CreateMainNavSubSection()
+        public MainNavSubSection CreateMainNavSubSection(int id = 0, string url = "/url")
         {
             return new MainNavSubSection
             {
-                Id = 1,
+                Id = id,
                 Description = "Faire un truc",
                 Label = "Truc",
                 MainNavSectionId = 1,
                 Order = 0,
-                Url = "/url"
+                Url = url
             };
         }
 

@@ -43,5 +43,16 @@ namespace WSOA.Server.Data.Implementation
                 }
             ).ToDictionary(s => s.MainNavSection, s => s.MainNavSubSections);
         }
+
+        public MainNavSubSection GetMainNavSubSectionByUrl(string url)
+        {
+            return
+                (
+                    from mnss in _dbContext.MainNavSubSections
+                    where mnss.Url == url
+                    select mnss
+                )
+                .Single();
+        }
     }
 }

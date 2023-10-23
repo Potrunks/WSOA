@@ -139,6 +139,15 @@ namespace WSOA.Server.Data
                     Description = "Lancer un tournoi",
                     Order = 2,
                     Url = "/tournament/execute"
+                },
+                new MainNavSubSection
+                {
+                    Id = 6,
+                    Label = "Tournoi en cours",
+                    MainNavSectionId = 3,
+                    Description = "Tournoi en cours",
+                    Order = 3,
+                    Url = "/tournament/inProgress"
                 }
             );
 
@@ -213,6 +222,13 @@ namespace WSOA.Server.Data
                 {
                     Id = 11,
                     MainNavSubSectionId = 5,
+                    ProfileCode = "ORGA"
+                },
+                // TOURNOI EN COURS
+                new MainNavSubSectionByProfileCode
+                {
+                    Id = 12,
+                    MainNavSubSectionId = 6,
                     ProfileCode = "ORGA"
                 }
             );

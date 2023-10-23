@@ -290,7 +290,9 @@ namespace WSOA.Server.Business.Implementation
                 _tournamentRepository.SaveTournament(currentTournament.Tournament);
 
                 result.Success = true;
-                result.RedirectUrl = RouteBusinessResources.TOURNAMENT_IN_PROGRESS;
+
+                MainNavSubSection tournamentInProgressSubSection = _menuRepository.GetMainNavSubSectionByUrl(RouteBusinessResources.TOURNAMENT_IN_PROGRESS);
+                result.RedirectUrl = $"{tournamentInProgressSubSection.Url}/{tournamentInProgressSubSection.Id}";
 
                 _transactionManager.CommitTransaction();
             }

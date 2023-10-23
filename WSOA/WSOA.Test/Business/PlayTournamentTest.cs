@@ -23,6 +23,7 @@ namespace WSOA.Test.Business
         private List<User> _selectedUsrs;
         private User _usrProcessor;
         private TournamentPreparedDto _tournamentPreparedDto;
+        private string _successRedirectUrl;
 
         private Mock<ISession> _sessionMock;
         private ITournamentRepository _tournamentRepository;
@@ -30,6 +31,7 @@ namespace WSOA.Test.Business
         private Mock<IPlayerRepository> _playerRepositoryMock;
         private Mock<ITransactionManager> _transactionManagerMock;
         private IUserRepository _userRepository;
+        private IMenuRepository _menuRepository;
 
         private ITournamentBusiness _tournamentBusiness;
 
@@ -49,10 +51,14 @@ namespace WSOA.Test.Business
             _transactionManagerMock = CreateITransactionManagerMock();
             _userRepository = new UserRepository(_dbContext);
 
+            _menuRepository = new MenuRepository(_dbContext);
+            MainNavSubSection succesRedirectSubSection = _menuRepository.GetMainNavSubSectionByUrl(RouteBusinessResources.TOURNAMENT_IN_PROGRESS);
+            _successRedirectUrl = $"{succesRedirectSubSection.Url}/{succesRedirectSubSection.Id}";
+
             _tournamentBusiness = new TournamentBusiness
                 (
                     _transactionManagerMock.Object,
-                    null,
+                    _menuRepository,
                     _tournamentRepository,
                     null,
                     _userRepository,
@@ -66,7 +72,7 @@ namespace WSOA.Test.Business
         {
             APICallResultBase result = ExecutePlayTournamentPreparedMethod();
 
-            VerifyAPICallResultSuccess(result, RouteBusinessResources.TOURNAMENT_IN_PROGRESS);
+            VerifyAPICallResultSuccess(result, _successRedirectUrl);
             VerifyTransactionManagerCommit(_transactionManagerMock);
             Assert.AreEqual(true, _tournamentTargeted.IsInProgress);
         }
@@ -76,7 +82,7 @@ namespace WSOA.Test.Business
         {
             APICallResultBase result = ExecutePlayTournamentPreparedMethod();
 
-            VerifyAPICallResultSuccess(result, RouteBusinessResources.TOURNAMENT_IN_PROGRESS);
+            VerifyAPICallResultSuccess(result, _successRedirectUrl);
             VerifyTransactionManagerCommit(_transactionManagerMock);
             foreach (Player player in _playersIntoTargetedTournament)
             {
@@ -97,7 +103,7 @@ namespace WSOA.Test.Business
             _tournamentBusiness = new TournamentBusiness
                 (
                     _transactionManagerMock.Object,
-                    null,
+                    _menuRepository,
                     _tournamentRepository,
                     null,
                     _userRepository,
@@ -107,7 +113,7 @@ namespace WSOA.Test.Business
 
             APICallResultBase result = ExecutePlayTournamentPreparedMethod();
 
-            VerifyAPICallResultSuccess(result, RouteBusinessResources.TOURNAMENT_IN_PROGRESS);
+            VerifyAPICallResultSuccess(result, _successRedirectUrl);
             VerifyTransactionManagerCommit(_transactionManagerMock);
             Player newPlayerCreated = _playersSaved.Single(pla => pla.UserId == newSelectedUsrNotSignUp.Id);
             Assert.AreEqual(PresenceStateResources.PRESENT_CODE, newPlayerCreated.PresenceStateCode);
@@ -127,7 +133,7 @@ namespace WSOA.Test.Business
             _tournamentBusiness = new TournamentBusiness
                 (
                     _transactionManagerMock.Object,
-                    null,
+                    _menuRepository,
                     _tournamentRepository,
                     null,
                     _userRepository,
@@ -137,7 +143,7 @@ namespace WSOA.Test.Business
 
             APICallResultBase result = ExecutePlayTournamentPreparedMethod();
 
-            VerifyAPICallResultSuccess(result, RouteBusinessResources.TOURNAMENT_IN_PROGRESS);
+            VerifyAPICallResultSuccess(result, _successRedirectUrl);
             VerifyTransactionManagerCommit(_transactionManagerMock);
             Assert.AreEqual(true, _playersDeleted.All(pla => pla.Id == playerNotSelected.Id));
         }
@@ -176,6 +182,31 @@ namespace WSOA.Test.Business
             APICallResultBase result = ExecutePlayTournamentPreparedMethod();
 
             string expectedErrorMsg = TournamentBusinessResources.CANNOT_EXECUTE_TOURNAMENT;
+            VerifyAPICallResultError(result, string.Format(RouteBusinessResources.MAIN_ERROR, expectedErrorMsg), expectedErrorMsg);
+            VerifyTransactionManagerRollback(_transactionManagerMock);
+        }
+
+        [TestMethod]
+        public void ShouldNotPlayTournament_WhenTournamentInProgressUrlNotFind()
+        {
+            Mock<IMenuRepository> menuRepositoryMock = CreateIMenuRepositoryMock();
+            menuRepositoryMock.Setup(m => m.GetMainNavSubSectionByUrl(It.IsAny<string>()))
+                              .Throws(new InvalidOperationException("Probleme lors de la recherche par URL"));
+
+            _tournamentBusiness = new TournamentBusiness
+                (
+                    _transactionManagerMock.Object,
+                    menuRepositoryMock.Object,
+                    _tournamentRepository,
+                    null,
+                    _userRepository,
+                    null,
+                    _playerRepository
+                );
+
+            APICallResultBase result = ExecutePlayTournamentPreparedMethod();
+
+            string expectedErrorMsg = MainBusinessResources.TECHNICAL_ERROR;
             VerifyAPICallResultError(result, string.Format(RouteBusinessResources.MAIN_ERROR, expectedErrorMsg), expectedErrorMsg);
             VerifyTransactionManagerRollback(_transactionManagerMock);
         }

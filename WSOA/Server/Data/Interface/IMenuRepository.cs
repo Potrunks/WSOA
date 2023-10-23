@@ -13,5 +13,10 @@ namespace WSOA.Server.Data.Interface
         /// Get main nav section of the user comparing to his profile code and the sub sections assiociated.
         /// </summary>
         IDictionary<MainNavSection, List<MainNavSubSection>> GetMainNavSubSectionsInSectionByProfileCode(string profileCode);
+
+        /// <summary>
+        /// Get the main nav sub section by URL.
+        /// </summary>
+        MainNavSubSection GetMainNavSubSectionByUrl(string url);
     }
 }
