@@ -1,3 +1,6 @@
 ﻿@page "/tournament/inProgress/{SubSectionId:int}"
+@using WSOA.Client.Pages.Tournament.Components;
+@inherits TournamentInProgressComponent
 
-<h3>TournamentInProgress</h3>
+<h3>@CurrentTime</h3>
+<button type="button" onclick="@(() => OnActivateTimer.InvokeAsync())">Activate Timer</button>
