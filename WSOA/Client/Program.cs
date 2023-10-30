@@ -1,4 +1,3 @@
-using Blazored.SessionStorage;
 using Microsoft.AspNetCore.Components.Web;
 using Microsoft.AspNetCore.Components.WebAssembly.Hosting;
 using WSOA.Client;
@@ -17,7 +16,5 @@ builder.Services.AddScoped<IMenuService, MenuService>();
 builder.Services.AddScoped<ITournamentService, TournamentService>();
 
 builder.Services.AddSingleton<TournamentInProgressStore>();
-
-builder.Services.AddBlazoredSessionStorage();
 
 await builder.Build().RunAsync();

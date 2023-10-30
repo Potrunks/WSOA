@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Components;
 using Microsoft.JSInterop;
 using WSOA.Client.Shared.EventHandlers;
+using WSOA.Shared.Resources;
 
 namespace WSOA.Client.Shared.Popups.Components
 {
@@ -15,45 +16,72 @@ namespace WSOA.Client.Shared.Popups.Components
 
         [Parameter]
         [EditorRequired]
-        public string Key { get; set; }
+        public PopupKeyResources Key { get; set; }
+
+        public Action? OnValid { get; set; }
+
+        public string Title { get; set; }
 
         public bool IsDisplay { get; set; } = false;
 
-        public EventCallback ClosePopup => EventCallback.Factory.Create(this, OnClosePopup);
+        public EventCallback ClosePopup => EventCallback.Factory.Create(this, PerformClosePopup);
+
+        public EventCallback ValidPopup => EventCallback.Factory.Create(this, PerformValidPopup);
 
         protected override void OnInitialized()
         {
-            PopupEventHandler.OnPopupOpen += async (obj, currentPopupOpen) =>
+            PopupEventHandler.OnPopupOpen += (obj, currentPopupOpen) =>
             {
                 if (IsDisplay && currentPopupOpen.Key != Key)
                 {
-                    IsDisplay = false;
-                    StateHasChanged();
-                    await JSRuntime.InvokeVoidAsync("blurring", "app_layout");
+                    UnDisplayPopup();
                 }
 
                 if (!IsDisplay && currentPopupOpen.Key == Key)
                 {
-                    IsDisplay = true;
-                    StateHasChanged();
-                    await JSRuntime.InvokeVoidAsync("blurring", "app_layout");
+                    DisplayPopup(currentPopupOpen);
                 }
             };
 
-            PopupEventHandler.OnPopupClose += async (obj, currentPopupOpen) =>
+            PopupEventHandler.OnPopupClose += (obj, currentPopupOpen) =>
             {
                 if (IsDisplay)
                 {
-                    IsDisplay = false;
-                    StateHasChanged();
-                    await JSRuntime.InvokeVoidAsync("blurring", "app_layout");
+                    UnDisplayPopup();
                 }
             };
         }
 
-        private void OnClosePopup()
+        private void PerformClosePopup()
         {
             PopupEventHandler.Close();
+        }
+
+        private void PerformValidPopup()
+        {
+            PopupEventHandler.Close();
+
+            OnValid.Invoke();
+        }
+
+        public void DisplayPopup(PopupEventArgs currentPopupOpen)
+        {
+            IsDisplay = true;
+            Title = currentPopupOpen.Title;
+            OnValid = currentPopupOpen.OnValid;
+            StateHasChangedOverride();
+        }
+
+        public void UnDisplayPopup()
+        {
+            IsDisplay = false;
+            StateHasChangedOverride();
+        }
+
+        private async void StateHasChangedOverride()
+        {
+            StateHasChanged();
+            await JSRuntime.InvokeVoidAsync("blurring", "app_layout");
         }
     }
 }

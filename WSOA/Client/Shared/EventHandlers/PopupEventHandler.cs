@@ -1,4 +1,5 @@
 ﻿using WSOA.Shared.Resources;
+using WSOA.Shared.ViewModel;
 
 namespace WSOA.Client.Shared.EventHandlers
 {
@@ -10,19 +11,34 @@ namespace WSOA.Client.Shared.EventHandlers
 
         public event EventHandler<PopupEventArgs> OnPopupClose;
 
-        public void Open(string popupKey)
+        public void Open(PopupKeyResources key, string title, Action? onValid)
         {
-            CurrentPopupOpen.Key = popupKey;
+            CurrentPopupOpen.Key = key;
+            CurrentPopupOpen.Title = title;
+            CurrentPopupOpen.OnValid = onValid;
 
             OnPopupOpen.Invoke(this, CurrentPopupOpen);
         }
 
-        public void Open(string msg, bool isError)
+        public void Open(string msg, bool isError, string title, Action? onValid)
         {
-            CurrentPopupOpen.IsError = isError;
-            CurrentPopupOpen.Message = msg;
+            CurrentPopupOpen.Messages = new List<MessageViewModel>
+            {
+                new MessageViewModel
+                {
+                    IsError = isError,
+                    Content = msg
+                }
+            };
 
-            Open(PopupKeyResources.MESSAGE);
+            Open(PopupKeyResources.MESSAGE, title, onValid);
+        }
+
+        public void Open(IEnumerable<MessageViewModel> messages, string title, Action? onValid)
+        {
+            CurrentPopupOpen.Messages = messages;
+
+            Open(PopupKeyResources.MESSAGE, title, onValid);
         }
 
         public void Close()

@@ -1,41 +1,33 @@
-﻿using Microsoft.JSInterop;
+﻿using WSOA.Shared.ViewModel;
 
 namespace WSOA.Client.Shared.Popups.Components
 {
     public class PopupMessageComponent : PopupComponentBase
     {
-        public string Message { get; set; }
-
-        public bool IsError { get; set; }
+        public IEnumerable<MessageViewModel> Messages { get; set; }
 
         protected override void OnInitialized()
         {
-            PopupEventHandler.OnPopupOpen += async (obj, currentPopupOpen) =>
+            PopupEventHandler.OnPopupOpen += (obj, currentPopupOpen) =>
             {
                 if (IsDisplay && currentPopupOpen.Key != Key)
                 {
-                    IsDisplay = false;
-                    StateHasChanged();
-                    await JSRuntime.InvokeVoidAsync("blurring", "app_layout");
+                    UnDisplayPopup();
                 }
 
                 if (!IsDisplay && currentPopupOpen.Key == Key)
                 {
-                    IsDisplay = true;
-                    Message = currentPopupOpen.Message;
-                    IsError = currentPopupOpen.IsError;
-                    StateHasChanged();
-                    await JSRuntime.InvokeVoidAsync("blurring", "app_layout");
+                    Messages = currentPopupOpen.Messages;
+
+                    DisplayPopup(currentPopupOpen);
                 }
             };
 
-            PopupEventHandler.OnPopupClose += async (obj, currentPopupOpen) =>
+            PopupEventHandler.OnPopupClose += (obj, currentPopupOpen) =>
             {
                 if (IsDisplay)
                 {
-                    IsDisplay = false;
-                    StateHasChanged();
-                    await JSRuntime.InvokeVoidAsync("blurring", "app_layout");
+                    UnDisplayPopup();
                 }
             };
         }

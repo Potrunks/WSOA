@@ -59,24 +59,4 @@ else
             </div>
         </div>
     }
-    @if (IsDisplayingPaymentMissingPopup)
-    {
-        <div class="c-selectPlayers__popup-paymentMissing">
-            <div class="c-selectPlayers__popup-emptyZone">
-                <div class="c-selectPlayers__popup-containerZone">
-                    <div class="c-selectPlayers__popup-title">@MainLabelResources.PLAYERS_PAYMENT_MISSING</div>
-                    <div class="c-selectPlayers__popup-playersDontPaid">
-                        @foreach (PlayerViewModel model in SelectedPlayers.Where(pla => !pla.HasPaid))
-                        {
-                            <div class="c-selectPlayers__label-playerFullName">@(char.ToUpper(model.FirstName[0]) + model.FirstName.Substring(1)) @(char.ToUpper(model.LastName[0])).</div>
-                        }
-                    </div>
-                    <div class="c-selectPlayers__popup-panelButtons">
-                        <MainButton IsPrimary="true" Label="@ButtonLabelResources.PAID" Type="button" OnClick="() => OnConfirmPlayersPayment.InvokeAsync()" />
-                        <MainButton Label="@ButtonLabelResources.CLOSE" Type="button" OnClick="() => OnPlayersPaymentMissingPopupExit.InvokeAsync()" />
-                    </div>
-                </div>
-            </div>
-        </div>
-    }
 }

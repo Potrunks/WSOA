@@ -1,7 +1,7 @@
 ﻿namespace WSOA.Shared.Resources
 {
-    public class PopupKeyResources
+    public enum PopupKeyResources
     {
-        public const string MESSAGE = "MESSAGE";
+        MESSAGE = 0
     }
 }

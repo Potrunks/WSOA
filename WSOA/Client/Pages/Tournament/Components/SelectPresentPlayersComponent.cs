@@ -3,6 +3,7 @@ using Microsoft.JSInterop;
 using WSOA.Client.Services.Interface;
 using WSOA.Client.Shared.Components;
 using WSOA.Client.Shared.EventHandlers;
+using WSOA.Client.Shared.Resources;
 using WSOA.Shared.Dtos;
 using WSOA.Shared.Resources;
 using WSOA.Shared.Result;
@@ -50,13 +51,7 @@ namespace WSOA.Client.Pages.Tournament.Components
 
         public EventCallback OnValidSelectedPlayers => EventCallback.Factory.Create(this, () => SaveTournamentPreparation());
 
-        public EventCallback OnConfirmPlayersPayment => EventCallback.Factory.Create(this, () => ConfirmPlayersPayment());
-
-        public EventCallback OnPlayersPaymentMissingPopupExit => EventCallback.Factory.Create(this, () => ClosePlayersPaymentMissingPopup());
-
         public bool IsDisplayingAddPlayersPopup { get; set; }
-
-        public bool IsDisplayingPaymentMissingPopup { get; set; }
 
         public bool IsDisplayingPopup { get; set; }
 
@@ -75,7 +70,6 @@ namespace WSOA.Client.Pages.Tournament.Components
             AvailablePlayers = result.Data.AvailablePlayers.OrderBy(pla => pla.LastName).ToList();
 
             IsDisplayingAddPlayersPopup = false;
-            IsDisplayingPaymentMissingPopup = false;
             IsDisplayingPopup = false;
 
             IsLoading = false;
@@ -141,14 +135,15 @@ namespace WSOA.Client.Pages.Tournament.Components
         {
             if (!SelectedPlayers.Any())
             {
-                PopupEventHandler.Open(TournamentErrorMessageResources.TOURNAMENT_NO_PLAYER_SELECTED, true);
+                PopupEventHandler.Open(TournamentErrorMessageResources.TOURNAMENT_NO_PLAYER_SELECTED, true, MainLabelResources.ERROR, null);
                 return;
             }
 
-            if (SelectedPlayers.Any(pla => !pla.HasPaid))
+            IEnumerable<PlayerViewModel> noPaymentPlayers = SelectedPlayers.Where(pla => !pla.HasPaid);
+            if (noPaymentPlayers.Any())
             {
-                IsDisplayingPaymentMissingPopup = true;
-                OnOpenPopup();
+                IEnumerable<MessageViewModel> messages = noPaymentPlayers.Select(pla => new MessageViewModel(pla));
+                PopupEventHandler.Open(messages, MainLabelResources.PLAYERS_PAYMENT_MISSING, ConfirmPlayersPayment());
                 return;
             }
 
@@ -172,23 +167,17 @@ namespace WSOA.Client.Pages.Tournament.Components
             IsLoading = false;
         }
 
-        private void ConfirmPlayersPayment()
+        public Action ConfirmPlayersPayment()
         {
-            foreach (PlayerViewModel player in SelectedPlayers)
+            return () =>
             {
-                player.HasPaid = true;
-            }
+                foreach (PlayerViewModel player in SelectedPlayers)
+                {
+                    player.HasPaid = true;
+                }
 
-            IsDisplayingPaymentMissingPopup = false;
-            OnClosePopup();
-
-            SaveTournamentPreparation();
-        }
-
-        private void ClosePlayersPaymentMissingPopup()
-        {
-            IsDisplayingPaymentMissingPopup = false;
-            OnClosePopup();
+                SaveTournamentPreparation();
+            };
         }
 
         private async void OnClosePopup()

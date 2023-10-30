@@ -2,6 +2,7 @@
 @using WSOA.Client.Shared.Buttons.Resources;
 @using WSOA.Client.Shared.Popups.Components;
 @using WSOA.Client.Shared.Resources;
+@using WSOA.Shared.ViewModel;
 @inherits PopupMessageComponent
 
 @if (IsDisplay)
@@ -9,12 +10,21 @@
     <div class="c-msgPopup__mainContainer">
         <div class="c-msgPopup__emptyZone">
             <div class="c-msgPopup__containerZone">
-                <div class="c-msgPopup__title">@MainLabelResources.ERROR</div>
-                <div class="c-msgPopup__msg">
-                    @Message
+                <div class="c-msgPopup__title">@Title</div>
+                <div class="c-msgPopup__messages">
+                    @foreach (MessageViewModel message in Messages)
+                    {
+                        <div class="c-msgPopup__msg @(message.IsError ? "error" : "")">
+                            @message.Content
+                        </div>
+                    }
                 </div>
                 <div class="c-msgPopup__panelButtons">
-                    <MainButton IsPrimary="true" Label="@ButtonLabelResources.CLOSE" Type="button" OnClick="() => ClosePopup.InvokeAsync()" />
+                    @if (OnValid != null)
+                    {
+                        <MainButton IsPrimary="true" Label="@ButtonLabelResources.VALIDATE" Type="button" OnClick="() => ValidPopup.InvokeAsync()" />
+                    }
+                    <MainButton IsPrimary="OnValid == null" Label="@ButtonLabelResources.CLOSE" Type="button" OnClick="() => ClosePopup.InvokeAsync()" />
                 </div>
             </div>
         </div>
