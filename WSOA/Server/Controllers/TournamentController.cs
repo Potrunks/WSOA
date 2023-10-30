@@ -74,7 +74,7 @@ namespace WSOA.Server.Controllers
         /// </summary>
         [HttpPost]
         [Route("api/tournament/play")]
-        public APICallResultBase PlayTournamentPrepared([FromBody] TournamentPreparedDto tournamentPrepared)
+        public APICallResult<TournamentInProgressDto> PlayTournamentPrepared([FromBody] TournamentPreparedDto tournamentPrepared)
         {
             return _tournamentBusiness.PlayTournamentPrepared(tournamentPrepared, HttpContext.Session);
         }

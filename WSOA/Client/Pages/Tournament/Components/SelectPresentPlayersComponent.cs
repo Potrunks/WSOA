@@ -2,8 +2,11 @@
 using Microsoft.JSInterop;
 using WSOA.Client.Services.Interface;
 using WSOA.Client.Shared.Components;
+using WSOA.Client.Shared.EventHandlers;
 using WSOA.Shared.Dtos;
+using WSOA.Shared.Resources;
 using WSOA.Shared.Result;
+using WSOA.Shared.Stores;
 using WSOA.Shared.ViewModel;
 
 namespace WSOA.Client.Pages.Tournament.Components
@@ -18,6 +21,13 @@ namespace WSOA.Client.Pages.Tournament.Components
 
         [Inject]
         public IJSRuntime JSRuntime { get; set; }
+
+        [Inject]
+        public TournamentInProgressStore TournamentInProgressStore { get; set; }
+
+        [CascadingParameter(Name = "PopupEventHandler")]
+        [EditorRequired]
+        public PopupEventHandler PopupEventHandler { get; set; }
 
         [Parameter]
         public int TournamentId { get; set; }
@@ -85,14 +95,13 @@ namespace WSOA.Client.Pages.Tournament.Components
             OrderPlayersListsByLastName();
         }
 
-        private async void ShowAvailablePlayersPopup()
+        private void ShowAvailablePlayersPopup()
         {
             IsDisplayingAddPlayersPopup = true;
-            IsDisplayingPopup = true;
-            await JSRuntime.InvokeVoidAsync("switchMainNavMenuDisplayStatus");
+            OnOpenPopup();
         }
 
-        private async void HideAvailablePlayersPopup()
+        private void HideAvailablePlayersPopup()
         {
             foreach (PlayerViewModel player in AvailablePlayers)
             {
@@ -100,9 +109,7 @@ namespace WSOA.Client.Pages.Tournament.Components
             }
 
             IsDisplayingAddPlayersPopup = false;
-            IsDisplayingPopup = false;
-
-            await JSRuntime.InvokeVoidAsync("switchMainNavMenuDisplayStatus");
+            OnClosePopup();
         }
 
         private void SwitchPreSelectStatus(PlayerViewModel player)
@@ -132,28 +139,37 @@ namespace WSOA.Client.Pages.Tournament.Components
 
         private async void SaveTournamentPreparation()
         {
+            if (!SelectedPlayers.Any())
+            {
+                PopupEventHandler.Open(TournamentErrorMessageResources.TOURNAMENT_NO_PLAYER_SELECTED, true);
+                return;
+            }
+
             if (SelectedPlayers.Any(pla => !pla.HasPaid))
             {
                 IsDisplayingPaymentMissingPopup = true;
-                IsDisplayingPopup = true;
-                await JSRuntime.InvokeVoidAsync("switchMainNavMenuDisplayStatus");
+                OnOpenPopup();
+                return;
             }
-            else
+
+            IsLoading = true;
+
+            TournamentPreparedDto tournamentPrepared = new TournamentPreparedDto
             {
-                IsLoading = true;
+                TournamentId = TournamentId,
+                SelectedUserIds = SelectedPlayers.Select(pla => pla.UserId)
+            };
 
-                TournamentPreparedDto tournamentPrepared = new TournamentPreparedDto
-                {
-                    TournamentId = TournamentId,
-                    SelectedUserIds = SelectedPlayers.Select(pla => pla.UserId)
-                };
+            APICallResult<TournamentInProgressDto> result = await TournamentService.PlayTournamentPrepared(tournamentPrepared);
 
-                APICallResultBase result = await TournamentService.PlayTournamentPrepared(tournamentPrepared);
-
-                NavigationManager.NavigateTo(result.RedirectUrl);
-
-                IsLoading = false;
+            if (result.Success)
+            {
+                TournamentInProgressStore.Store(result.Data);
             }
+
+            NavigationManager.NavigateTo(result.RedirectUrl);
+
+            IsLoading = false;
         }
 
         private void ConfirmPlayersPayment()
@@ -164,15 +180,26 @@ namespace WSOA.Client.Pages.Tournament.Components
             }
 
             IsDisplayingPaymentMissingPopup = false;
-            IsDisplayingPopup = false;
+            OnClosePopup();
 
             SaveTournamentPreparation();
         }
 
-        private async void ClosePlayersPaymentMissingPopup()
+        private void ClosePlayersPaymentMissingPopup()
         {
             IsDisplayingPaymentMissingPopup = false;
+            OnClosePopup();
+        }
+
+        private async void OnClosePopup()
+        {
             IsDisplayingPopup = false;
+            await JSRuntime.InvokeVoidAsync("switchMainNavMenuDisplayStatus");
+        }
+
+        private async void OnOpenPopup()
+        {
+            IsDisplayingPopup = true;
             await JSRuntime.InvokeVoidAsync("switchMainNavMenuDisplayStatus");
         }
     }

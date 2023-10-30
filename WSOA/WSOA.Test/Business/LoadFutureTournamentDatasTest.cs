@@ -45,7 +45,7 @@ namespace WSOA.Test.Business
             _tournamentRepositoryMock.Setup(m => m.GetTournamentDtosByIsOverAndIsInProgress(false, false))
                                      .Returns(_tournamentDtos);
 
-            _tournamentBusiness = new TournamentBusiness(null, _menuRepositoryMock.Object, _tournamentRepositoryMock.Object, null, null, null, null);
+            _tournamentBusiness = new TournamentBusiness(null, _menuRepositoryMock.Object, _tournamentRepositoryMock.Object, null, null, null, null, null);
         }
 
         [TestMethod]

@@ -23,6 +23,7 @@ namespace WSOA.Server.Business.Implementation
         private readonly IUserRepository _userRepository;
         private readonly IAddressRepository _addressRepository;
         private readonly IPlayerRepository _playerRepository;
+        private readonly IBonusTournamentRepository _bonusTournamentRepository;
 
         private readonly ILog _log = LogManager.GetLogger(nameof(TournamentBusiness));
 
@@ -34,7 +35,8 @@ namespace WSOA.Server.Business.Implementation
             IMailService mailService,
             IUserRepository userRepository,
             IAddressRepository addressRepository,
-            IPlayerRepository playerRepository
+            IPlayerRepository playerRepository,
+            IBonusTournamentRepository bonusTournamentRepository
         )
         {
             _transactionManager = transactionManager;
@@ -44,6 +46,7 @@ namespace WSOA.Server.Business.Implementation
             _userRepository = userRepository;
             _addressRepository = addressRepository;
             _playerRepository = playerRepository;
+            _bonusTournamentRepository = bonusTournamentRepository;
         }
 
         public APICallResultBase CreateTournament(TournamentCreationFormViewModel form, ISession session)
@@ -245,9 +248,9 @@ namespace WSOA.Server.Business.Implementation
             }
         }
 
-        public APICallResultBase PlayTournamentPrepared(TournamentPreparedDto tournamentPrepared, ISession session)
+        public APICallResult<TournamentInProgressDto> PlayTournamentPrepared(TournamentPreparedDto tournamentPrepared, ISession session)
         {
-            APICallResultBase result = new APICallResultBase(false);
+            APICallResult<TournamentInProgressDto> result = new APICallResult<TournamentInProgressDto>(false);
 
             try
             {
@@ -255,11 +258,18 @@ namespace WSOA.Server.Business.Implementation
 
                 session.CanUserPerformAction(_userRepository, BusinessActionResources.EXECUTE_TOURNAMENT);
 
+                if (!tournamentPrepared.SelectedUserIds.Any())
+                {
+                    string errorMsg = TournamentErrorMessageResources.TOURNAMENT_NO_PLAYER_SELECTED;
+                    throw new FunctionalException(errorMsg, string.Format(RouteBusinessResources.MAIN_ERROR, errorMsg));
+                }
+
                 TournamentDto currentTournament = _tournamentRepository.GetTournamentDtoById(tournamentPrepared.TournamentId);
 
                 CanExecuteTournament(currentTournament.Tournament.Id);
 
                 List<Player> newPlayers = new List<Player>();
+                List<Player> updatedPlayers = new List<Player>();
                 IDictionary<int, Player> selectedPlayersAlreadySignUpByUsrId = currentTournament.Players.Where(pla => tournamentPrepared.SelectedUserIds.Contains(pla.Player.UserId)).ToDictionary(pla => pla.User.Id, pla => pla.Player);
                 foreach (int selectedUsrId in tournamentPrepared.SelectedUserIds)
                 {
@@ -267,6 +277,7 @@ namespace WSOA.Server.Business.Implementation
                     if (selectedPlayersAlreadySignUpByUsrId.TryGetValue(selectedUsrId, out selectedPlayer))
                     {
                         selectedPlayer.PresenceStateCode = PresenceStateResources.PRESENT_CODE;
+                        updatedPlayers.Add(selectedPlayer);
                     }
                     else
                     {
@@ -286,13 +297,21 @@ namespace WSOA.Server.Business.Implementation
                 currentTournament.Tournament.IsInProgress = true;
 
                 _playerRepository.DeletePlayers(playersToDelete);
-                _playerRepository.SavePlayers(currentTournament.Players.Select(pla => pla.Player).Concat(newPlayers));
+                _playerRepository.SavePlayers(updatedPlayers.Concat(newPlayers));
                 _tournamentRepository.SaveTournament(currentTournament.Tournament);
 
                 result.Success = true;
 
                 MainNavSubSection tournamentInProgressSubSection = _menuRepository.GetMainNavSubSectionByUrl(RouteBusinessResources.TOURNAMENT_IN_PROGRESS);
                 result.RedirectUrl = $"{tournamentInProgressSubSection.Url}/{tournamentInProgressSubSection.Id}";
+
+                currentTournament = _tournamentRepository.GetTournamentDtoById(tournamentPrepared.TournamentId);
+                IEnumerable<BonusTournament> availableBonusTournaments = _bonusTournamentRepository.GetAll();
+                result.Data = new TournamentInProgressDto
+                {
+                    TournamentDto = currentTournament,
+                    WinnableBonus = availableBonusTournaments
+                };
 
                 _transactionManager.CommitTransaction();
             }
@@ -301,14 +320,14 @@ namespace WSOA.Server.Business.Implementation
                 _transactionManager.RollbackTransaction();
                 string errorMsg = e.Message;
                 _log.Error(errorMsg);
-                return new APICallResultBase(errorMsg, e.RedirectUrl);
+                return new APICallResult<TournamentInProgressDto>(errorMsg, e.RedirectUrl);
             }
             catch (Exception e)
             {
                 _transactionManager.RollbackTransaction();
                 string errorMsg = MainBusinessResources.TECHNICAL_ERROR;
                 _log.Error(e.Message);
-                return new APICallResultBase(errorMsg, string.Format(RouteBusinessResources.MAIN_ERROR, errorMsg));
+                return new APICallResult<TournamentInProgressDto>(errorMsg, string.Format(RouteBusinessResources.MAIN_ERROR, errorMsg));
             }
 
             return result;

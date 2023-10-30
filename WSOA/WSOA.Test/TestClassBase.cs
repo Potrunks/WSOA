@@ -410,6 +410,24 @@ namespace WSOA.Test
             _dbContext.SaveChanges();
         }
 
+        public List<BonusTournament> SaveBonusTournaments(int number)
+        {
+            List<BonusTournament> bonusTournaments = new List<BonusTournament>();
+            for (int i = 0; i < number; i++)
+            {
+                BonusTournament bonusTournament = new BonusTournament
+                {
+                    Code = $"Code{i}",
+                    Label = "Label",
+                    PointAmount = i
+                };
+                bonusTournaments.Add(bonusTournament);
+            }
+            _dbContext.BonusTournaments.AddRange(bonusTournaments);
+            _dbContext.SaveChanges();
+            return bonusTournaments;
+        }
+
         public void VerifyTransactionManagerCommit(Mock<ITransactionManager> transactionManagerMock)
         {
             transactionManagerMock.Verify(m => m.BeginTransaction(), Times.Once);
