@@ -1,4 +1,5 @@
-﻿using WSOA.Shared.Resources;
+﻿using Microsoft.AspNetCore.Components;
+using WSOA.Shared.Resources;
 using WSOA.Shared.ViewModel;
 
 namespace WSOA.Client.Shared.EventHandlers
@@ -11,11 +12,20 @@ namespace WSOA.Client.Shared.EventHandlers
 
         public event EventHandler<PopupEventArgs> OnPopupClose;
 
-        public void Open(PopupKeyResources key, string title, Action? onValid)
+        private void Open(PopupKeyResources key, string title, Action? onValid)
         {
             CurrentPopupOpen.Key = key;
             CurrentPopupOpen.Title = title;
             CurrentPopupOpen.OnValid = onValid;
+
+            OnPopupOpen.Invoke(this, CurrentPopupOpen);
+        }
+
+        private void Open(PopupKeyResources key, string title, EventCallback<IEnumerable<int>>? onValid)
+        {
+            CurrentPopupOpen.Key = key;
+            CurrentPopupOpen.Title = title;
+            CurrentPopupOpen.OnValidSelectedItemIds = onValid;
 
             OnPopupOpen.Invoke(this, CurrentPopupOpen);
         }
@@ -39,6 +49,13 @@ namespace WSOA.Client.Shared.EventHandlers
             CurrentPopupOpen.Messages = messages;
 
             Open(PopupKeyResources.MESSAGE, title, onValid);
+        }
+
+        public void Open(IEnumerable<ItemSelectableViewModel> selectableItems, string title, EventCallback<IEnumerable<int>> onValid)
+        {
+            CurrentPopupOpen.SelectableItems = selectableItems;
+
+            Open(PopupKeyResources.ITEM_SELECT, title, onValid);
         }
 
         public void Close()

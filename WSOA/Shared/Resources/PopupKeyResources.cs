@@ -2,6 +2,7 @@
 {
     public enum PopupKeyResources
     {
-        MESSAGE = 0
+        MESSAGE = 0,
+        ITEM_SELECT = 1
     }
 }

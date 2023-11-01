@@ -1,4 +1,5 @@
-﻿using WSOA.Shared.Resources;
+﻿using Microsoft.AspNetCore.Components;
+using WSOA.Shared.Resources;
 using WSOA.Shared.ViewModel;
 
 namespace WSOA.Client.Shared.EventHandlers
@@ -11,6 +12,10 @@ namespace WSOA.Client.Shared.EventHandlers
 
         public IEnumerable<MessageViewModel>? Messages { get; set; }
 
+        public IEnumerable<ItemSelectableViewModel>? SelectableItems { get; set; }
+
         public Action? OnValid { get; set; }
+
+        public EventCallback<IEnumerable<int>>? OnValidSelectedItemIds { get; set; }
     }
 }

@@ -37,23 +37,21 @@ namespace WSOA.Client.Pages.Tournament.Components
 
         public List<PlayerViewModel> AvailablePlayers { get; set; }
 
-        public EventCallback<PlayerViewModel> OnPaymentClick => EventCallback.Factory.Create(this, (PlayerViewModel player) => SwitchPaymentStatus(player));
+        public EventCallback<PlayerViewModel> SwitchPaymentStatus => EventCallback.Factory.Create(this, (PlayerViewModel player) =>
+        {
+            player.HasPaid = !player.HasPaid;
+        });
 
-        public EventCallback<PlayerViewModel> OnTrashPlayerClick => EventCallback.Factory.Create(this, (PlayerViewModel player) => UnSelectPlayer(player));
-
-        public EventCallback OnAddPlayersClick => EventCallback.Factory.Create(this, () => ShowAvailablePlayersPopup());
-
-        public EventCallback OnAddPlayersPopupExit => EventCallback.Factory.Create(this, () => HideAvailablePlayersPopup());
-
-        public EventCallback<PlayerViewModel> OnPreSelectPlayerClick => EventCallback.Factory.Create(this, (PlayerViewModel player) => SwitchPreSelectStatus(player));
-
-        public EventCallback OnValidPreSelectedPlayers => EventCallback.Factory.Create(this, () => SelectPlayers());
+        public EventCallback<PlayerViewModel> UnSelectPlayer => EventCallback.Factory.Create(this, (PlayerViewModel player) =>
+        {
+            player.IsPreSelected = false;
+            SelectedPlayers.Remove(player);
+            AvailablePlayers.Add(player);
+            SelectedPlayers = SelectedPlayers.OrderBy(pla => pla.LastName).ToList();
+            AvailablePlayers = AvailablePlayers.OrderBy(pla => pla.LastName).ToList();
+        });
 
         public EventCallback OnValidSelectedPlayers => EventCallback.Factory.Create(this, () => SaveTournamentPreparation());
-
-        public bool IsDisplayingAddPlayersPopup { get; set; }
-
-        public bool IsDisplayingPopup { get; set; }
 
         protected override async Task OnInitializedAsync()
         {
@@ -69,67 +67,27 @@ namespace WSOA.Client.Pages.Tournament.Components
             SelectedPlayers = result.Data.PresentPlayers.OrderBy(pla => pla.LastName).ToList();
             AvailablePlayers = result.Data.AvailablePlayers.OrderBy(pla => pla.LastName).ToList();
 
-            IsDisplayingAddPlayersPopup = false;
-            IsDisplayingPopup = false;
-
             IsLoading = false;
         }
 
-        private void SwitchPaymentStatus(PlayerViewModel player)
+        public EventCallback OpenSelectablePlayersPopup => EventCallback.Factory.Create(this, () =>
         {
-            player.HasPaid = !player.HasPaid;
-        }
+            IEnumerable<ItemSelectableViewModel> selectablePlayers = AvailablePlayers.Select(pla => new ItemSelectableViewModel(pla));
+            PopupEventHandler.Open(selectablePlayers, MainLabelResources.AVAILABLE_PLAYERS, SelectPlayers);
+        });
 
-        private void UnSelectPlayer(PlayerViewModel player)
+        public EventCallback<IEnumerable<int>> SelectPlayers => EventCallback.Factory.Create(this, (IEnumerable<int> selectedItemIds) =>
         {
-            player.IsPreSelected = false;
-            SelectedPlayers.Remove(player);
-            AvailablePlayers.Add(player);
-
-            OrderPlayersListsByLastName();
-        }
-
-        private void ShowAvailablePlayersPopup()
-        {
-            IsDisplayingAddPlayersPopup = true;
-            OnOpenPopup();
-        }
-
-        private void HideAvailablePlayersPopup()
-        {
-            foreach (PlayerViewModel player in AvailablePlayers)
-            {
-                player.IsPreSelected = false;
-            }
-
-            IsDisplayingAddPlayersPopup = false;
-            OnClosePopup();
-        }
-
-        private void SwitchPreSelectStatus(PlayerViewModel player)
-        {
-            player.IsPreSelected = !player.IsPreSelected;
-        }
-
-        private void SelectPlayers()
-        {
-            List<PlayerViewModel> selectedPlayers = AvailablePlayers.Where(pla => pla.IsPreSelected).ToList();
+            List<PlayerViewModel> selectedPlayers = AvailablePlayers.Where(pla => selectedItemIds.Contains(pla.UserId)).ToList();
             foreach (PlayerViewModel player in selectedPlayers)
             {
                 player.HasPaid = false;
                 AvailablePlayers.Remove(player);
             }
             SelectedPlayers.AddRange(selectedPlayers);
-
-            OrderPlayersListsByLastName();
-            HideAvailablePlayersPopup();
-        }
-
-        private void OrderPlayersListsByLastName()
-        {
             SelectedPlayers = SelectedPlayers.OrderBy(pla => pla.LastName).ToList();
             AvailablePlayers = AvailablePlayers.OrderBy(pla => pla.LastName).ToList();
-        }
+        });
 
         private async void SaveTournamentPreparation()
         {
@@ -178,18 +136,6 @@ namespace WSOA.Client.Pages.Tournament.Components
 
                 SaveTournamentPreparation();
             };
-        }
-
-        private async void OnClosePopup()
-        {
-            IsDisplayingPopup = false;
-            await JSRuntime.InvokeVoidAsync("switchMainNavMenuDisplayStatus");
-        }
-
-        private async void OnOpenPopup()
-        {
-            IsDisplayingPopup = true;
-            await JSRuntime.InvokeVoidAsync("switchMainNavMenuDisplayStatus");
         }
     }
 }
