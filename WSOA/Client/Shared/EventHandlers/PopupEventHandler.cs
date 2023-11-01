@@ -53,9 +53,16 @@ namespace WSOA.Client.Shared.EventHandlers
 
         public void Open(IEnumerable<ItemSelectableViewModel> selectableItems, string title, EventCallback<IEnumerable<int>> onValid)
         {
-            CurrentPopupOpen.SelectableItems = selectableItems;
+            if (!selectableItems.Any())
+            {
+                Open(PopupErrorMessageResources.NO_SELECTABLE_ITEM, false, title, null);
+            }
+            else
+            {
+                CurrentPopupOpen.SelectableItems = selectableItems;
 
-            Open(PopupKeyResources.ITEM_SELECT, title, onValid);
+                Open(PopupKeyResources.ITEM_SELECT, title, onValid);
+            }
         }
 
         public void Close()

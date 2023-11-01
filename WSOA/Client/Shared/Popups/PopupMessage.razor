@@ -22,7 +22,12 @@
                 <div class="c-msgPopup__panelButtons">
                     @if (OnValid != null)
                     {
-                        <MainButton IsPrimary="true" Label="@ButtonLabelResources.VALIDATE" Type="button" OnClick="() => ValidPopup.InvokeAsync()" />
+                        <MainButton
+                            IsPrimary="true"
+                            Label="@ButtonLabelResources.VALIDATE"
+                            Type="button"
+                            OnClick="() => ValidPopup.InvokeAsync()"
+                            MarginRight="5" />
                     }
                     <MainButton IsPrimary="OnValid == null" Label="@ButtonLabelResources.CLOSE" Type="button" OnClick="() => ClosePopup.InvokeAsync()" />
                 </div>

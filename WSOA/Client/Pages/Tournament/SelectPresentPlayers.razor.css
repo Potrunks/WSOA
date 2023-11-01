@@ -82,68 +82,19 @@
     font-size: 20px;
 }
 
-@media only screen and (min-width: 768px) {
+@media only screen and (min-width: 390px) {
     .c-selectPlayers__container-player img,
     .c-selectPlayers__panelButtons-addPlayer img,
     .c-selectPlayer__icon-blank {
-        width: 50px;
+        width: 40px;
+        margin-right: 10px;
+        margin-left: 10px;
     }
 
     .c-selectPlayers__title,
     .c-selectPlayers__label-playerFullName,
     .c-selectPlayers__label,
     .c-selectPlayers__panelButtons ::deep .mainButton {
-        font-size: 30px;
-    }
-}
-
-@media only screen and (min-width: 820px) {
-    .c-selectPlayers__container-player img,
-    .c-selectPlayers__panelButtons-addPlayer img,
-    .c-selectPlayer__icon-blank {
-        width: 70px;
-    }
-
-    .c-selectPlayers__title,
-    .c-selectPlayers__label-playerFullName,
-    .c-selectPlayers__label,
-    .c-selectPlayers__panelButtons ::deep .mainButton {
-        font-size: 40px;
-    }
-}
-
-@media only screen and (min-width: 1024px) and (min-height: 600px) {
-    .c-selectPlayers__title {
-        padding: 10px 0 0 10px;
-    }
-
-    .c-selectPlayers__container-sub {
-        height: 85%;
-    }
-
-    .c-selectPlayers__container-player img,
-    .c-selectPlayers__panelButtons-addPlayer img,
-    .c-selectPlayer__icon-blank {
-        width: 60px;
-    }
-
-    .c-selectPlayers__title,
-    .c-selectPlayers__label-playerFullName,
-    .c-selectPlayers__label,
-    .c-selectPlayers__panelButtons ::deep .mainButton {
-        font-size: 40px;
-    }
-
-    .c-selectPlayers__panelButtons {
-        height: 15%;
-    }
-
-    .c-selectPlayers__container-player {
-        height: 25%;
-    }
-
-    .c-selectPlayers__container-player,
-    .c-selectPlayers__panelButtons-addPlayer {
-        padding: 0 20px 0 20px;
+        font-size: 25px;
     }
 }

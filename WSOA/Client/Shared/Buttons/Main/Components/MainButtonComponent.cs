@@ -18,6 +18,9 @@ namespace WSOA.Client.Shared.Buttons.Main.Components
         public string? _primaryCssClassName;
 
         [Parameter]
+        public int MarginRight { get; set; }
+
+        [Parameter]
         public object OnClick { get; set; }
 
         protected override void OnInitialized()
