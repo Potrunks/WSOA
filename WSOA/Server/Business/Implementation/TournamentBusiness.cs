@@ -248,9 +248,9 @@ namespace WSOA.Server.Business.Implementation
             }
         }
 
-        public APICallResult<TournamentInProgressDto> PlayTournamentPrepared(TournamentPreparedDto tournamentPrepared, ISession session)
+        public APICallResultBase SaveTournamentPrepared(TournamentPreparedDto tournamentPrepared, ISession session)
         {
-            APICallResult<TournamentInProgressDto> result = new APICallResult<TournamentInProgressDto>(false);
+            APICallResultBase result = new APICallResultBase(false);
 
             try
             {
@@ -300,18 +300,10 @@ namespace WSOA.Server.Business.Implementation
                 _playerRepository.SavePlayers(updatedPlayers.Concat(newPlayers));
                 _tournamentRepository.SaveTournament(currentTournament.Tournament);
 
-                result.Success = true;
-
                 MainNavSubSection tournamentInProgressSubSection = _menuRepository.GetMainNavSubSectionByUrl(RouteBusinessResources.TOURNAMENT_IN_PROGRESS);
                 result.RedirectUrl = $"{tournamentInProgressSubSection.Url}/{tournamentInProgressSubSection.Id}";
 
-                currentTournament = _tournamentRepository.GetTournamentDtoById(tournamentPrepared.TournamentId);
-                IEnumerable<BonusTournament> availableBonusTournaments = _bonusTournamentRepository.GetAll();
-                result.Data = new TournamentInProgressDto
-                {
-                    TournamentDto = currentTournament,
-                    WinnableBonus = availableBonusTournaments
-                };
+                result.Success = true;
 
                 _transactionManager.CommitTransaction();
             }
@@ -320,14 +312,14 @@ namespace WSOA.Server.Business.Implementation
                 _transactionManager.RollbackTransaction();
                 string errorMsg = e.Message;
                 _log.Error(errorMsg);
-                return new APICallResult<TournamentInProgressDto>(errorMsg, e.RedirectUrl);
+                return new APICallResultBase(errorMsg, e.RedirectUrl);
             }
             catch (Exception e)
             {
                 _transactionManager.RollbackTransaction();
                 string errorMsg = MainBusinessResources.TECHNICAL_ERROR;
                 _log.Error(e.Message);
-                return new APICallResult<TournamentInProgressDto>(errorMsg, string.Format(RouteBusinessResources.MAIN_ERROR, errorMsg));
+                return new APICallResultBase(errorMsg, string.Format(RouteBusinessResources.MAIN_ERROR, errorMsg));
             }
 
             return result;

@@ -14,7 +14,7 @@ using WSOA.Shared.Result;
 namespace WSOA.Test.Business
 {
     [TestClass]
-    public class PlayTournamentTest : TestClassBase
+    public class SavePreparedTournamentTest : TestClassBase
     {
         private Tournament _tournamentTargeted;
         private List<Player> _playersIntoTargetedTournament;
@@ -75,7 +75,7 @@ namespace WSOA.Test.Business
         [TestMethod]
         public void ShouldMarkInProgress_WhenTournamentIsPrepared()
         {
-            APICallResult<TournamentInProgressDto> result = ExecutePlayTournamentPreparedMethod();
+            APICallResultBase result = ExecutePlayTournamentPreparedMethod();
 
             VerifyAPICallResultSuccess(result, _successRedirectUrl);
             VerifyTransactionManagerCommit(_transactionManagerMock);
@@ -85,7 +85,7 @@ namespace WSOA.Test.Business
         [TestMethod]
         public void ShouldMarkAsPresentSelectedUsers_WhenAlreadySignUpInTournamentInPreparation()
         {
-            APICallResult<TournamentInProgressDto> result = ExecutePlayTournamentPreparedMethod();
+            APICallResultBase result = ExecutePlayTournamentPreparedMethod();
 
             VerifyAPICallResultSuccess(result, _successRedirectUrl);
             VerifyTransactionManagerCommit(_transactionManagerMock);
@@ -117,7 +117,7 @@ namespace WSOA.Test.Business
                     _bonusTournamentRepository
                 );
 
-            APICallResult<TournamentInProgressDto> result = ExecutePlayTournamentPreparedMethod();
+            APICallResultBase result = ExecutePlayTournamentPreparedMethod();
 
             VerifyAPICallResultSuccess(result, _successRedirectUrl);
             VerifyTransactionManagerCommit(_transactionManagerMock);
@@ -148,7 +148,7 @@ namespace WSOA.Test.Business
                     _bonusTournamentRepository
                 );
 
-            APICallResult<TournamentInProgressDto> result = ExecutePlayTournamentPreparedMethod();
+            APICallResultBase result = ExecutePlayTournamentPreparedMethod();
 
             VerifyAPICallResultSuccess(result, _successRedirectUrl);
             VerifyTransactionManagerCommit(_transactionManagerMock);
@@ -160,7 +160,7 @@ namespace WSOA.Test.Business
         {
             _sessionMock = CreateISessionMock(ProfileResources.PLAYER_CODE, _usrProcessor.Id);
 
-            APICallResult<TournamentInProgressDto> result = ExecutePlayTournamentPreparedMethod();
+            APICallResultBase result = ExecutePlayTournamentPreparedMethod();
 
             string expectedErrorMsg = MainBusinessResources.USER_CANNOT_PERFORM_ACTION;
             VerifyAPICallResultError(result, string.Format(RouteBusinessResources.SIGN_IN_WITH_ERROR_MESSAGE, expectedErrorMsg), expectedErrorMsg);
@@ -173,7 +173,7 @@ namespace WSOA.Test.Business
             _tournamentTargeted.IsInProgress = true;
             _dbContext.SaveChanges();
 
-            APICallResult<TournamentInProgressDto> result = ExecutePlayTournamentPreparedMethod();
+            APICallResultBase result = ExecutePlayTournamentPreparedMethod();
 
             string expectedErrorMsg = TournamentBusinessResources.EXISTS_TOURNAMENT_IN_PROGRESS;
             VerifyAPICallResultError(result, string.Format(RouteBusinessResources.MAIN_ERROR, expectedErrorMsg), expectedErrorMsg);
@@ -186,7 +186,7 @@ namespace WSOA.Test.Business
             _tournamentTargeted.IsOver = true;
             _dbContext.SaveChanges();
 
-            APICallResult<TournamentInProgressDto> result = ExecutePlayTournamentPreparedMethod();
+            APICallResultBase result = ExecutePlayTournamentPreparedMethod();
 
             string expectedErrorMsg = TournamentBusinessResources.CANNOT_EXECUTE_TOURNAMENT;
             VerifyAPICallResultError(result, string.Format(RouteBusinessResources.MAIN_ERROR, expectedErrorMsg), expectedErrorMsg);
@@ -212,7 +212,7 @@ namespace WSOA.Test.Business
                     _bonusTournamentRepository
                 );
 
-            APICallResult<TournamentInProgressDto> result = ExecutePlayTournamentPreparedMethod();
+            APICallResultBase result = ExecutePlayTournamentPreparedMethod();
 
             string expectedErrorMsg = MainBusinessResources.TECHNICAL_ERROR;
             VerifyAPICallResultError(result, string.Format(RouteBusinessResources.MAIN_ERROR, expectedErrorMsg), expectedErrorMsg);
@@ -220,34 +220,20 @@ namespace WSOA.Test.Business
         }
 
         [TestMethod]
-        public void ShouldReturnTournamentInProgressDto_WhenTournamentPreparedSuccessfullySaved()
-        {
-            APICallResult<TournamentInProgressDto> result = ExecutePlayTournamentPreparedMethod();
-
-            Assert.AreEqual(_tournamentTargeted.Id, result.Data.TournamentDto.Tournament.Id);
-            Assert.AreEqual(true, result.Data.TournamentDto.Players.All(pla => _selectedUsrs.Select(usr => usr.Id).Contains(pla.User.Id)));
-            Assert.AreEqual(3, _allBonusTournaments.Count);
-            foreach (BonusTournament expectedBonusTournament in _allBonusTournaments)
-            {
-                Assert.AreEqual(expectedBonusTournament.Code, result.Data.WinnableBonus.Single(bon => bon.Code == expectedBonusTournament.Code).Code);
-            }
-        }
-
-        [TestMethod]
         public void ShouldNotPlayTournament_WhenNoPlayerSelected()
         {
             _selectedUsrs.Clear();
 
-            APICallResult<TournamentInProgressDto> result = ExecutePlayTournamentPreparedMethod();
+            APICallResultBase result = ExecutePlayTournamentPreparedMethod();
 
             string expectedErrorMsg = TournamentErrorMessageResources.TOURNAMENT_NO_PLAYER_SELECTED;
             VerifyAPICallResultError(result, string.Format(RouteBusinessResources.MAIN_ERROR, expectedErrorMsg), expectedErrorMsg);
             VerifyTransactionManagerRollback(_transactionManagerMock);
         }
 
-        private APICallResult<TournamentInProgressDto> ExecutePlayTournamentPreparedMethod()
+        private APICallResultBase ExecutePlayTournamentPreparedMethod()
         {
-            return _tournamentBusiness.PlayTournamentPrepared(_tournamentPreparedDto, _sessionMock.Object);
+            return _tournamentBusiness.SaveTournamentPrepared(_tournamentPreparedDto, _sessionMock.Object);
         }
     }
 }

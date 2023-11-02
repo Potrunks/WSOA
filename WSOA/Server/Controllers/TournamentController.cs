@@ -73,10 +73,10 @@ namespace WSOA.Server.Controllers
         /// Save and play the tournament selected.
         /// </summary>
         [HttpPost]
-        [Route("api/tournament/play")]
-        public APICallResult<TournamentInProgressDto> PlayTournamentPrepared([FromBody] TournamentPreparedDto tournamentPrepared)
+        [Route("api/tournament/prepared/save")]
+        public APICallResultBase SaveTournamentPrepared([FromBody] TournamentPreparedDto tournamentPrepared)
         {
-            return _tournamentBusiness.PlayTournamentPrepared(tournamentPrepared, HttpContext.Session);
+            return _tournamentBusiness.SaveTournamentPrepared(tournamentPrepared, HttpContext.Session);
         }
     }
 }

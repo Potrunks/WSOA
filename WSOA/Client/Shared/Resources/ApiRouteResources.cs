@@ -13,6 +13,6 @@
         public const string CLEAR_SESSION = "api/account/clearSession";
         public const string SIGN_UP_TOURNAMENT = "api/tournament/future/signUp";
         public const string TOURNAMENT_PREPARATION_GET_PLAYERS = "api/tournament/load/presentPlayers/{0}";
-        public const string PLAY_TOURNAMENT_PREPARED = "api/tournament/play";
+        public const string PLAY_TOURNAMENT_PREPARED = "api/tournament/prepared/save";
     }
 }

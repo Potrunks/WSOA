@@ -34,6 +34,6 @@ namespace WSOA.Server.Business.Interface
         /// <summary>
         /// Save the tournament prepared and declare it as in progress.
         /// </summary>
-        APICallResult<TournamentInProgressDto> PlayTournamentPrepared(TournamentPreparedDto tournamentPrepared, ISession session);
+        APICallResultBase SaveTournamentPrepared(TournamentPreparedDto tournamentPrepared, ISession session);
     }
 }

@@ -113,12 +113,7 @@ namespace WSOA.Client.Pages.Tournament.Components
                 SelectedUserIds = SelectedPlayers.Select(pla => pla.UserId)
             };
 
-            APICallResult<TournamentInProgressDto> result = await TournamentService.PlayTournamentPrepared(tournamentPrepared);
-
-            if (result.Success)
-            {
-                TournamentInProgressStore.Store(result.Data);
-            }
+            APICallResultBase result = await TournamentService.SaveTournamentPrepared(tournamentPrepared);
 
             NavigationManager.NavigateTo(result.RedirectUrl);
 

@@ -46,10 +46,10 @@ namespace WSOA.Client.Services.Implementation
             return response.Content.ToObject<APICallResult<PlayerSelectionViewModel>>();
         }
 
-        public async Task<APICallResult<TournamentInProgressDto>> PlayTournamentPrepared(TournamentPreparedDto tournamentPrepared)
+        public async Task<APICallResultBase> SaveTournamentPrepared(TournamentPreparedDto tournamentPrepared)
         {
             HttpResponseMessage response = await _httpClient.PostAsync(ApiRouteResources.PLAY_TOURNAMENT_PREPARED, tournamentPrepared.ToJsonUtf8());
-            return response.Content.ToObject<APICallResult<TournamentInProgressDto>>();
+            return response.Content.ToObject<APICallResultBase>();
         }
     }
 }
