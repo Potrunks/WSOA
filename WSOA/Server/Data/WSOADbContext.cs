@@ -335,5 +335,6 @@ namespace WSOA.Server.Data
         public DbSet<PresenceState> PresenceStates { get; set; }
         public DbSet<BusinessAction> BusinessActions { get; set; }
         public DbSet<BusinessActionByProfileCode> BusinessActionsByProfileCode { get; set; }
+        public DbSet<Elimination> Eliminations { get; set; }
     }
 }

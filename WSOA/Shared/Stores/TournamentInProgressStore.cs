@@ -1,7 +1,7 @@
 ﻿using System.Timers;
 using WSOA.Shared.Dtos;
-using WSOA.Shared.Entity;
-using WSOA.Shared.ViewModel;
+using WSOA.Shared.Exceptions;
+using WSOA.Shared.Resources;
 using Timer = System.Timers.Timer;
 
 namespace WSOA.Shared.Stores
@@ -13,19 +13,13 @@ namespace WSOA.Shared.Stores
 
         }
 
-        private Timer Timer { get; set; }
+        private Timer? Timer { get; set; }
 
-        private DateTime StartTime { get; set; }
+        private DateTime? StartTime { get; set; }
 
-        private DateTime StartDate { get; set; }
+        private DateTime? StartDate { get; set; }
 
-        private string Season { get; set; }
-
-        private List<PlayerDto> PlayingPlayers { get; set; }
-
-        private int TournamentId { get; set; }
-
-        private IEnumerable<BonusTournament> WinnableBonus { get; set; }
+        private TournamentInProgressDto? Data { get; set; }
 
         public void ActivateTimer(DateTime startTime, ElapsedEventHandler onElapsedTimer)
         {
@@ -47,27 +41,20 @@ namespace WSOA.Shared.Stores
             return null;
         }
 
-        public void Store(TournamentInProgressDto tournamentInProgress)
+        public TournamentInProgressDto? GetStoredData()
         {
-            Tournament tournament = tournamentInProgress.TournamentDto.Tournament;
-
-            StartDate = tournament.StartDate;
-            Season = tournament.Season;
-            TournamentId = tournament.Id;
-            PlayingPlayers = tournamentInProgress.TournamentDto.Players.ToList();
-            WinnableBonus = tournamentInProgress.WinnableBonus;
+            return Data;
         }
 
-        public TournamentInProgressViewModel GetViewModel()
+        public void Store(TournamentInProgressDto tournamentInProgress)
         {
-            return new TournamentInProgressViewModel
+            if (Data != null)
             {
-                TournamentId = TournamentId,
-                Season = Season,
-                StartDate = StartDate,
-                PlayingPlayers = PlayingPlayers.Select(pla => new PlayerPlayingViewModel(pla)),
-                WinnableBonus = WinnableBonus
-            };
+                string errorMsg = TournamentErrorMessageResources.TOURNAMENT_IN_PROGRESS_ALREADY_STORED;
+                throw new FunctionalException(errorMsg, string.Format(RouteResources.MAIN_ERROR, errorMsg));
+            }
+
+            Data = tournamentInProgress;
         }
     }
 }

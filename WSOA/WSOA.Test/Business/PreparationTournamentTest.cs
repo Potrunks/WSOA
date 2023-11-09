@@ -29,7 +29,7 @@ namespace WSOA.Test.Business
         [TestInitialize]
         public void Init()
         {
-            _currentUser = CreateUser(1);
+            _currentUser = CreateUser(1, 1);
             _sessionMock = CreateISessionMock(_currentUser.ProfileCode, _currentUser.Id);
 
             _presentPlayers = CreatePlayerDtos(1).ToList();
@@ -37,7 +37,7 @@ namespace WSOA.Test.Business
             _playerRepositoryMock.Setup(m => m.GetPlayersByTournamentIdAndPresenceStateCode(It.IsAny<int>(), It.IsAny<string>()))
                                  .Returns(_presentPlayers);
 
-            _availableUsers = new List<User> { CreateUser(2) };
+            _availableUsers = new List<User> { CreateUser(2, 2) };
             _userRepositoryMock = CreateIUserRepositoryMock();
             _userRepositoryMock.Setup(m => m.GetAllUsers(null))
                                .Returns(_availableUsers);

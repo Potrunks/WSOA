@@ -40,9 +40,9 @@ namespace WSOA.Test.Business
         [TestInitialize]
         public void Init()
         {
-            _tournamentTargeted = SaveTournament(1);
+            _tournamentTargeted = SaveTournament();
             _selectedUsrs = SaveUsers(3);
-            _usrProcessor = SaveUser();
+            _usrProcessor = SaveUser(0);
             _playersIntoTargetedTournament = SavePlayers(_selectedUsrs.Select(usr => usr.Id), _tournamentTargeted.Id, PresenceStateResources.ABSENT_CODE);
             _tournamentPreparedDto = CreateTournamentPreparedDto(_tournamentTargeted.Id, _selectedUsrs.Select(usr => usr.Id));
             SaveBusinessAction(ProfileResources.ORGANIZER_CODE, "EXEC_TOURNAMENT_FOR_TEST");
@@ -98,7 +98,7 @@ namespace WSOA.Test.Business
         [TestMethod]
         public void ShouldCreateNewSelectedPlayer_WhenNotAlreadySignUpInTournamentInPreparation()
         {
-            User newSelectedUsrNotSignUp = SaveUser();
+            User newSelectedUsrNotSignUp = SaveUser(0);
             _selectedUsrs.Add(newSelectedUsrNotSignUp);
             _tournamentPreparedDto = CreateTournamentPreparedDto(_tournamentTargeted.Id, _selectedUsrs.Select(usr => usr.Id));
 
@@ -129,7 +129,7 @@ namespace WSOA.Test.Business
         [TestMethod]
         public void ShouldDeletePlayer_WhenNotSelected()
         {
-            User usrNotSelected = SaveUser();
+            User usrNotSelected = SaveUser(0);
             Player playerNotSelected = SavePlayer(_tournamentTargeted.Id, usrNotSelected.Id, PresenceStateResources.PRESENT_CODE);
             _playersIntoTargetedTournament.Add(playerNotSelected);
 

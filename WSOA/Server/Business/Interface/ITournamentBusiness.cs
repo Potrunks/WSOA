@@ -35,5 +35,10 @@ namespace WSOA.Server.Business.Interface
         /// Save the tournament prepared and declare it as in progress.
         /// </summary>
         APICallResultBase SaveTournamentPrepared(TournamentPreparedDto tournamentPrepared, ISession session);
+
+        /// <summary>
+        /// Load tournament in progress.
+        /// </summary>
+        APICallResult<TournamentInProgressDto> LoadTournamentInProgress(int subSectionId, ISession session);
     }
 }

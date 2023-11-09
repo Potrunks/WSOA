@@ -65,5 +65,21 @@ namespace WSOA.Server.Data.Implementation
             _dbContext.Players.RemoveRange(players);
             _dbContext.SaveChanges();
         }
+
+        public IDictionary<int, IEnumerable<BonusTournamentEarned>> GetBonusTournamentEarnedsByPlayerIds(IEnumerable<int> playerIds)
+        {
+            return (
+                        from bte in _dbContext.BonusTournamentEarneds
+                        where playerIds.Contains(bte.PlayerId)
+                        select bte
+                    )
+                    .GroupBy(bte => bte.PlayerId)
+                    .Select(g => new
+                    {
+                        PlayerId = g.Key,
+                        BonusTournamentEarneds = g.Select(bte => bte)
+                    })
+                    .ToDictionary(sel => sel.PlayerId, sel => sel.BonusTournamentEarneds);
+        }
     }
 }

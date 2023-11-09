@@ -1,0 +1,60 @@
+﻿.c-tournamentInProgress__container-main {
+    display: grid;
+    grid-template-columns: 49% 2% 49%;
+    grid-template-rows: 75% 1% 25%;
+    width: 100%;
+    height: 100%;
+    padding: 8px 8px 5px 8px;
+}
+
+.c-tournamentInProgress__container-info,
+.c-tournamentInProgress__container-players,
+.c-tournamentInProgress__container-timer {
+    background-color: #EDE8DF;
+    border-radius: 5px;
+}
+
+.c-tournamentInProgress__container-info {
+    grid-column-start: 1;
+    grid-column-end: 2;
+    grid-row-start: 1;
+    grid-row-end: 2;
+}
+
+.c-tournamentInProgress__container-players {
+    grid-column-start: 3;
+    grid-column-end: 4;
+    grid-row-start: 1;
+    grid-row-end: 2;
+    display: grid;
+    grid-template-columns: 70% 30%;
+    grid-template-rows: 5% 95%;
+}
+
+.c-tournamentInProgress__container-timer {
+    grid-column-start: 1;
+    grid-column-end: 4;
+    grid-row-start: 3;
+    grid-row-end: 4;
+}
+
+.c-players__heading-title {
+    grid-column-start: 1;
+    grid-column-end: 2;
+    grid-row-start: 1;
+    grid-row-end: 2;
+}
+
+.c-players__heading-counter {
+    grid-column-start: 2;
+    grid-column-end: 3;
+    grid-row-start: 1;
+    grid-row-end: 2;
+}
+
+.c-players__container-main {
+    grid-column-start: 1;
+    grid-column-end: 3;
+    grid-row-start: 2;
+    grid-row-end: 3;
+}

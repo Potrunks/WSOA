@@ -1,6 +1,23 @@
 ﻿@page "/tournament/inProgress/{SubSectionId:int}"
 @using WSOA.Client.Pages.Tournament.Components;
+@using WSOA.Client.Shared.Loaders
 @inherits TournamentInProgressComponent
 
-<h3>@CurrentTime</h3>
-<button type="button" onclick="@(() => OnActivateTimer.InvokeAsync())">Activate Timer</button>
+@if (IsLoading)
+{
+    <CardCoinLoader />
+}
+else
+{
+    <div class="c-tournamentInProgress__container-main">
+        <div class="c-tournamentInProgress__container-info">
+        </div>
+        <div class="c-tournamentInProgress__container-players">
+            <div class="c-players__heading-title">Joueurs</div>
+            <div class="c-players__heading-counter">8 / 9</div>
+            <div class="c-players__container-main"></div>
+        </div>
+        <div class="c-tournamentInProgress__container-timer">
+        </div>
+    </div>
+}

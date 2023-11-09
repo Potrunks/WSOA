@@ -78,5 +78,12 @@ namespace WSOA.Server.Controllers
         {
             return _tournamentBusiness.SaveTournamentPrepared(tournamentPrepared, HttpContext.Session);
         }
+
+        [HttpGet]
+        [Route("api/tournament/inProgress/load/{subSectionId}")]
+        public APICallResult<TournamentInProgressDto> LoadTournamentInProgress(int subSectionId)
+        {
+            return _tournamentBusiness.LoadTournamentInProgress(subSectionId, HttpContext.Session);
+        }
     }
 }

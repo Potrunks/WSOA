@@ -2,6 +2,7 @@
 using WSOA.Client.Shared.Resources;
 using WSOA.Client.Utils;
 using WSOA.Shared.Dtos;
+using WSOA.Shared.Resources;
 using WSOA.Shared.Result;
 using WSOA.Shared.ViewModel;
 
@@ -50,6 +51,12 @@ namespace WSOA.Client.Services.Implementation
         {
             HttpResponseMessage response = await _httpClient.PostAsync(ApiRouteResources.PLAY_TOURNAMENT_PREPARED, tournamentPrepared.ToJsonUtf8());
             return response.Content.ToObject<APICallResultBase>();
+        }
+
+        public async Task<APICallResult<TournamentInProgressDto>> LoadTournamentInProgress(int subSectionId)
+        {
+            HttpResponseMessage response = await _httpClient.GetAsync(string.Format(RouteResources.LOAD_TOURNAMENT_IN_PROGRESS, subSectionId));
+            return response.Content.ToObject<APICallResult<TournamentInProgressDto>>();
         }
     }
 }

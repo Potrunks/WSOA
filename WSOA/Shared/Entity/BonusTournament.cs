@@ -13,5 +13,8 @@ namespace WSOA.Shared.Entity
 
         [Required]
         public int PointAmount { get; set; }
+
+        [Required]
+        public string LogoPath { get; set; }
     }
 }

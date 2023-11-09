@@ -1,5 +1,4 @@
-﻿using System.ComponentModel;
-using System.ComponentModel.DataAnnotations;
+﻿using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
 namespace WSOA.Shared.Entity
@@ -24,10 +23,6 @@ namespace WSOA.Shared.Entity
 
         public int? CurrentTournamentPosition { get; set; }
 
-        [ForeignKey(nameof(EliminatorPlayer))]
-        public int? EliminatorPlayerId { get; set; }
-        public Player EliminatorPlayer { get; set; }
-
         public int? TotalReBuy { get; set; }
 
         public int? TotalAddOn { get; set; }
@@ -37,9 +32,9 @@ namespace WSOA.Shared.Entity
         public string PresenceStateCode { get; set; }
         public PresenceState PresenceState { get; set; }
 
-        [Required]
-        [DefaultValue(false)]
-        public bool WasFinalTable { get; set; }
+        public bool? WasFinalTable { get; set; }
+
+        public bool? WasAddOn { get; set; }
 
         public int? TotalWinningsAmount { get; set; }
 

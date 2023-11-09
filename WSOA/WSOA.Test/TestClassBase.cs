@@ -199,24 +199,31 @@ namespace WSOA.Test
             };
         }
 
-        public User CreateUser(int id)
+        public User CreateUser(int usrId, int accountId)
         {
             return new User
             {
-                Id = id,
-                AccountId = id,
-                Email = $"test{id}@test.com",
-                FirstName = $"firstName{id}",
-                LastName = $"lastName{id}",
+                Id = usrId,
+                AccountId = accountId,
+                Email = $"test{usrId}@test.com",
+                FirstName = $"firstName{usrId}",
+                LastName = $"lastName{usrId}",
                 ProfileCode = ProfileResources.PLAYER_CODE
             };
         }
 
-        public User SaveUser()
+        public User SaveUser(int accountId)
         {
-            User usr = CreateUser(0);
+            User usr = CreateUser(0, accountId);
             _dbContext.Add(usr);
             _dbContext.SaveChanges();
+            return usr;
+        }
+
+        public User SaveUser(string login, string pwd)
+        {
+            Account account = SaveAccount(login, pwd);
+            User usr = SaveUser(account.Id);
             return usr;
         }
 
@@ -225,7 +232,7 @@ namespace WSOA.Test
             List<User> users = new List<User>();
             for (int i = 1; i <= number; i++)
             {
-                users.Add(CreateUser(i));
+                users.Add(CreateUser(i, i));
             }
             return users;
         }
@@ -235,7 +242,7 @@ namespace WSOA.Test
             List<User> users = new List<User>();
             for (int i = 1; i <= number; i++)
             {
-                User user = CreateUser(i);
+                User user = CreateUser(i, i);
                 user.Id = 0;
                 users.Add(user);
             }
@@ -276,24 +283,49 @@ namespace WSOA.Test
             };
         }
 
-        public Tournament CreateTournament(int id)
+        public MainNavSubSection SaveMainNavSubSection(string profileCode)
+        {
+            MainNavSubSection mainNavSubSection = new MainNavSubSection
+            {
+                Description = "Test",
+                Label = "Test",
+                MainNavSectionId = 0,
+                Order = 0,
+                Url = "Test"
+            };
+
+            _dbContext.MainNavSubSections.Add(mainNavSubSection);
+            _dbContext.SaveChanges();
+
+            MainNavSubSectionByProfileCode mainNavSubSectionByProfileCode = new MainNavSubSectionByProfileCode
+            {
+                MainNavSubSectionId = mainNavSubSection.Id,
+                ProfileCode = profileCode
+            };
+
+            _dbContext.MainNavSubSectionsByProfileCode.Add(mainNavSubSectionByProfileCode);
+            _dbContext.SaveChanges();
+
+            return mainNavSubSection;
+        }
+
+        public Tournament CreateTournament(int id, bool isInProgress = false, string season = "Season Test", DateTime? startDate = null, bool isOver = false)
         {
             return new Tournament
             {
                 Id = id,
                 AddressId = id,
                 BuyIn = 1,
-                IsInProgress = false,
-                IsOver = false,
-                Season = "Season " + id.ToString(),
-                StartDate = DateTime.UtcNow.AddDays(1)
+                IsInProgress = isInProgress,
+                IsOver = isOver,
+                Season = season,
+                StartDate = startDate == null ? DateTime.UtcNow.AddDays(1) : startDate.Value
             };
         }
 
-        public Tournament SaveTournament(int id)
+        public Tournament SaveTournament(bool isInProgress = false, string season = "Season Test", DateTime? startDate = null, bool isOver = false)
         {
-            Tournament tournament = CreateTournament(id);
-            tournament.Id = 0;
+            Tournament tournament = CreateTournament(0, isInProgress: isInProgress, season: season, startDate: startDate, isOver: isOver);
             _dbContext.Tournaments.Add(tournament);
             _dbContext.SaveChanges();
             return tournament;
@@ -338,20 +370,63 @@ namespace WSOA.Test
             return player;
         }
 
-        public List<Player> SavePlayers(IEnumerable<int> usrIds, int tournamentId, string presenceStateCode)
+        public List<Player> SavePlayers(IEnumerable<int> usrIds, int tournamentId, string presenceStateCode, bool tournamentIsOver = false)
         {
             List<Player> players = new List<Player>();
+            int tournamentPositionToUse = 1;
+            int pointsToUse = 1000;
+
             foreach (int usrId in usrIds)
             {
                 Player player = new Player();
                 player.UserId = usrId;
                 player.PlayedTournamentId = tournamentId;
                 player.PresenceStateCode = presenceStateCode;
+                if (tournamentIsOver)
+                {
+                    player.CurrentTournamentPosition = tournamentPositionToUse;
+                    player.TotalWinningsPoint = pointsToUse;
+                    tournamentPositionToUse++;
+                    pointsToUse -= 10;
+                }
                 players.Add(player);
             }
+
             _dbContext.Players.AddRange(players);
             _dbContext.SaveChanges();
             return players;
+        }
+
+        public List<Player> SavePlayers(int tournamentId, string presenceStateCode, int playersQuantity, bool tournamentIsOver = false)
+        {
+            List<Account> accounts = new List<Account>();
+            for (int i = 0; i < playersQuantity; i++)
+            {
+                Account account = SaveAccount($"Login{i}", $"Pwd{i}");
+                accounts.Add(account);
+            }
+
+            List<User> users = new List<User>();
+            foreach (Account accountCreated in accounts)
+            {
+                User user = SaveUser(accountCreated.Id);
+                users.Add(user);
+            }
+
+            return SavePlayers(users.Select(usr => usr.Id), tournamentId, presenceStateCode, tournamentIsOver: tournamentIsOver);
+        }
+
+        public Account SaveAccount(string login, string pwd)
+        {
+            Account account = new Account
+            {
+                Login = login,
+                Password = pwd
+            };
+
+            _dbContext.Accounts.Add(account);
+            _dbContext.SaveChanges();
+            return account;
         }
 
         public PlayerDto CreatePlayerDto(int id)
@@ -359,7 +434,7 @@ namespace WSOA.Test
             return new PlayerDto
             {
                 Player = CreatePlayer(id),
-                User = CreateUser(id)
+                User = CreateUser(id, id)
             };
         }
 
@@ -419,13 +494,38 @@ namespace WSOA.Test
                 {
                     Code = $"Code{i}",
                     Label = "Label",
-                    PointAmount = i
+                    PointAmount = i,
+                    LogoPath = $"/je/suis/range/la/{i}"
                 };
                 bonusTournaments.Add(bonusTournament);
             }
             _dbContext.BonusTournaments.AddRange(bonusTournaments);
             _dbContext.SaveChanges();
             return bonusTournaments;
+        }
+
+        public List<BonusTournamentEarned> SaveBonusTournamentEarneds(IEnumerable<int> playerIds, IEnumerable<BonusTournament> bonusTournamentEarneds)
+        {
+            List<BonusTournamentEarned> createdBonusTournamentEarneds = new List<BonusTournamentEarned>();
+
+            foreach (int playerId in playerIds)
+            {
+                foreach (BonusTournament bonus in bonusTournamentEarneds)
+                {
+                    BonusTournamentEarned bonusEarned = new BonusTournamentEarned
+                    {
+                        BonusTournamentCode = bonus.Code,
+                        Occurrence = 1,
+                        PlayerId = playerId,
+                        PointAmount = 1
+                    };
+                    createdBonusTournamentEarneds.Add(bonusEarned);
+                }
+            }
+
+            _dbContext.BonusTournamentEarneds.AddRange(createdBonusTournamentEarneds);
+            _dbContext.SaveChanges();
+            return createdBonusTournamentEarneds;
         }
 
         public void VerifyTransactionManagerCommit(Mock<ITransactionManager> transactionManagerMock)

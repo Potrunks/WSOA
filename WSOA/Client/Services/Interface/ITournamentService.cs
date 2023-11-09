@@ -35,5 +35,10 @@ namespace WSOA.Client.Services.Interface
         /// Save selected tournament and execute it.
         /// </summary>
         Task<APICallResultBase> SaveTournamentPrepared(TournamentPreparedDto tournamentPrepared);
+
+        /// <summary>
+        /// Load tournament in progress.
+        /// </summary>
+        Task<APICallResult<TournamentInProgressDto>> LoadTournamentInProgress(int subSectionId);
     }
 }

@@ -38,5 +38,15 @@ namespace WSOA.Server.Data.Interface
         /// Check if exists business action with profile code wanted.
         /// </summary>
         bool ExistsBusinessActionByProfileCode(string profileCode, string businessActionCode);
+
+        /// <summary>
+        /// Get user win tournament given.
+        /// </summary>
+        User GetUserWinnerByTournamentId(int tournamentId);
+
+        /// <summary>
+        /// Get the actual first user in the season given.
+        /// </summary>
+        User GetFirstRankUserBySeasonCode(string seasonCode);
     }
 }

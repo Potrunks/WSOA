@@ -1,4 +1,5 @@
 ﻿using log4net;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using WSOA.Server.Business.Interface;
 using WSOA.Server.Business.Resources;
@@ -320,6 +321,61 @@ namespace WSOA.Server.Business.Implementation
                 string errorMsg = MainBusinessResources.TECHNICAL_ERROR;
                 _log.Error(e.Message);
                 return new APICallResultBase(errorMsg, string.Format(RouteBusinessResources.MAIN_ERROR, errorMsg));
+            }
+
+            return result;
+        }
+
+        public APICallResult<TournamentInProgressDto> LoadTournamentInProgress(int subSectionId, ISession session)
+        {
+            APICallResult<TournamentInProgressDto> result = new APICallResult<TournamentInProgressDto>(false);
+
+            try
+            {
+                session.CanUserPerformAction(_menuRepository, subSectionId);
+
+                Tournament? tournamentInProgress = _tournamentRepository.GetTournamentInProgress();
+                if (tournamentInProgress == null)
+                {
+                    string errorMsg = TournamentErrorMessageResources.NO_TOURNAMENT_IN_PROGRESS;
+                    throw new FunctionalException(errorMsg, string.Format(RouteResources.MAIN_ERROR, errorMsg));
+                }
+
+                IEnumerable<PlayerDto> presentPlayers = _playerRepository.GetPlayersByTournamentIdAndPresenceStateCode(tournamentInProgress.Id, PresenceStateResources.PRESENT_CODE);
+                if (!presentPlayers.Any())
+                {
+                    string errorMsg = TournamentErrorMessageResources.NO_PLAYERS_PRESENT;
+                    throw new FunctionalException(errorMsg, string.Format(RouteResources.MAIN_ERROR, errorMsg));
+                }
+
+                IDictionary<string, BonusTournament> winnableBonusByCode = _bonusTournamentRepository.GetAll().ToDictionary(bonus => bonus.Code);
+                IDictionary<int, IEnumerable<BonusTournamentEarned>> bonusEarnedsByPlayerId = _playerRepository.GetBonusTournamentEarnedsByPlayerIds(presentPlayers.Select(pla => pla.Player.Id));
+
+                User? lastWinner = null;
+                User? firstRankUser = null;
+                int tournamentNb = _tournamentRepository.GetTournamentNumber(tournamentInProgress);
+                if (tournamentNb > 1)
+                {
+                    Tournament tournamentPrevious = _tournamentRepository.GetPreviousTournament(tournamentInProgress);
+                    lastWinner = _userRepository.GetUserWinnerByTournamentId(tournamentPrevious.Id);
+                    firstRankUser = _userRepository.GetFirstRankUserBySeasonCode(tournamentInProgress.Season);
+                }
+
+                result.Data = new TournamentInProgressDto(tournamentInProgress, presentPlayers, winnableBonusByCode, bonusEarnedsByPlayerId, tournamentNb, lastWinner, firstRankUser);
+
+                result.Success = true;
+            }
+            catch (FunctionalException e)
+            {
+                string errorMsg = e.Message;
+                _log.Error(errorMsg);
+                return new APICallResult<TournamentInProgressDto>(errorMsg, e.RedirectUrl);
+            }
+            catch (Exception e)
+            {
+                string errorMsg = MainBusinessResources.TECHNICAL_ERROR;
+                _log.Error(e.Message);
+                return new APICallResult<TournamentInProgressDto>(errorMsg, string.Format(RouteBusinessResources.MAIN_ERROR, errorMsg));
             }
 
             return result;
