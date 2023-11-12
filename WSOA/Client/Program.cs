@@ -3,7 +3,7 @@ using Microsoft.AspNetCore.Components.WebAssembly.Hosting;
 using WSOA.Client;
 using WSOA.Client.Services.Implementation;
 using WSOA.Client.Services.Interface;
-using WSOA.Shared.Stores;
+using WSOA.Client.Shared.Stores;
 
 var builder = WebAssemblyHostBuilder.CreateDefault(args);
 builder.RootComponents.Add<App>("#app");

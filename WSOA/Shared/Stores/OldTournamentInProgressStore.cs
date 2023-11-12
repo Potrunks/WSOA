@@ -6,9 +6,9 @@ using Timer = System.Timers.Timer;
 
 namespace WSOA.Shared.Stores
 {
-    public class TournamentInProgressStore
+    public class OldTournamentInProgressStore
     {
-        public TournamentInProgressStore()
+        public OldTournamentInProgressStore()
         {
 
         }

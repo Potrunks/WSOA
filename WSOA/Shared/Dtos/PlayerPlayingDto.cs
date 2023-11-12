@@ -4,6 +4,11 @@ namespace WSOA.Shared.Dtos
 {
     public class PlayerPlayingDto
     {
+        public PlayerPlayingDto()
+        {
+
+        }
+
         public PlayerPlayingDto
         (
             PlayerDto playerDto,

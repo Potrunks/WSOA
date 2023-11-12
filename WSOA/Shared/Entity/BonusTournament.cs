@@ -4,6 +4,11 @@ namespace WSOA.Shared.Entity
 {
     public class BonusTournament
     {
+        public BonusTournament()
+        {
+
+        }
+
         [Key]
         [Required]
         public string Code { get; set; }

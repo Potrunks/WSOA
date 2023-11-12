@@ -4,6 +4,11 @@ namespace WSOA.Shared.Dtos
 {
     public class TournamentInProgressDto
     {
+        public TournamentInProgressDto()
+        {
+
+        }
+
         public TournamentInProgressDto
         (
             Tournament tournament,

@@ -57,4 +57,67 @@
     grid-column-end: 3;
     grid-row-start: 2;
     grid-row-end: 3;
+    overflow: auto;
+}
+
+.c-player__container-main {
+    display: grid;
+    grid-template-columns: 70% 15% 15%;
+    align-items: center;
+    grid-template-rows: 25px 25px;
+}
+
+    .c-player__container-main.extended {
+        grid-template-rows: 25px 25px auto;
+    }
+
+.c-player__firstName {
+    grid-column-start: 1;
+    grid-column-end: 2;
+    grid-row-start: 1;
+    grid-row-end: 2;
+}
+
+.c-player__lastName {
+    grid-column-start: 1;
+    grid-column-end: 2;
+    grid-row-start: 2;
+    grid-row-end: 3;
+}
+
+.c-player__totalReBuy {
+    grid-column-start: 2;
+    grid-column-end: 3;
+    grid-row-start: 1;
+    grid-row-end: 3;
+    width: 100%;
+    height: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.c-player__totalAddOn {
+    grid-column-start: 3;
+    grid-column-end: 4;
+    grid-row-start: 1;
+    grid-row-end: 3;
+    width: 100%;
+    height: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.c-player__bonusEarneds {
+    grid-column-start: 1;
+    grid-column-end: 4;
+    grid-row-start: 3;
+    grid-row-end: 4;
+    width: 100%;
+    height: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-wrap: wrap;
 }

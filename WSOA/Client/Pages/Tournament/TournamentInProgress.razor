@@ -1,6 +1,8 @@
 ﻿@page "/tournament/inProgress/{SubSectionId:int}"
 @using WSOA.Client.Pages.Tournament.Components;
+@using WSOA.Client.Shared.Counters
 @using WSOA.Client.Shared.Loaders
+@using WSOA.Shared.ViewModel;
 @inherits TournamentInProgressComponent
 
 @if (IsLoading)
@@ -10,14 +12,46 @@
 else
 {
     <div class="c-tournamentInProgress__container-main">
-        <div class="c-tournamentInProgress__container-info">
-        </div>
+        <div class="c-tournamentInProgress__container-info"></div>
         <div class="c-tournamentInProgress__container-players">
             <div class="c-players__heading-title">Joueurs</div>
-            <div class="c-players__heading-counter">8 / 9</div>
-            <div class="c-players__container-main"></div>
+            <div class="c-players__heading-counter">@($"{PlayerPlayingsViewModel.Where(pla => !pla.IsEliminated).Count()} / {PlayerPlayingsViewModel.Count()}")</div>
+            <div class="c-players__container-main">
+                @foreach (PlayerPlayingViewModel player in PlayerPlayingsViewModel)
+                {
+                    <div class="c-player__container-main @(player.HasBonusEarned ? "extended" : "")">
+                        <div class="c-player__firstName">@player.FirstName</div>
+                        <div class="c-player__lastName">@player.LastName</div>
+                        <div class="c-player__totalReBuy">
+                            <CascadingValue Value="@player.TotalRebuy" Name="LogoBadgeCounterValue">
+                                <LogoBadgeCounter
+                                    LogoPath="images/reload.png"
+                                    LogoPixelSize="20"/>
+                            </CascadingValue>
+                        </div>
+                        <div class="c-player__totalAddOn">
+                            <CascadingValue Value="@player.TotalAddOn" Name="LogoBadgeCounterValue">
+                                <LogoBadgeCounter
+                                    LogoPath="images/plus.png"
+                                    LogoPixelSize="20"/>
+                            </CascadingValue>
+                        </div>
+                        @if (player.HasBonusEarned)
+                        {
+                            <div class="c-player__bonusEarneds">
+                                @foreach (KeyValuePair<string, int> kvp in player.EarnedBonusLogoPathsWithOccurrences)
+                                {
+                                    <CascadingValue Value="@kvp.Value" Name="LogoBadgeCounterValue">
+                                        <LogoBadgeCounter LogoPath="@kvp.Key"
+                                          LogoPixelSize="20" />
+                                    </CascadingValue>
+                                }
+                            </div>
+                        }
+                    </div>
+                }
+            </div>
         </div>
-        <div class="c-tournamentInProgress__container-timer">
-        </div>
+        <div class="c-tournamentInProgress__container-timer"></div>
     </div>
 }

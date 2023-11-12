@@ -1,5 +1,4 @@
 ﻿using Microsoft.AspNetCore.Components;
-using Microsoft.JSInterop;
 using WSOA.Client.Services.Interface;
 using WSOA.Client.Shared.Components;
 using WSOA.Client.Shared.EventHandlers;
@@ -7,7 +6,6 @@ using WSOA.Client.Shared.Resources;
 using WSOA.Shared.Dtos;
 using WSOA.Shared.Resources;
 using WSOA.Shared.Result;
-using WSOA.Shared.Stores;
 using WSOA.Shared.ViewModel;
 
 namespace WSOA.Client.Pages.Tournament.Components
@@ -19,12 +17,6 @@ namespace WSOA.Client.Pages.Tournament.Components
 
         [Inject]
         public NavigationManager NavigationManager { get; set; }
-
-        [Inject]
-        public IJSRuntime JSRuntime { get; set; }
-
-        [Inject]
-        public TournamentInProgressStore TournamentInProgressStore { get; set; }
 
         [CascadingParameter(Name = "PopupEventHandler")]
         [EditorRequired]
