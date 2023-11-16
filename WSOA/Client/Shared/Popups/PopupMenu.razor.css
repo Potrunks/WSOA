@@ -1,0 +1,63 @@
+﻿.c-popupMenu__mainContainer {
+    position: absolute;
+    z-index: 99;
+    height: 100%;
+    width: 100%;
+}
+
+.c-popupMenu__emptyZone {
+    height: 100%;
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.c-popupMenu__container {
+    width: 75%;
+    display: flex;
+    flex-direction: column;
+    justify-content: start;
+    align-items: center;
+    background: #EDE8DF;
+    box-shadow: 12px 12px 2px 1px rgba(0, 0, 0, 0.15);
+    border-radius: 10px;
+}
+
+.c-popupMenu__title {
+    width: 100%;
+    font-size: 20px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-decoration: underline;
+    text-underline-offset: 7px;
+    text-decoration-color: red;
+    text-decoration-thickness: 2px;
+    padding: 5px;
+}
+
+.c-popupMenu__actions {
+    width: 100%;
+    overflow: auto;
+    padding: 5px;
+    max-height: 300px;
+    flex-direction: column;
+}
+
+    .c-popupMenu__actions ::deep .mainButton {
+        width: 100%;
+        height: 40px;
+    }
+
+.c-popupMenu__panelButtons {
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 5px;
+}
+
+    .c-popupMenu__panelButtons ::deep .mainButton {
+        width: 100%;
+    }

@@ -17,5 +17,9 @@ namespace WSOA.Client.Shared.EventHandlers
         public Action? OnValid { get; set; }
 
         public EventCallback<IEnumerable<int>>? OnValidSelectedItemIds { get; set; }
+
+        public IEnumerable<PopupButtonViewModel>? Buttons { get; set; }
+
+        public int? ConcernedItemId { get; set; }
     }
 }

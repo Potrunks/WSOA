@@ -1,4 +1,6 @@
-﻿namespace WSOA.Shared.ViewModel
+﻿using WSOA.Shared.Utils;
+
+namespace WSOA.Shared.ViewModel
 {
     public class ItemSelectableViewModel
     {
@@ -7,7 +9,13 @@
         public ItemSelectableViewModel(PlayerViewModel player)
         {
             Id = player.UserId;
-            Label = $"{char.ToUpper(player.FirstName[0]) + player.FirstName.Substring(1)} {char.ToUpper(player.LastName[0])}.";
+            Label = StringFormatUtil.ToFullFirstNameAndFirstLetterLastName(player.FirstName, player.LastName);
+        }
+
+        public ItemSelectableViewModel(PlayerPlayingViewModel player)
+        {
+            Id = player.Id;
+            Label = StringFormatUtil.ToFullFirstNameAndFirstLetterLastName(player.FirstName, player.LastName);
         }
 
         public int Id { get; set; }

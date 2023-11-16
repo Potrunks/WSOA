@@ -1,0 +1,33 @@
+﻿@using WSOA.Client.Shared.Buttons.Main
+@using WSOA.Client.Shared.Buttons.Resources;
+@using WSOA.Client.Shared.Popups.Components;
+@using WSOA.Shared.ViewModel;
+@inherits PopupMenuComponent
+
+@if (IsDisplay)
+{
+    <div class="c-popupMenu__mainContainer">
+        <div class="c-popupMenu__emptyZone">
+            <div class="c-popupMenu__container">
+                <div class="c-popupMenu__title">@Title</div>
+                <div class="c-popupMenu__actions">
+                    @foreach (PopupButtonViewModel button in Buttons)
+                    {
+                        <MainButton
+                            IsPrimary="true"
+                            Label="@button.Label"
+                            Type="button"
+                            OnClick="() => ExecutePopupAction.InvokeAsync(button.Action)"/>
+                    }
+                </div>
+                <div class="c-popupMenu__panelButtons">
+                    <MainButton
+                        IsPrimary="true"
+                        Label="@ButtonLabelResources.CLOSE"
+                        Type="button"
+                        OnClick="() => ClosePopup.InvokeAsync()"/>
+                </div>
+            </div>
+        </div>
+    </div>
+}

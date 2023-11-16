@@ -50,7 +50,7 @@ namespace WSOA.Shared.Stores
         {
             if (Data != null)
             {
-                string errorMsg = TournamentErrorMessageResources.TOURNAMENT_IN_PROGRESS_ALREADY_STORED;
+                string errorMsg = TournamentMessageResources.TOURNAMENT_IN_PROGRESS_ALREADY_STORED;
                 throw new FunctionalException(errorMsg, string.Format(RouteResources.MAIN_ERROR, errorMsg));
             }
 

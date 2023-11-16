@@ -226,7 +226,7 @@ namespace WSOA.Test.Business
 
             APICallResultBase result = ExecutePlayTournamentPreparedMethod();
 
-            string expectedErrorMsg = TournamentErrorMessageResources.TOURNAMENT_NO_PLAYER_SELECTED;
+            string expectedErrorMsg = TournamentMessageResources.TOURNAMENT_NO_PLAYER_SELECTED;
             VerifyAPICallResultError(result, string.Format(RouteBusinessResources.MAIN_ERROR, expectedErrorMsg), expectedErrorMsg);
             VerifyTransactionManagerRollback(_transactionManagerMock);
         }

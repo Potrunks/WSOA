@@ -261,7 +261,7 @@ namespace WSOA.Server.Business.Implementation
 
                 if (!tournamentPrepared.SelectedUserIds.Any())
                 {
-                    string errorMsg = TournamentErrorMessageResources.TOURNAMENT_NO_PLAYER_SELECTED;
+                    string errorMsg = TournamentMessageResources.TOURNAMENT_NO_PLAYER_SELECTED;
                     throw new FunctionalException(errorMsg, string.Format(RouteBusinessResources.MAIN_ERROR, errorMsg));
                 }
 
@@ -337,14 +337,14 @@ namespace WSOA.Server.Business.Implementation
                 Tournament? tournamentInProgress = _tournamentRepository.GetTournamentInProgress();
                 if (tournamentInProgress == null)
                 {
-                    string errorMsg = TournamentErrorMessageResources.NO_TOURNAMENT_IN_PROGRESS;
+                    string errorMsg = TournamentMessageResources.NO_TOURNAMENT_IN_PROGRESS;
                     throw new FunctionalException(errorMsg, string.Format(RouteResources.MAIN_ERROR, errorMsg));
                 }
 
                 IEnumerable<PlayerDto> presentPlayers = _playerRepository.GetPlayersByTournamentIdAndPresenceStateCode(tournamentInProgress.Id, PresenceStateResources.PRESENT_CODE);
                 if (!presentPlayers.Any())
                 {
-                    string errorMsg = TournamentErrorMessageResources.NO_PLAYERS_PRESENT;
+                    string errorMsg = TournamentMessageResources.NO_PLAYERS_PRESENT;
                     throw new FunctionalException(errorMsg, string.Format(RouteResources.MAIN_ERROR, errorMsg));
                 }
 

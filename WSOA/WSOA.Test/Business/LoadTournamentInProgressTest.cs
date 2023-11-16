@@ -131,7 +131,7 @@ namespace WSOA.Test.Business
 
             APICallResult<TournamentInProgressDto> result = ExecuteLoadTournamentInProgress();
 
-            string expectedErrorMsg = TournamentErrorMessageResources.NO_TOURNAMENT_IN_PROGRESS;
+            string expectedErrorMsg = TournamentMessageResources.NO_TOURNAMENT_IN_PROGRESS;
             VerifyAPICallResultError(result, string.Format(RouteResources.MAIN_ERROR, expectedErrorMsg), expectedErrorMsg);
         }
 
@@ -146,7 +146,7 @@ namespace WSOA.Test.Business
 
             APICallResult<TournamentInProgressDto> result = ExecuteLoadTournamentInProgress();
 
-            string expectedErrorMsg = TournamentErrorMessageResources.NO_PLAYERS_PRESENT;
+            string expectedErrorMsg = TournamentMessageResources.NO_PLAYERS_PRESENT;
             VerifyAPICallResultError(result, string.Format(RouteResources.MAIN_ERROR, expectedErrorMsg), expectedErrorMsg);
         }
 

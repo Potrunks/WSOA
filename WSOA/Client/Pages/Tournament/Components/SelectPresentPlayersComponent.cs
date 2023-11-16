@@ -85,7 +85,7 @@ namespace WSOA.Client.Pages.Tournament.Components
         {
             if (!SelectedPlayers.Any())
             {
-                PopupEventHandler.Open(TournamentErrorMessageResources.TOURNAMENT_NO_PLAYER_SELECTED, true, MainLabelResources.ERROR, null);
+                PopupEventHandler.Open(TournamentMessageResources.TOURNAMENT_NO_PLAYER_SELECTED, true, MainLabelResources.ERROR, null);
                 return;
             }
 
