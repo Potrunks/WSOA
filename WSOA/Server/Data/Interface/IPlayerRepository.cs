@@ -34,5 +34,10 @@ namespace WSOA.Server.Data.Interface
         /// Get bonus tournament earned list by player id.
         /// </summary>
         IDictionary<int, IEnumerable<BonusTournamentEarned>> GetBonusTournamentEarnedsByPlayerIds(IEnumerable<int> playerIds);
+
+        /// <summary>
+        /// Get players by ids.
+        /// </summary>
+        IDictionary<int, Player> GetPlayersByIds(IEnumerable<int> playerIds);
     }
 }

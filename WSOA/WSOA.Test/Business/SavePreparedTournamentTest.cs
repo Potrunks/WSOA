@@ -68,7 +68,8 @@ namespace WSOA.Test.Business
                     _userRepository,
                     null,
                     _playerRepository,
-                    _bonusTournamentRepository
+                    _bonusTournamentRepository,
+                    null
                 );
         }
 
@@ -114,7 +115,8 @@ namespace WSOA.Test.Business
                     _userRepository,
                     null,
                     _playerRepositoryMock.Object,
-                    _bonusTournamentRepository
+                    _bonusTournamentRepository,
+                    null
                 );
 
             APICallResultBase result = ExecutePlayTournamentPreparedMethod();
@@ -145,7 +147,8 @@ namespace WSOA.Test.Business
                     _userRepository,
                     null,
                     _playerRepositoryMock.Object,
-                    _bonusTournamentRepository
+                    _bonusTournamentRepository,
+                    null
                 );
 
             APICallResultBase result = ExecutePlayTournamentPreparedMethod();
@@ -209,7 +212,8 @@ namespace WSOA.Test.Business
                     _userRepository,
                     null,
                     _playerRepository,
-                    _bonusTournamentRepository
+                    _bonusTournamentRepository,
+                    null
                 );
 
             APICallResultBase result = ExecutePlayTournamentPreparedMethod();

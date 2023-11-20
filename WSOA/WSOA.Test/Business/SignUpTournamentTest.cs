@@ -32,7 +32,7 @@ namespace WSOA.Test.Business
         [TestInitialize]
         public void Init()
         {
-            _currentTournament = CreateTournament(1);
+            _currentTournament = CreateTournament(1, 0);
             _formVM = CreateSignUpTournamentFormViewModel(_currentTournament.Id, PresenceStateResources.PRESENT_CODE);
 
             _currentUser = CreateUser(1, 1);
@@ -64,6 +64,7 @@ namespace WSOA.Test.Business
                     _userRepositoryMock.Object,
                     null,
                     _playerRepositoryMock.Object,
+                    null,
                     null
                 );
         }

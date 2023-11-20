@@ -306,6 +306,11 @@ namespace WSOA.Server.Data
                 {
                     Code = "EXEC_TOURNAMENT",
                     Label = "Executer un tournoi"
+                },
+                new BusinessAction
+                {
+                    Code = "ELIM_PLAYER",
+                    Label = "Eliminer un joueur"
                 }
             );
 
@@ -316,6 +321,12 @@ namespace WSOA.Server.Data
                     Id = 1,
                     ProfileCode = "ORGA",
                     BusinessActionCode = "EXEC_TOURNAMENT"
+                },
+                new BusinessActionByProfileCode
+                {
+                    Id = 2,
+                    ProfileCode = "ORGA",
+                    BusinessActionCode = "ELIM_PLAYER"
                 }
             );
         }

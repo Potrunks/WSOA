@@ -162,6 +162,11 @@ namespace WSOA.Test
             return mock;
         }
 
+        public Mock<IEliminationRepository> CreateIEliminationRepositoryMock()
+        {
+            return new Mock<IEliminationRepository>();
+        }
+
         public LinkAccountCreation CreateLinkAccountCreation()
         {
             return new LinkAccountCreation
@@ -224,6 +229,22 @@ namespace WSOA.Test
         {
             Account account = SaveAccount(login, pwd);
             User usr = SaveUser(account.Id);
+            return usr;
+        }
+
+        public User SaveUser(string firstName, string lastName, string login, string pwd, string profileCode)
+        {
+            Account account = SaveAccount(login, pwd);
+            User usr = new User
+            {
+                AccountId = account.Id,
+                FirstName = firstName,
+                LastName = lastName,
+                Email = $"{firstName}.{lastName}@email.com",
+                ProfileCode = profileCode
+            };
+            _dbContext.Users.Add(usr);
+            _dbContext.SaveChanges();
             return usr;
         }
 
@@ -309,13 +330,13 @@ namespace WSOA.Test
             return mainNavSubSection;
         }
 
-        public Tournament CreateTournament(int id, bool isInProgress = false, string season = "Season Test", DateTime? startDate = null, bool isOver = false)
+        public Tournament CreateTournament(int id, int addressId, bool isInProgress = false, string season = "Season Test", DateTime? startDate = null, bool isOver = false)
         {
             return new Tournament
             {
                 Id = id,
-                AddressId = id,
-                BuyIn = 1,
+                AddressId = addressId,
+                BuyIn = 10,
                 IsInProgress = isInProgress,
                 IsOver = isOver,
                 Season = season,
@@ -323,9 +344,21 @@ namespace WSOA.Test
             };
         }
 
+        public Address SaveAddress()
+        {
+            Address address = new Address
+            {
+                Content = "4 Privet Drive"
+            };
+            _dbContext.Addresses.Add(address);
+            _dbContext.SaveChanges();
+            return address;
+        }
+
         public Tournament SaveTournament(bool isInProgress = false, string season = "Season Test", DateTime? startDate = null, bool isOver = false)
         {
-            Tournament tournament = CreateTournament(0, isInProgress: isInProgress, season: season, startDate: startDate, isOver: isOver);
+            Address address = SaveAddress();
+            Tournament tournament = CreateTournament(0, address.Id, isInProgress: isInProgress, season: season, startDate: startDate, isOver: isOver);
             _dbContext.Tournaments.Add(tournament);
             _dbContext.SaveChanges();
             return tournament;
@@ -347,7 +380,7 @@ namespace WSOA.Test
             {
                 Address = CreateAddress(id),
                 Players = CreatePlayerDtos(nbPlayersByTournament),
-                Tournament = CreateTournament(id)
+                Tournament = CreateTournament(id, id)
             };
         }
 
@@ -526,6 +559,19 @@ namespace WSOA.Test
             _dbContext.BonusTournamentEarneds.AddRange(createdBonusTournamentEarneds);
             _dbContext.SaveChanges();
             return createdBonusTournamentEarneds;
+        }
+
+        public Elimination SaveElimination(int eliminatedPlayerId, int eliminatorPlayerId, bool isEliminationDefinitive)
+        {
+            Elimination elimination = new Elimination
+            {
+                IsDefinitive = isEliminationDefinitive,
+                PlayerEliminatorId = eliminatorPlayerId,
+                PlayerVictimId = eliminatedPlayerId
+            };
+            _dbContext.Eliminations.Add(elimination);
+            _dbContext.SaveChanges();
+            return elimination;
         }
 
         public void VerifyTransactionManagerCommit(Mock<ITransactionManager> transactionManagerMock)

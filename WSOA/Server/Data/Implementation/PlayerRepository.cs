@@ -81,5 +81,16 @@ namespace WSOA.Server.Data.Implementation
                     })
                     .ToDictionary(sel => sel.PlayerId, sel => sel.BonusTournamentEarneds);
         }
+
+        public IDictionary<int, Player> GetPlayersByIds(IEnumerable<int> playerIds)
+        {
+            return
+                (
+                    from pla in _dbContext.Players
+                    where playerIds.Contains(pla.Id)
+                    select pla
+                )
+                .ToDictionary(pla => pla.Id);
+        }
     }
 }

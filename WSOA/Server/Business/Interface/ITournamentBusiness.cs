@@ -40,5 +40,10 @@ namespace WSOA.Server.Business.Interface
         /// Load tournament in progress.
         /// </summary>
         APICallResult<TournamentInProgressDto> LoadTournamentInProgress(int subSectionId, ISession session);
+
+        /// <summary>
+        /// Eliminate player definitively if player dont take rebuy.
+        /// </summary>
+        APICallResultBase EliminatePlayer(EliminationDto eliminationDto, ISession session);
     }
 }

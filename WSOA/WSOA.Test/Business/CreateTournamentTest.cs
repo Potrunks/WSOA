@@ -80,6 +80,7 @@ namespace WSOA.Test.Business
                 _userRepositoryMock.Object,
                 _addressRepositoryMock.Object,
                 null,
+                null,
                 null
             );
         }
