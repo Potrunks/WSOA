@@ -57,7 +57,9 @@ namespace WSOA.Client.Shared.Popups.Components
         {
             PopupEventHandler.Close();
 
-            OnValid.Invoke(ConcernedItemId, Form.SelectedItemId, Form.IsOptionSelected);
+            Console.WriteLine(Form.IsOptionSelected);
+
+            //OnValid.Invoke(ConcernedItemId, Form.SelectedItemId, Form.IsOptionSelected);
         });
     }
 }

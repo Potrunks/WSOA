@@ -1,0 +1,14 @@
+﻿@using WSOA.Client.Shared.Fields.Checkboxes.Components;
+@inherits IconCheckboxComponent
+
+<div class="c-iconCheckbox__mainContainer">
+    @if (Value)
+    {
+        <img src="images/yes.png" class="c-iconCheckbox__icon" onclick="@(() => SwitchValue.InvokeAsync())" />
+    }
+    else
+    {
+        <img src="images/no.png" class="c-iconCheckbox__icon" onclick="@(() => SwitchValue.InvokeAsync())" />
+    }
+    <div class="c-iconCheckbox__label" onclick="@(() => SwitchValue.InvokeAsync())">@Label</div>
+</div>
