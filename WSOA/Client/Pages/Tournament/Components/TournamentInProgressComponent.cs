@@ -2,6 +2,7 @@
 using WSOA.Client.Services.Interface;
 using WSOA.Client.Shared.Components;
 using WSOA.Client.Shared.EventHandlers;
+using WSOA.Client.Shared.Resources;
 using WSOA.Client.Shared.Stores;
 using WSOA.Shared.Dtos;
 using WSOA.Shared.Exceptions;
@@ -26,6 +27,10 @@ namespace WSOA.Client.Pages.Tournament.Components
 
         public IEnumerable<PlayerPlayingViewModel> PlayerPlayingsViewModel { get; set; }
 
+        public int TotalJackpot { get; set; }
+
+        public IDictionary<int, int> WinnableMoneyByPosition { get; set; }
+
         protected override async Task OnInitializedAsync()
         {
             IsLoading = true;
@@ -43,9 +48,16 @@ namespace WSOA.Client.Pages.Tournament.Components
                 tournamentInProgressDto = TournamentInProgressStore.SetData(result.Data);
             }
 
-            PlayerPlayingsViewModel = tournamentInProgressDto.PlayerPlayings.Select(pla => new PlayerPlayingViewModel(pla));
+            InitializedData(tournamentInProgressDto);
 
             IsLoading = false;
+        }
+
+        private void InitializedData(TournamentInProgressDto tournamentInProgress)
+        {
+            PlayerPlayingsViewModel = tournamentInProgress.PlayerPlayings.Select(pla => new PlayerPlayingViewModel(pla));
+            TotalJackpot = tournamentInProgress.TotalJackpot;
+            WinnableMoneyByPosition = tournamentInProgress.WinnableMoneyByPosition;
         }
 
         public EventCallback<PlayerPlayingViewModel> OpenPlayerActionsPopup => EventCallback.Factory.Create(this, (PlayerPlayingViewModel player) =>
@@ -76,16 +88,24 @@ namespace WSOA.Client.Pages.Tournament.Components
 
                     IEnumerable<ItemSelectableViewModel> eliminatorPlayers = PlayerPlayingsViewModel.Where(pla => !pla.IsEliminated && pla.Id != playerId)
                                                                                                     .Select(pla => new ItemSelectableViewModel(pla));
+                    OptionViewModel option = new OptionViewModel
+                    {
+                        Label = "Re-Buy ?",
+                        Value = false
+                    };
 
                     PopupEventHandler.Open(
-                        selectableItems: eliminatorPlayers,
-                        title: string.Format(TournamentMessageResources.WHO_ELIMINATE_PLAYER, StringFormatUtil.ToFullFirstNameAndFirstLetterLastName(eliminatedPlayer.FirstName, eliminatedPlayer.LastName)),
-                        playerId: playerId.Value
+                        eliminatorPlayers,
+                        string.Format(TournamentMessageResources.WHO_ELIMINATE_PLAYER, StringFormatUtil.ToFullFirstNameAndFirstLetterLastName(eliminatedPlayer.FirstName, eliminatedPlayer.LastName)),
+                        playerId.Value,
+                        option,
+                        EliminatePlayer()
                         );
                 }
                 catch (FunctionalException e)
                 {
                     NavigationManager.NavigateTo(e.RedirectUrl);
+                    return;
                 }
             };
         }
@@ -130,6 +150,70 @@ namespace WSOA.Client.Pages.Tournament.Components
                 throw new FunctionalException(errorMsg, redirectUrl);
             }
             return tournamentInProgressDto;
+        }
+
+        private Action<int, int, bool> EliminatePlayer()
+        {
+            return async (int eliminatedPlayerId, int eliminatorPlayerId, bool hasReBuy) =>
+            {
+                try
+                {
+                    TournamentInProgressDto tournament = CheckTournamentAlwaysInProgress();
+
+                    string? playerNameDefinitivelyEliminated = tournament.GetNameFirstPlayerDefinitivelyEliminated(new List<int> { eliminatedPlayerId, eliminatorPlayerId });
+                    if (playerNameDefinitivelyEliminated != null)
+                    {
+                        PopupEventHandler.Open(
+                                msg: TournamentMessageResources.PLAYER_ALREADY_ELIMINATED,
+                                isError: false,
+                                title: playerNameDefinitivelyEliminated,
+                                onValid: null
+                                );
+                        return;
+                    }
+
+                    EliminationDto elimination = new EliminationDto
+                    {
+                        EliminatedPlayerId = eliminatedPlayerId,
+                        EliminatorPlayerId = eliminatorPlayerId,
+                        HasReBuy = hasReBuy,
+                        WinnableMoneyByPosition = tournament.WinnableMoneyByPosition,
+                        IsAddOn = tournament.IsAddOn,
+                        IsFinalTable = tournament.IsFinalTable
+                    };
+
+                    APICallResult<EliminationResultDto> result = await TournamentService.EliminatePlayer(elimination);
+                    if (!result.Success)
+                    {
+                        if (string.IsNullOrEmpty(result.RedirectUrl))
+                        {
+                            PopupEventHandler.Open(
+                                msg: result.ErrorMessage!,
+                                isError: true,
+                                title: MainLabelResources.ERROR,
+                                onValid: null
+                                );
+                            return;
+                        }
+                        else
+                        {
+                            NavigationManager.NavigateTo(result.RedirectUrl);
+                            return;
+                        }
+                    }
+
+                    tournament = TournamentInProgressStore.Update(elimination, result.Data);
+
+                    InitializedData(tournament);
+
+                    StateHasChanged();
+                }
+                catch (FunctionalException e)
+                {
+                    NavigationManager.NavigateTo(e.RedirectUrl!);
+                    return;
+                }
+            };
         }
     }
 }

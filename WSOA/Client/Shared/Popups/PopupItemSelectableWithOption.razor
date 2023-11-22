@@ -1,0 +1,30 @@
+﻿@using WSOA.Client.Shared.Buttons.Main
+@using WSOA.Client.Shared.Buttons.Resources;
+@using WSOA.Client.Shared.Popups.Components;
+@using WSOA.Shared.ViewModel;
+@using WSOA.Client.Shared.Fields.Selects.NumberText;
+@inherits PopupItemSelectableWithOptionComponent
+
+@if (IsDisplay)
+{
+    <div class="c-selectItems__popup">
+        <div class="c-selectItems__emptyZone">
+            <div class="c-selectItems__containerZone">
+                <div class="c-selectItems__title">@Title</div>
+                <EditForm Model="@Form">
+                    <IntegerTextSelectField Label="Eliminateur"
+                                        Options="@Items.ToDictionary(item => item.Id, item => item.Label)"
+                                        @bind-InputValue="@Form.SelectedItemId" />
+                    <div>
+                        <InputCheckbox @bind-Value="@Form.IsOptionSelected" />
+                        <div>@Option.Label</div>
+                    </div>
+                </EditForm>
+                <div class="c-selectItems__panelButtons">
+                    <MainButton IsPrimary="true" Label="@ButtonLabelResources.VALIDATE" Type="button" OnClick="() => ValidPopup.InvokeAsync()" />
+                    <MainButton Label="@ButtonLabelResources.CLOSE" Type="button" OnClick="() => ClosePopup.InvokeAsync()" />
+                </div>
+            </div>
+        </div>
+    </div>
+}

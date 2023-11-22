@@ -85,5 +85,12 @@ namespace WSOA.Server.Controllers
         {
             return _tournamentBusiness.LoadTournamentInProgress(subSectionId, HttpContext.Session);
         }
+
+        [HttpPost]
+        [Route("api/tournament/eliminatePlayer")]
+        public APICallResult<EliminationResultDto> EliminatePlayer(EliminationDto elimination)
+        {
+            return _tournamentBusiness.EliminatePlayer(elimination, HttpContext.Session);
+        }
     }
 }

@@ -5,6 +5,6 @@
         MESSAGE = 0,
         ITEM_SELECT = 1,
         MENU = 2,
-        PLAYER_ELIMINATION = 3
+        ITEM_SELECT_OPTION = 3
     }
 }

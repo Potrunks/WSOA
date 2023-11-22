@@ -40,5 +40,10 @@ namespace WSOA.Client.Services.Interface
         /// Load tournament in progress.
         /// </summary>
         Task<APICallResult<TournamentInProgressDto>> LoadTournamentInProgress(int subSectionId);
+
+        /// <summary>
+        /// Eliminate selected player and close tournament if it's the final.
+        /// </summary>
+        Task<APICallResult<EliminationResultDto>> EliminatePlayer(EliminationDto elimination);
     }
 }

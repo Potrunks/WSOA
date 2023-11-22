@@ -69,6 +69,7 @@ namespace WSOA.Test.Business
                     null,
                     _playerRepository,
                     _bonusTournamentRepository,
+                    null,
                     null
                 );
         }
@@ -116,6 +117,7 @@ namespace WSOA.Test.Business
                     null,
                     _playerRepositoryMock.Object,
                     _bonusTournamentRepository,
+                    null,
                     null
                 );
 
@@ -148,6 +150,7 @@ namespace WSOA.Test.Business
                     null,
                     _playerRepositoryMock.Object,
                     _bonusTournamentRepository,
+                    null,
                     null
                 );
 
@@ -213,6 +216,7 @@ namespace WSOA.Test.Business
                     null,
                     _playerRepository,
                     _bonusTournamentRepository,
+                    null,
                     null
                 );
 

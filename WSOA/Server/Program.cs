@@ -24,6 +24,7 @@ builder.Services.AddScoped<IAddressRepository, AddressRepository>();
 builder.Services.AddScoped<IPlayerRepository, PlayerRepository>();
 builder.Services.AddScoped<IBonusTournamentRepository, BonusTournamentRepository>();
 builder.Services.AddScoped<IEliminationRepository, EliminationRepository>();
+builder.Services.AddScoped<IBonusTournamentEarnedRepository, BonusTournamentEarnedRepository>();
 
 builder.Services.AddScoped<ITransactionManager, TransactionManager>();
 builder.Services.AddScoped<IMailService, MailService>();

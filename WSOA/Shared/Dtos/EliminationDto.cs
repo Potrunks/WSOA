@@ -11,5 +11,9 @@
         public bool HasReBuy { get; set; }
 
         public IDictionary<int, int> WinnableMoneyByPosition { get; set; }
+
+        public bool IsAddOn { get; set; }
+
+        public bool IsFinalTable { get; set; }
     }
 }

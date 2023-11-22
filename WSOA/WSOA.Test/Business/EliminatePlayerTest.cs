@@ -25,6 +25,7 @@ namespace WSOA.Test.Business
 
         private User _eliminatorUser;
         private Player _eliminatorPlayer;
+        private List<BonusTournamentEarned> _eliminatorPlayerBonus = new List<BonusTournamentEarned>();
 
         private User _otherUser;
         private Player _otherPlayer;
@@ -39,12 +40,17 @@ namespace WSOA.Test.Business
         private Mock<IEliminationRepository> _eliminationRepositoryMock;
         private Mock<ITransactionManager> _transactionManagerMock;
         private ITournamentRepository _tournamentRepository;
+        private Mock<IBonusTournamentEarnedRepository> _bonusTournamentRepositoryMock;
+        private IBonusTournamentRepository _bonusTournamentRepository;
 
         private ITournamentBusiness _tournamentBusiness;
 
         [TestInitialize]
         public void Init()
         {
+            SaveBonusTournament(BonusTournamentResources.FIRST_RANKED_KILLED, 20);
+            SaveBonusTournament(BonusTournamentResources.PREVIOUS_WINNER_KILLED, 20);
+
             _tournamentInProgress = SaveTournament(isInProgress: true);
 
             _currentUser = SaveUser
@@ -126,6 +132,13 @@ namespace WSOA.Test.Business
             _playerRepository = new PlayerRepository(_dbContext);
             _transactionManagerMock = CreateITransactionManagerMock();
             _tournamentRepository = new TournamentRepository(_dbContext);
+            _bonusTournamentRepositoryMock = CreateIBonusTournamentEarnedRepository();
+            _bonusTournamentRepositoryMock.Setup(m => m.SaveBonusTournamentEarned(It.IsAny<BonusTournamentEarned>()))
+                                          .Callback<BonusTournamentEarned>((bonus) =>
+                                          {
+                                              _eliminatorPlayerBonus.Add(bonus);
+                                          });
+            _bonusTournamentRepository = new BonusTournamentRepository(_dbContext);
 
             _tournamentBusiness = new TournamentBusiness
                 (
@@ -136,15 +149,16 @@ namespace WSOA.Test.Business
                     _userRepository,
                     null,
                     _playerRepository,
-                    null,
-                    _eliminationRepositoryMock.Object
+                    _bonusTournamentRepository,
+                    _eliminationRepositoryMock.Object,
+                    _bonusTournamentRepositoryMock.Object
                 );
         }
 
         [TestMethod]
         public void DontDefinitivelyEliminatePlayer_WhenReBuy()
         {
-            APICallResultBase result = ExecuteEliminatePlayer();
+            APICallResult<EliminationResultDto> result = ExecuteEliminatePlayer();
 
             VerifyAPICallResultSuccess(result, null);
             VerifyTransactionManagerCommit(_transactionManagerMock);
@@ -157,6 +171,7 @@ namespace WSOA.Test.Business
             Assert.AreEqual(null, _eliminatedPlayer.TotalWinningsAmount);
             Assert.AreEqual(true, _tournamentInProgress.IsInProgress);
             Assert.AreEqual(false, _tournamentInProgress.IsOver);
+            Assert.AreEqual(false, _eliminatorPlayerBonus.Any());
         }
 
         [TestMethod]
@@ -164,7 +179,7 @@ namespace WSOA.Test.Business
         {
             _eliminationDto.HasReBuy = false;
 
-            APICallResultBase result = ExecuteEliminatePlayer();
+            APICallResult<EliminationResultDto> result = ExecuteEliminatePlayer();
 
             VerifyAPICallResultSuccess(result, null);
             VerifyTransactionManagerCommit(_transactionManagerMock);
@@ -177,6 +192,7 @@ namespace WSOA.Test.Business
             Assert.AreEqual(0, _eliminatedPlayer.TotalWinningsAmount);
             Assert.AreEqual(true, _tournamentInProgress.IsInProgress);
             Assert.AreEqual(false, _tournamentInProgress.IsOver);
+            Assert.AreEqual(false, _eliminatorPlayerBonus.Any());
         }
 
         [TestMethod]
@@ -188,7 +204,7 @@ namespace WSOA.Test.Business
             _dbContext.SaveChanges();
             _eliminationDto.HasReBuy = false;
 
-            APICallResultBase result = ExecuteEliminatePlayer();
+            APICallResult<EliminationResultDto> result = ExecuteEliminatePlayer();
 
             VerifyAPICallResultSuccess(result, null);
             VerifyTransactionManagerCommit(_transactionManagerMock);
@@ -201,6 +217,7 @@ namespace WSOA.Test.Business
             Assert.AreEqual(10, _eliminatedPlayer.TotalWinningsAmount);
             Assert.AreEqual(false, _tournamentInProgress.IsInProgress);
             Assert.AreEqual(true, _tournamentInProgress.IsOver);
+            Assert.AreEqual(false, _eliminatorPlayerBonus.Any());
         }
 
         [TestMethod]
@@ -210,7 +227,7 @@ namespace WSOA.Test.Business
             _dbContext.SaveChanges();
             _eliminationDto.HasReBuy = false;
 
-            APICallResultBase result = ExecuteEliminatePlayer();
+            APICallResult<EliminationResultDto> result = ExecuteEliminatePlayer();
 
             VerifyAPICallResultSuccess(result, null);
             VerifyTransactionManagerCommit(_transactionManagerMock);
@@ -223,6 +240,7 @@ namespace WSOA.Test.Business
             Assert.AreEqual(0, _eliminatedPlayer.TotalWinningsAmount);
             Assert.AreEqual(true, _tournamentInProgress.IsInProgress);
             Assert.AreEqual(false, _tournamentInProgress.IsOver);
+            Assert.AreEqual(false, _eliminatorPlayerBonus.Any());
         }
 
         [TestMethod]
@@ -234,7 +252,7 @@ namespace WSOA.Test.Business
             _dbContext.SaveChanges();
             _eliminationDto.HasReBuy = false;
 
-            APICallResultBase result = ExecuteEliminatePlayer();
+            APICallResult<EliminationResultDto> result = ExecuteEliminatePlayer();
 
             VerifyAPICallResultSuccess(result, null);
             VerifyTransactionManagerCommit(_transactionManagerMock);
@@ -250,6 +268,7 @@ namespace WSOA.Test.Business
             Assert.AreEqual(20, _eliminatorPlayer.TotalWinningsAmount);
             Assert.AreEqual(false, _tournamentInProgress.IsInProgress);
             Assert.AreEqual(true, _tournamentInProgress.IsOver);
+            Assert.AreEqual(false, _eliminatorPlayerBonus.Any());
         }
 
         [TestMethod]
@@ -269,11 +288,12 @@ namespace WSOA.Test.Business
                     _userRepository,
                     null,
                     _playerRepository,
-                    null,
-                    _eliminationRepositoryMock.Object
+                    _bonusTournamentRepository,
+                    _eliminationRepositoryMock.Object,
+                    _bonusTournamentRepositoryMock.Object
                 );
 
-            APICallResultBase result = ExecuteEliminatePlayer();
+            APICallResult<EliminationResultDto> result = ExecuteEliminatePlayer();
 
             string expectedErrorMsg = MainBusinessResources.USER_CANNOT_PERFORM_ACTION;
             VerifyAPICallResultError
@@ -292,7 +312,7 @@ namespace WSOA.Test.Business
             _dbContext.Players.Remove(_eliminatedPlayer);
             _dbContext.SaveChanges();
 
-            APICallResultBase result = ExecuteEliminatePlayer();
+            APICallResult<EliminationResultDto> result = ExecuteEliminatePlayer();
 
             string expectedErrorMsg = MainBusinessResources.TECHNICAL_ERROR;
             VerifyAPICallResultError
@@ -311,7 +331,7 @@ namespace WSOA.Test.Business
             _dbContext.Players.Remove(_eliminatorPlayer);
             _dbContext.SaveChanges();
 
-            APICallResultBase result = ExecuteEliminatePlayer();
+            APICallResult<EliminationResultDto> result = ExecuteEliminatePlayer();
 
             string expectedErrorMsg = MainBusinessResources.TECHNICAL_ERROR;
             VerifyAPICallResultError
@@ -331,7 +351,7 @@ namespace WSOA.Test.Business
             _eliminationRepositoryMock.Setup(m => m.GetEliminationsByPlayerVictimIds(It.IsAny<IEnumerable<int>>()))
                                       .Returns(_dbContext.Eliminations.Where(elim => new List<int> { _eliminatedPlayer.Id, _eliminatorPlayer.Id }.Contains(elim.PlayerVictimId)));
 
-            APICallResultBase result = ExecuteEliminatePlayer();
+            APICallResult<EliminationResultDto> result = ExecuteEliminatePlayer();
 
             string expectedErrorMsg = TournamentMessageResources.PLAYERS_ALREADY_DEFINITIVELY_ELIMINATED;
             VerifyAPICallResultError(result, null, expectedErrorMsg);
@@ -339,7 +359,41 @@ namespace WSOA.Test.Business
             Assert.AreEqual(null, _eliminationSaved);
         }
 
-        private APICallResultBase ExecuteEliminatePlayer()
+        [TestMethod]
+        public void EliminatorPlayerWinBonus_WhenEliminatedPlayerIsTheCurrentFirstRanked()
+        {
+            Tournament previousTournament = SaveTournament(isOver: true, startDate: DateTime.UtcNow.AddMonths(-1));
+            SavePlayer(previousTournament.Id, _eliminatedUser.Id, PresenceStateResources.PRESENT_CODE, positionInTournament: 2, totalPoints: 100);
+            SavePlayer(previousTournament.Id, _eliminatorUser.Id, PresenceStateResources.PRESENT_CODE, positionInTournament: 1, totalPoints: 50);
+            _eliminationDto.HasReBuy = false;
+
+            APICallResult<EliminationResultDto> result = ExecuteEliminatePlayer();
+
+            VerifyAPICallResultSuccess(result, null);
+            VerifyTransactionManagerCommit(_transactionManagerMock);
+            Assert.AreEqual(BonusTournamentResources.FIRST_RANKED_KILLED, result.Data.EliminatorPlayerWonBonusCodes.Single(b => b == BonusTournamentResources.FIRST_RANKED_KILLED));
+            Assert.AreEqual(BonusTournamentResources.FIRST_RANKED_KILLED, _eliminatorPlayerBonus.Single(b => b.BonusTournamentCode == BonusTournamentResources.FIRST_RANKED_KILLED).BonusTournamentCode);
+            Assert.AreEqual(1, _eliminatorPlayerBonus.Single(b => b.BonusTournamentCode == BonusTournamentResources.FIRST_RANKED_KILLED).Occurrence);
+        }
+
+        [TestMethod]
+        public void EliminatorPlayerWinBonus_WhenEliminatedPlayerIsPreviousWinner()
+        {
+            Tournament previousTournament = SaveTournament(isOver: true, startDate: DateTime.UtcNow.AddMonths(-1));
+            SavePlayer(previousTournament.Id, _eliminatedUser.Id, PresenceStateResources.PRESENT_CODE, positionInTournament: 1, totalPoints: 1);
+            SavePlayer(previousTournament.Id, _eliminatorUser.Id, PresenceStateResources.PRESENT_CODE, positionInTournament: 2, totalPoints: 100);
+            _eliminationDto.HasReBuy = false;
+
+            APICallResult<EliminationResultDto> result = ExecuteEliminatePlayer();
+
+            VerifyAPICallResultSuccess(result, null);
+            VerifyTransactionManagerCommit(_transactionManagerMock);
+            Assert.AreEqual(BonusTournamentResources.PREVIOUS_WINNER_KILLED, result.Data.EliminatorPlayerWonBonusCodes.Single(b => b == BonusTournamentResources.PREVIOUS_WINNER_KILLED));
+            Assert.AreEqual(BonusTournamentResources.PREVIOUS_WINNER_KILLED, _eliminatorPlayerBonus.Single(b => b.BonusTournamentCode == BonusTournamentResources.PREVIOUS_WINNER_KILLED).BonusTournamentCode);
+            Assert.AreEqual(1, _eliminatorPlayerBonus.Single(b => b.BonusTournamentCode == BonusTournamentResources.PREVIOUS_WINNER_KILLED).Occurrence);
+        }
+
+        private APICallResult<EliminationResultDto> ExecuteEliminatePlayer()
         {
             return _tournamentBusiness.EliminatePlayer(_eliminationDto, _sessionMock.Object);
         }

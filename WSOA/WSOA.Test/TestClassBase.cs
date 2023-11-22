@@ -167,6 +167,11 @@ namespace WSOA.Test
             return new Mock<IEliminationRepository>();
         }
 
+        public Mock<IBonusTournamentEarnedRepository> CreateIBonusTournamentEarnedRepository()
+        {
+            return new Mock<IBonusTournamentEarnedRepository>();
+        }
+
         public LinkAccountCreation CreateLinkAccountCreation()
         {
             return new LinkAccountCreation
@@ -384,20 +389,22 @@ namespace WSOA.Test
             };
         }
 
-        public Player CreatePlayer(int id, int tournamentId = 0, int usrId = 0, string? presenceStateCode = null)
+        public Player CreatePlayer(int id, int tournamentId = 0, int usrId = 0, string? presenceStateCode = null, int? positionInTournament = null, int? totalPoints = null)
         {
             return new Player
             {
                 Id = id,
                 UserId = usrId,
                 PlayedTournamentId = tournamentId,
-                PresenceStateCode = presenceStateCode != null ? presenceStateCode : PresenceStateResources.PRESENT_CODE
+                PresenceStateCode = presenceStateCode != null ? presenceStateCode : PresenceStateResources.PRESENT_CODE,
+                CurrentTournamentPosition = positionInTournament,
+                TotalWinningsPoint = totalPoints
             };
         }
 
-        public Player SavePlayer(int tournamentId, int usrId, string presenceStateCode)
+        public Player SavePlayer(int tournamentId, int usrId, string presenceStateCode, int? positionInTournament = null, int? totalPoints = null)
         {
-            Player player = CreatePlayer(0, tournamentId, usrId, presenceStateCode);
+            Player player = CreatePlayer(0, tournamentId, usrId, presenceStateCode, positionInTournament, totalPoints);
             _dbContext.Players.Add(player);
             _dbContext.SaveChanges();
             return player;
@@ -572,6 +579,24 @@ namespace WSOA.Test
             _dbContext.Eliminations.Add(elimination);
             _dbContext.SaveChanges();
             return elimination;
+        }
+
+        public BonusTournament SaveBonusTournament(string code, int pointAmount, string label = "label", string logoPath = "logoPath")
+        {
+            BonusTournament? bonusTournament = _dbContext.BonusTournaments.SingleOrDefault(b => b.Code == code);
+            if (bonusTournament == null)
+            {
+                bonusTournament = new BonusTournament
+                {
+                    Code = code,
+                    Label = label,
+                    PointAmount = pointAmount,
+                    LogoPath = logoPath
+                };
+                _dbContext.BonusTournaments.Add(bonusTournament);
+                _dbContext.SaveChanges();
+            }
+            return bonusTournament;
         }
 
         public void VerifyTransactionManagerCommit(Mock<ITransactionManager> transactionManagerMock)

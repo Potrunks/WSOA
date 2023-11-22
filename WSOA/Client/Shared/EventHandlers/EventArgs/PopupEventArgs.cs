@@ -18,8 +18,12 @@ namespace WSOA.Client.Shared.EventHandlers
 
         public EventCallback<IEnumerable<int>>? OnValidSelectedItemIds { get; set; }
 
+        public Action<int, int, bool>? OnValidTwoSelectedIdsWithOption { get; set; }
+
         public IEnumerable<PopupButtonViewModel>? Buttons { get; set; }
 
         public int? ConcernedItemId { get; set; }
+
+        public OptionViewModel? Option { get; set; }
     }
 }

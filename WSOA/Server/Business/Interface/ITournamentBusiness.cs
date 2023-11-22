@@ -44,6 +44,6 @@ namespace WSOA.Server.Business.Interface
         /// <summary>
         /// Eliminate player definitively if player dont take rebuy.
         /// </summary>
-        APICallResultBase EliminatePlayer(EliminationDto eliminationDto, ISession session);
+        APICallResult<EliminationResultDto> EliminatePlayer(EliminationDto eliminationDto, ISession session);
     }
 }

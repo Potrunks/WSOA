@@ -65,6 +65,7 @@ namespace WSOA.Test.Business
                     null,
                     _playerRepositoryMock.Object,
                     null,
+                    null,
                     null
                 );
         }

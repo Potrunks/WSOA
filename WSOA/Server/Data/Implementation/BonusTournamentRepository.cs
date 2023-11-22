@@ -16,5 +16,10 @@ namespace WSOA.Server.Data.Implementation
         {
             return _dbContext.BonusTournaments;
         }
+
+        public BonusTournament GetBonusTournamentByCode(string code)
+        {
+            return _dbContext.BonusTournaments.Single(b => b.Code == code);
+        }
     }
 }

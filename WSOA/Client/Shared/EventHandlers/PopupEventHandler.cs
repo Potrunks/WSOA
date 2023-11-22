@@ -67,7 +67,7 @@ namespace WSOA.Client.Shared.EventHandlers
             }
         }
 
-        public void Open(IEnumerable<ItemSelectableViewModel> selectableItems, string title, int playerId)
+        public void Open(IEnumerable<ItemSelectableViewModel> selectableItems, string title, int concernedId, OptionViewModel option, Action<int, int, bool> onValid)
         {
             if (!selectableItems.Any())
             {
@@ -76,9 +76,11 @@ namespace WSOA.Client.Shared.EventHandlers
             else
             {
                 CurrentPopupOpen.SelectableItems = selectableItems;
-                CurrentPopupOpen.ConcernedItemId = playerId;
+                CurrentPopupOpen.Option = option;
+                CurrentPopupOpen.ConcernedItemId = concernedId;
+                CurrentPopupOpen.OnValidTwoSelectedIdsWithOption = onValid;
 
-                Open(PopupKeyResources.PLAYER_ELIMINATION, title);
+                Open(PopupKeyResources.ITEM_SELECT_OPTION, title);
             }
         }
 
@@ -109,6 +111,8 @@ namespace WSOA.Client.Shared.EventHandlers
             CurrentPopupOpen.OnValidSelectedItemIds = null;
             CurrentPopupOpen.Buttons = null;
             CurrentPopupOpen.ConcernedItemId = null;
+            CurrentPopupOpen.Option = null;
+            CurrentPopupOpen.OnValidTwoSelectedIdsWithOption = null;
         }
     }
 }

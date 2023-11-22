@@ -26,6 +26,7 @@ namespace WSOA.Server.Business.Implementation
         private readonly IPlayerRepository _playerRepository;
         private readonly IBonusTournamentRepository _bonusTournamentRepository;
         private readonly IEliminationRepository _eliminationRepository;
+        private readonly IBonusTournamentEarnedRepository _bonusTournamentEarnedRepository;
 
         private readonly ILog _log = LogManager.GetLogger(nameof(TournamentBusiness));
 
@@ -39,7 +40,8 @@ namespace WSOA.Server.Business.Implementation
             IAddressRepository addressRepository,
             IPlayerRepository playerRepository,
             IBonusTournamentRepository bonusTournamentRepository,
-            IEliminationRepository eliminationRepository
+            IEliminationRepository eliminationRepository,
+            IBonusTournamentEarnedRepository bonusTournamentEarnedRepository
         )
         {
             _transactionManager = transactionManager;
@@ -51,6 +53,7 @@ namespace WSOA.Server.Business.Implementation
             _playerRepository = playerRepository;
             _bonusTournamentRepository = bonusTournamentRepository;
             _eliminationRepository = eliminationRepository;
+            _bonusTournamentEarnedRepository = bonusTournamentEarnedRepository;
         }
 
         public APICallResultBase CreateTournament(TournamentCreationFormViewModel form, ISession session)
@@ -354,17 +357,9 @@ namespace WSOA.Server.Business.Implementation
                 IDictionary<string, BonusTournament> winnableBonusByCode = _bonusTournamentRepository.GetAll().ToDictionary(bonus => bonus.Code);
                 IDictionary<int, IEnumerable<BonusTournamentEarned>> bonusEarnedsByPlayerId = _playerRepository.GetBonusTournamentEarnedsByPlayerIds(presentPlayers.Select(pla => pla.Player.Id));
 
-                User? lastWinner = null;
-                User? firstRankUser = null;
-                int tournamentNb = _tournamentRepository.GetTournamentNumber(tournamentInProgress);
-                if (tournamentNb > 1)
-                {
-                    Tournament tournamentPrevious = _tournamentRepository.GetPreviousTournament(tournamentInProgress);
-                    lastWinner = _userRepository.GetUserWinnerByTournamentId(tournamentPrevious.Id);
-                    firstRankUser = _userRepository.GetFirstRankUserBySeasonCode(tournamentInProgress.Season);
-                }
+                UsersBestDto usersBestDto = GetBestUsersByCurrentSeasonTournament(tournamentInProgress);
 
-                result.Data = new TournamentInProgressDto(tournamentInProgress, presentPlayers, winnableBonusByCode, bonusEarnedsByPlayerId, tournamentNb, lastWinner, firstRankUser);
+                result.Data = new TournamentInProgressDto(tournamentInProgress, presentPlayers, winnableBonusByCode, bonusEarnedsByPlayerId, usersBestDto.TotalSeasonTournamentPlayed, usersBestDto.WinnerPreviousTournament, usersBestDto.FirstRanked);
 
                 result.Success = true;
             }
@@ -384,13 +379,36 @@ namespace WSOA.Server.Business.Implementation
             return result;
         }
 
-        public APICallResultBase EliminatePlayer(EliminationDto eliminationDto, ISession session)
+        private UsersBestDto GetBestUsersByCurrentSeasonTournament(Tournament tournament)
         {
-            APICallResultBase result = new APICallResultBase(false);
+            User? lastWinner = null;
+            User? firstRankUser = null;
+
+            int tournamentNb = _tournamentRepository.GetTournamentNumber(tournament);
+            if (tournamentNb > 1)
+            {
+                Tournament tournamentPrevious = _tournamentRepository.GetPreviousTournament(tournament);
+                lastWinner = _userRepository.GetUserWinnerByTournamentId(tournamentPrevious.Id);
+                firstRankUser = _userRepository.GetFirstRankUserBySeasonCode(tournament.Season);
+            }
+
+            return new UsersBestDto
+            {
+                FirstRanked = firstRankUser,
+                WinnerPreviousTournament = lastWinner,
+                TotalSeasonTournamentPlayed = tournamentNb
+            };
+        }
+
+        public APICallResult<EliminationResultDto> EliminatePlayer(EliminationDto eliminationDto, ISession session)
+        {
+            APICallResult<EliminationResultDto> result = new APICallResult<EliminationResultDto>(false);
 
             try
             {
                 _transactionManager.BeginTransaction();
+
+                result.Data = new EliminationResultDto();
 
                 session.CanUserPerformAction(_userRepository, BusinessActionResources.ELIMINATE_PLAYER);
 
@@ -419,13 +437,15 @@ namespace WSOA.Server.Business.Implementation
                 Player eliminatedPlayer = players[eliminationDto.EliminatedPlayerId];
                 if (eliminationDto.HasReBuy)
                 {
-                    eliminatedPlayer.TotalReBuy = eliminatedPlayer.TotalReBuy == null ? 1 : eliminatedPlayer.TotalReBuy++;
+                    eliminatedPlayer.TotalReBuy = eliminatedPlayer.TotalReBuy == null ? 1 : eliminatedPlayer.TotalReBuy + 1;
                 }
-
                 if (!eliminationDto.HasReBuy && eliminatedPlayer.TotalReBuy == null && !eliminatedPlayer.WasAddOn.GetValueOrDefault())
                 {
                     eliminatedPlayer.TotalReBuy = 0;
                 }
+                _playerRepository.SavePlayer(eliminatedPlayer);
+
+                result.Data.EliminatedPlayerTotalReBuy = eliminatedPlayer.TotalReBuy;
 
                 Elimination elimination = new Elimination
                 {
@@ -435,6 +455,7 @@ namespace WSOA.Server.Business.Implementation
                 };
                 _eliminationRepository.SaveElimination(elimination);
 
+                Tournament currentTournament = _tournamentRepository.GetTournamentById(eliminatedPlayer.PlayedTournamentId);
                 IEnumerable<PlayerDto> allPlayers = _playerRepository.GetPlayersByTournamentIdAndPresenceStateCode(eliminatedPlayer.PlayedTournamentId, PresenceStateResources.PRESENT_CODE);
                 int nbPlayers = allPlayers.Where(pla => pla.Player.CurrentTournamentPosition == null)
                                           .Count();
@@ -442,6 +463,9 @@ namespace WSOA.Server.Business.Implementation
                 if (elimination.IsDefinitive)
                 {
                     eliminatedPlayer.CurrentTournamentPosition = nbPlayers;
+                    eliminatedPlayer.WasAddOn = eliminationDto.IsAddOn;
+                    eliminatedPlayer.WasFinalTable = eliminationDto.IsFinalTable;
+
                     if (eliminatedPlayer.CurrentTournamentPosition.Value > TournamentPointsResources.TournamentPointAmountByPosition.Keys.Max())
                     {
                         eliminatedPlayer.TotalWinningsPoint = TournamentPointsResources.MinimumPointAmount;
@@ -461,6 +485,35 @@ namespace WSOA.Server.Business.Implementation
                     }
 
                     _playerRepository.SavePlayer(eliminatedPlayer);
+
+                    UsersBestDto usersBestDto = GetBestUsersByCurrentSeasonTournament(currentTournament);
+                    if (usersBestDto.FirstRanked != null && usersBestDto.FirstRanked.Id == eliminatedPlayer.UserId)
+                    {
+                        BonusTournament firstRankedKilledBonus = _bonusTournamentRepository.GetBonusTournamentByCode(BonusTournamentResources.FIRST_RANKED_KILLED);
+                        BonusTournamentEarned newBonus = new BonusTournamentEarned
+                        {
+                            BonusTournamentCode = firstRankedKilledBonus.Code,
+                            PlayerId = eliminationDto.EliminatorPlayerId,
+                            PointAmount = firstRankedKilledBonus.PointAmount,
+                            Occurrence = 1
+                        };
+                        _bonusTournamentEarnedRepository.SaveBonusTournamentEarned(newBonus);
+                        result.Data.EliminatorPlayerWonBonusCodes.Add(newBonus.BonusTournamentCode);
+                    }
+
+                    if (usersBestDto.WinnerPreviousTournament != null && usersBestDto.WinnerPreviousTournament.Id == eliminatedPlayer.UserId)
+                    {
+                        BonusTournament firstRankedKilledBonus = _bonusTournamentRepository.GetBonusTournamentByCode(BonusTournamentResources.PREVIOUS_WINNER_KILLED);
+                        BonusTournamentEarned newBonus = new BonusTournamentEarned
+                        {
+                            BonusTournamentCode = firstRankedKilledBonus.Code,
+                            PlayerId = eliminationDto.EliminatorPlayerId,
+                            PointAmount = firstRankedKilledBonus.PointAmount,
+                            Occurrence = 1
+                        };
+                        _bonusTournamentEarnedRepository.SaveBonusTournamentEarned(newBonus);
+                        result.Data.EliminatorPlayerWonBonusCodes.Add(newBonus.BonusTournamentCode);
+                    }
                 }
 
                 if (nbPlayers == 2)
@@ -471,10 +524,11 @@ namespace WSOA.Server.Business.Implementation
                     winner.TotalWinningsAmount = eliminationDto.WinnableMoneyByPosition[1];
                     _playerRepository.SavePlayer(winner);
 
-                    Tournament tournament = _tournamentRepository.GetTournamentById(winner.PlayedTournamentId);
-                    tournament.IsOver = true;
-                    tournament.IsInProgress = false;
-                    _tournamentRepository.SaveTournament(tournament);
+                    currentTournament.IsOver = true;
+                    currentTournament.IsInProgress = false;
+                    _tournamentRepository.SaveTournament(currentTournament);
+
+                    result.Data.IsTournamentOver = currentTournament.IsOver;
                 }
 
                 result.Success = true;

@@ -58,5 +58,11 @@ namespace WSOA.Client.Services.Implementation
             HttpResponseMessage response = await _httpClient.GetAsync(string.Format(RouteResources.LOAD_TOURNAMENT_IN_PROGRESS, subSectionId));
             return response.Content.ToObject<APICallResult<TournamentInProgressDto>>();
         }
+
+        public async Task<APICallResult<EliminationResultDto>> EliminatePlayer(EliminationDto elimination)
+        {
+            HttpResponseMessage response = await _httpClient.PostAsync(RouteResources.ELIMINATE_PLAYER, elimination.ToJsonUtf8());
+            return response.Content.ToObject<APICallResult<EliminationResultDto>>();
+        }
     }
 }

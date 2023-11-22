@@ -1,4 +1,5 @@
 ﻿using WSOA.Shared.Entity;
+using WSOA.Shared.Utils;
 
 namespace WSOA.Shared.Dtos
 {
@@ -36,6 +37,11 @@ namespace WSOA.Shared.Dtos
                 }
                 return new PlayerPlayingDto(player, winnableBonusByCode, currentBonusTournamentEarneds, lastWinner, firstRankUser);
             });
+            TotalJackpot = tournament.BuyIn * players.Count();
+            WinnableMoneyByPosition = new Dictionary<int, int>
+            {
+                { 1, TotalJackpot }
+            };
         }
 
         public int Id { get; set; }
@@ -53,5 +59,20 @@ namespace WSOA.Shared.Dtos
         public IEnumerable<BonusTournament> WinnableBonus { get; set; }
 
         public IEnumerable<PlayerPlayingDto> PlayerPlayings { get; set; }
+
+        public int TotalJackpot { get; set; }
+
+        public IDictionary<int, int> WinnableMoneyByPosition { get; set; }
+
+        public string? GetNameFirstPlayerDefinitivelyEliminated(IEnumerable<int> playerIds)
+        {
+            string? result = null;
+            PlayerPlayingDto? firstPlayerDefinitivelyEliminated = PlayerPlayings.Where(pla => playerIds.Contains(pla.Id)).FirstOrDefault(pla => pla.IsEliminated);
+            if (firstPlayerDefinitivelyEliminated != null)
+            {
+                result = StringFormatUtil.ToFullFirstNameAndFirstLetterLastName(firstPlayerDefinitivelyEliminated.FirstName, firstPlayerDefinitivelyEliminated.LastName);
+            }
+            return result;
+        }
     }
 }
