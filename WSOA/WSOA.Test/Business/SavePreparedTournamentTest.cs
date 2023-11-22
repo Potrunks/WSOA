@@ -17,6 +17,7 @@ namespace WSOA.Test.Business
     public class SavePreparedTournamentTest : TestClassBase
     {
         private Tournament _tournamentTargeted;
+        private Tournament _previousTournament;
         private List<Player> _playersIntoTargetedTournament;
         private IEnumerable<Player> _playersSaved;
         private IEnumerable<Player> _playersDeleted;
@@ -40,7 +41,8 @@ namespace WSOA.Test.Business
         [TestInitialize]
         public void Init()
         {
-            _tournamentTargeted = SaveTournament();
+            _tournamentTargeted = SaveTournament(startDate: DateTime.UtcNow);
+            _previousTournament = SaveTournament(startDate: DateTime.UtcNow.AddMonths(-1), isOver: true);
             _selectedUsrs = SaveUsers(3);
             _usrProcessor = SaveUser(0);
             _playersIntoTargetedTournament = SavePlayers(_selectedUsrs.Select(usr => usr.Id), _tournamentTargeted.Id, PresenceStateResources.ABSENT_CODE);
@@ -235,6 +237,19 @@ namespace WSOA.Test.Business
             APICallResultBase result = ExecutePlayTournamentPreparedMethod();
 
             string expectedErrorMsg = TournamentMessageResources.TOURNAMENT_NO_PLAYER_SELECTED;
+            VerifyAPICallResultError(result, string.Format(RouteBusinessResources.MAIN_ERROR, expectedErrorMsg), expectedErrorMsg);
+            VerifyTransactionManagerRollback(_transactionManagerMock);
+        }
+
+        [TestMethod]
+        public void ShouldNotPlayTournament_WhenTournamentSelectedHasStartDateLowerThanPreviousTournament()
+        {
+            _previousTournament.StartDate = _tournamentTargeted.StartDate.AddMonths(1);
+            _dbContext.SaveChanges();
+
+            APICallResultBase result = ExecutePlayTournamentPreparedMethod();
+
+            string expectedErrorMsg = TournamentMessageResources.TOURNAMENT_PAST;
             VerifyAPICallResultError(result, string.Format(RouteBusinessResources.MAIN_ERROR, expectedErrorMsg), expectedErrorMsg);
             VerifyTransactionManagerRollback(_transactionManagerMock);
         }

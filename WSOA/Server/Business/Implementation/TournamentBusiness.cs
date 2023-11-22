@@ -217,7 +217,8 @@ namespace WSOA.Server.Business.Implementation
             try
             {
                 session.CanUserPerformAction(_userRepository, BusinessActionResources.EXECUTE_TOURNAMENT);
-                CanExecuteTournament(tournamentId);
+                Tournament tournament = _tournamentRepository.GetTournamentById(tournamentId);
+                CanExecuteTournament(tournament);
                 IEnumerable<PlayerDto> presentPlayers = _playerRepository.GetPlayersByTournamentIdAndPresenceStateCode(tournamentId, PresenceStateResources.PRESENT_CODE);
                 IEnumerable<User> availableUsers = _userRepository.GetAllUsers(blacklistUserIds: presentPlayers.Select(pla => pla.User.Id));
                 result.Data = new PlayerSelectionViewModel(presentPlayers, availableUsers);
@@ -238,20 +239,31 @@ namespace WSOA.Server.Business.Implementation
             return result;
         }
 
-        private void CanExecuteTournament(int tournamentId)
+        private void CanExecuteTournament(Tournament tournament)
         {
-            bool existsTournamentInProgress = _tournamentRepository.ExistsTournamentByIsInProgress(true);
-            if (existsTournamentInProgress)
+            try
             {
-                string errorMsg = TournamentBusinessResources.EXISTS_TOURNAMENT_IN_PROGRESS;
-                throw new FunctionalException(errorMsg, string.Format(RouteBusinessResources.MAIN_ERROR, errorMsg));
-            }
+                bool existsTournamentInProgress = _tournamentRepository.ExistsTournamentByIsInProgress(true);
+                if (existsTournamentInProgress)
+                {
+                    throw new FunctionalException(TournamentBusinessResources.EXISTS_TOURNAMENT_IN_PROGRESS, null);
+                }
 
-            bool canExecute = _tournamentRepository.ExistsTournamentByTournamentIdIsOverAndIsInProgress(tournamentId, false, false);
-            if (!canExecute)
+                bool canExecute = _tournamentRepository.ExistsTournamentByTournamentIdIsOverAndIsInProgress(tournament.Id, false, false);
+                if (!canExecute)
+                {
+                    throw new FunctionalException(TournamentBusinessResources.CANNOT_EXECUTE_TOURNAMENT, null);
+                }
+
+                Tournament? lastTournament = _tournamentRepository.GetLastFinishedTournamentBySeason(tournament.Season);
+                if (lastTournament != null && tournament.StartDate <= lastTournament.StartDate)
+                {
+                    throw new FunctionalException(TournamentMessageResources.TOURNAMENT_PAST, null);
+                }
+            }
+            catch (Exception e)
             {
-                string errorMsg = TournamentBusinessResources.CANNOT_EXECUTE_TOURNAMENT;
-                throw new FunctionalException(errorMsg, string.Format(RouteBusinessResources.MAIN_ERROR, errorMsg));
+                throw new FunctionalException(e.Message, string.Format(RouteBusinessResources.MAIN_ERROR, e.Message));
             }
         }
 
@@ -273,7 +285,7 @@ namespace WSOA.Server.Business.Implementation
 
                 TournamentDto currentTournament = _tournamentRepository.GetTournamentDtoById(tournamentPrepared.TournamentId);
 
-                CanExecuteTournament(currentTournament.Tournament.Id);
+                CanExecuteTournament(currentTournament.Tournament);
 
                 List<Player> newPlayers = new List<Player>();
                 List<Player> updatedPlayers = new List<Player>();

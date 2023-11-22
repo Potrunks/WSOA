@@ -143,5 +143,12 @@ namespace WSOA.Server.Data.Implementation
                 return orderedTournaments[indexOfCurrentTournament - 1];
             }
         }
+
+        public Tournament? GetLastFinishedTournamentBySeason(string season)
+        {
+            return _dbContext.Tournaments.Where(tou => tou.Season == season && tou.IsOver)
+                                         .OrderByDescending(tou => tou.StartDate)
+                                         .FirstOrDefault();
+        }
     }
 }
