@@ -1,5 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using WSOA.Shared.Entity;
+using WSOA.Shared.Resources;
 
 namespace WSOA.Server.Data
 {
@@ -327,6 +328,45 @@ namespace WSOA.Server.Data
                     Id = 2,
                     ProfileCode = "ORGA",
                     BusinessActionCode = "ELIM_PLAYER"
+                }
+            );
+
+            modelBuilder.Entity<BonusTournament>().HasData
+            (
+                new BonusTournament
+                {
+                    Code = BonusTournamentResources.FIRST_RANKED_KILLED,
+                    Label = "Elimination 1er au classement",
+                    PointAmount = 20,
+                    LogoPath = "images/black_skull.png"
+                },
+                new BonusTournament
+                {
+                    Code = BonusTournamentResources.PREVIOUS_WINNER_KILLED,
+                    Label = "Elimination 1er au précédent tournoi",
+                    PointAmount = 20,
+                    LogoPath = "images/white_skull.png"
+                },
+                new BonusTournament
+                {
+                    Code = BonusTournamentResources.FOUR_OF_A_KIND,
+                    Label = "Carré",
+                    PointAmount = 10,
+                    LogoPath = "images/four_kind.png"
+                },
+                new BonusTournament
+                {
+                    Code = BonusTournamentResources.STRAIGHT_FLUSH,
+                    Label = "Quinte flush",
+                    PointAmount = 30,
+                    LogoPath = "images/straight_flush.png"
+                },
+                new BonusTournament
+                {
+                    Code = BonusTournamentResources.ROYAL_STRAIGHT_FLUSH,
+                    Label = "Quinte flush royale",
+                    PointAmount = 50,
+                    LogoPath = "images/royal_straight_flush.png"
                 }
             );
         }
