@@ -43,6 +43,9 @@
     grid-column-end: 2;
     grid-row-start: 1;
     grid-row-end: 2;
+    padding: 5px 0 0 5px;
+    display: flex;
+    align-items: center;
 }
 
 .c-players__heading-counter {
@@ -50,6 +53,9 @@
     grid-column-end: 3;
     grid-row-start: 1;
     grid-row-end: 2;
+    padding-top: 5px;
+    display: flex;
+    align-items: center;
 }
 
 .c-players__container-main {
@@ -58,6 +64,7 @@
     grid-row-start: 2;
     grid-row-end: 3;
     overflow: auto;
+    padding: 5px;
 }
 
 .c-player__container-main {
@@ -120,4 +127,11 @@
     justify-content: center;
     align-items: center;
     flex-wrap: wrap;
+}
+
+.c-player__separator {
+    height: 2px;
+    background-color: red;
+    width: 75%;
+    margin-left: 22px;
 }

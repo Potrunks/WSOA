@@ -19,7 +19,8 @@ else
             <div class="c-players__container-main">
                 @foreach (PlayerPlayingViewModel player in PlayerPlayingsViewModel)
                 {
-                    <div class="c-player__container-main @(player.HasBonusEarned ? "extended" : "")" onclick="@(() => OpenPlayerActionsPopup.InvokeAsync(player))">
+                    <div class="c-player__separator" />
+                    <div class="c-player__container-main @(player.HasBonusEarned ? "extended" : "") @(player.IsEliminated ? "flood" : "")" onclick="@(() => OpenPlayerActionsPopup.InvokeAsync(player))">
                         <div class="c-player__firstName">@player.FirstName</div>
                         <div class="c-player__lastName">@player.LastName</div>
                         <div class="c-player__totalReBuy">
