@@ -1,8 +1,8 @@
 ﻿namespace WSOA.Shared.Dtos
 {
-    public class EliminationResultDto
+    public class EliminationCreationResultDto
     {
-        public EliminationResultDto()
+        public EliminationCreationResultDto()
         {
             EliminatorPlayerWonBonusCodes = new List<string>();
         }

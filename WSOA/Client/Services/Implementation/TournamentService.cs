@@ -59,10 +59,16 @@ namespace WSOA.Client.Services.Implementation
             return response.Content.ToObject<APICallResult<TournamentInProgressDto>>();
         }
 
-        public async Task<APICallResult<EliminationResultDto>> EliminatePlayer(EliminationDto elimination)
+        public async Task<APICallResult<EliminationCreationResultDto>> EliminatePlayer(EliminationCreationDto elimination)
         {
             HttpResponseMessage response = await _httpClient.PostAsync(RouteResources.ELIMINATE_PLAYER, elimination.ToJsonUtf8());
-            return response.Content.ToObject<APICallResult<EliminationResultDto>>();
+            return response.Content.ToObject<APICallResult<EliminationCreationResultDto>>();
+        }
+
+        public async Task<APICallResult<BonusTournamentEarnedCreationResultDto>> SaveBonusTournamentEarned(BonusTournamentEarnedCreationDto bonusTournamentEarnedCreation)
+        {
+            HttpResponseMessage response = await _httpClient.PostAsync(RouteResources.SAVE_BONUS_EARNED, bonusTournamentEarnedCreation.ToJsonUtf8());
+            return response.Content.ToObject<APICallResult<BonusTournamentEarnedCreationResultDto>>();
         }
     }
 }

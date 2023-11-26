@@ -1,8 +1,8 @@
 ﻿namespace WSOA.Shared.Dtos
 {
-    public class EliminationDto
+    public class EliminationCreationDto
     {
-        public EliminationDto() { }
+        public EliminationCreationDto() { }
 
         public int EliminatedPlayerId { get; set; }
 

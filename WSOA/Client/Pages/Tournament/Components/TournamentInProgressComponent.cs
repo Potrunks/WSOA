@@ -172,7 +172,7 @@ namespace WSOA.Client.Pages.Tournament.Components
                         return;
                     }
 
-                    EliminationDto elimination = new EliminationDto
+                    EliminationCreationDto elimination = new EliminationCreationDto
                     {
                         EliminatedPlayerId = eliminatedPlayerId,
                         EliminatorPlayerId = eliminatorPlayerId,
@@ -182,7 +182,7 @@ namespace WSOA.Client.Pages.Tournament.Components
                         IsFinalTable = tournament.IsFinalTable
                     };
 
-                    APICallResult<EliminationResultDto> result = await TournamentService.EliminatePlayer(elimination);
+                    APICallResult<EliminationCreationResultDto> result = await TournamentService.EliminatePlayer(elimination);
                     if (!result.Success)
                     {
                         if (string.IsNullOrEmpty(result.RedirectUrl))

@@ -412,15 +412,15 @@ namespace WSOA.Server.Business.Implementation
             };
         }
 
-        public APICallResult<EliminationResultDto> EliminatePlayer(EliminationDto eliminationDto, ISession session)
+        public APICallResult<EliminationCreationResultDto> EliminatePlayer(EliminationCreationDto eliminationDto, ISession session)
         {
-            APICallResult<EliminationResultDto> result = new APICallResult<EliminationResultDto>(false);
+            APICallResult<EliminationCreationResultDto> result = new APICallResult<EliminationCreationResultDto>(false);
 
             try
             {
                 _transactionManager.BeginTransaction();
 
-                result.Data = new EliminationResultDto();
+                result.Data = new EliminationCreationResultDto();
 
                 session.CanUserPerformAction(_userRepository, BusinessActionResources.ELIMINATE_PLAYER);
 
@@ -546,6 +546,53 @@ namespace WSOA.Server.Business.Implementation
                 result.Success = true;
 
                 _transactionManager.CommitTransaction();
+            }
+            catch (FunctionalException e)
+            {
+                _transactionManager.RollbackTransaction();
+                string errorMsg = e.Message;
+                _log.Error(errorMsg);
+                result.ErrorMessage = errorMsg;
+                result.RedirectUrl = e.RedirectUrl;
+            }
+            catch (Exception e)
+            {
+                _transactionManager.RollbackTransaction();
+                string errorMsg = MainBusinessResources.TECHNICAL_ERROR;
+                _log.Error(e.Message);
+                result.ErrorMessage = errorMsg;
+                result.RedirectUrl = string.Format(RouteBusinessResources.MAIN_ERROR, errorMsg);
+            }
+
+            return result;
+        }
+
+        public APICallResult<BonusTournamentEarnedCreationResultDto> SaveBonusTournamentEarned(BonusTournamentEarnedCreationDto bonusEarnedDto, ISession session)
+        {
+            APICallResult<BonusTournamentEarnedCreationResultDto> result = new APICallResult<BonusTournamentEarnedCreationResultDto>(false);
+
+            try
+            {
+                _transactionManager.BeginTransaction();
+
+                session.CanUserPerformAction(_userRepository, BusinessActionResources.EDIT_BONUS_TOURNAMENT_EARNED);
+
+                BonusTournamentEarned bonusTournamentEarned = new BonusTournamentEarned
+                {
+                    BonusTournamentCode = bonusEarnedDto.EarnedBonus.Code,
+                    Occurrence = 1,
+                    PlayerId = bonusEarnedDto.ConcernedPlayerId,
+                    PointAmount = bonusEarnedDto.EarnedBonus.PointAmount
+                };
+                bonusTournamentEarned = _bonusTournamentEarnedRepository.SaveBonusTournamentEarned(bonusTournamentEarned);
+
+                _transactionManager.CommitTransaction();
+
+                result.Data = new BonusTournamentEarnedCreationResultDto
+                {
+                    BonusTournamentEarned = bonusTournamentEarned
+                };
+                result.Success = true;
             }
             catch (FunctionalException e)
             {

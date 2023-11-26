@@ -508,20 +508,28 @@ namespace WSOA.Test
 
         public void SaveBusinessAction(string profileCode, string businessActionCode)
         {
-            BusinessAction businessAction = new BusinessAction
+            BusinessAction? existingBusinessAction = _dbContext.BusinessActions.SingleOrDefault(ba => ba.Code == businessActionCode);
+            if (existingBusinessAction == null)
             {
-                Code = businessActionCode,
-                Label = "businessActionForTest"
-            };
+                existingBusinessAction = new BusinessAction
+                {
+                    Code = businessActionCode,
+                    Label = "businessActionForTest"
+                };
+                _dbContext.BusinessActions.Add(existingBusinessAction);
+            }
 
-            BusinessActionByProfileCode businessActionByProfileCode = new BusinessActionByProfileCode
+            BusinessActionByProfileCode? existingBusinessActionByProfileCode = _dbContext.BusinessActionsByProfileCode.SingleOrDefault(bap => bap.BusinessActionCode == businessActionCode && bap.ProfileCode == profileCode);
+            if (existingBusinessActionByProfileCode == null)
             {
-                ProfileCode = profileCode,
-                BusinessActionCode = businessActionCode
-            };
+                existingBusinessActionByProfileCode = new BusinessActionByProfileCode
+                {
+                    ProfileCode = profileCode,
+                    BusinessActionCode = businessActionCode
+                };
+                _dbContext.BusinessActionsByProfileCode.Add(existingBusinessActionByProfileCode);
+            }
 
-            _dbContext.BusinessActions.Add(businessAction);
-            _dbContext.BusinessActionsByProfileCode.Add(businessActionByProfileCode);
             _dbContext.SaveChanges();
         }
 
@@ -542,6 +550,20 @@ namespace WSOA.Test
             _dbContext.BonusTournaments.AddRange(bonusTournaments);
             _dbContext.SaveChanges();
             return bonusTournaments;
+        }
+
+        public BonusTournamentEarned SaveBonusTournamentEarned(int playerId, BonusTournament bonusTournament)
+        {
+            BonusTournamentEarned bonusTournamentEarned = new BonusTournamentEarned
+            {
+                BonusTournamentCode = bonusTournament.Code,
+                Occurrence = 1,
+                PlayerId = playerId,
+                PointAmount = bonusTournament.PointAmount
+            };
+            _dbContext.BonusTournamentEarneds.Add(bonusTournamentEarned);
+            _dbContext.SaveChanges();
+            return bonusTournamentEarned;
         }
 
         public List<BonusTournamentEarned> SaveBonusTournamentEarneds(IEnumerable<int> playerIds, IEnumerable<BonusTournament> bonusTournamentEarneds)
@@ -597,6 +619,15 @@ namespace WSOA.Test
                 _dbContext.SaveChanges();
             }
             return bonusTournament;
+        }
+
+        public BonusTournamentEarnedCreationDto CreateBonusTournamentEarnedCreationDto(int earnedBonusPlayerId, BonusTournament selectedBonusTournament)
+        {
+            return new BonusTournamentEarnedCreationDto
+            {
+                ConcernedPlayerId = earnedBonusPlayerId,
+                EarnedBonus = selectedBonusTournament
+            };
         }
 
         public void VerifyTransactionManagerCommit(Mock<ITransactionManager> transactionManagerMock)

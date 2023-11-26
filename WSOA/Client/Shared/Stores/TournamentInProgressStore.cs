@@ -20,7 +20,7 @@ namespace WSOA.Client.Shared.Stores
             return Data;
         }
 
-        public TournamentInProgressDto Update(EliminationDto elimination, EliminationResultDto eliminationResult)
+        public TournamentInProgressDto Update(EliminationCreationDto elimination, EliminationCreationResultDto eliminationResult)
         {
             if (eliminationResult.IsTournamentOver)
             {

@@ -18,13 +18,15 @@ namespace WSOA.Server.Data.Implementation
             if (existingBonus != null)
             {
                 existingBonus.Occurrence++;
+                _dbContext.SaveChanges();
+                return existingBonus;
             }
             else
             {
                 _dbContext.BonusTournamentEarneds.Add(bonusTournamentEarned);
+                _dbContext.SaveChanges();
+                return bonusTournamentEarned;
             }
-            _dbContext.SaveChanges();
-            return bonusTournamentEarned;
         }
     }
 }

@@ -44,6 +44,11 @@ namespace WSOA.Server.Business.Interface
         /// <summary>
         /// Eliminate player definitively if player dont take rebuy.
         /// </summary>
-        APICallResult<EliminationResultDto> EliminatePlayer(EliminationDto eliminationDto, ISession session);
+        APICallResult<EliminationCreationResultDto> EliminatePlayer(EliminationCreationDto eliminationDto, ISession session);
+
+        /// <summary>
+        /// Save bonus tournament earned by the player.
+        /// </summary>
+        APICallResult<BonusTournamentEarnedCreationResultDto> SaveBonusTournamentEarned(BonusTournamentEarnedCreationDto bonusEarnedDto, ISession session);
     }
 }

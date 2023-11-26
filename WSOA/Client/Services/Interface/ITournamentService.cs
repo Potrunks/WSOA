@@ -44,6 +44,11 @@ namespace WSOA.Client.Services.Interface
         /// <summary>
         /// Eliminate selected player and close tournament if it's the final.
         /// </summary>
-        Task<APICallResult<EliminationResultDto>> EliminatePlayer(EliminationDto elimination);
+        Task<APICallResult<EliminationCreationResultDto>> EliminatePlayer(EliminationCreationDto elimination);
+
+        /// <summary>
+        /// Save bonus tournament earned by a player
+        /// </summary>
+        Task<APICallResult<BonusTournamentEarnedCreationResultDto>> SaveBonusTournamentEarned(BonusTournamentEarnedCreationDto bonusTournamentEarnedCreation);
     }
 }

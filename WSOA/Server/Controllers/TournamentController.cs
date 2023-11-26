@@ -88,9 +88,16 @@ namespace WSOA.Server.Controllers
 
         [HttpPost]
         [Route("api/tournament/eliminatePlayer")]
-        public APICallResult<EliminationResultDto> EliminatePlayer(EliminationDto elimination)
+        public APICallResult<EliminationCreationResultDto> EliminatePlayer(EliminationCreationDto elimination)
         {
             return _tournamentBusiness.EliminatePlayer(elimination, HttpContext.Session);
+        }
+
+        [HttpPost]
+        [Route("api/tournament/saveBonusEarned")]
+        public APICallResult<BonusTournamentEarnedCreationResultDto> SaveBonusTournamentEarned(BonusTournamentEarnedCreationDto bonusTournamentEarnedCreation)
+        {
+            return _tournamentBusiness.SaveBonusTournamentEarned(bonusTournamentEarnedCreation, HttpContext.Session);
         }
     }
 }

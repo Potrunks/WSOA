@@ -30,7 +30,7 @@ namespace WSOA.Test.Business
         private User _otherUser;
         private Player _otherPlayer;
 
-        private EliminationDto _eliminationDto;
+        private EliminationCreationDto _eliminationDto;
 
         private Elimination _eliminationSaved;
 
@@ -107,7 +107,7 @@ namespace WSOA.Test.Business
                     PresenceStateResources.PRESENT_CODE
                 );
 
-            _eliminationDto = new EliminationDto
+            _eliminationDto = new EliminationCreationDto
             {
                 EliminatedPlayerId = _eliminatedPlayer.Id,
                 EliminatorPlayerId = _eliminatorPlayer.Id,
@@ -158,7 +158,7 @@ namespace WSOA.Test.Business
         [TestMethod]
         public void DontDefinitivelyEliminatePlayer_WhenReBuy()
         {
-            APICallResult<EliminationResultDto> result = ExecuteEliminatePlayer();
+            APICallResult<EliminationCreationResultDto> result = ExecuteEliminatePlayer();
 
             VerifyAPICallResultSuccess(result, null);
             VerifyTransactionManagerCommit(_transactionManagerMock);
@@ -179,7 +179,7 @@ namespace WSOA.Test.Business
         {
             _eliminationDto.HasReBuy = false;
 
-            APICallResult<EliminationResultDto> result = ExecuteEliminatePlayer();
+            APICallResult<EliminationCreationResultDto> result = ExecuteEliminatePlayer();
 
             VerifyAPICallResultSuccess(result, null);
             VerifyTransactionManagerCommit(_transactionManagerMock);
@@ -204,7 +204,7 @@ namespace WSOA.Test.Business
             _dbContext.SaveChanges();
             _eliminationDto.HasReBuy = false;
 
-            APICallResult<EliminationResultDto> result = ExecuteEliminatePlayer();
+            APICallResult<EliminationCreationResultDto> result = ExecuteEliminatePlayer();
 
             VerifyAPICallResultSuccess(result, null);
             VerifyTransactionManagerCommit(_transactionManagerMock);
@@ -227,7 +227,7 @@ namespace WSOA.Test.Business
             _dbContext.SaveChanges();
             _eliminationDto.HasReBuy = false;
 
-            APICallResult<EliminationResultDto> result = ExecuteEliminatePlayer();
+            APICallResult<EliminationCreationResultDto> result = ExecuteEliminatePlayer();
 
             VerifyAPICallResultSuccess(result, null);
             VerifyTransactionManagerCommit(_transactionManagerMock);
@@ -252,7 +252,7 @@ namespace WSOA.Test.Business
             _dbContext.SaveChanges();
             _eliminationDto.HasReBuy = false;
 
-            APICallResult<EliminationResultDto> result = ExecuteEliminatePlayer();
+            APICallResult<EliminationCreationResultDto> result = ExecuteEliminatePlayer();
 
             VerifyAPICallResultSuccess(result, null);
             VerifyTransactionManagerCommit(_transactionManagerMock);
@@ -293,7 +293,7 @@ namespace WSOA.Test.Business
                     _bonusTournamentRepositoryMock.Object
                 );
 
-            APICallResult<EliminationResultDto> result = ExecuteEliminatePlayer();
+            APICallResult<EliminationCreationResultDto> result = ExecuteEliminatePlayer();
 
             string expectedErrorMsg = MainBusinessResources.USER_CANNOT_PERFORM_ACTION;
             VerifyAPICallResultError
@@ -312,7 +312,7 @@ namespace WSOA.Test.Business
             _dbContext.Players.Remove(_eliminatedPlayer);
             _dbContext.SaveChanges();
 
-            APICallResult<EliminationResultDto> result = ExecuteEliminatePlayer();
+            APICallResult<EliminationCreationResultDto> result = ExecuteEliminatePlayer();
 
             string expectedErrorMsg = MainBusinessResources.TECHNICAL_ERROR;
             VerifyAPICallResultError
@@ -331,7 +331,7 @@ namespace WSOA.Test.Business
             _dbContext.Players.Remove(_eliminatorPlayer);
             _dbContext.SaveChanges();
 
-            APICallResult<EliminationResultDto> result = ExecuteEliminatePlayer();
+            APICallResult<EliminationCreationResultDto> result = ExecuteEliminatePlayer();
 
             string expectedErrorMsg = MainBusinessResources.TECHNICAL_ERROR;
             VerifyAPICallResultError
@@ -351,7 +351,7 @@ namespace WSOA.Test.Business
             _eliminationRepositoryMock.Setup(m => m.GetEliminationsByPlayerVictimIds(It.IsAny<IEnumerable<int>>()))
                                       .Returns(_dbContext.Eliminations.Where(elim => new List<int> { _eliminatedPlayer.Id, _eliminatorPlayer.Id }.Contains(elim.PlayerVictimId)));
 
-            APICallResult<EliminationResultDto> result = ExecuteEliminatePlayer();
+            APICallResult<EliminationCreationResultDto> result = ExecuteEliminatePlayer();
 
             string expectedErrorMsg = TournamentMessageResources.PLAYERS_ALREADY_DEFINITIVELY_ELIMINATED;
             VerifyAPICallResultError(result, null, expectedErrorMsg);
@@ -367,7 +367,7 @@ namespace WSOA.Test.Business
             SavePlayer(previousTournament.Id, _eliminatorUser.Id, PresenceStateResources.PRESENT_CODE, positionInTournament: 1, totalPoints: 50);
             _eliminationDto.HasReBuy = false;
 
-            APICallResult<EliminationResultDto> result = ExecuteEliminatePlayer();
+            APICallResult<EliminationCreationResultDto> result = ExecuteEliminatePlayer();
 
             VerifyAPICallResultSuccess(result, null);
             VerifyTransactionManagerCommit(_transactionManagerMock);
@@ -384,7 +384,7 @@ namespace WSOA.Test.Business
             SavePlayer(previousTournament.Id, _eliminatorUser.Id, PresenceStateResources.PRESENT_CODE, positionInTournament: 2, totalPoints: 100);
             _eliminationDto.HasReBuy = false;
 
-            APICallResult<EliminationResultDto> result = ExecuteEliminatePlayer();
+            APICallResult<EliminationCreationResultDto> result = ExecuteEliminatePlayer();
 
             VerifyAPICallResultSuccess(result, null);
             VerifyTransactionManagerCommit(_transactionManagerMock);
@@ -393,7 +393,7 @@ namespace WSOA.Test.Business
             Assert.AreEqual(1, _eliminatorPlayerBonus.Single(b => b.BonusTournamentCode == BonusTournamentResources.PREVIOUS_WINNER_KILLED).Occurrence);
         }
 
-        private APICallResult<EliminationResultDto> ExecuteEliminatePlayer()
+        private APICallResult<EliminationCreationResultDto> ExecuteEliminatePlayer()
         {
             return _tournamentBusiness.EliminatePlayer(_eliminationDto, _sessionMock.Object);
         }

@@ -9,12 +9,6 @@ namespace WSOA.Shared.Dtos
 
         }
 
-        public PlayerDto(Player player, User user)
-        {
-            Player = player;
-            User = user;
-        }
-
         public Player Player { get; set; }
 
         public User User { get; set; }
