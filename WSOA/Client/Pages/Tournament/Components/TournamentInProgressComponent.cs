@@ -169,7 +169,7 @@ namespace WSOA.Client.Pages.Tournament.Components
                         }
                     }
 
-                    tournament = TournamentInProgressStore.Update(dto);
+                    tournament = TournamentInProgressStore.Update(dto, result.Data);
                     InitializedData(tournament);
                     StateHasChanged();
                 }

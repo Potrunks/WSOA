@@ -58,7 +58,7 @@ namespace WSOA.Client.Shared.Stores
             return tournamentInProgress;
         }
 
-        public TournamentInProgressDto Update(BonusTournamentEarnedCreationDto creation)
+        public TournamentInProgressDto Update(BonusTournamentEarnedCreationDto creation, BonusTournamentEarnedCreationResultDto result)
         {
             TournamentInProgressDto tournament = GetData()!;
 
@@ -66,11 +66,11 @@ namespace WSOA.Client.Shared.Stores
 
             if (player.BonusTournamentEarnedsByBonusTournamentCode.TryGetValue(creation.EarnedBonus.Code, out BonusTournamentEarnedDto? bonusTournamentEarned))
             {
-                bonusTournamentEarned.Occurence++;
+                bonusTournamentEarned.Occurence = result.BonusTournamentEarned.Occurrence;
             }
             else
             {
-                bonusTournamentEarned = new BonusTournamentEarnedDto(creation.EarnedBonus);
+                bonusTournamentEarned = new BonusTournamentEarnedDto(creation.EarnedBonus, result.BonusTournamentEarned);
                 player.BonusTournamentEarnedsByBonusTournamentCode.Add(creation.EarnedBonus.Code, bonusTournamentEarned);
             }
 
