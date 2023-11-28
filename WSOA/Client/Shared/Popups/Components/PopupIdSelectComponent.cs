@@ -4,11 +4,11 @@ using WSOA.Shared.ViewModel;
 
 namespace WSOA.Client.Shared.Popups.Components
 {
-    public class PopupItemSelectableWithOptionComponent : PopupComponentBase
+    public class PopupIdSelectComponent : PopupComponentBase
     {
-        public List<ItemSelectableViewModel> Items { get; set; }
+        public List<IdSelectableViewModel> Items { get; set; }
 
-        public ItemSelectableWithOptionForm Form { get; set; }
+        public IdSelectedWithOptionForm Form { get; set; }
 
         public OptionViewModel Option { get; set; }
 
@@ -27,16 +27,16 @@ namespace WSOA.Client.Shared.Popups.Components
 
                 if (!IsDisplay && currentPopupOpen.Key == Key)
                 {
-                    Items = new List<ItemSelectableViewModel>();
-                    Items.AddRange(currentPopupOpen.SelectableItems!);
+                    Items = new List<IdSelectableViewModel>();
+                    Items.AddRange(currentPopupOpen.SelectableIds!);
 
                     Option = currentPopupOpen.Option!;
 
-                    OnValid = currentPopupOpen.OnValidTwoSelectedIdsWithOption!;
+                    OnValid = currentPopupOpen.OnValidSelectedId!;
 
-                    ConcernedItemId = currentPopupOpen.ConcernedItemId!.Value;
+                    ConcernedItemId = currentPopupOpen.ConcernedId!.Value;
 
-                    Form = new ItemSelectableWithOptionForm();
+                    Form = new IdSelectedWithOptionForm();
                     Form.SelectedItemId = Items.First().Id;
                     Form.IsOptionSelected = Option.Value;
 

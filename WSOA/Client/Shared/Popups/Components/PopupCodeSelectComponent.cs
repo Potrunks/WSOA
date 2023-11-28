@@ -1,13 +1,14 @@
 ﻿using Microsoft.AspNetCore.Components;
+using WSOA.Shared.Forms;
 using WSOA.Shared.ViewModel;
 
 namespace WSOA.Client.Shared.Popups.Components
 {
-    public class PopupItemSelectableComponent : PopupComponentBase
+    public class PopupCodeSelectComponent : PopupComponentBase
     {
-        public List<ItemSelectableViewModel> Items { get; set; }
+        public IEnumerable<CodeSelectableViewModel> Items { get; set; }
 
-        public new EventCallback<IEnumerable<int>> OnValid { get; set; }
+        public CodeSelectedForm Form { get; set; }
 
         protected override void OnInitialized()
         {
@@ -20,11 +21,10 @@ namespace WSOA.Client.Shared.Popups.Components
 
                 if (!IsDisplay && currentPopupOpen.Key == Key)
                 {
-                    Items = new List<ItemSelectableViewModel>();
-                    Items.AddRange(currentPopupOpen.SelectableItems);
-
-                    OnValid = currentPopupOpen.OnValidSelectedItemIds.Value;
-
+                    Items = currentPopupOpen.SelectableCodes!;
+                    Form = new CodeSelectedForm();
+                    Form.ConcernedId = currentPopupOpen.ConcernedId!.Value;
+                    Form.SelectedCode = Items.First().Value;
                     DisplayPopup(currentPopupOpen);
                 }
             };
@@ -38,18 +38,11 @@ namespace WSOA.Client.Shared.Popups.Components
             };
         }
 
-        public EventCallback<ItemSelectableViewModel> SwitchSelectionStatus => EventCallback.Factory.Create(this, (ItemSelectableViewModel item) =>
-        {
-            item.IsSelected = !item.IsSelected;
-        });
-
         public new EventCallback ValidPopup => EventCallback.Factory.Create(this, () =>
         {
-            IEnumerable<int> selectedItemIds = Items.Where(item => item.IsSelected).Select(sel => sel.Id);
-
-            OnValid.InvokeAsync(selectedItemIds);
-
+            Action<string, int> onValid = PopupEventHandler.CurrentPopupOpen.OnValidSelectedCode!;
             PopupEventHandler.Close();
+            onValid.Invoke(Form.SelectedCode, Form.ConcernedId);
         });
     }
 }

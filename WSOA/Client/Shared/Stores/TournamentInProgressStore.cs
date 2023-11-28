@@ -25,15 +25,12 @@ namespace WSOA.Client.Shared.Stores
             if (eliminationResult.IsTournamentOver)
             {
                 Data = null;
-            }
-
-            TournamentInProgressDto? tournamentInProgress = GetData();
-            if (tournamentInProgress == null)
-            {
-                string errorMsg = TournamentMessageResources.NO_TOURNAMENT_IN_PROGRESS;
+                string errorMsg = TournamentMessageResources.TOURNAMENT_FINISHED;
                 string redirectUrl = string.Format(RouteResources.MAIN_ERROR, errorMsg);
                 throw new FunctionalException(errorMsg, redirectUrl);
             }
+
+            TournamentInProgressDto tournamentInProgress = GetData()!;
 
             PlayerPlayingDto eliminatedPlayer = tournamentInProgress.PlayerPlayings.Single(pla => pla.Id == elimination.EliminatedPlayerId);
             if (elimination.HasReBuy)
@@ -58,6 +55,24 @@ namespace WSOA.Client.Shared.Stores
             }
 
             return tournamentInProgress;
+        }
+
+        public TournamentInProgressDto Update(BonusTournamentEarnedCreationDto creation)
+        {
+            TournamentInProgressDto tournament = GetData()!;
+
+            PlayerPlayingDto player = tournament.PlayerPlayings.Single(player => player.Id == creation.ConcernedPlayerId);
+
+            if (player.EarnedBonusLogoPathsWithOccurrences.TryGetValue(creation.EarnedBonus.LogoPath, out int occurence))
+            {
+                occurence++;
+            }
+            else
+            {
+                player.EarnedBonusLogoPathsWithOccurrences.Add(creation.EarnedBonus.LogoPath, 1);
+            }
+
+            return tournament;
         }
     }
 }

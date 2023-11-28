@@ -2,7 +2,7 @@
 @using WSOA.Client.Shared.Buttons.Resources;
 @using WSOA.Client.Shared.Popups.Components;
 @using WSOA.Shared.ViewModel;
-@inherits PopupItemSelectableComponent
+@inherits PopupIdsSelectComponent
 
 @if (IsDisplay)
 {
@@ -11,7 +11,7 @@
             <div class="c-selectItems__containerZone">
                 <div class="c-selectItems__title">@Title</div>
                 <div class="c-selectItems__items">
-                    @foreach (ItemSelectableViewModel item in Items)
+                    @foreach (IdSelectableViewModel item in Items)
                     {
                         <div class="c-selectItems__item">
                             <img class="c-selectItems__checkbox @(item.IsSelected ? "selected" : "")" src="images/success_logo.png" onclick="@(() => SwitchSelectionStatus.InvokeAsync(item))" />

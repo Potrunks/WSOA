@@ -12,17 +12,21 @@ namespace WSOA.Client.Shared.EventHandlers
 
         public IEnumerable<MessageViewModel>? Messages { get; set; }
 
-        public IEnumerable<ItemSelectableViewModel>? SelectableItems { get; set; }
+        public IEnumerable<IdSelectableViewModel>? SelectableIds { get; set; }
+
+        public IEnumerable<CodeSelectableViewModel>? SelectableCodes { get; set; }
 
         public Action? OnValid { get; set; }
 
-        public EventCallback<IEnumerable<int>>? OnValidSelectedItemIds { get; set; }
+        public EventCallback<IEnumerable<int>>? OnValidSelectedIds { get; set; }
 
-        public Action<int, int, bool>? OnValidTwoSelectedIdsWithOption { get; set; }
+        public Action<int, int, bool>? OnValidSelectedId { get; set; }
+
+        public Action<string, int>? OnValidSelectedCode { get; set; }
 
         public IEnumerable<PopupButtonViewModel>? Buttons { get; set; }
 
-        public int? ConcernedItemId { get; set; }
+        public int? ConcernedId { get; set; }
 
         public OptionViewModel? Option { get; set; }
     }

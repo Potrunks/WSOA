@@ -20,7 +20,7 @@ namespace WSOA.Client.Shared.EventHandlers
 
         private void Open(PopupKeyResources key, string title, EventCallback<IEnumerable<int>>? onValid)
         {
-            CurrentPopupOpen.OnValidSelectedItemIds = onValid;
+            CurrentPopupOpen.OnValidSelectedIds = onValid;
             Open(key, title);
         }
 
@@ -53,7 +53,7 @@ namespace WSOA.Client.Shared.EventHandlers
             Open(PopupKeyResources.MESSAGE, title, onValid);
         }
 
-        public void Open(IEnumerable<ItemSelectableViewModel> selectableItems, string title, EventCallback<IEnumerable<int>> onValid)
+        public void Open(IEnumerable<IdSelectableViewModel> selectableItems, string title, EventCallback<IEnumerable<int>> onValid)
         {
             if (!selectableItems.Any())
             {
@@ -61,13 +61,13 @@ namespace WSOA.Client.Shared.EventHandlers
             }
             else
             {
-                CurrentPopupOpen.SelectableItems = selectableItems;
+                CurrentPopupOpen.SelectableIds = selectableItems;
 
-                Open(PopupKeyResources.ITEM_SELECT, title, onValid);
+                Open(PopupKeyResources.MULTI_ID_SELECT, title, onValid);
             }
         }
 
-        public void Open(IEnumerable<ItemSelectableViewModel> selectableItems, string title, int concernedId, OptionViewModel option, Action<int, int, bool> onValid)
+        public void Open(IEnumerable<IdSelectableViewModel> selectableItems, string title, int concernedId, OptionViewModel option, Action<int, int, bool> onValid)
         {
             if (!selectableItems.Any())
             {
@@ -75,12 +75,12 @@ namespace WSOA.Client.Shared.EventHandlers
             }
             else
             {
-                CurrentPopupOpen.SelectableItems = selectableItems;
+                CurrentPopupOpen.SelectableIds = selectableItems;
                 CurrentPopupOpen.Option = option;
-                CurrentPopupOpen.ConcernedItemId = concernedId;
-                CurrentPopupOpen.OnValidTwoSelectedIdsWithOption = onValid;
+                CurrentPopupOpen.ConcernedId = concernedId;
+                CurrentPopupOpen.OnValidSelectedId = onValid;
 
-                Open(PopupKeyResources.ITEM_SELECT_OPTION, title);
+                Open(PopupKeyResources.ID_SELECT_OPTION, title);
             }
         }
 
@@ -93,9 +93,24 @@ namespace WSOA.Client.Shared.EventHandlers
             else
             {
                 CurrentPopupOpen.Buttons = buttons;
-                CurrentPopupOpen.ConcernedItemId = concernedItemId;
+                CurrentPopupOpen.ConcernedId = concernedItemId;
 
                 Open(PopupKeyResources.MENU, title);
+            }
+        }
+
+        public void Open(IEnumerable<CodeSelectableViewModel> items, string title, int concernedId, Action<string, int> onValid)
+        {
+            if (items.Any())
+            {
+                CurrentPopupOpen.SelectableCodes = items;
+                CurrentPopupOpen.OnValidSelectedCode = onValid;
+                CurrentPopupOpen.ConcernedId = concernedId;
+                Open(PopupKeyResources.CODE_SELECT, title);
+            }
+            else
+            {
+                Open(PopupErrorMessageResources.NO_SELECTABLE_ITEM, false, title, null);
             }
         }
 
@@ -106,13 +121,15 @@ namespace WSOA.Client.Shared.EventHandlers
             CurrentPopupOpen.Key = null;
             CurrentPopupOpen.Title = null;
             CurrentPopupOpen.Messages = null;
-            CurrentPopupOpen.SelectableItems = null;
+            CurrentPopupOpen.SelectableIds = null;
             CurrentPopupOpen.OnValid = null;
-            CurrentPopupOpen.OnValidSelectedItemIds = null;
+            CurrentPopupOpen.OnValidSelectedIds = null;
             CurrentPopupOpen.Buttons = null;
-            CurrentPopupOpen.ConcernedItemId = null;
+            CurrentPopupOpen.ConcernedId = null;
             CurrentPopupOpen.Option = null;
-            CurrentPopupOpen.OnValidTwoSelectedIdsWithOption = null;
+            CurrentPopupOpen.OnValidSelectedId = null;
+            CurrentPopupOpen.SelectableCodes = null;
+            CurrentPopupOpen.OnValidSelectedCode = null;
         }
     }
 }

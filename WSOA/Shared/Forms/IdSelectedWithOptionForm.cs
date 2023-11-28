@@ -1,8 +1,8 @@
 ﻿namespace WSOA.Shared.Forms
 {
-    public class ItemSelectableWithOptionForm
+    public class IdSelectedWithOptionForm
     {
-        public ItemSelectableWithOptionForm() { }
+        public IdSelectedWithOptionForm() { }
 
         public int SelectedItemId { get; set; }
 

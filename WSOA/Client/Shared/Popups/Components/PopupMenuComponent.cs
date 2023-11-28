@@ -35,7 +35,7 @@ namespace WSOA.Client.Shared.Popups.Components
 
         public EventCallback<Action<int?>> ExecutePopupAction => EventCallback.Factory.Create(this, (Action<int?> action) =>
         {
-            int? concernedItemId = PopupEventHandler.CurrentPopupOpen.ConcernedItemId;
+            int? concernedItemId = PopupEventHandler.CurrentPopupOpen.ConcernedId;
             PopupEventHandler.Close();
             action.Invoke(concernedItemId);
         });

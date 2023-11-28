@@ -2,17 +2,17 @@
 
 namespace WSOA.Shared.ViewModel
 {
-    public class ItemSelectableViewModel
+    public class IdSelectableViewModel
     {
-        public ItemSelectableViewModel() { }
+        public IdSelectableViewModel() { }
 
-        public ItemSelectableViewModel(PlayerViewModel player)
+        public IdSelectableViewModel(PlayerViewModel player)
         {
             Id = player.UserId;
             Label = StringFormatUtil.ToFullFirstNameAndFirstLetterLastName(player.FirstName, player.LastName);
         }
 
-        public ItemSelectableViewModel(PlayerPlayingViewModel player)
+        public IdSelectableViewModel(PlayerPlayingViewModel player)
         {
             Id = player.Id;
             Label = StringFormatUtil.ToFullFirstNameAndFirstLetterLastName(player.FirstName, player.LastName);

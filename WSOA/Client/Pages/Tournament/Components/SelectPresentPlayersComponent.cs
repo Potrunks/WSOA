@@ -64,7 +64,7 @@ namespace WSOA.Client.Pages.Tournament.Components
 
         public EventCallback OpenSelectablePlayersPopup => EventCallback.Factory.Create(this, () =>
         {
-            IEnumerable<ItemSelectableViewModel> selectablePlayers = AvailablePlayers.Select(pla => new ItemSelectableViewModel(pla));
+            IEnumerable<IdSelectableViewModel> selectablePlayers = AvailablePlayers.Select(pla => new IdSelectableViewModel(pla));
             PopupEventHandler.Open(selectablePlayers, MainLabelResources.AVAILABLE_PLAYERS, SelectPlayers);
         });
 

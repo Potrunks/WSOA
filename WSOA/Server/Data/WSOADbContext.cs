@@ -312,12 +312,12 @@ namespace WSOA.Server.Data
                 {
                     Code = "ELIM_PLAYER",
                     Label = "Eliminer un joueur"
+                },
+                new BusinessAction
+                {
+                    Code = BusinessActionResources.EDIT_BONUS_TOURNAMENT_EARNED,
+                    Label = "Editer un bonus tournament gagné"
                 }
-                //new BusinessAction
-                //{
-                //    Code = BusinessActionResources.EDIT_BONUS_TOURNAMENT_EARNED,
-                //    Label = "Editer un bonus tournament gagné"
-                //}
             );
 
             modelBuilder.Entity<BusinessActionByProfileCode>().HasData
@@ -333,13 +333,13 @@ namespace WSOA.Server.Data
                     Id = 2,
                     ProfileCode = "ORGA",
                     BusinessActionCode = "ELIM_PLAYER"
+                },
+                new BusinessActionByProfileCode
+                {
+                    Id = 3,
+                    ProfileCode = "ORGA",
+                    BusinessActionCode = BusinessActionResources.EDIT_BONUS_TOURNAMENT_EARNED
                 }
-                //new BusinessActionByProfileCode
-                //{
-                //    Id = 3,
-                //    ProfileCode = "ORGA",
-                //    BusinessActionCode = BusinessActionResources.EDIT_BONUS_TOURNAMENT_EARNED
-                //}
             );
 
             modelBuilder.Entity<BonusTournament>().HasData

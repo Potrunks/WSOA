@@ -86,36 +86,98 @@ namespace WSOA.Client.Pages.Tournament.Components
                             );
                     }
 
-                    IEnumerable<ItemSelectableViewModel> eliminatorPlayers = PlayerPlayingsViewModel.Where(pla => !pla.IsEliminated && pla.Id != playerId)
-                                                                                                    .Select(pla => new ItemSelectableViewModel(pla));
+                    IEnumerable<IdSelectableViewModel> eliminatorPlayers = PlayerPlayingsViewModel.Where(pla => !pla.IsEliminated && pla.Id != playerId)
+                                                                                                    .Select(pla => new IdSelectableViewModel(pla));
                     OptionViewModel option = new OptionViewModel
                     {
-                        Label = "Re-Buy ?",
+                        Label = TournamentMessageResources.WANT_REBUY,
                         Value = false
                     };
 
                     PopupEventHandler.Open(
                         eliminatorPlayers,
                         string.Format(TournamentMessageResources.WHO_ELIMINATE_PLAYER, StringFormatUtil.ToFullFirstNameAndFirstLetterLastName(eliminatedPlayer.FirstName, eliminatedPlayer.LastName)),
-                        playerId.Value,
+                        playerId!.Value,
                         option,
                         EliminatePlayer()
                         );
                 }
                 catch (FunctionalException e)
                 {
-                    NavigationManager.NavigateTo(e.RedirectUrl);
+                    NavigationManager.NavigateTo(e.RedirectUrl!);
                     return;
                 }
             };
         }
 
-        public Action<int?> OpenWinBonusPopup()
+        private Action<int?> OpenWinBonusPopup()
         {
             return (int? playerId) =>
             {
-                // Ouvrir la popup des bonus gagné
-                PopupEventHandler.Close();
+                try
+                {
+                    TournamentInProgressDto tournamentInProgressDto = CheckTournamentAlwaysInProgress();
+                    PlayerPlayingDto player = tournamentInProgressDto.PlayerPlayings.Single(pla => pla.Id == playerId);
+                    IEnumerable<CodeSelectableViewModel> items = tournamentInProgressDto.WinnableBonus.Where(bonus => !new string[] { BonusTournamentResources.FIRST_RANKED_KILLED, BonusTournamentResources.PREVIOUS_WINNER_KILLED }.Contains(bonus.Code))
+                                                                                                      .Select(bonus => new CodeSelectableViewModel(bonus));
+                    PopupEventHandler.Open
+                    (
+                        items,
+                        string.Format(TournamentMessageResources.WHICH_BONUS_HAS_WON, StringFormatUtil.ToFullFirstNameAndFirstLetterLastName(player.FirstName, player.LastName)),
+                        playerId!.Value,
+                        AddBonus()
+                    );
+                }
+                catch (FunctionalException e)
+                {
+                    NavigationManager.NavigateTo(e.RedirectUrl!);
+                    return;
+                }
+            };
+        }
+
+        private Action<string, int> AddBonus()
+        {
+            return async (string selectedCode, int concernedId) =>
+            {
+                try
+                {
+                    TournamentInProgressDto tournament = CheckTournamentAlwaysInProgress();
+                    BonusTournamentEarnedCreationDto dto = new BonusTournamentEarnedCreationDto
+                    {
+                        ConcernedPlayerId = concernedId,
+                        EarnedBonus = tournament.WinnableBonus.Single(bonus => bonus.Code == selectedCode)
+                    };
+
+                    APICallResult<BonusTournamentEarnedCreationResultDto> result = await TournamentService.SaveBonusTournamentEarned(dto);
+                    if (!result.Success)
+                    {
+                        if (string.IsNullOrEmpty(result.RedirectUrl))
+                        {
+                            PopupEventHandler.Open(
+                                msg: result.ErrorMessage!,
+                                isError: true,
+                                title: MainLabelResources.ERROR,
+                                onValid: null
+                                );
+                            return;
+                        }
+                        else
+                        {
+                            NavigationManager.NavigateTo(result.RedirectUrl);
+                            return;
+                        }
+                    }
+
+                    tournament = TournamentInProgressStore.Update(dto);
+                    InitializedData(tournament);
+                    StateHasChanged();
+                }
+                catch (FunctionalException e)
+                {
+                    NavigationManager.NavigateTo(e.RedirectUrl!);
+                    return;
+                }
             };
         }
 
@@ -130,12 +192,12 @@ namespace WSOA.Client.Pages.Tournament.Components
                     Action = OpenEliminationPopup(),
                     Label = PopupPlayerActionResources.ELIMINATION
                 });
-                actions.Add(new PopupButtonViewModel
-                {
-                    Action = OpenWinBonusPopup(),
-                    Label = PopupPlayerActionResources.WIN_BONUS
-                });
             }
+            actions.Add(new PopupButtonViewModel
+            {
+                Action = OpenWinBonusPopup(),
+                Label = PopupPlayerActionResources.WIN_BONUS
+            });
 
             return actions;
         }
