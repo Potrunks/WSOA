@@ -50,7 +50,8 @@ namespace WSOA.Client.Shared.Stores
                 IEnumerable<BonusTournament> bonusWon = tournamentInProgress.WinnableBonus.Where(b => eliminationResult.EliminatorPlayerWonBonusCodes.Contains(b.Code));
                 foreach (BonusTournament bonusTournament in bonusWon)
                 {
-                    eliminatorPlayer.EarnedBonusLogoPathsWithOccurrences.Add(bonusTournament.LogoPath, 1);
+                    BonusTournamentEarnedDto bonusTournamentEarned = new BonusTournamentEarnedDto(bonusTournament);
+                    eliminatorPlayer.BonusTournamentEarnedsByBonusTournamentCode.Add(bonusTournament.Code, bonusTournamentEarned);
                 }
             }
 
@@ -63,13 +64,14 @@ namespace WSOA.Client.Shared.Stores
 
             PlayerPlayingDto player = tournament.PlayerPlayings.Single(player => player.Id == creation.ConcernedPlayerId);
 
-            if (player.EarnedBonusLogoPathsWithOccurrences.TryGetValue(creation.EarnedBonus.LogoPath, out int occurence))
+            if (player.BonusTournamentEarnedsByBonusTournamentCode.TryGetValue(creation.EarnedBonus.Code, out BonusTournamentEarnedDto? bonusTournamentEarned))
             {
-                occurence++;
+                bonusTournamentEarned.Occurence++;
             }
             else
             {
-                player.EarnedBonusLogoPathsWithOccurrences.Add(creation.EarnedBonus.LogoPath, 1);
+                bonusTournamentEarned = new BonusTournamentEarnedDto(creation.EarnedBonus);
+                player.BonusTournamentEarnedsByBonusTournamentCode.Add(creation.EarnedBonus.Code, bonusTournamentEarned);
             }
 
             return tournament;

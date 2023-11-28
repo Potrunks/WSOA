@@ -17,8 +17,8 @@ namespace WSOA.Shared.ViewModel
             LastName = playerPlayingDto.LastName.ToUpper();
             TotalAddOn = playerPlayingDto.TotalAddOn == null ? 0 : playerPlayingDto.TotalAddOn.Value;
             TotalRebuy = playerPlayingDto.TotalRebuy == null ? 0 : playerPlayingDto.TotalRebuy.Value;
-            EarnedBonusLogoPathsWithOccurrences = playerPlayingDto.EarnedBonusLogoPathsWithOccurrences;
-            HasBonusEarned = EarnedBonusLogoPathsWithOccurrences.Any();
+            BonusTournamentEarnedByBonusTournamentCode = playerPlayingDto.BonusTournamentEarnedsByBonusTournamentCode;
+            HasBonusEarned = BonusTournamentEarnedByBonusTournamentCode.Any();
         }
 
         public int Id { get; set; }
@@ -33,7 +33,7 @@ namespace WSOA.Shared.ViewModel
 
         public int TotalRebuy { get; set; }
 
-        public IDictionary<string, int> EarnedBonusLogoPathsWithOccurrences { get; set; }
+        public IDictionary<string, BonusTournamentEarnedDto> BonusTournamentEarnedByBonusTournamentCode { get; set; }
 
         public bool HasBonusEarned { get; set; }
     }

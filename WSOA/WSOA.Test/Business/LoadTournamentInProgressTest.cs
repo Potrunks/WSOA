@@ -100,7 +100,7 @@ namespace WSOA.Test.Business
                 Assert.AreEqual(player.TotalAddOn, playerResult.TotalAddOn);
                 Assert.AreEqual(usr.FirstName, playerResult.FirstName);
                 Assert.AreEqual(usr.LastName, playerResult.LastName);
-                Assert.AreEqual(_availableBonus.Count, playerResult.EarnedBonusLogoPathsWithOccurrences.Count);
+                Assert.AreEqual(_availableBonus.Count, playerResult.BonusTournamentEarnedsByBonusTournamentCode.Count);
                 Assert.AreEqual(false, playerResult.IsEliminated);
                 Assert.AreEqual(false, playerResult.HasWinLastTournament);
                 Assert.AreEqual(false, playerResult.IsActualFirstSeasonRank);

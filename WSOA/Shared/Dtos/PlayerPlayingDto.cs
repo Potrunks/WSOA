@@ -23,7 +23,7 @@ namespace WSOA.Shared.Dtos
             LastName = playerDto.User.LastName;
             TotalRebuy = playerDto.Player.TotalReBuy;
             TotalAddOn = playerDto.Player.TotalAddOn;
-            EarnedBonusLogoPathsWithOccurrences = bonusTournamentEarneds.ToDictionary(bonus => allBonusByCode[bonus.BonusTournamentCode].LogoPath, bonus => bonus.Occurrence);
+            BonusTournamentEarnedsByBonusTournamentCode = bonusTournamentEarneds.ToDictionary(bonus => bonus.BonusTournamentCode, bonus => new BonusTournamentEarnedDto(allBonusByCode[bonus.BonusTournamentCode], bonus));
             IsEliminated = playerDto.Player.CurrentTournamentPosition != null;
             HasWinLastTournament = lastWinner != null && lastWinner.Id == playerDto.User.Id;
             IsActualFirstSeasonRank = firstRanked != null && firstRanked.Id == playerDto.User.Id;
@@ -39,7 +39,7 @@ namespace WSOA.Shared.Dtos
 
         public int? TotalAddOn { get; set; }
 
-        public IDictionary<string, int> EarnedBonusLogoPathsWithOccurrences { get; set; }
+        public IDictionary<string, BonusTournamentEarnedDto> BonusTournamentEarnedsByBonusTournamentCode { get; set; }
 
         public bool IsEliminated { get; set; }
 

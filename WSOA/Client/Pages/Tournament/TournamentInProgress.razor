@@ -2,6 +2,7 @@
 @using WSOA.Client.Pages.Tournament.Components;
 @using WSOA.Client.Shared.Counters
 @using WSOA.Client.Shared.Loaders
+@using WSOA.Shared.Dtos;
 @using WSOA.Shared.ViewModel;
 @inherits TournamentInProgressComponent
 
@@ -40,10 +41,10 @@ else
                         @if (player.HasBonusEarned)
                         {
                             <div class="c-player__bonusEarneds">
-                                @foreach (KeyValuePair<string, int> kvp in player.EarnedBonusLogoPathsWithOccurrences)
+                                @foreach (KeyValuePair<string, BonusTournamentEarnedDto> kvp in player.BonusTournamentEarnedByBonusTournamentCode)
                                 {
-                                    <CascadingValue Value="@kvp.Value" Name="LogoBadgeCounterValue">
-                                        <LogoBadgeCounter LogoPath="@kvp.Key"
+                                    <CascadingValue Value="@kvp.Value.Occurence" Name="LogoBadgeCounterValue">
+                                        <LogoBadgeCounter LogoPath="@kvp.Value.LogoPath"
                                           LogoPixelSize="20" />
                                     </CascadingValue>
                                 }
