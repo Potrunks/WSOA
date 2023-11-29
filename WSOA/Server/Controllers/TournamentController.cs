@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using WSOA.Server.Business.Interface;
 using WSOA.Shared.Dtos;
+using WSOA.Shared.Resources;
 using WSOA.Shared.Result;
 using WSOA.Shared.ViewModel;
 
@@ -95,9 +96,16 @@ namespace WSOA.Server.Controllers
 
         [HttpPost]
         [Route("api/tournament/saveBonusEarned")]
-        public APICallResult<BonusTournamentEarnedCreationResultDto> SaveBonusTournamentEarned(BonusTournamentEarnedCreationDto bonusTournamentEarnedCreation)
+        public APICallResult<BonusTournamentEarnedEditResultDto> SaveBonusTournamentEarned(BonusTournamentEarnedEditDto bonusTournamentEarnedCreation)
         {
             return _tournamentBusiness.SaveBonusTournamentEarned(bonusTournamentEarnedCreation, HttpContext.Session);
+        }
+
+        [HttpPost]
+        [Route(RouteResources.DELETE_BONUS_EARNED)]
+        public APICallResult<BonusTournamentEarnedEditResultDto> DeleteBonusTournamentEarned(BonusTournamentEarnedEditDto bonusTournamentEarnedEditDto)
+        {
+            return _tournamentBusiness.DeleteBonusTournamentEarned(bonusTournamentEarnedEditDto, HttpContext.Session);
         }
     }
 }

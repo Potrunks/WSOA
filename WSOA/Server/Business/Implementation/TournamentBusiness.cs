@@ -567,9 +567,9 @@ namespace WSOA.Server.Business.Implementation
             return result;
         }
 
-        public APICallResult<BonusTournamentEarnedCreationResultDto> SaveBonusTournamentEarned(BonusTournamentEarnedCreationDto bonusEarnedDto, ISession session)
+        public APICallResult<BonusTournamentEarnedEditResultDto> SaveBonusTournamentEarned(BonusTournamentEarnedEditDto bonusEarnedDto, ISession session)
         {
-            APICallResult<BonusTournamentEarnedCreationResultDto> result = new APICallResult<BonusTournamentEarnedCreationResultDto>(false);
+            APICallResult<BonusTournamentEarnedEditResultDto> result = new APICallResult<BonusTournamentEarnedEditResultDto>(false);
 
             try
             {
@@ -579,18 +579,58 @@ namespace WSOA.Server.Business.Implementation
 
                 BonusTournamentEarned bonusTournamentEarned = new BonusTournamentEarned
                 {
-                    BonusTournamentCode = bonusEarnedDto.EarnedBonus.Code,
+                    BonusTournamentCode = bonusEarnedDto.ConcernedBonusTournament.Code,
                     Occurrence = 1,
                     PlayerId = bonusEarnedDto.ConcernedPlayerId,
-                    PointAmount = bonusEarnedDto.EarnedBonus.PointAmount
+                    PointAmount = bonusEarnedDto.ConcernedBonusTournament.PointAmount
                 };
                 bonusTournamentEarned = _bonusTournamentEarnedRepository.SaveBonusTournamentEarned(bonusTournamentEarned);
 
                 _transactionManager.CommitTransaction();
 
-                result.Data = new BonusTournamentEarnedCreationResultDto
+                result.Data = new BonusTournamentEarnedEditResultDto
                 {
-                    BonusTournamentEarned = bonusTournamentEarned
+                    EditedBonusTournamentEarned = bonusTournamentEarned
+                };
+                result.Success = true;
+            }
+            catch (FunctionalException e)
+            {
+                _transactionManager.RollbackTransaction();
+                string errorMsg = e.Message;
+                _log.Error(errorMsg);
+                result.ErrorMessage = errorMsg;
+                result.RedirectUrl = e.RedirectUrl;
+            }
+            catch (Exception e)
+            {
+                _transactionManager.RollbackTransaction();
+                string errorMsg = MainBusinessResources.TECHNICAL_ERROR;
+                _log.Error(e.Message);
+                result.ErrorMessage = errorMsg;
+                result.RedirectUrl = string.Format(RouteBusinessResources.MAIN_ERROR, errorMsg);
+            }
+
+            return result;
+        }
+
+        public APICallResult<BonusTournamentEarnedEditResultDto> DeleteBonusTournamentEarned(BonusTournamentEarnedEditDto bonusTournamentEarnedEditDto, ISession session)
+        {
+            APICallResult<BonusTournamentEarnedEditResultDto> result = new APICallResult<BonusTournamentEarnedEditResultDto>(false);
+
+            try
+            {
+                _transactionManager.BeginTransaction();
+
+                session.CanUserPerformAction(_userRepository, BusinessActionResources.EDIT_BONUS_TOURNAMENT_EARNED);
+
+                BonusTournamentEarned bonusTournamentEarnedUpdated = _bonusTournamentEarnedRepository.DeleteBonusTournamentEarned(bonusTournamentEarnedEditDto.ConcernedPlayerId, bonusTournamentEarnedEditDto.ConcernedBonusTournament.Code);
+
+                _transactionManager.CommitTransaction();
+
+                result.Data = new BonusTournamentEarnedEditResultDto
+                {
+                    EditedBonusTournamentEarned = bonusTournamentEarnedUpdated
                 };
                 result.Success = true;
             }

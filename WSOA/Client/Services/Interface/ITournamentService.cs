@@ -49,6 +49,11 @@ namespace WSOA.Client.Services.Interface
         /// <summary>
         /// Save bonus tournament earned by a player
         /// </summary>
-        Task<APICallResult<BonusTournamentEarnedCreationResultDto>> SaveBonusTournamentEarned(BonusTournamentEarnedCreationDto bonusTournamentEarnedCreation);
+        Task<APICallResult<BonusTournamentEarnedEditResultDto>> SaveBonusTournamentEarned(BonusTournamentEarnedEditDto bonusTournamentEarnedEditDto);
+
+        /// <summary>
+        /// Delete bonus tournament earned by a player (reduce by one the occurence or delete if occurence updated is zero).
+        /// </summary>
+        Task<APICallResult<BonusTournamentEarnedEditResultDto>> DeleteBonusTournamentEarned(BonusTournamentEarnedEditDto bonusTournamentEarnedEditDto);
     }
 }

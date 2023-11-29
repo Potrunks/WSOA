@@ -410,6 +410,12 @@ namespace WSOA.Test
             return player;
         }
 
+        public Player SavePlayer(string firstName, string lastName, string profileCode, int tournamentId, string presenceStateCode, int? positionInTournament = null, int? totalPoints = null)
+        {
+            User user = SaveUser(firstName, lastName, $"{lastName}Login", $"{lastName}Pwd", profileCode);
+            return SavePlayer(tournamentId, user.Id, presenceStateCode, positionInTournament, totalPoints);
+        }
+
         public List<Player> SavePlayers(IEnumerable<int> usrIds, int tournamentId, string presenceStateCode, bool tournamentIsOver = false)
         {
             List<Player> players = new List<Player>();
@@ -552,12 +558,12 @@ namespace WSOA.Test
             return bonusTournaments;
         }
 
-        public BonusTournamentEarned SaveBonusTournamentEarned(int playerId, BonusTournament bonusTournament)
+        public BonusTournamentEarned SaveBonusTournamentEarned(int playerId, BonusTournament bonusTournament, int occurence = 1)
         {
             BonusTournamentEarned bonusTournamentEarned = new BonusTournamentEarned
             {
                 BonusTournamentCode = bonusTournament.Code,
-                Occurrence = 1,
+                Occurrence = occurence,
                 PlayerId = playerId,
                 PointAmount = bonusTournament.PointAmount
             };
@@ -621,12 +627,12 @@ namespace WSOA.Test
             return bonusTournament;
         }
 
-        public BonusTournamentEarnedCreationDto CreateBonusTournamentEarnedCreationDto(int earnedBonusPlayerId, BonusTournament selectedBonusTournament)
+        public BonusTournamentEarnedEditDto CreateBonusTournamentEarnedEditDto(int earnedBonusPlayerId, BonusTournament selectedBonusTournament)
         {
-            return new BonusTournamentEarnedCreationDto
+            return new BonusTournamentEarnedEditDto
             {
                 ConcernedPlayerId = earnedBonusPlayerId,
-                EarnedBonus = selectedBonusTournament
+                ConcernedBonusTournament = selectedBonusTournament
             };
         }
 

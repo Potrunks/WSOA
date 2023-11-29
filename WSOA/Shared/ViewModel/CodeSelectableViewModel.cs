@@ -1,4 +1,5 @@
-﻿using WSOA.Shared.Entity;
+﻿using WSOA.Shared.Dtos;
+using WSOA.Shared.Entity;
 
 namespace WSOA.Shared.ViewModel
 {
@@ -13,6 +14,12 @@ namespace WSOA.Shared.ViewModel
         {
             Value = bonusTournament.Code;
             Label = bonusTournament.Label;
+        }
+
+        public CodeSelectableViewModel(BonusTournamentEarnedDto bonusTournamentEarnedDto)
+        {
+            Value = bonusTournamentEarnedDto.Code;
+            Label = bonusTournamentEarnedDto.Label;
         }
 
         public string Value { get; set; }

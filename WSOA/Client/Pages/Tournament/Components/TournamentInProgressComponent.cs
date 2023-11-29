@@ -125,7 +125,7 @@ namespace WSOA.Client.Pages.Tournament.Components
                         items,
                         string.Format(TournamentMessageResources.WHICH_BONUS_HAS_WON, StringFormatUtil.ToFullFirstNameAndFirstLetterLastName(player.FirstName, player.LastName)),
                         playerId!.Value,
-                        AddBonus()
+                        EditBonus(false)
                     );
                 }
                 catch (FunctionalException e)
@@ -136,20 +136,45 @@ namespace WSOA.Client.Pages.Tournament.Components
             };
         }
 
-        private Action<string, int> AddBonus()
+        private Action<int?> OpenDeleteBonusPopup()
+        {
+            return (int? playerId) =>
+            {
+                try
+                {
+                    TournamentInProgressDto tournamentInProgressDto = CheckTournamentAlwaysInProgress();
+                    PlayerPlayingDto player = tournamentInProgressDto.PlayerPlayings.Single(pla => pla.Id == playerId);
+                    IEnumerable<CodeSelectableViewModel> items = player.BonusTournamentEarnedsByBonusTournamentCode.Select(bonus => new CodeSelectableViewModel(bonus.Value));
+                    PopupEventHandler.Open
+                    (
+                        items,
+                        string.Format(TournamentMessageResources.WHICH_BONUS_TO_DELETE, StringFormatUtil.ToFullFirstNameAndFirstLetterLastName(player.FirstName, player.LastName)),
+                        playerId!.Value,
+                        EditBonus(true)
+                    );
+                }
+                catch (FunctionalException e)
+                {
+                    NavigationManager.NavigateTo(e.RedirectUrl!);
+                    return;
+                }
+            };
+        }
+
+        private Action<string, int> EditBonus(bool isDelete)
         {
             return async (string selectedCode, int concernedId) =>
             {
                 try
                 {
                     TournamentInProgressDto tournament = CheckTournamentAlwaysInProgress();
-                    BonusTournamentEarnedCreationDto dto = new BonusTournamentEarnedCreationDto
+                    BonusTournamentEarnedEditDto dto = new BonusTournamentEarnedEditDto
                     {
                         ConcernedPlayerId = concernedId,
-                        EarnedBonus = tournament.WinnableBonus.Single(bonus => bonus.Code == selectedCode)
+                        ConcernedBonusTournament = tournament.WinnableBonus.Single(bonus => bonus.Code == selectedCode)
                     };
 
-                    APICallResult<BonusTournamentEarnedCreationResultDto> result = await TournamentService.SaveBonusTournamentEarned(dto);
+                    APICallResult<BonusTournamentEarnedEditResultDto> result = isDelete ? await TournamentService.DeleteBonusTournamentEarned(dto) : await TournamentService.SaveBonusTournamentEarned(dto);
                     if (!result.Success)
                     {
                         if (string.IsNullOrEmpty(result.RedirectUrl))
@@ -169,7 +194,7 @@ namespace WSOA.Client.Pages.Tournament.Components
                         }
                     }
 
-                    tournament = TournamentInProgressStore.Update(dto, result.Data);
+                    tournament = TournamentInProgressStore.Update(result.Data);
                     InitializedData(tournament);
                     StateHasChanged();
                 }
@@ -193,6 +218,16 @@ namespace WSOA.Client.Pages.Tournament.Components
                     Label = PopupPlayerActionResources.ELIMINATION
                 });
             }
+
+            if (player.BonusTournamentEarnedByBonusTournamentCode.Any())
+            {
+                actions.Add(new PopupButtonViewModel
+                {
+                    Action = OpenDeleteBonusPopup(),
+                    Label = PopupPlayerActionResources.DELETE_BONUS
+                });
+            }
+
             actions.Add(new PopupButtonViewModel
             {
                 Action = OpenWinBonusPopup(),

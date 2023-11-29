@@ -11,6 +11,7 @@ namespace WSOA.Shared.Dtos
             Code = bonusTournament.Code;
             LogoPath = bonusTournament.LogoPath;
             Occurence = bonusTournamentEarned.Occurrence;
+            Label = bonusTournament.Label;
         }
 
         public BonusTournamentEarnedDto(BonusTournament bonusTournament)
@@ -18,9 +19,12 @@ namespace WSOA.Shared.Dtos
             Code = bonusTournament.Code;
             LogoPath = bonusTournament.LogoPath;
             Occurence = 1;
+            Label = bonusTournament.Label;
         }
 
         public string Code { get; set; }
+
+        public string Label { get; set; }
 
         public string LogoPath { get; set; }
 

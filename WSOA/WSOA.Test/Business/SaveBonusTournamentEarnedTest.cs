@@ -21,7 +21,7 @@ namespace WSOA.Test.Business
         private Tournament _currentTournament;
         private Player _earnedBonusPlayer;
         private BonusTournament _selectedBonusTournament;
-        private BonusTournamentEarnedCreationDto _creationDto;
+        private BonusTournamentEarnedEditDto _creationDto;
 
         private Mock<ISession> _sessionMock;
         private Mock<ITransactionManager> _transactionManagerMock;
@@ -40,7 +40,7 @@ namespace WSOA.Test.Business
             _earnedBonusPlayer = SavePlayer(_currentTournament.Id, _earnedBonusUsr.Id, PresenceStateResources.PRESENT_CODE);
 
             _selectedBonusTournament = SaveBonusTournament("BONUS_TOURNAMENT_TEST", 20);
-            _creationDto = CreateBonusTournamentEarnedCreationDto(_earnedBonusPlayer.Id, _selectedBonusTournament);
+            _creationDto = CreateBonusTournamentEarnedEditDto(_earnedBonusPlayer.Id, _selectedBonusTournament);
 
             _sessionMock = CreateISessionMock(_performerUsr.ProfileCode, _performerUsr.Id);
             _transactionManagerMock = CreateITransactionManagerMock();
@@ -65,14 +65,14 @@ namespace WSOA.Test.Business
         [TestMethod]
         public void ShouldAddInDatabaseNewBonusTournamentEarned_WhenPlayerNotAlreadyEarnedIt()
         {
-            APICallResult<BonusTournamentEarnedCreationResultDto> result = ExecuteSaveBonusTournamentEarned();
+            APICallResult<BonusTournamentEarnedEditResultDto> result = ExecuteSaveBonusTournamentEarned();
 
             VerifyTransactionManagerCommit(_transactionManagerMock);
             VerifyAPICallResultSuccess(result, null);
-            Assert.AreEqual(_selectedBonusTournament.Code, result.Data.BonusTournamentEarned.BonusTournamentCode);
-            Assert.AreEqual(_earnedBonusPlayer.Id, result.Data.BonusTournamentEarned.PlayerId);
-            Assert.AreEqual(_selectedBonusTournament.PointAmount, result.Data.BonusTournamentEarned.PointAmount);
-            Assert.AreEqual(1, result.Data.BonusTournamentEarned.Occurrence);
+            Assert.AreEqual(_selectedBonusTournament.Code, result.Data.EditedBonusTournamentEarned.BonusTournamentCode);
+            Assert.AreEqual(_earnedBonusPlayer.Id, result.Data.EditedBonusTournamentEarned.PlayerId);
+            Assert.AreEqual(_selectedBonusTournament.PointAmount, result.Data.EditedBonusTournamentEarned.PointAmount);
+            Assert.AreEqual(1, result.Data.EditedBonusTournamentEarned.Occurrence);
         }
 
         [TestMethod]
@@ -80,15 +80,15 @@ namespace WSOA.Test.Business
         {
             BonusTournamentEarned existingBonusTournamentEarned = SaveBonusTournamentEarned(_earnedBonusPlayer.Id, _selectedBonusTournament);
 
-            APICallResult<BonusTournamentEarnedCreationResultDto> result = ExecuteSaveBonusTournamentEarned();
+            APICallResult<BonusTournamentEarnedEditResultDto> result = ExecuteSaveBonusTournamentEarned();
 
             VerifyTransactionManagerCommit(_transactionManagerMock);
             VerifyAPICallResultSuccess(result, null);
-            Assert.AreEqual(existingBonusTournamentEarned.Id, result.Data.BonusTournamentEarned.Id);
-            Assert.AreEqual(existingBonusTournamentEarned.BonusTournamentCode, result.Data.BonusTournamentEarned.BonusTournamentCode);
-            Assert.AreEqual(existingBonusTournamentEarned.PlayerId, result.Data.BonusTournamentEarned.PlayerId);
-            Assert.AreEqual(existingBonusTournamentEarned.PointAmount, result.Data.BonusTournamentEarned.PointAmount);
-            Assert.AreEqual(2, result.Data.BonusTournamentEarned.Occurrence);
+            Assert.AreEqual(existingBonusTournamentEarned.Id, result.Data.EditedBonusTournamentEarned.Id);
+            Assert.AreEqual(existingBonusTournamentEarned.BonusTournamentCode, result.Data.EditedBonusTournamentEarned.BonusTournamentCode);
+            Assert.AreEqual(existingBonusTournamentEarned.PlayerId, result.Data.EditedBonusTournamentEarned.PlayerId);
+            Assert.AreEqual(existingBonusTournamentEarned.PointAmount, result.Data.EditedBonusTournamentEarned.PointAmount);
+            Assert.AreEqual(2, result.Data.EditedBonusTournamentEarned.Occurrence);
         }
 
         [TestMethod]
@@ -111,14 +111,14 @@ namespace WSOA.Test.Business
                 _bonusTournamentEarnedRepository
             );
 
-            APICallResult<BonusTournamentEarnedCreationResultDto> result = ExecuteSaveBonusTournamentEarned();
+            APICallResult<BonusTournamentEarnedEditResultDto> result = ExecuteSaveBonusTournamentEarned();
 
             VerifyTransactionManagerRollback(_transactionManagerMock);
             string expectedErrorMsg = MainBusinessResources.USER_CANNOT_PERFORM_ACTION;
             VerifyAPICallResultError(result, string.Format(RouteBusinessResources.SIGN_IN_WITH_ERROR_MESSAGE, expectedErrorMsg), expectedErrorMsg);
         }
 
-        private APICallResult<BonusTournamentEarnedCreationResultDto> ExecuteSaveBonusTournamentEarned()
+        private APICallResult<BonusTournamentEarnedEditResultDto> ExecuteSaveBonusTournamentEarned()
         {
             return _tournamentBusiness.SaveBonusTournamentEarned(_creationDto, _sessionMock.Object);
         }

@@ -65,10 +65,16 @@ namespace WSOA.Client.Services.Implementation
             return response.Content.ToObject<APICallResult<EliminationCreationResultDto>>();
         }
 
-        public async Task<APICallResult<BonusTournamentEarnedCreationResultDto>> SaveBonusTournamentEarned(BonusTournamentEarnedCreationDto bonusTournamentEarnedCreation)
+        public async Task<APICallResult<BonusTournamentEarnedEditResultDto>> SaveBonusTournamentEarned(BonusTournamentEarnedEditDto bonusTournamentEarnedEditDto)
         {
-            HttpResponseMessage response = await _httpClient.PostAsync(RouteResources.SAVE_BONUS_EARNED, bonusTournamentEarnedCreation.ToJsonUtf8());
-            return response.Content.ToObject<APICallResult<BonusTournamentEarnedCreationResultDto>>();
+            HttpResponseMessage response = await _httpClient.PostAsync(RouteResources.SAVE_BONUS_EARNED, bonusTournamentEarnedEditDto.ToJsonUtf8());
+            return response.Content.ToObject<APICallResult<BonusTournamentEarnedEditResultDto>>();
+        }
+
+        public async Task<APICallResult<BonusTournamentEarnedEditResultDto>> DeleteBonusTournamentEarned(BonusTournamentEarnedEditDto bonusTournamentEarnedEditDto)
+        {
+            HttpResponseMessage response = await _httpClient.PostAsync(RouteResources.DELETE_BONUS_EARNED, bonusTournamentEarnedEditDto.ToJsonUtf8());
+            return response.Content.ToObject<APICallResult<BonusTournamentEarnedEditResultDto>>();
         }
     }
 }

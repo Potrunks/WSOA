@@ -1,10 +1,10 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
     <TargetFramework>net6.0</TargetFramework>
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
-    <NoWarn>CS8618</NoWarn>
+    <NoWarn>CS8618; CS8625</NoWarn>
     <IsPackable>false</IsPackable>
     <TestResultsDirectory>$(TEMP)\WSOA_App\TestResults</TestResultsDirectory>
   </PropertyGroup>

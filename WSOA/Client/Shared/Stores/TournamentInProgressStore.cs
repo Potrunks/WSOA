@@ -58,20 +58,28 @@ namespace WSOA.Client.Shared.Stores
             return tournamentInProgress;
         }
 
-        public TournamentInProgressDto Update(BonusTournamentEarnedCreationDto creation, BonusTournamentEarnedCreationResultDto result)
+        public TournamentInProgressDto Update(BonusTournamentEarnedEditResultDto result)
         {
             TournamentInProgressDto tournament = GetData()!;
 
-            PlayerPlayingDto player = tournament.PlayerPlayings.Single(player => player.Id == creation.ConcernedPlayerId);
+            PlayerPlayingDto player = tournament.PlayerPlayings.Single(player => player.Id == result.EditedBonusTournamentEarned.PlayerId);
 
-            if (player.BonusTournamentEarnedsByBonusTournamentCode.TryGetValue(creation.EarnedBonus.Code, out BonusTournamentEarnedDto? bonusTournamentEarned))
+            if (player.BonusTournamentEarnedsByBonusTournamentCode.TryGetValue(result.EditedBonusTournamentEarned.BonusTournamentCode, out BonusTournamentEarnedDto? bonusTournamentEarned))
             {
-                bonusTournamentEarned.Occurence = result.BonusTournamentEarned.Occurrence;
+                if (result.EditedBonusTournamentEarned.Occurrence == 0)
+                {
+                    player.BonusTournamentEarnedsByBonusTournamentCode.Remove(result.EditedBonusTournamentEarned.BonusTournamentCode);
+                }
+                else
+                {
+                    bonusTournamentEarned.Occurence = result.EditedBonusTournamentEarned.Occurrence;
+                }
             }
             else
             {
-                bonusTournamentEarned = new BonusTournamentEarnedDto(creation.EarnedBonus, result.BonusTournamentEarned);
-                player.BonusTournamentEarnedsByBonusTournamentCode.Add(creation.EarnedBonus.Code, bonusTournamentEarned);
+                BonusTournament associatedBonusTournament = tournament.WinnableBonus.Single(bonus => bonus.Code == result.EditedBonusTournamentEarned.BonusTournamentCode);
+                bonusTournamentEarned = new BonusTournamentEarnedDto(associatedBonusTournament, result.EditedBonusTournamentEarned);
+                player.BonusTournamentEarnedsByBonusTournamentCode.Add(associatedBonusTournament.Code, bonusTournamentEarned);
             }
 
             return tournament;

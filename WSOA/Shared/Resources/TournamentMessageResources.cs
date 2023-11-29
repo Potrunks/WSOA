@@ -10,6 +10,7 @@
         public const string PLAYER_ALREADY_ELIMINATED = "Joueur déjà éliminé";
         public const string WHO_ELIMINATE_PLAYER = "Qui a éliminé {0}?";
         public const string WHICH_BONUS_HAS_WON = "Quel bonus a gagné {0}?";
+        public const string WHICH_BONUS_TO_DELETE = "Quel bonus de {0} est retiré?";
         public const string WANT_REBUY = "Re-Buy?";
         public const string PLAYERS_ELIMINATION_CONCERNED_MISSING = "Le joueur eliminé et/ou eliminateur n'est pas dans la base de données. Player ID eliminé : {0}, Player ID eliminateur : {1}";
         public const string PLAYERS_ALREADY_DEFINITIVELY_ELIMINATED = "Le joueur eliminé et/ou eliminateur est déjà définitivement éliminé";

@@ -49,6 +49,11 @@ namespace WSOA.Server.Business.Interface
         /// <summary>
         /// Save bonus tournament earned by the player.
         /// </summary>
-        APICallResult<BonusTournamentEarnedCreationResultDto> SaveBonusTournamentEarned(BonusTournamentEarnedCreationDto bonusEarnedDto, ISession session);
+        APICallResult<BonusTournamentEarnedEditResultDto> SaveBonusTournamentEarned(BonusTournamentEarnedEditDto bonusEarnedDto, ISession session);
+
+        /// <summary>
+        /// Delete bonus tournament earned by the player.
+        /// </summary>
+        APICallResult<BonusTournamentEarnedEditResultDto> DeleteBonusTournamentEarned(BonusTournamentEarnedEditDto bonusTournamentEarnedEditDto, ISession session);
     }
 }

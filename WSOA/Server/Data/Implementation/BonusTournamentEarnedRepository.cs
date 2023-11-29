@@ -28,5 +28,17 @@ namespace WSOA.Server.Data.Implementation
                 return bonusTournamentEarned;
             }
         }
+
+        public BonusTournamentEarned DeleteBonusTournamentEarned(int playerIdConcerned, string bonusTournamentCodeToDelete)
+        {
+            BonusTournamentEarned existingBonusTournamentEarned = _dbContext.BonusTournamentEarneds.Single(bonus => bonus.BonusTournamentCode == bonusTournamentCodeToDelete && bonus.PlayerId == playerIdConcerned);
+            existingBonusTournamentEarned.Occurrence--;
+            if (existingBonusTournamentEarned.Occurrence == 0)
+            {
+                _dbContext.BonusTournamentEarneds.Remove(existingBonusTournamentEarned);
+            }
+            _dbContext.SaveChanges();
+            return existingBonusTournamentEarned;
+        }
     }
 }
