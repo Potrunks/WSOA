@@ -40,5 +40,11 @@ namespace WSOA.Server.Data.Implementation
             _dbContext.SaveChanges();
             return existingBonusTournamentEarned;
         }
+
+        public void DeleteBonusTournamentEarneds(IEnumerable<BonusTournamentEarned> bonusTournamentEarneds)
+        {
+            _dbContext.BonusTournamentEarneds.RemoveRange(bonusTournamentEarneds);
+            _dbContext.SaveChanges();
+        }
     }
 }

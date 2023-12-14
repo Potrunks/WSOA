@@ -84,5 +84,37 @@ namespace WSOA.Client.Shared.Stores
 
             return tournament;
         }
+
+        public TournamentInProgressDto Update(CancelEliminationResultDto result)
+        {
+            TournamentInProgressDto tournamentInProgress = CheckTournamentAlwaysInProgress();
+
+            PlayerPlayingDto eliminatedPlayer = tournamentInProgress.PlayerPlayings.Single(pla => pla.Id == result.PlayerEliminated.Id);
+            eliminatedPlayer.IsEliminated = false;
+            eliminatedPlayer.TotalRebuy = result.PlayerEliminated.TotalReBuy;
+
+            PlayerPlayingDto eliminatorPlayer = tournamentInProgress.PlayerPlayings.Single(pla => pla.Id == result.PlayerEliminator.Id);
+            if (result.BonusTournamentsLostByEliminator != null)
+            {
+                foreach (BonusTournament bonusTournamentLost in result.BonusTournamentsLostByEliminator)
+                {
+                    eliminatorPlayer.BonusTournamentEarnedsByBonusTournamentCode.Remove(bonusTournamentLost.Code);
+                }
+            }
+
+            return tournamentInProgress;
+        }
+
+        public TournamentInProgressDto CheckTournamentAlwaysInProgress()
+        {
+            TournamentInProgressDto? tournamentInProgressDto = GetData();
+            if (tournamentInProgressDto == null)
+            {
+                string errorMsg = TournamentMessageResources.NO_TOURNAMENT_IN_PROGRESS;
+                string redirectUrl = string.Format(RouteResources.MAIN_ERROR, errorMsg);
+                throw new FunctionalException(errorMsg, redirectUrl);
+            }
+            return tournamentInProgressDto;
+        }
     }
 }

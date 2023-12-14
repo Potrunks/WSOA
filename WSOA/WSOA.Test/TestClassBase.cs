@@ -389,7 +389,7 @@ namespace WSOA.Test
             };
         }
 
-        public Player CreatePlayer(int id, int tournamentId = 0, int usrId = 0, string? presenceStateCode = null, int? positionInTournament = null, int? totalPoints = null)
+        public Player CreatePlayer(int id, int tournamentId = 0, int usrId = 0, string? presenceStateCode = null, int? positionInTournament = null, int? totalPoints = null, int? totalRebuy = null)
         {
             return new Player
             {
@@ -398,22 +398,23 @@ namespace WSOA.Test
                 PlayedTournamentId = tournamentId,
                 PresenceStateCode = presenceStateCode != null ? presenceStateCode : PresenceStateResources.PRESENT_CODE,
                 CurrentTournamentPosition = positionInTournament,
-                TotalWinningsPoint = totalPoints
+                TotalWinningsPoint = totalPoints,
+                TotalReBuy = totalRebuy
             };
         }
 
-        public Player SavePlayer(int tournamentId, int usrId, string presenceStateCode, int? positionInTournament = null, int? totalPoints = null)
+        public Player SavePlayer(int tournamentId, int usrId, string presenceStateCode, int? positionInTournament = null, int? totalPoints = null, int? totalRebuy = null)
         {
-            Player player = CreatePlayer(0, tournamentId, usrId, presenceStateCode, positionInTournament, totalPoints);
+            Player player = CreatePlayer(0, tournamentId, usrId, presenceStateCode, positionInTournament, totalPoints, totalRebuy);
             _dbContext.Players.Add(player);
             _dbContext.SaveChanges();
             return player;
         }
 
-        public Player SavePlayer(string firstName, string lastName, string profileCode, int tournamentId, string presenceStateCode, int? positionInTournament = null, int? totalPoints = null)
+        public Player SavePlayer(string firstName, string lastName, string profileCode, int tournamentId, string presenceStateCode, int? positionInTournament = null, int? totalPoints = null, int? totalRebuy = null)
         {
             User user = SaveUser(firstName, lastName, $"{lastName}Login", $"{lastName}Pwd", profileCode);
-            return SavePlayer(tournamentId, user.Id, presenceStateCode, positionInTournament, totalPoints);
+            return SavePlayer(tournamentId, user.Id, presenceStateCode, positionInTournament, totalPoints, totalRebuy);
         }
 
         public List<Player> SavePlayers(IEnumerable<int> usrIds, int tournamentId, string presenceStateCode, bool tournamentIsOver = false)
@@ -596,17 +597,40 @@ namespace WSOA.Test
             return createdBonusTournamentEarneds;
         }
 
-        public Elimination SaveElimination(int eliminatedPlayerId, int eliminatorPlayerId, bool isEliminationDefinitive)
+        public Elimination SaveElimination(int eliminatedPlayerId, int eliminatorPlayerId, bool isEliminationDefinitive, DateTime? eliminationDate = null)
         {
             Elimination elimination = new Elimination
             {
                 IsDefinitive = isEliminationDefinitive,
                 PlayerEliminatorId = eliminatorPlayerId,
-                PlayerVictimId = eliminatedPlayerId
+                PlayerVictimId = eliminatedPlayerId,
+                CreationDate = eliminationDate ?? DateTime.UtcNow
             };
             _dbContext.Eliminations.Add(elimination);
             _dbContext.SaveChanges();
             return elimination;
+        }
+
+        public List<Elimination> SaveEliminations(int eliminatedPlayerId, int eliminatorPlayerId, int nbElimination, bool isEliminationDefinitive)
+        {
+            List<Elimination> eliminations = new List<Elimination>();
+
+            for (int i = 0; i < nbElimination; i++)
+            {
+                Elimination elimination = new Elimination
+                {
+                    CreationDate = eliminations.Any() ? eliminations.Last().CreationDate.AddMinutes(30) : DateTime.UtcNow,
+                    IsDefinitive = i == nbElimination - 1 ? isEliminationDefinitive : false,
+                    PlayerEliminatorId = eliminatorPlayerId,
+                    PlayerVictimId = eliminatedPlayerId
+                };
+                eliminations.Add(elimination);
+            }
+
+            _dbContext.Eliminations.AddRange(eliminations);
+            _dbContext.SaveChanges();
+
+            return eliminations;
         }
 
         public BonusTournament SaveBonusTournament(string code, int pointAmount, string label = "label", string logoPath = "logoPath")

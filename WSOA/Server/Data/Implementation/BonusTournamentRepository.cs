@@ -21,5 +21,13 @@ namespace WSOA.Server.Data.Implementation
         {
             return _dbContext.BonusTournaments.Single(b => b.Code == code);
         }
+
+        public IEnumerable<BonusTournament> GetBonusTournamentsByCodes(IEnumerable<string> codes)
+        {
+            return
+                from bonus in _dbContext.BonusTournaments
+                where codes.Contains(bonus.Code)
+                select bonus;
+        }
     }
 }

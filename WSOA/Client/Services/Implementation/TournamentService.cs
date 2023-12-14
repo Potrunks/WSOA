@@ -76,5 +76,11 @@ namespace WSOA.Client.Services.Implementation
             HttpResponseMessage response = await _httpClient.PostAsync(RouteResources.DELETE_BONUS_EARNED, bonusTournamentEarnedEditDto.ToJsonUtf8());
             return response.Content.ToObject<APICallResult<BonusTournamentEarnedEditResultDto>>();
         }
+
+        public async Task<APICallResult<CancelEliminationResultDto>> CancelLastPlayerEliminationByPlayerId(int playerId)
+        {
+            HttpResponseMessage response = await _httpClient.GetAsync(string.Format(RouteResources.CANCEL_PLAYER_ELIMINATION, playerId));
+            return response.Content.ToObject<APICallResult<CancelEliminationResultDto>>();
+        }
     }
 }

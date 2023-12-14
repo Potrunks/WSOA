@@ -13,5 +13,10 @@ namespace WSOA.Server.Data.Interface
         /// Get bonus tournament by code.
         /// </summary>
         BonusTournament GetBonusTournamentByCode(string code);
+
+        /// <summary>
+        /// Get bonus tournaments list by list of bonus tournament code.
+        /// </summary>
+        IEnumerable<BonusTournament> GetBonusTournamentsByCodes(IEnumerable<string> codes);
     }
 }

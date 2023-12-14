@@ -55,5 +55,10 @@ namespace WSOA.Server.Business.Interface
         /// Delete bonus tournament earned by the player.
         /// </summary>
         APICallResult<BonusTournamentEarnedEditResultDto> DeleteBonusTournamentEarned(BonusTournamentEarnedEditDto bonusTournamentEarnedEditDto, ISession session);
+
+        /// <summary>
+        /// Cancel the last elimination of a player victim id.
+        /// </summary>
+        APICallResult<CancelEliminationResultDto> CancelLastPlayerElimination(int playerIdToCancelElimination, ISession session);
     }
 }

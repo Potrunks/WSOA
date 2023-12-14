@@ -1,4 +1,5 @@
-﻿using WSOA.Shared.Entity;
+﻿using WSOA.Shared.Dtos;
+using WSOA.Shared.Entity;
 
 namespace WSOA.Server.Data.Interface
 {
@@ -13,5 +14,15 @@ namespace WSOA.Server.Data.Interface
         /// Get all eliminations by player victim ids.
         /// </summary>
         IEnumerable<Elimination> GetEliminationsByPlayerVictimIds(IEnumerable<int> playerVictimIds);
+
+        /// <summary>
+        /// Get player victim qith all eliminations.
+        /// </summary>
+        IEnumerable<PlayerEliminationsDto> GetPlayerEliminationsDtosByPlayerVictimIds(IEnumerable<int> playerVictimIds);
+
+        /// <summary>
+        /// Delete elimination from DB.
+        /// </summary>
+        void DeleteElimination(Elimination elimination);
     }
 }

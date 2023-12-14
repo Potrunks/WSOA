@@ -55,5 +55,10 @@ namespace WSOA.Client.Services.Interface
         /// Delete bonus tournament earned by a player (reduce by one the occurence or delete if occurence updated is zero).
         /// </summary>
         Task<APICallResult<BonusTournamentEarnedEditResultDto>> DeleteBonusTournamentEarned(BonusTournamentEarnedEditDto bonusTournamentEarnedEditDto);
+
+        /// <summary>
+        /// Cancel the last player elimination.
+        /// </summary>
+        Task<APICallResult<CancelEliminationResultDto>> CancelLastPlayerEliminationByPlayerId(int playerId);
     }
 }

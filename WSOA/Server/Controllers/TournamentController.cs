@@ -107,5 +107,12 @@ namespace WSOA.Server.Controllers
         {
             return _tournamentBusiness.DeleteBonusTournamentEarned(bonusTournamentEarnedEditDto, HttpContext.Session);
         }
+
+        [HttpGet]
+        [Route("api/tournament/cancel/player/{playerId}/elimination")]
+        public APICallResult<CancelEliminationResultDto> CancelLastPlayerEliminationByPlayerId(int playerId)
+        {
+            return _tournamentBusiness.CancelLastPlayerElimination(playerId, HttpContext.Session);
+        }
     }
 }

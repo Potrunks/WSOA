@@ -463,7 +463,8 @@ namespace WSOA.Server.Business.Implementation
                 {
                     IsDefinitive = !eliminationDto.HasReBuy,
                     PlayerEliminatorId = eliminationDto.EliminatorPlayerId,
-                    PlayerVictimId = eliminatedPlayer.Id
+                    PlayerVictimId = eliminatedPlayer.Id,
+                    CreationDate = DateTime.UtcNow
                 };
                 _eliminationRepository.SaveElimination(elimination);
 
@@ -631,6 +632,97 @@ namespace WSOA.Server.Business.Implementation
                 result.Data = new BonusTournamentEarnedEditResultDto
                 {
                     EditedBonusTournamentEarned = bonusTournamentEarnedUpdated
+                };
+                result.Success = true;
+            }
+            catch (FunctionalException e)
+            {
+                _transactionManager.RollbackTransaction();
+                string errorMsg = e.Message;
+                _log.Error(errorMsg);
+                result.ErrorMessage = errorMsg;
+                result.RedirectUrl = e.RedirectUrl;
+            }
+            catch (Exception e)
+            {
+                _transactionManager.RollbackTransaction();
+                string errorMsg = MainBusinessResources.TECHNICAL_ERROR;
+                _log.Error(e.Message);
+                result.ErrorMessage = errorMsg;
+                result.RedirectUrl = string.Format(RouteBusinessResources.MAIN_ERROR, errorMsg);
+            }
+
+            return result;
+        }
+
+        public APICallResult<CancelEliminationResultDto> CancelLastPlayerElimination(int playerIdToCancelElimination, ISession session)
+        {
+            APICallResult<CancelEliminationResultDto> result = new APICallResult<CancelEliminationResultDto>(false);
+            IEnumerable<BonusTournament>? bonusTournamentsLostByEliminator = null;
+
+            try
+            {
+                _transactionManager.BeginTransaction();
+
+                session.CanUserPerformAction(_userRepository, BusinessActionResources.ELIMINATE_PLAYER);
+
+                PlayerEliminationsDto existingPlayerWithEliminations = _eliminationRepository.GetPlayerEliminationsDtosByPlayerVictimIds(new List<int> { playerIdToCancelElimination }).Single();
+
+                Elimination lastElimination = existingPlayerWithEliminations.Eliminations.OrderByDescending(elim => elim.CreationDate).First();
+                Player eliminatorPlayer = existingPlayerWithEliminations.EliminatorPlayersById[lastElimination.PlayerEliminatorId];
+                Player eliminatedPlayer = existingPlayerWithEliminations.EliminatedPlayer;
+
+                if (lastElimination.IsDefinitive)
+                {
+                    eliminatedPlayer.CurrentTournamentPosition = null;
+                    eliminatedPlayer.WasAddOn = null;
+                    eliminatedPlayer.WasFinalTable = null;
+                    eliminatedPlayer.TotalWinningsPoint = null;
+                    eliminatedPlayer.TotalWinningsAmount = null;
+
+                    KeyValuePair<int, IEnumerable<BonusTournamentEarned>> eliminatorBonus = _playerRepository.GetBonusTournamentEarnedsByPlayerIds(new List<int> { eliminatorPlayer.Id }).SingleOrDefault();
+                    if (eliminatorBonus.Value != null && eliminatorBonus.Value.Any(bon => new List<string> { BonusTournamentResources.FIRST_RANKED_KILLED, BonusTournamentResources.PREVIOUS_WINNER_KILLED }.Contains(bon.BonusTournamentCode)))
+                    {
+                        IDictionary<string, BonusTournamentEarned> eliminatorBonusByCode = eliminatorBonus.Value.ToDictionary(bon => bon.BonusTournamentCode);
+                        UsersBestDto usersBestDto = GetBestUsersByCurrentSeasonTournament(existingPlayerWithEliminations.Tournament);
+                        List<BonusTournamentEarned> eliminatorBonusToDelete = new List<BonusTournamentEarned>();
+
+                        if (usersBestDto.FirstRanked != null
+                            && usersBestDto.FirstRanked.Id == existingPlayerWithEliminations.EliminatedUser.Id
+                            && eliminatorBonusByCode.TryGetValue(BonusTournamentResources.FIRST_RANKED_KILLED, out BonusTournamentEarned? firstRankedKilledBonus))
+                        {
+                            eliminatorBonusToDelete.Add(firstRankedKilledBonus);
+                        }
+
+                        if (usersBestDto.WinnerPreviousTournament != null
+                            && usersBestDto.WinnerPreviousTournament.Id == existingPlayerWithEliminations.EliminatedUser.Id
+                            && eliminatorBonusByCode.TryGetValue(BonusTournamentResources.PREVIOUS_WINNER_KILLED, out BonusTournamentEarned? previousWinnerKilledBonus))
+                        {
+                            eliminatorBonusToDelete.Add(previousWinnerKilledBonus);
+                        }
+
+                        _bonusTournamentEarnedRepository.DeleteBonusTournamentEarneds(eliminatorBonusToDelete);
+
+                        bonusTournamentsLostByEliminator = _bonusTournamentRepository.GetBonusTournamentsByCodes(eliminatorBonusToDelete.Select(bonus => bonus.BonusTournamentCode));
+                    }
+                }
+                else
+                {
+                    eliminatedPlayer.TotalReBuy--;
+                }
+
+                eliminatedPlayer.TotalReBuy = eliminatedPlayer.TotalReBuy == 0 ? null : eliminatedPlayer.TotalReBuy;
+
+                _eliminationRepository.DeleteElimination(lastElimination);
+
+                _transactionManager.CommitTransaction();
+
+                result.Data = new CancelEliminationResultDto
+                {
+                    PlayerEliminated = existingPlayerWithEliminations.EliminatedPlayer,
+                    PlayerEliminator = eliminatorPlayer,
+                    BonusTournamentsLostByEliminator = bonusTournamentsLostByEliminator,
+                    EliminationCanceled = lastElimination
                 };
                 result.Success = true;
             }

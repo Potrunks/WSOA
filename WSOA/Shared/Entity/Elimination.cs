@@ -21,5 +21,8 @@ namespace WSOA.Shared.Entity
 
         [Required]
         public bool IsDefinitive { get; set; }
+
+        [Required]
+        public DateTime CreationDate { get; set; } = DateTime.UtcNow;
     }
 }
