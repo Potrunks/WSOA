@@ -105,6 +105,17 @@ namespace WSOA.Client.Shared.Stores
             return tournamentInProgress;
         }
 
+        public TournamentInProgressDto Update(Player player)
+        {
+            TournamentInProgressDto tournamentInProgress = CheckTournamentAlwaysInProgress();
+
+            PlayerPlayingDto playerConcerned = tournamentInProgress.PlayerPlayings.Single(pla => pla.Id == player.Id);
+            playerConcerned.TotalRebuy = player.TotalReBuy;
+            playerConcerned.TotalAddOn = player.TotalAddOn;
+
+            return tournamentInProgress;
+        }
+
         public TournamentInProgressDto CheckTournamentAlwaysInProgress()
         {
             TournamentInProgressDto? tournamentInProgressDto = GetData();
@@ -115,6 +126,12 @@ namespace WSOA.Client.Shared.Stores
                 throw new FunctionalException(errorMsg, redirectUrl);
             }
             return tournamentInProgressDto;
+        }
+
+        public bool IsAddOn()
+        {
+            TournamentInProgressDto tournamentInProgress = CheckTournamentAlwaysInProgress();
+            return tournamentInProgress.IsAddOn;
         }
     }
 }

@@ -389,7 +389,7 @@ namespace WSOA.Test
             };
         }
 
-        public Player CreatePlayer(int id, int tournamentId = 0, int usrId = 0, string? presenceStateCode = null, int? positionInTournament = null, int? totalPoints = null, int? totalRebuy = null)
+        public Player CreatePlayer(int id, int tournamentId = 0, int usrId = 0, string? presenceStateCode = null, int? positionInTournament = null, int? totalPoints = null, int? totalRebuy = null, bool? wasAddon = null)
         {
             return new Player
             {
@@ -399,22 +399,23 @@ namespace WSOA.Test
                 PresenceStateCode = presenceStateCode != null ? presenceStateCode : PresenceStateResources.PRESENT_CODE,
                 CurrentTournamentPosition = positionInTournament,
                 TotalWinningsPoint = totalPoints,
-                TotalReBuy = totalRebuy
+                TotalReBuy = totalRebuy,
+                WasAddOn = wasAddon
             };
         }
 
-        public Player SavePlayer(int tournamentId, int usrId, string presenceStateCode, int? positionInTournament = null, int? totalPoints = null, int? totalRebuy = null)
+        public Player SavePlayer(int tournamentId, int usrId, string presenceStateCode, int? positionInTournament = null, int? totalPoints = null, int? totalRebuy = null, bool? wasAddon = null)
         {
-            Player player = CreatePlayer(0, tournamentId, usrId, presenceStateCode, positionInTournament, totalPoints, totalRebuy);
+            Player player = CreatePlayer(0, tournamentId, usrId, presenceStateCode, positionInTournament, totalPoints, totalRebuy, wasAddon);
             _dbContext.Players.Add(player);
             _dbContext.SaveChanges();
             return player;
         }
 
-        public Player SavePlayer(string firstName, string lastName, string profileCode, int tournamentId, string presenceStateCode, int? positionInTournament = null, int? totalPoints = null, int? totalRebuy = null)
+        public Player SavePlayer(string firstName, string lastName, string profileCode, int tournamentId, string presenceStateCode, int? positionInTournament = null, int? totalPoints = null, int? totalRebuy = null, bool? wasAddon = null)
         {
             User user = SaveUser(firstName, lastName, $"{lastName}Login", $"{lastName}Pwd", profileCode);
-            return SavePlayer(tournamentId, user.Id, presenceStateCode, positionInTournament, totalPoints, totalRebuy);
+            return SavePlayer(tournamentId, user.Id, presenceStateCode, positionInTournament, totalPoints, totalRebuy, wasAddon);
         }
 
         public List<Player> SavePlayers(IEnumerable<int> usrIds, int tournamentId, string presenceStateCode, bool tournamentIsOver = false)

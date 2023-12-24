@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using WSOA.Server.Business.Interface;
 using WSOA.Shared.Dtos;
+using WSOA.Shared.Entity;
 using WSOA.Shared.Resources;
 using WSOA.Shared.Result;
 using WSOA.Shared.ViewModel;
@@ -80,6 +81,9 @@ namespace WSOA.Server.Controllers
             return _tournamentBusiness.SaveTournamentPrepared(tournamentPrepared, HttpContext.Session);
         }
 
+        /// <summary>
+        /// Load the tournament in progress.
+        /// </summary>
         [HttpGet]
         [Route("api/tournament/inProgress/load/{subSectionId}")]
         public APICallResult<TournamentInProgressDto> LoadTournamentInProgress(int subSectionId)
@@ -87,6 +91,9 @@ namespace WSOA.Server.Controllers
             return _tournamentBusiness.LoadTournamentInProgress(subSectionId, HttpContext.Session);
         }
 
+        /// <summary>
+        /// Eliminate the selected player.
+        /// </summary>
         [HttpPost]
         [Route("api/tournament/eliminatePlayer")]
         public APICallResult<EliminationCreationResultDto> EliminatePlayer(EliminationCreationDto elimination)
@@ -94,6 +101,9 @@ namespace WSOA.Server.Controllers
             return _tournamentBusiness.EliminatePlayer(elimination, HttpContext.Session);
         }
 
+        /// <summary>
+        /// Save the bonus tournament selected for the player selected.
+        /// </summary>
         [HttpPost]
         [Route("api/tournament/saveBonusEarned")]
         public APICallResult<BonusTournamentEarnedEditResultDto> SaveBonusTournamentEarned(BonusTournamentEarnedEditDto bonusTournamentEarnedCreation)
@@ -101,6 +111,9 @@ namespace WSOA.Server.Controllers
             return _tournamentBusiness.SaveBonusTournamentEarned(bonusTournamentEarnedCreation, HttpContext.Session);
         }
 
+        /// <summary>
+        /// Delete the bonus tournament earned selected for the player selected.
+        /// </summary>
         [HttpPost]
         [Route(RouteResources.DELETE_BONUS_EARNED)]
         public APICallResult<BonusTournamentEarnedEditResultDto> DeleteBonusTournamentEarned(BonusTournamentEarnedEditDto bonusTournamentEarnedEditDto)
@@ -108,11 +121,24 @@ namespace WSOA.Server.Controllers
             return _tournamentBusiness.DeleteBonusTournamentEarned(bonusTournamentEarnedEditDto, HttpContext.Session);
         }
 
+        /// <summary>
+        /// Cancel the lest elimination for the selected player.
+        /// </summary>
         [HttpGet]
         [Route("api/tournament/cancel/player/{playerId}/elimination")]
         public APICallResult<CancelEliminationResultDto> CancelLastPlayerEliminationByPlayerId(int playerId)
         {
             return _tournamentBusiness.CancelLastPlayerElimination(playerId, HttpContext.Session);
+        }
+
+        /// <summary>
+        /// Edit the value of the total addon of the selected player.
+        /// </summary>
+        [HttpGet]
+        [Route("api/tournament/player/{playerId}/addon/{addonNb}")]
+        public APICallResult<Player> EditPlayerTotalAddon(int playerId, int addonNb)
+        {
+            return _tournamentBusiness.EditPlayerTotalAddon(playerId, addonNb, HttpContext.Session);
         }
     }
 }

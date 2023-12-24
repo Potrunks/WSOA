@@ -1,0 +1,25 @@
+﻿@using WSOA.Client.Shared.Buttons.Main;
+@using WSOA.Client.Shared.Buttons.Resources;
+@using WSOA.Client.Shared.Popups.Components;
+@using WSOA.Shared.Resources;
+@inherits PopupInputNumberComponent
+
+@if (IsDisplay)
+{
+    <div class="c-popupInputNumber__mainContainer">
+        <div class="c-popupInputNumber__emptyZone">
+            <div class="c-popupInputNumber__containerZone">
+                <div class="c-popupInputNumber__title">@Title</div>
+                <div class="c-popupInputNumber__field">
+                    <img class="c-popupInputNumber__field-numberModificatorImage" onclick="@(() => ChangeInputNumberValue.InvokeAsync(NumberModificatorType.DECREASE))" src="images/minus.png" />
+                    <div class="c-popupInputNumber__field-value">@InputNumber</div>
+                    <img class="c-popupInputNumber__field-numberModificatorImage" onclick="@(() => ChangeInputNumberValue.InvokeAsync(NumberModificatorType.INCREASE))" src="images/plus.png" />
+                </div>
+                <div class="c-popupInputNumber__panelButtons">
+                    <MainButton IsPrimary="true" Label="@ButtonLabelResources.VALIDATE" Type="button" OnClick="() => ValidPopup.InvokeAsync()" />
+                    <MainButton Label="@ButtonLabelResources.CLOSE" Type="button" OnClick="() => ClosePopup.InvokeAsync()" />
+                </div>
+            </div>
+        </div>
+    </div>
+}

@@ -5,6 +5,7 @@ using WSOA.Client.Shared.EventHandlers;
 using WSOA.Client.Shared.Resources;
 using WSOA.Client.Shared.Stores;
 using WSOA.Shared.Dtos;
+using WSOA.Shared.Entity;
 using WSOA.Shared.Exceptions;
 using WSOA.Shared.Resources;
 using WSOA.Shared.Result;
@@ -210,38 +211,54 @@ namespace WSOA.Client.Pages.Tournament.Components
         {
             List<PopupButtonViewModel> actions = new List<PopupButtonViewModel>();
 
-            if (!player.IsEliminated)
+            try
             {
+                if (!player.IsEliminated)
+                {
+                    actions.Add(new PopupButtonViewModel
+                    {
+                        Action = OpenEliminationPopup(),
+                        Label = PopupPlayerActionResources.ELIMINATION
+                    });
+                }
+
+                if (player.TotalRebuy > 0 || player.IsEliminated)
+                {
+                    actions.Add(new PopupButtonViewModel
+                    {
+                        Action = CancelLastPlayerEliminationByPlayerId(),
+                        Label = PopupPlayerActionResources.CANCEL_LAST_ELIMINATION
+                    });
+                }
+
                 actions.Add(new PopupButtonViewModel
                 {
-                    Action = OpenEliminationPopup(),
-                    Label = PopupPlayerActionResources.ELIMINATION
+                    Action = OpenWinBonusPopup(),
+                    Label = PopupPlayerActionResources.WIN_BONUS
                 });
-            }
 
-            if (player.BonusTournamentEarnedByBonusTournamentCode.Any())
-            {
-                actions.Add(new PopupButtonViewModel
+                if (player.BonusTournamentEarnedByBonusTournamentCode.Any())
                 {
-                    Action = OpenDeleteBonusPopup(),
-                    Label = PopupPlayerActionResources.DELETE_BONUS
-                });
-            }
+                    actions.Add(new PopupButtonViewModel
+                    {
+                        Action = OpenDeleteBonusPopup(),
+                        Label = PopupPlayerActionResources.DELETE_BONUS
+                    });
+                }
 
-            if (player.TotalRebuy > 0 || player.IsEliminated)
-            {
-                actions.Add(new PopupButtonViewModel
+                if (TournamentInProgressStore.IsAddOn())
                 {
-                    Action = CancelLastPlayerEliminationByPlayerId(),
-                    Label = PopupPlayerActionResources.CANCEL_LAST_ELIMINATION
-                });
+                    actions.Add(new PopupButtonViewModel
+                    {
+                        Action = OpenEditAddonPopup(),
+                        Label = PopupPlayerActionResources.EDIT_ADDON
+                    });
+                }
             }
-
-            actions.Add(new PopupButtonViewModel
+            catch (FunctionalException e)
             {
-                Action = OpenWinBonusPopup(),
-                Label = PopupPlayerActionResources.WIN_BONUS
-            });
+                NavigationManager.NavigateTo(e.RedirectUrl!);
+            }
 
             return actions;
         }
@@ -316,6 +333,8 @@ namespace WSOA.Client.Pages.Tournament.Components
             {
                 try
                 {
+                    TournamentInProgressDto tournamentInProgress = TournamentInProgressStore.CheckTournamentAlwaysInProgress();
+
                     APICallResult<CancelEliminationResultDto> result = await TournamentService.CancelLastPlayerEliminationByPlayerId(playerId!.Value);
 
                     if (!result.Success)
@@ -337,7 +356,68 @@ namespace WSOA.Client.Pages.Tournament.Components
                         }
                     }
 
-                    TournamentInProgressDto tournamentInProgress = TournamentInProgressStore.Update(result.Data);
+                    tournamentInProgress = TournamentInProgressStore.Update(result.Data);
+
+                    InitializedData(tournamentInProgress);
+
+                    StateHasChanged();
+                }
+                catch (FunctionalException e)
+                {
+                    NavigationManager.NavigateTo(e.RedirectUrl!);
+                    return;
+                }
+            };
+        }
+
+        private Action<int?> OpenEditAddonPopup()
+        {
+            return (int? playerId) =>
+            {
+                try
+                {
+                    TournamentInProgressDto tournamentInProgressDto = TournamentInProgressStore.CheckTournamentAlwaysInProgress();
+                    PlayerPlayingDto player = tournamentInProgressDto.PlayerPlayings.Single(pla => pla.Id == playerId);
+                    PopupEventHandler.OpenInputNumberPopup(player.TotalAddOn, string.Format(TournamentMessageResources.HOW_MUCH_ADDON_FOR_PLAYER, StringFormatUtil.ToFullFirstNameAndFirstLetterLastName(player.FirstName, player.LastName)), player.Id, EditPlayerTotalAddon());
+                }
+                catch (FunctionalException e)
+                {
+                    NavigationManager.NavigateTo(e.RedirectUrl!);
+                    return;
+                }
+            };
+        }
+
+        private Action<int, int> EditPlayerTotalAddon()
+        {
+            return async (int playerId, int addonNb) =>
+            {
+                try
+                {
+                    TournamentInProgressDto tournamentInProgress = TournamentInProgressStore.CheckTournamentAlwaysInProgress();
+
+                    APICallResult<Player> result = await TournamentService.EditPlayerTotalAddon(playerId, addonNb);
+
+                    if (!result.Success)
+                    {
+                        if (string.IsNullOrEmpty(result.RedirectUrl))
+                        {
+                            PopupEventHandler.Open(
+                                msg: result.ErrorMessage!,
+                                isError: true,
+                                title: MainLabelResources.ERROR,
+                                onValid: null
+                                );
+                            return;
+                        }
+                        else
+                        {
+                            NavigationManager.NavigateTo(result.RedirectUrl);
+                            return;
+                        }
+                    }
+
+                    tournamentInProgress = TournamentInProgressStore.Update(result.Data);
 
                     InitializedData(tournamentInProgress);
 

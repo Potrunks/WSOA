@@ -114,6 +114,14 @@ namespace WSOA.Client.Shared.EventHandlers
             }
         }
 
+        public void OpenInputNumberPopup(int? inputNumber, string title, int concernedId, Action<int, int> onValidInputNumberForConcernedId)
+        {
+            CurrentPopupOpen.InputNumber = inputNumber == null ? 0 : inputNumber;
+            CurrentPopupOpen.ConcernedId = concernedId;
+            CurrentPopupOpen.OnValidInputNumberForConcernedId = onValidInputNumberForConcernedId;
+            Open(PopupKeyResources.INPUT_NUMBER, title);
+        }
+
         public void Close()
         {
             OnPopupClose.Invoke(this, CurrentPopupOpen);
@@ -130,6 +138,8 @@ namespace WSOA.Client.Shared.EventHandlers
             CurrentPopupOpen.OnValidSelectedId = null;
             CurrentPopupOpen.SelectableCodes = null;
             CurrentPopupOpen.OnValidSelectedCode = null;
+            CurrentPopupOpen.OnValidInputNumberForConcernedId = null;
+            CurrentPopupOpen.InputNumber = null;
         }
     }
 }

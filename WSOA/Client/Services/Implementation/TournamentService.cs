@@ -2,6 +2,7 @@
 using WSOA.Client.Shared.Resources;
 using WSOA.Client.Utils;
 using WSOA.Shared.Dtos;
+using WSOA.Shared.Entity;
 using WSOA.Shared.Resources;
 using WSOA.Shared.Result;
 using WSOA.Shared.ViewModel;
@@ -81,6 +82,12 @@ namespace WSOA.Client.Services.Implementation
         {
             HttpResponseMessage response = await _httpClient.GetAsync(string.Format(RouteResources.CANCEL_PLAYER_ELIMINATION, playerId));
             return response.Content.ToObject<APICallResult<CancelEliminationResultDto>>();
+        }
+
+        public async Task<APICallResult<Player>> EditPlayerTotalAddon(int playerId, int addonNb)
+        {
+            HttpResponseMessage response = await _httpClient.GetAsync(string.Format(RouteResources.EDIT_ADDON_PLAYER, playerId, addonNb));
+            return response.Content.ToObject<APICallResult<Player>>();
         }
     }
 }

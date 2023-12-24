@@ -1,4 +1,5 @@
 ﻿using WSOA.Shared.Dtos;
+using WSOA.Shared.Entity;
 using WSOA.Shared.Result;
 using WSOA.Shared.ViewModel;
 
@@ -60,5 +61,10 @@ namespace WSOA.Server.Business.Interface
         /// Cancel the last elimination of a player victim id.
         /// </summary>
         APICallResult<CancelEliminationResultDto> CancelLastPlayerElimination(int playerIdToCancelElimination, ISession session);
+
+        /// <summary>
+        /// Allow to edit the value of total addon of a player.
+        /// </summary>
+        APICallResult<Player> EditPlayerTotalAddon(int playerId, int addonNb, ISession session);
     }
 }

@@ -1,4 +1,5 @@
 ﻿using WSOA.Shared.Dtos;
+using WSOA.Shared.Entity;
 using WSOA.Shared.Result;
 using WSOA.Shared.ViewModel;
 
@@ -60,5 +61,10 @@ namespace WSOA.Client.Services.Interface
         /// Cancel the last player elimination.
         /// </summary>
         Task<APICallResult<CancelEliminationResultDto>> CancelLastPlayerEliminationByPlayerId(int playerId);
+
+        /// <summary>
+        /// Edit the value of the total addon of the selected player.
+        /// </summary>
+        Task<APICallResult<Player>> EditPlayerTotalAddon(int playerId, int addonNb);
     }
 }

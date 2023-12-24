@@ -29,5 +29,9 @@ namespace WSOA.Client.Shared.EventHandlers
         public int? ConcernedId { get; set; }
 
         public OptionViewModel? Option { get; set; }
+
+        public int? InputNumber { get; set; }
+
+        public Action<int, int>? OnValidInputNumberForConcernedId { get; set; }
     }
 }

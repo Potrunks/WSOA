@@ -534,6 +534,8 @@ namespace WSOA.Server.Business.Implementation
                     Player winner = players[eliminationDto.EliminatorPlayerId];
                     winner.TotalWinningsPoint = TournamentPointsResources.TournamentPointAmountByPosition[1];
                     winner.CurrentTournamentPosition = 1;
+                    winner.WasAddOn = eliminationDto.IsAddOn;
+                    winner.WasFinalTable = eliminationDto.IsFinalTable;
                     winner.TotalWinningsAmount = eliminationDto.WinnableMoneyByPosition[1];
                     _playerRepository.SavePlayer(winner);
 
@@ -725,6 +727,58 @@ namespace WSOA.Server.Business.Implementation
                     EliminationCanceled = lastElimination
                 };
                 result.Success = true;
+            }
+            catch (FunctionalException e)
+            {
+                _transactionManager.RollbackTransaction();
+                string errorMsg = e.Message;
+                _log.Error(errorMsg);
+                result.ErrorMessage = errorMsg;
+                result.RedirectUrl = e.RedirectUrl;
+            }
+            catch (Exception e)
+            {
+                _transactionManager.RollbackTransaction();
+                string errorMsg = MainBusinessResources.TECHNICAL_ERROR;
+                _log.Error(e.Message);
+                result.ErrorMessage = errorMsg;
+                result.RedirectUrl = string.Format(RouteBusinessResources.MAIN_ERROR, errorMsg);
+            }
+
+            return result;
+        }
+
+        public APICallResult<Player> EditPlayerTotalAddon(int playerId, int addonNb, ISession session)
+        {
+            APICallResult<Player> result = new APICallResult<Player>(false);
+
+            try
+            {
+                _transactionManager.BeginTransaction();
+
+                session.CanUserPerformAction(_userRepository, BusinessActionResources.EDIT_TOTAL_ADDON);
+
+                if (addonNb < 0)
+                {
+                    throw new FunctionalException(TournamentBusinessResources.TOTAL_ADDON_GIVEN_LESS_THAN_ZERO, null);
+                }
+
+                Player playerConcerned = _playerRepository.GetPlayersByIds(new List<int> { playerId }).Single().Value;
+                if (!playerConcerned.WasAddOn.GetValueOrDefault())
+                {
+                    throw new FunctionalException(TournamentBusinessResources.PLAYER_NOT_IN_ADDON, null);
+                }
+
+                if (playerConcerned.TotalAddOn != addonNb)
+                {
+                    playerConcerned.TotalAddOn = addonNb;
+                    _playerRepository.SavePlayer(playerConcerned);
+                }
+
+                _transactionManager.CommitTransaction();
+
+                result.Success = true;
+                result.Data = playerConcerned;
             }
             catch (FunctionalException e)
             {

@@ -316,7 +316,12 @@ namespace WSOA.Server.Data
                 new BusinessAction
                 {
                     Code = BusinessActionResources.EDIT_BONUS_TOURNAMENT_EARNED,
-                    Label = "Editer un bonus tournament gagné"
+                    Label = "Editer le bonus d'un joueur"
+                },
+                new BusinessAction
+                {
+                    Code = BusinessActionResources.EDIT_TOTAL_ADDON,
+                    Label = "Editer l'add-on d'un joueur"
                 }
             );
 
@@ -339,6 +344,12 @@ namespace WSOA.Server.Data
                     Id = 3,
                     ProfileCode = "ORGA",
                     BusinessActionCode = BusinessActionResources.EDIT_BONUS_TOURNAMENT_EARNED
+                },
+                new BusinessActionByProfileCode
+                {
+                    Id = 4,
+                    ProfileCode = "ORGA",
+                    BusinessActionCode = BusinessActionResources.EDIT_TOTAL_ADDON
                 }
             );
 

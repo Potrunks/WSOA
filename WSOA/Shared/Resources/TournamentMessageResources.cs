@@ -15,5 +15,6 @@
         public const string PLAYERS_ELIMINATION_CONCERNED_MISSING = "Le joueur eliminé et/ou eliminateur n'est pas dans la base de données. Player ID eliminé : {0}, Player ID eliminateur : {1}";
         public const string PLAYERS_ALREADY_DEFINITIVELY_ELIMINATED = "Le joueur eliminé et/ou eliminateur est déjà définitivement éliminé";
         public const string TOURNAMENT_PAST = "La date du tournoi est passé";
+        public const string HOW_MUCH_ADDON_FOR_PLAYER = "Combien d'add-on pour {0}";
     }
 }
