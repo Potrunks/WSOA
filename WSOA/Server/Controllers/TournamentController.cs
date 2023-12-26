@@ -124,11 +124,11 @@ namespace WSOA.Server.Controllers
         /// <summary>
         /// Cancel the lest elimination for the selected player.
         /// </summary>
-        [HttpGet]
-        [Route("api/tournament/cancel/player/{playerId}/elimination")]
-        public APICallResult<CancelEliminationResultDto> CancelLastPlayerEliminationByPlayerId(int playerId)
+        [HttpPost]
+        [Route("api/tournament/cancel/player/elimination")]
+        public APICallResult<CancelEliminationResultDto> CancelLastPlayerEliminationByPlayerId([FromBody] EliminationEditionDto eliminationEditionDto)
         {
-            return _tournamentBusiness.CancelLastPlayerElimination(playerId, HttpContext.Session);
+            return _tournamentBusiness.CancelLastPlayerElimination(eliminationEditionDto, HttpContext.Session);
         }
 
         /// <summary>

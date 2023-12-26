@@ -60,7 +60,7 @@ namespace WSOA.Client.Services.Interface
         /// <summary>
         /// Cancel the last player elimination.
         /// </summary>
-        Task<APICallResult<CancelEliminationResultDto>> CancelLastPlayerEliminationByPlayerId(int playerId);
+        Task<APICallResult<CancelEliminationResultDto>> CancelLastPlayerEliminationByPlayerId(EliminationEditionDto eliminationEditionDto);
 
         /// <summary>
         /// Edit the value of the total addon of the selected player.

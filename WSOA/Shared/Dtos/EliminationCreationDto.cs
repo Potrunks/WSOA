@@ -1,19 +1,13 @@
 ﻿namespace WSOA.Shared.Dtos
 {
-    public class EliminationCreationDto
+    public class EliminationCreationDto : EliminationEditionDto
     {
-        public EliminationCreationDto() { }
-
-        public int EliminatedPlayerId { get; set; }
+        public EliminationCreationDto() : base() { }
 
         public int EliminatorPlayerId { get; set; }
 
         public bool HasReBuy { get; set; }
 
         public IDictionary<int, int> WinnableMoneyByPosition { get; set; }
-
-        public bool IsAddOn { get; set; }
-
-        public bool IsFinalTable { get; set; }
     }
 }

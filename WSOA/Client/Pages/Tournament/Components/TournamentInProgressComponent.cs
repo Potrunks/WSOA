@@ -335,7 +335,13 @@ namespace WSOA.Client.Pages.Tournament.Components
                 {
                     TournamentInProgressDto tournamentInProgress = TournamentInProgressStore.CheckTournamentAlwaysInProgress();
 
-                    APICallResult<CancelEliminationResultDto> result = await TournamentService.CancelLastPlayerEliminationByPlayerId(playerId!.Value);
+                    EliminationEditionDto eliminationEditionDto = new EliminationEditionDto
+                    {
+                        EliminatedPlayerId = playerId!.Value,
+                        IsAddOn = tournamentInProgress.IsAddOn,
+                        IsFinalTable = tournamentInProgress.IsFinalTable
+                    };
+                    APICallResult<CancelEliminationResultDto> result = await TournamentService.CancelLastPlayerEliminationByPlayerId(eliminationEditionDto);
 
                     if (!result.Success)
                     {

@@ -111,8 +111,8 @@ namespace WSOA.Test.Business
             Assert.AreEqual(_eliminations.Last(), result.Data.EliminationCanceled);
             Assert.AreEqual(null, _dbContext.Eliminations.SingleOrDefault(elim => elim.Id == _eliminations.Last().Id));
             Assert.AreEqual(null, _playerEliminated.CurrentTournamentPosition);
-            Assert.AreEqual(null, _playerEliminated.WasAddOn);
-            Assert.AreEqual(null, _playerEliminated.WasFinalTable);
+            Assert.AreEqual(false, _playerEliminated.WasAddOn);
+            Assert.AreEqual(false, _playerEliminated.WasFinalTable);
             Assert.AreEqual(null, _playerEliminated.TotalWinningsPoint);
             Assert.AreEqual(null, _playerEliminated.TotalWinningsAmount);
         }
@@ -196,9 +196,71 @@ namespace WSOA.Test.Business
             Assert.AreEqual(null, result.Data.PlayerEliminated.TotalReBuy);
         }
 
-        private APICallResult<CancelEliminationResultDto> ExecuteCancelElimination()
+        [TestMethod]
+        public void ShouldSetPlayerWasAddonTrue_WhenEliminationXasDefinitiveAndTournamentIsAddon()
         {
-            return _tournamentBusiness.CancelLastPlayerElimination(_playerEliminated.Id, _sessionMock.Object);
+            _eliminations.Add(SaveElimination(_playerEliminated.Id, _playerEliminator.Id, true, _eliminations.Last().CreationDate.AddMinutes(30)));
+
+            _playerEliminated.CurrentTournamentPosition = 3;
+            _playerEliminated.WasAddOn = false;
+            _playerEliminated.WasFinalTable = false;
+            _playerEliminated.TotalWinningsPoint = 100;
+            _playerEliminated.TotalWinningsAmount = 1000;
+
+            APICallResult<CancelEliminationResultDto> result = ExecuteCancelElimination(true);
+
+            VerifyAPICallResultSuccess(result, null);
+            VerifyTransactionManagerCommit(_transactionManagerMock);
+            Assert.AreEqual(_playerEliminated.Id, result.Data.PlayerEliminated.Id);
+            Assert.AreEqual(3, result.Data.PlayerEliminated.TotalReBuy);
+            Assert.AreEqual(_playerEliminator.Id, result.Data.PlayerEliminator.Id);
+            Assert.AreEqual(null, result.Data.BonusTournamentsLostByEliminator);
+            Assert.AreEqual(_eliminations.Last(), result.Data.EliminationCanceled);
+            Assert.AreEqual(null, _dbContext.Eliminations.SingleOrDefault(elim => elim.Id == _eliminations.Last().Id));
+            Assert.AreEqual(null, _playerEliminated.CurrentTournamentPosition);
+            Assert.AreEqual(true, _playerEliminated.WasAddOn);
+            Assert.AreEqual(false, _playerEliminated.WasFinalTable);
+            Assert.AreEqual(null, _playerEliminated.TotalWinningsPoint);
+            Assert.AreEqual(null, _playerEliminated.TotalWinningsAmount);
+        }
+
+        [TestMethod]
+        public void ShouldSetPlayerWasFinalTableTrue_WhenEliminationXasDefinitiveAndTournamentIsFinalTable()
+        {
+            _eliminations.Add(SaveElimination(_playerEliminated.Id, _playerEliminator.Id, true, _eliminations.Last().CreationDate.AddMinutes(30)));
+
+            _playerEliminated.CurrentTournamentPosition = 3;
+            _playerEliminated.WasAddOn = false;
+            _playerEliminated.WasFinalTable = false;
+            _playerEliminated.TotalWinningsPoint = 100;
+            _playerEliminated.TotalWinningsAmount = 1000;
+
+            APICallResult<CancelEliminationResultDto> result = ExecuteCancelElimination(isFinalTable: true);
+
+            VerifyAPICallResultSuccess(result, null);
+            VerifyTransactionManagerCommit(_transactionManagerMock);
+            Assert.AreEqual(_playerEliminated.Id, result.Data.PlayerEliminated.Id);
+            Assert.AreEqual(3, result.Data.PlayerEliminated.TotalReBuy);
+            Assert.AreEqual(_playerEliminator.Id, result.Data.PlayerEliminator.Id);
+            Assert.AreEqual(null, result.Data.BonusTournamentsLostByEliminator);
+            Assert.AreEqual(_eliminations.Last(), result.Data.EliminationCanceled);
+            Assert.AreEqual(null, _dbContext.Eliminations.SingleOrDefault(elim => elim.Id == _eliminations.Last().Id));
+            Assert.AreEqual(null, _playerEliminated.CurrentTournamentPosition);
+            Assert.AreEqual(false, _playerEliminated.WasAddOn);
+            Assert.AreEqual(true, _playerEliminated.WasFinalTable);
+            Assert.AreEqual(null, _playerEliminated.TotalWinningsPoint);
+            Assert.AreEqual(null, _playerEliminated.TotalWinningsAmount);
+        }
+
+        private APICallResult<CancelEliminationResultDto> ExecuteCancelElimination(bool isAddon = false, bool isFinalTable = false)
+        {
+            EliminationEditionDto eliminationEditionDto = new EliminationEditionDto
+            {
+                EliminatedPlayerId = _playerEliminated.Id,
+                IsAddOn = isAddon,
+                IsFinalTable = isFinalTable
+            };
+            return _tournamentBusiness.CancelLastPlayerElimination(eliminationEditionDto, _sessionMock.Object);
         }
     }
 }

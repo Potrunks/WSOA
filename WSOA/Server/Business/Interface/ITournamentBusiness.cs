@@ -60,7 +60,7 @@ namespace WSOA.Server.Business.Interface
         /// <summary>
         /// Cancel the last elimination of a player victim id.
         /// </summary>
-        APICallResult<CancelEliminationResultDto> CancelLastPlayerElimination(int playerIdToCancelElimination, ISession session);
+        APICallResult<CancelEliminationResultDto> CancelLastPlayerElimination(EliminationEditionDto eliminationEditionDto, ISession session);
 
         /// <summary>
         /// Allow to edit the value of total addon of a player.

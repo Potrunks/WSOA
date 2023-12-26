@@ -657,7 +657,7 @@ namespace WSOA.Server.Business.Implementation
             return result;
         }
 
-        public APICallResult<CancelEliminationResultDto> CancelLastPlayerElimination(int playerIdToCancelElimination, ISession session)
+        public APICallResult<CancelEliminationResultDto> CancelLastPlayerElimination(EliminationEditionDto eliminationEditionDto, ISession session)
         {
             APICallResult<CancelEliminationResultDto> result = new APICallResult<CancelEliminationResultDto>(false);
             IEnumerable<BonusTournament>? bonusTournamentsLostByEliminator = null;
@@ -668,7 +668,7 @@ namespace WSOA.Server.Business.Implementation
 
                 session.CanUserPerformAction(_userRepository, BusinessActionResources.ELIMINATE_PLAYER);
 
-                PlayerEliminationsDto existingPlayerWithEliminations = _eliminationRepository.GetPlayerEliminationsDtosByPlayerVictimIds(new List<int> { playerIdToCancelElimination }).Single();
+                PlayerEliminationsDto existingPlayerWithEliminations = _eliminationRepository.GetPlayerEliminationsDtosByPlayerVictimIds(new List<int> { eliminationEditionDto.EliminatedPlayerId }).Single();
 
                 Elimination lastElimination = existingPlayerWithEliminations.Eliminations.OrderByDescending(elim => elim.CreationDate).First();
                 Player eliminatorPlayer = existingPlayerWithEliminations.EliminatorPlayersById[lastElimination.PlayerEliminatorId];
@@ -677,8 +677,8 @@ namespace WSOA.Server.Business.Implementation
                 if (lastElimination.IsDefinitive)
                 {
                     eliminatedPlayer.CurrentTournamentPosition = null;
-                    eliminatedPlayer.WasAddOn = null;
-                    eliminatedPlayer.WasFinalTable = null;
+                    eliminatedPlayer.WasAddOn = eliminationEditionDto.IsAddOn;
+                    eliminatedPlayer.WasFinalTable = eliminationEditionDto.IsFinalTable;
                     eliminatedPlayer.TotalWinningsPoint = null;
                     eliminatedPlayer.TotalWinningsAmount = null;
 
@@ -721,7 +721,7 @@ namespace WSOA.Server.Business.Implementation
 
                 result.Data = new CancelEliminationResultDto
                 {
-                    PlayerEliminated = existingPlayerWithEliminations.EliminatedPlayer,
+                    PlayerEliminated = eliminatedPlayer,
                     PlayerEliminator = eliminatorPlayer,
                     BonusTournamentsLostByEliminator = bonusTournamentsLostByEliminator,
                     EliminationCanceled = lastElimination
