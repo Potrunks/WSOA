@@ -39,5 +39,10 @@ namespace WSOA.Server.Data.Interface
         /// Get players by ids.
         /// </summary>
         IDictionary<int, Player> GetPlayersByIds(IEnumerable<int> playerIds);
+
+        /// <summary>
+        /// Get player dtos by player Ids.
+        /// </summary>
+        IEnumerable<PlayerDto> GetPlayerDtosByPlayerIds(IEnumerable<int> playerIds);
     }
 }

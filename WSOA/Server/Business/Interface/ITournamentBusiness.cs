@@ -66,5 +66,10 @@ namespace WSOA.Server.Business.Interface
         /// Allow to edit the value of total addon of a player.
         /// </summary>
         APICallResult<Player> EditPlayerTotalAddon(int playerId, int addonNb, ISession session);
+
+        /// <summary>
+        /// Remove a player that never come really in the tournament.
+        /// </summary>
+        APICallResultBase RemovePlayerNeverComeIntoTournamentInProgress(int playerId, ISession session);
     }
 }

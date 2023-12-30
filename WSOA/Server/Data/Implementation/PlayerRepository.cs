@@ -92,5 +92,31 @@ namespace WSOA.Server.Data.Implementation
                 )
                 .ToDictionary(pla => pla.Id);
         }
+
+        public IEnumerable<PlayerDto> GetPlayerDtosByPlayerIds(IEnumerable<int> playerIds)
+        {
+            return (
+                    from pla in _dbContext.Players
+                    join usr in _dbContext.Users on pla.UserId equals usr.Id
+                    join tou in _dbContext.Tournaments on pla.PlayedTournamentId equals tou.Id
+                    join bon in _dbContext.BonusTournamentEarneds on pla.Id equals bon.PlayerId into left_bon
+                    from bon in left_bon.DefaultIfEmpty()
+                    join elim_as_elim in _dbContext.Eliminations on pla.Id equals elim_as_elim.PlayerEliminatorId into left_elim_as_elim
+                    from elim_as_elim in left_elim_as_elim.DefaultIfEmpty()
+                    join elim_as_victim in _dbContext.Eliminations on pla.Id equals elim_as_victim.PlayerVictimId into left_elim_as_victim
+                    from elim_as_victim in left_elim_as_victim.DefaultIfEmpty()
+                    where playerIds.Contains(pla.Id)
+                    group new { usr, tou, elim_as_elim, elim_as_victim, bon } by pla into grouped
+                    select new PlayerDto
+                    {
+                        Player = grouped.Key,
+                        User = grouped.First().usr,
+                        Tournament = grouped.First().tou,
+                        BonusTournamentEarneds = grouped.Where(gr => gr.bon != null).Select(gr => gr.bon),
+                        EliminationsAsEliminator = grouped.Where(gr => gr.elim_as_elim != null).Select(gr => gr.elim_as_elim),
+                        EliminationsAsVictim = grouped.Where(gr => gr.elim_as_victim != null).Select(gr => gr.elim_as_victim)
+                    }
+                );
+        }
     }
 }

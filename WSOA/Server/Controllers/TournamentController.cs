@@ -140,5 +140,15 @@ namespace WSOA.Server.Controllers
         {
             return _tournamentBusiness.EditPlayerTotalAddon(playerId, addonNb, HttpContext.Session);
         }
+
+        /// <summary>
+        /// Remove player never come into tournament in progress.
+        /// </summary>
+        [HttpGet]
+        [Route("api/tournament/player/{playerId}/neverCome")]
+        public APICallResultBase RemovePlayerNeverComeIntoTournamentInProgress(int playerId)
+        {
+            return _tournamentBusiness.RemovePlayerNeverComeIntoTournamentInProgress(playerId, HttpContext.Session);
+        }
     }
 }

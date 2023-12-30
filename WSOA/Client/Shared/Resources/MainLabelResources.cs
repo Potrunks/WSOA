@@ -18,5 +18,6 @@
         public const string AVAILABLE_PLAYERS = "Joueurs disponibles";
         public const string PLAYERS_PAYMENT_MISSING = "Mauvais payeurs";
         public const string ERROR = "Erreur";
+        public const string WARNING = "Avertissement";
     }
 }

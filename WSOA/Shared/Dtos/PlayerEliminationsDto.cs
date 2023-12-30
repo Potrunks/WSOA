@@ -10,7 +10,7 @@ namespace WSOA.Shared.Dtos
 
         public User EliminatedUser { get; set; }
 
-        public IEnumerable<Elimination> Eliminations { get; set; }
+        public IEnumerable<Elimination> EliminatedPlayerEliminations { get; set; }
 
         public IDictionary<int, Player> EliminatorPlayersById { get; set; }
 

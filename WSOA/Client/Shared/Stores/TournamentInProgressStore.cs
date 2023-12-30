@@ -116,6 +116,15 @@ namespace WSOA.Client.Shared.Stores
             return tournamentInProgress;
         }
 
+        public TournamentInProgressDto RemovePlayer(int playerId)
+        {
+            TournamentInProgressDto tournamentInProgress = CheckTournamentAlwaysInProgress();
+
+            tournamentInProgress.PlayerPlayings = tournamentInProgress.PlayerPlayings.Where(pla => pla.Id != playerId);
+
+            return tournamentInProgress;
+        }
+
         public TournamentInProgressDto CheckTournamentAlwaysInProgress()
         {
             TournamentInProgressDto? tournamentInProgressDto = GetData();
@@ -132,6 +141,18 @@ namespace WSOA.Client.Shared.Stores
         {
             TournamentInProgressDto tournamentInProgress = CheckTournamentAlwaysInProgress();
             return tournamentInProgress.IsAddOn;
+        }
+
+        public bool CanRemovePlayer(int playerId)
+        {
+            TournamentInProgressDto tournamentInProgress = CheckTournamentAlwaysInProgress();
+            PlayerPlayingDto playerConcerned = tournamentInProgress.PlayerPlayings.Single(pla => pla.Id == playerId);
+            return !tournamentInProgress.IsAddOn
+                    && !tournamentInProgress.IsFinalTable
+                    && !playerConcerned.BonusTournamentEarnedsByBonusTournamentCode.Any()
+                    && !playerConcerned.IsEliminated
+                    && playerConcerned.TotalAddOn == null
+                    && playerConcerned.TotalRebuy == null;
         }
     }
 }

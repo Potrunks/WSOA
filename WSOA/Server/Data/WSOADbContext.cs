@@ -322,6 +322,11 @@ namespace WSOA.Server.Data
                 {
                     Code = BusinessActionResources.EDIT_TOTAL_ADDON,
                     Label = "Editer l'add-on d'un joueur"
+                },
+                new BusinessAction
+                {
+                    Code = BusinessActionResources.EDIT_PLAYER_PRESENCE,
+                    Label = "Editer le statut présence du joueur"
                 }
             );
 
@@ -350,6 +355,12 @@ namespace WSOA.Server.Data
                     Id = 4,
                     ProfileCode = "ORGA",
                     BusinessActionCode = BusinessActionResources.EDIT_TOTAL_ADDON
+                },
+                new BusinessActionByProfileCode
+                {
+                    Id = 5,
+                    ProfileCode = "ORGA",
+                    BusinessActionCode = BusinessActionResources.EDIT_PLAYER_PRESENCE
                 }
             );
 

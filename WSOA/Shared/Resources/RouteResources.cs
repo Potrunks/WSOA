@@ -9,5 +9,6 @@
         public const string DELETE_BONUS_EARNED = "api/tournament/deleteBonusEarned";
         public const string CANCEL_PLAYER_ELIMINATION = "api/tournament/cancel/player/elimination";
         public const string EDIT_ADDON_PLAYER = "api/tournament/player/{0}/addon/{1}";
+        public const string REMOVE_PLAYER_NVR_COME = "api/tournament/player/{0}/neverCome";
     }
 }

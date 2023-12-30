@@ -89,5 +89,11 @@ namespace WSOA.Client.Services.Implementation
             HttpResponseMessage response = await _httpClient.GetAsync(string.Format(RouteResources.EDIT_ADDON_PLAYER, playerId, addonNb));
             return response.Content.ToObject<APICallResult<Player>>();
         }
+
+        public async Task<APICallResultBase> RemovePlayerNeverComeIntoTournamentInProgress(int playerId)
+        {
+            HttpResponseMessage response = await _httpClient.GetAsync(string.Format(RouteResources.REMOVE_PLAYER_NVR_COME, playerId));
+            return response.Content.ToObject<APICallResultBase>();
+        }
     }
 }

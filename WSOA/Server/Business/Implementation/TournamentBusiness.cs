@@ -670,7 +670,7 @@ namespace WSOA.Server.Business.Implementation
 
                 PlayerEliminationsDto existingPlayerWithEliminations = _eliminationRepository.GetPlayerEliminationsDtosByPlayerVictimIds(new List<int> { eliminationEditionDto.EliminatedPlayerId }).Single();
 
-                Elimination lastElimination = existingPlayerWithEliminations.Eliminations.OrderByDescending(elim => elim.CreationDate).First();
+                Elimination lastElimination = existingPlayerWithEliminations.EliminatedPlayerEliminations.OrderByDescending(elim => elim.CreationDate).First();
                 Player eliminatorPlayer = existingPlayerWithEliminations.EliminatorPlayersById[lastElimination.PlayerEliminatorId];
                 Player eliminatedPlayer = existingPlayerWithEliminations.EliminatedPlayer;
 
@@ -779,6 +779,92 @@ namespace WSOA.Server.Business.Implementation
 
                 result.Success = true;
                 result.Data = playerConcerned;
+            }
+            catch (FunctionalException e)
+            {
+                _transactionManager.RollbackTransaction();
+                string errorMsg = e.Message;
+                _log.Error(errorMsg);
+                result.ErrorMessage = errorMsg;
+                result.RedirectUrl = e.RedirectUrl;
+            }
+            catch (Exception e)
+            {
+                _transactionManager.RollbackTransaction();
+                string errorMsg = MainBusinessResources.TECHNICAL_ERROR;
+                _log.Error(e.Message);
+                result.ErrorMessage = errorMsg;
+                result.RedirectUrl = string.Format(RouteBusinessResources.MAIN_ERROR, errorMsg);
+            }
+
+            return result;
+        }
+
+        public APICallResultBase RemovePlayerNeverComeIntoTournamentInProgress(int playerId, ISession session)
+        {
+            APICallResultBase result = new APICallResultBase(false);
+
+            try
+            {
+                _transactionManager.BeginTransaction();
+
+                session.CanUserPerformAction(_userRepository, BusinessActionResources.EDIT_PLAYER_PRESENCE);
+
+                PlayerDto playerNeverCome = _playerRepository.GetPlayerDtosByPlayerIds(new List<int> { playerId }).Single();
+
+                if (playerNeverCome.Player.PresenceStateCode != PresenceStateResources.PRESENT_CODE)
+                {
+                    _log.Warn($"Player ID {playerId} is declared with a presence state code {playerNeverCome.Player.PresenceStateCode}. It should not be functionnaly possible to allow this presence state code when player need to be remove from the tournament in progress.");
+                    result.WarningMessage = TournamentMessageResources.PLAYER_ALREADY_NOT_PRESENT;
+                }
+
+                if (playerNeverCome.Player.TotalReBuy != null)
+                {
+                    throw new FunctionalException(TournamentMessageResources.REMOVE_PLAYER_FROM_TOURNAMENT_REBUY_ERROR, null);
+                }
+
+                if (playerNeverCome.Player.TotalAddOn != null || playerNeverCome.Player.WasAddOn.GetValueOrDefault())
+                {
+                    throw new FunctionalException(TournamentMessageResources.REMOVE_PLAYER_FROM_TOURNAMENT_ADDON_ERROR, null);
+                }
+
+                if (playerNeverCome.Player.WasFinalTable.GetValueOrDefault())
+                {
+                    throw new FunctionalException(TournamentMessageResources.REMOVE_PLAYER_FROM_TOURNAMENT_FINAL_TABLE_ERROR, null);
+                }
+
+                if (playerNeverCome.Player.TotalWinningsPoint != null)
+                {
+                    throw new FunctionalException(TournamentMessageResources.REMOVE_PLAYER_FROM_TOURNAMENT_PTS_EARNED_ERROR, null);
+                }
+
+                if (playerNeverCome.Player.CurrentTournamentPosition != null)
+                {
+                    throw new FunctionalException(TournamentMessageResources.REMOVE_PLAYER_FROM_TOURNAMENT_POSITION_EARNED_ERROR, null);
+                }
+
+                if (!playerNeverCome.Tournament.IsInProgress)
+                {
+                    throw new FunctionalException(TournamentMessageResources.REMOVE_PLAYER_FROM_TOURNAMENT_IN_PROGRESS_ERROR, null);
+                }
+
+                if (playerNeverCome.EliminationsAsEliminator.Any())
+                {
+                    throw new FunctionalException(TournamentMessageResources.REMOVE_PLAYER_FROM_TOURNAMENT_ELIMINATOR_ERROR, null);
+                }
+
+                if (playerNeverCome.BonusTournamentEarneds.Any())
+                {
+                    throw new FunctionalException(TournamentMessageResources.REMOVE_PLAYER_FROM_TOURNAMENT_BONUS_ERROR, null);
+                }
+
+                playerNeverCome.Player.PresenceStateCode = PresenceStateResources.ABSENT_CODE;
+
+                _playerRepository.SavePlayer(playerNeverCome.Player);
+
+                _transactionManager.CommitTransaction();
+
+                result.Success = true;
             }
             catch (FunctionalException e)
             {

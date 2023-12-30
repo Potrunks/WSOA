@@ -254,6 +254,15 @@ namespace WSOA.Client.Pages.Tournament.Components
                         Label = PopupPlayerActionResources.EDIT_ADDON
                     });
                 }
+
+                if (TournamentInProgressStore.CanRemovePlayer(player.Id))
+                {
+                    actions.Add(new PopupButtonViewModel
+                    {
+                        Action = RemovePlayerNeverComeIntoTournamentInProgress(),
+                        Label = PopupPlayerActionResources.REMOVE_PLAYER
+                    });
+                }
             }
             catch (FunctionalException e)
             {
@@ -367,6 +376,59 @@ namespace WSOA.Client.Pages.Tournament.Components
                     InitializedData(tournamentInProgress);
 
                     StateHasChanged();
+                }
+                catch (FunctionalException e)
+                {
+                    NavigationManager.NavigateTo(e.RedirectUrl!);
+                    return;
+                }
+            };
+        }
+
+        private Action<int?> RemovePlayerNeverComeIntoTournamentInProgress()
+        {
+            return async (int? playerId) =>
+            {
+                try
+                {
+                    TournamentInProgressStore.CheckTournamentAlwaysInProgress();
+
+                    APICallResultBase result = await TournamentService.RemovePlayerNeverComeIntoTournamentInProgress(playerId!.Value);
+
+                    if (!result.Success)
+                    {
+                        if (string.IsNullOrEmpty(result.RedirectUrl))
+                        {
+                            PopupEventHandler.Open(
+                                msg: result.ErrorMessage!,
+                                isError: true,
+                                title: MainLabelResources.ERROR,
+                                onValid: null
+                                );
+                            return;
+                        }
+                        else
+                        {
+                            NavigationManager.NavigateTo(result.RedirectUrl);
+                            return;
+                        }
+                    }
+
+                    TournamentInProgressDto tournamentInProgress = TournamentInProgressStore.RemovePlayer(playerId!.Value);
+
+                    InitializedData(tournamentInProgress);
+
+                    StateHasChanged();
+
+                    if (!string.IsNullOrEmpty(result.WarningMessage))
+                    {
+                        PopupEventHandler.Open(
+                                msg: result.WarningMessage,
+                                isError: false,
+                                title: MainLabelResources.WARNING,
+                                onValid: null
+                                );
+                    }
                 }
                 catch (FunctionalException e)
                 {

@@ -66,5 +66,10 @@ namespace WSOA.Client.Services.Interface
         /// Edit the value of the total addon of the selected player.
         /// </summary>
         Task<APICallResult<Player>> EditPlayerTotalAddon(int playerId, int addonNb);
+
+        /// <summary>
+        /// Remove player never come into tournament in progress.
+        /// </summary>
+        Task<APICallResultBase> RemovePlayerNeverComeIntoTournamentInProgress(int playerId);
     }
 }

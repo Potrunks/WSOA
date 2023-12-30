@@ -58,7 +58,7 @@ namespace WSOA.Server.Data.Implementation
             return rawDatas.Select(data => new PlayerEliminationsDto
             {
                 EliminatedPlayer = data.EliminatedPlayer,
-                Eliminations = data.Eliminations,
+                EliminatedPlayerEliminations = data.Eliminations,
                 EliminatorPlayersById = data.EliminatorPlayers.ToDictionary(pla => pla.Id),
                 Tournament = data.Tournament.Single(),
                 EliminatedUser = data.EliminatedUser.Single()
