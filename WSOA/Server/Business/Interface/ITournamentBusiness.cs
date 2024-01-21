@@ -71,5 +71,10 @@ namespace WSOA.Server.Business.Interface
         /// Remove a player that never come really in the tournament.
         /// </summary>
         APICallResultBase RemovePlayerNeverComeIntoTournamentInProgress(int playerId, ISession session);
+
+        /// <summary>
+        /// Cancel the tournament in progress
+        /// </summary>
+        APICallResultBase CancelTournamentInProgress(int tournamentInProgressId, ISession session);
     }
 }

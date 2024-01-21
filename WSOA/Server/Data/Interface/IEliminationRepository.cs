@@ -24,5 +24,10 @@ namespace WSOA.Server.Data.Interface
         /// Delete elimination from DB.
         /// </summary>
         void DeleteElimination(Elimination elimination);
+
+        /// <summary>
+        /// Delete eliminations from DB.
+        /// </summary>
+        void DeleteEliminations(IEnumerable<Elimination> eliminations);
     }
 }

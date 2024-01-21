@@ -84,7 +84,6 @@ namespace WSOA.Test.Business
             Assert.AreEqual(_tournamentInProgress.BuyIn, result.Data.BuyIn);
             Assert.AreEqual(false, result.Data.IsFinalTable);
             Assert.AreEqual(false, result.Data.IsAddOn);
-            Assert.AreEqual(30, result.Data.TotalJackpot);
             Assert.AreEqual(1, result.Data.WinnableMoneyByPosition.Single().Key);
             Assert.AreEqual(30, result.Data.WinnableMoneyByPosition.Single().Value);
             foreach (BonusTournament bonus in _availableBonus)

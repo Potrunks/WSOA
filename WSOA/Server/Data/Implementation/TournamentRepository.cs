@@ -150,5 +150,29 @@ namespace WSOA.Server.Data.Implementation
                                          .OrderByDescending(tou => tou.StartDate)
                                          .FirstOrDefault();
         }
+
+        public TournamentToCancelDto GetTournamentToCancelDtoByTournamentId(int tournamentToCancelId)
+        {
+            return
+                (
+                    from tournament in _dbContext.Tournaments
+                    join player in _dbContext.Players on tournament.Id equals player.PlayedTournamentId into left_player
+                    from player in left_player.DefaultIfEmpty()
+                    join elim in _dbContext.Eliminations on player.Id equals elim.PlayerEliminatorId into left_elim
+                    from elim in left_elim.DefaultIfEmpty()
+                    join bonus in _dbContext.BonusTournamentEarneds on player.Id equals bonus.PlayerId into left_bonus
+                    from bonus in left_bonus.DefaultIfEmpty()
+                    where tournament.Id == tournamentToCancelId
+                    group new { player, elim, bonus } by tournament into grouped
+                    select new TournamentToCancelDto
+                    {
+                        TournamentToCancel = grouped.Key,
+                        PlayersToUpdate = grouped.Select(g => g.player).Where(p => p != null),
+                        BonusToDelete = grouped.Select(g => g.bonus).Where(b => b != null),
+                        EliminationsToDelete = grouped.Select(g => g.elim).Where(e => e != null)
+                    }
+                )
+                .Single();
+        }
     }
 }

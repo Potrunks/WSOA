@@ -71,12 +71,19 @@ namespace WSOA.Server.Business.Implementation
                 _tournamentRepository.SaveTournament(newTournament);
 
                 IEnumerable<User> allUsers = _userRepository.GetAllUsers();
-                _mailService.SendMails
-                (
-                    allUsers.Select(usr => usr.Email),
-                    TournamentBusinessResources.MAIL_SUBJECT_NEW_TOURNAMENT,
-                    string.Format(TournamentBusinessResources.MAIL_BODY_NEW_TOURNAMENT, form.BaseUri)
-                );
+                try
+                {
+                    _mailService.SendMails
+                    (
+                        allUsers.Select(usr => usr.Email),
+                        TournamentBusinessResources.MAIL_SUBJECT_NEW_TOURNAMENT,
+                        string.Format(TournamentBusinessResources.MAIL_BODY_NEW_TOURNAMENT, form.BaseUri)
+                    );
+                }
+                catch (Exception e)
+                {
+                    _log.Error(e);
+                }
 
                 _transactionManager.CommitTransaction();
             }
@@ -861,6 +868,65 @@ namespace WSOA.Server.Business.Implementation
                 playerNeverCome.Player.PresenceStateCode = PresenceStateResources.ABSENT_CODE;
 
                 _playerRepository.SavePlayer(playerNeverCome.Player);
+
+                _transactionManager.CommitTransaction();
+
+                result.Success = true;
+            }
+            catch (FunctionalException e)
+            {
+                _transactionManager.RollbackTransaction();
+                string errorMsg = e.Message;
+                _log.Error(errorMsg);
+                result.ErrorMessage = errorMsg;
+                result.RedirectUrl = e.RedirectUrl;
+            }
+            catch (Exception e)
+            {
+                _transactionManager.RollbackTransaction();
+                string errorMsg = MainBusinessResources.TECHNICAL_ERROR;
+                _log.Error(e.Message);
+                result.ErrorMessage = errorMsg;
+                result.RedirectUrl = string.Format(RouteBusinessResources.MAIN_ERROR, errorMsg);
+            }
+
+            return result;
+        }
+
+        public APICallResultBase CancelTournamentInProgress(int tournamentInProgressId, ISession session)
+        {
+            APICallResultBase result = new APICallResultBase(false);
+
+            try
+            {
+                _transactionManager.BeginTransaction();
+
+                session.CanUserPerformAction(_userRepository, BusinessActionResources.CANCEL_TOURNAMENT_IN_PROGRESS);
+
+                TournamentToCancelDto tournamentToCancelDto = _tournamentRepository.GetTournamentToCancelDtoByTournamentId(tournamentInProgressId);
+
+                if (!tournamentToCancelDto.TournamentToCancel.IsInProgress)
+                {
+                    throw new FunctionalException(TournamentBusinessResources.TOURNAMENT_NOT_IN_PROGRESS, null);
+                }
+
+                tournamentToCancelDto.TournamentToCancel.IsInProgress = false;
+
+                foreach (Player playerToUpdate in tournamentToCancelDto.PlayersToUpdate)
+                {
+                    playerToUpdate.TotalWinningsPoint = null;
+                    playerToUpdate.CurrentTournamentPosition = null;
+                    playerToUpdate.TotalReBuy = null;
+                    playerToUpdate.TotalAddOn = null;
+                    playerToUpdate.WasFinalTable = null;
+                    playerToUpdate.WasAddOn = null;
+                    playerToUpdate.TotalWinningsAmount = null;
+                }
+
+                _bonusTournamentEarnedRepository.DeleteBonusTournamentEarneds(tournamentToCancelDto.BonusToDelete);
+                _eliminationRepository.DeleteEliminations(tournamentToCancelDto.EliminationsToDelete);
+                _tournamentRepository.SaveTournament(tournamentToCancelDto.TournamentToCancel);
+                _playerRepository.SavePlayers(tournamentToCancelDto.PlayersToUpdate);
 
                 _transactionManager.CommitTransaction();
 

@@ -25,5 +25,6 @@
         public const string REMOVE_PLAYER_FROM_TOURNAMENT_IN_PROGRESS_ERROR = "Le joueur ne peut pas être retiré du tournoi car le tournoi n'est pas en cours";
         public const string REMOVE_PLAYER_FROM_TOURNAMENT_ELIMINATOR_ERROR = "Le joueur ne peut pas être retiré du tournoi car il a déjà éliminé au moins un joueur";
         public const string REMOVE_PLAYER_FROM_TOURNAMENT_BONUS_ERROR = "Le joueur ne peut pas être retiré du tournoi car il a déjà gagné un bonus";
+        public const string TOURNAMENT_IN_PROGRESS_CANCELLED = "Le tournoi en cours a été annulé";
     }
 }

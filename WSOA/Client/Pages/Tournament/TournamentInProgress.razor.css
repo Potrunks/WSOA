@@ -19,6 +19,8 @@
     grid-column-end: 2;
     grid-row-start: 1;
     grid-row-end: 2;
+    overflow: auto;
+    padding: 5px;
 }
 
 .c-tournamentInProgress__container-players {
@@ -129,9 +131,23 @@
     flex-wrap: wrap;
 }
 
-.c-player__separator {
+.c-player__separator,
+.c-info__separator {
     height: 2px;
     background-color: red;
     width: 75%;
     margin-left: 22px;
+}
+
+.c-tournamentInProgress__subContainer-info {
+    margin-bottom: 5px;
+}
+
+.c-tournamentInProgress__info,
+.c-tournamentInProgress__jackpot-container {
+    text-align: center;
+}
+
+.c-tournamentInProgress__panelButtons ::deep .mainButton {
+    width: 100%;
 }

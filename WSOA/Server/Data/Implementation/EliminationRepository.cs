@@ -70,5 +70,11 @@ namespace WSOA.Server.Data.Implementation
             _dbContext.Eliminations.Remove(elimination);
             _dbContext.SaveChanges();
         }
+
+        public void DeleteEliminations(IEnumerable<Elimination> eliminations)
+        {
+            _dbContext.Eliminations.RemoveRange(eliminations);
+            _dbContext.SaveChanges();
+        }
     }
 }

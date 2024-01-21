@@ -24,6 +24,7 @@ namespace WSOA.Shared.Dtos
             Id = tournament.Id;
             Season = tournament.Season;
             TournamentNumber = tournamentNb;
+            StartDate = tournament.StartDate;
             BuyIn = tournament.BuyIn;
             IsFinalTable = players.Any(player => player.Player.WasFinalTable.GetValueOrDefault());
             IsAddOn = players.Any(player => player.Player.WasAddOn.GetValueOrDefault());
@@ -37,10 +38,9 @@ namespace WSOA.Shared.Dtos
                 }
                 return new PlayerPlayingDto(player, winnableBonusByCode, currentBonusTournamentEarneds, lastWinner, firstRankUser);
             });
-            TotalJackpot = tournament.BuyIn * players.Count();
             WinnableMoneyByPosition = new Dictionary<int, int>
             {
-                { 1, TotalJackpot }
+                { 1, CalculateTotalJackpot() }
             };
         }
 
@@ -49,6 +49,8 @@ namespace WSOA.Shared.Dtos
         public string Season { get; set; }
 
         public int TournamentNumber { get; set; }
+
+        public DateTime StartDate { get; set; }
 
         public int BuyIn { get; set; }
 
@@ -59,8 +61,6 @@ namespace WSOA.Shared.Dtos
         public IEnumerable<BonusTournament> WinnableBonus { get; set; }
 
         public IEnumerable<PlayerPlayingDto> PlayerPlayings { get; set; }
-
-        public int TotalJackpot { get; set; }
 
         public IDictionary<int, int> WinnableMoneyByPosition { get; set; }
 
@@ -73,6 +73,13 @@ namespace WSOA.Shared.Dtos
                 result = StringFormatUtil.ToFullFirstNameAndFirstLetterLastName(firstPlayerDefinitivelyEliminated.FirstName, firstPlayerDefinitivelyEliminated.LastName);
             }
             return result;
+        }
+
+        public int CalculateTotalJackpot()
+        {
+            return BuyIn * (PlayerPlayings.Count()
+                            + PlayerPlayings.Where(pla => pla.TotalRebuy.HasValue && pla.TotalRebuy > 0).Sum(pla => pla.TotalRebuy!.Value)
+                            + PlayerPlayings.Where(pla => pla.TotalAddOn.HasValue && pla.TotalAddOn > 0).Sum(pla => pla.TotalAddOn!.Value));
         }
     }
 }

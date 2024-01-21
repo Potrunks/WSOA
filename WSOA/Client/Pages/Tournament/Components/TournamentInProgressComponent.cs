@@ -28,9 +28,7 @@ namespace WSOA.Client.Pages.Tournament.Components
 
         public IEnumerable<PlayerPlayingViewModel> PlayerPlayingsViewModel { get; set; }
 
-        public int TotalJackpot { get; set; }
-
-        public IDictionary<int, int> WinnableMoneyByPosition { get; set; }
+        public TournamentInProgressViewModel TournamentInProgressViewModel { get; set; }
 
         protected override async Task OnInitializedAsync()
         {
@@ -57,8 +55,7 @@ namespace WSOA.Client.Pages.Tournament.Components
         private void InitializedData(TournamentInProgressDto tournamentInProgress)
         {
             PlayerPlayingsViewModel = tournamentInProgress.PlayerPlayings.Select(pla => new PlayerPlayingViewModel(pla));
-            TotalJackpot = tournamentInProgress.TotalJackpot;
-            WinnableMoneyByPosition = tournamentInProgress.WinnableMoneyByPosition;
+            TournamentInProgressViewModel = new TournamentInProgressViewModel(tournamentInProgress);
         }
 
         public EventCallback<PlayerPlayingViewModel> OpenPlayerActionsPopup => EventCallback.Factory.Create(this, (PlayerPlayingViewModel player) =>
@@ -490,6 +487,87 @@ namespace WSOA.Client.Pages.Tournament.Components
                     InitializedData(tournamentInProgress);
 
                     StateHasChanged();
+                }
+                catch (FunctionalException e)
+                {
+                    NavigationManager.NavigateTo(e.RedirectUrl!);
+                    return;
+                }
+            };
+        }
+
+        public EventCallback ShowTournamentInProgressMenu => EventCallback.Factory.Create(this, () =>
+        {
+            PopupEventHandler.Open
+            (
+                GenerateTournamentInProgressActions(),
+                $"Saison {TournamentInProgressViewModel.Season} - Tournoi n°{TournamentInProgressViewModel.TournamentNumber}",
+                TournamentInProgressViewModel.Id
+            );
+        });
+
+        private List<PopupButtonViewModel> GenerateTournamentInProgressActions()
+        {
+            List<PopupButtonViewModel> actions = new List<PopupButtonViewModel>();
+
+            try
+            {
+                actions.Add(new PopupButtonViewModel
+                {
+                    Action = CancelTournamentInProgress(),
+                    Label = PopupTournamentInProgressActionResources.CANCEL_TOURNAMENT_IN_PROGRESS
+                });
+
+                // Ajouter un joueur
+
+                // Switch etape tournoi (normal <-> addon <-> Table final)
+                // Suivante (a afficher si on est pas en table final)
+                // Précédente (a afficher si on est pas en normal mode)
+
+                // Changer repartition gain
+            }
+            catch (FunctionalException e)
+            {
+                NavigationManager.NavigateTo(e.RedirectUrl!);
+            }
+
+            return actions;
+        }
+
+        private Action<int?> CancelTournamentInProgress()
+        {
+            return async (int? tournamentInProgressId) =>
+            {
+                try
+                {
+                    TournamentInProgressStore.CheckTournamentAlwaysInProgress();
+
+                    APICallResultBase result = await TournamentService.CancelTournamentInProgress(tournamentInProgressId!.Value);
+
+                    if (!result.Success)
+                    {
+                        if (!string.IsNullOrEmpty(result.RedirectUrl))
+                        {
+                            NavigationManager.NavigateTo(result.RedirectUrl);
+                            return;
+                        }
+                        else
+                        {
+                            PopupEventHandler.Open(
+                                msg: result.ErrorMessage!,
+                                isError: true,
+                                title: MainLabelResources.ERROR,
+                                onValid: null
+                                );
+                            return;
+                        }
+                    }
+                    else
+                    {
+                        TournamentInProgressStore.Clean();
+                        NavigationManager.NavigateTo(string.Format(RouteResources.MAIN_ERROR, TournamentMessageResources.TOURNAMENT_IN_PROGRESS_CANCELLED));
+                        return;
+                    }
                 }
                 catch (FunctionalException e)
                 {

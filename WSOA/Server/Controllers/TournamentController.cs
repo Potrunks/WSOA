@@ -150,5 +150,12 @@ namespace WSOA.Server.Controllers
         {
             return _tournamentBusiness.RemovePlayerNeverComeIntoTournamentInProgress(playerId, HttpContext.Session);
         }
+
+        [HttpGet]
+        [Route("api/tournament/inProgress/{tournamentInProgressId}/cancel")]
+        public APICallResultBase CancelTournamentInProgress(int tournamentInProgressId)
+        {
+            return _tournamentBusiness.CancelTournamentInProgress(tournamentInProgressId, HttpContext.Session);
+        }
     }
 }

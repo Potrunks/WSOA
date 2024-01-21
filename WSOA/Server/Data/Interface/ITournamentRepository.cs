@@ -54,5 +54,10 @@ namespace WSOA.Server.Data.Interface
         /// Get the last tournament over by season code given.
         /// </summary>
         Tournament? GetLastFinishedTournamentBySeason(string season);
+
+        /// <summary>
+        /// Get all data to cancel a tournament.
+        /// </summary>
+        TournamentToCancelDto GetTournamentToCancelDtoByTournamentId(int tournamentToCancelId);
     }
 }

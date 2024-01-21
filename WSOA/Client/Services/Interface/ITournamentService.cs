@@ -71,5 +71,10 @@ namespace WSOA.Client.Services.Interface
         /// Remove player never come into tournament in progress.
         /// </summary>
         Task<APICallResultBase> RemovePlayerNeverComeIntoTournamentInProgress(int playerId);
+
+        /// <summary>
+        /// Cancel tournament in progress.
+        /// </summary>
+        Task<APICallResultBase> CancelTournamentInProgress(int tournamentInProgressId);
     }
 }

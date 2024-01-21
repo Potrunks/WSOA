@@ -327,6 +327,11 @@ namespace WSOA.Server.Data
                 {
                     Code = BusinessActionResources.EDIT_PLAYER_PRESENCE,
                     Label = "Editer le statut présence du joueur"
+                },
+                new BusinessAction
+                {
+                    Code = BusinessActionResources.CANCEL_TOURNAMENT_IN_PROGRESS,
+                    Label = "Annuler un tournoi en cours"
                 }
             );
 
@@ -361,6 +366,12 @@ namespace WSOA.Server.Data
                     Id = 5,
                     ProfileCode = "ORGA",
                     BusinessActionCode = BusinessActionResources.EDIT_PLAYER_PRESENCE
+                },
+                new BusinessActionByProfileCode
+                {
+                    Id = 6,
+                    ProfileCode = "ORGA",
+                    BusinessActionCode = BusinessActionResources.CANCEL_TOURNAMENT_IN_PROGRESS
                 }
             );
 

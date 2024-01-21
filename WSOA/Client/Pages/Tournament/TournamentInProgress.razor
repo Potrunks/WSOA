@@ -1,5 +1,6 @@
 ﻿@page "/tournament/inProgress/{SubSectionId:int}"
 @using WSOA.Client.Pages.Tournament.Components;
+@using WSOA.Client.Shared.Buttons.Main
 @using WSOA.Client.Shared.Counters
 @using WSOA.Client.Shared.Loaders
 @using WSOA.Shared.Dtos;
@@ -13,7 +14,57 @@
 else
 {
     <div class="c-tournamentInProgress__container-main">
-        <div class="c-tournamentInProgress__container-info"></div>
+        <div class="c-tournamentInProgress__container-info">
+            <div class="c-tournamentInProgress__subContainer-info">
+                <div class="c-tournamentInProgress__heading-title">Date</div>
+                <div class="c-tournamentInProgress__info">@TournamentInProgressViewModel.StartDate</div>
+            </div>
+            <div class="c-info__separator" />
+            <div class="c-tournamentInProgress__subContainer-info">
+                <div class="c-tournamentInProgress__heading-title">Tournoi n°</div>
+                <div class="c-tournamentInProgress__info">@TournamentInProgressViewModel.TournamentNumber</div>
+            </div>
+            <div class="c-info__separator" />
+            <div class="c-tournamentInProgress__subContainer-info">
+                <div class="c-tournamentInProgress__heading-title">Saison</div>
+                <div class="c-tournamentInProgress__info">@TournamentInProgressViewModel.Season</div>
+            </div>
+            <div class="c-info__separator" />
+            <div class="c-tournamentInProgress__subContainer-info">
+                <div class="c-tournamentInProgress__heading-title">Vainqueur tournoi précédent</div>
+                <div class="c-tournamentInProgress__info">@TournamentInProgressViewModel.WinnerLastTournamentFullName</div>
+            </div>
+            <div class="c-info__separator" />
+            <div class="c-tournamentInProgress__subContainer-info">
+                <div class="c-tournamentInProgress__heading-title">1er de la saison</div>
+                <div class="c-tournamentInProgress__info">@TournamentInProgressViewModel.FirstRankedFullName</div>
+            </div>
+            <div class="c-info__separator" />
+            <div class="c-tournamentInProgress__subContainer-info">
+                <div class="c-tournamentInProgress__heading-title">Jackpot</div>
+                <div class="c-tournamentInProgress__jackpot-container">
+                    <div class="c-tournamentInProgress__jackpot-total">@TournamentInProgressViewModel.TotalJackpot</div>
+                    <div class="c-tournamentInProgress__jackpot-distribution">
+                        @foreach (string winnableMoney in TournamentInProgressViewModel.WinnableMoneys)
+                        {
+                            <div class="c-tournamentInProgress__jackpot-amountByPosition">@winnableMoney</div>
+                        }
+                    </div>
+                </div>
+            </div>
+            <div class="c-info__separator" />
+            <div class="c-tournamentInProgress__subContainer-info">
+                <div class="c-tournamentInProgress__heading-title">Etape</div>
+                <div class="c-tournamentInProgress__info">@TournamentInProgressViewModel.Step</div>
+            </div>
+            <div class="c-tournamentInProgress__panelButtons">
+                <MainButton
+                    IsPrimary="true"
+                    Label="Menu"
+                    Type="button"
+                    OnClick="() => ShowTournamentInProgressMenu.InvokeAsync()"/>
+            </div>
+        </div>
         <div class="c-tournamentInProgress__container-players">
             <div class="c-players__heading-title">Joueurs</div>
             <div class="c-players__heading-counter">@($"{PlayerPlayingsViewModel.Where(pla => !pla.IsEliminated).Count()} / {PlayerPlayingsViewModel.Count()}")</div>
