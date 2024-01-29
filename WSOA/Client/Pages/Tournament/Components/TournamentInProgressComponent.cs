@@ -518,7 +518,11 @@ namespace WSOA.Client.Pages.Tournament.Components
                     Label = PopupTournamentInProgressActionResources.CANCEL_TOURNAMENT_IN_PROGRESS
                 });
 
-                // Ajouter un joueur
+                actions.Add(new PopupButtonViewModel
+                {
+                    Action = OpenAddPlayerPopup(),
+                    Label = PopupTournamentInProgressActionResources.ADD_PLAYER
+                });
 
                 // Switch etape tournoi (normal <-> addon <-> Table final)
                 // Suivante (a afficher si on est pas en table final)
@@ -533,6 +537,79 @@ namespace WSOA.Client.Pages.Tournament.Components
 
             return actions;
         }
+
+        private Action<int?> OpenAddPlayerPopup()
+        {
+            return async (int? tournamentId) =>
+            {
+                try
+                {
+                    TournamentInProgressStore.CheckTournamentAlwaysInProgress();
+
+                    APICallResult<PlayerSelectionViewModel> result = await TournamentService.LoadPlayersForPlayingTournamentInProgress(tournamentId!.Value);
+
+                    if (!result.Success)
+                    {
+                        if (!string.IsNullOrEmpty(result.RedirectUrl))
+                        {
+                            throw new FunctionalException(result.ErrorMessage!, result.RedirectUrl);
+                        }
+                        PopupEventHandler.Open(
+                                    msg: result.ErrorMessage!,
+                                    isError: true,
+                                    title: MainLabelResources.ERROR,
+                                    onValid: null
+                                    );
+                        return;
+                    }
+
+                    IEnumerable<IdSelectableViewModel> selectableIds = result.Data.AvailablePlayers.Select(p => new IdSelectableViewModel(p));
+
+                    PopupEventHandler.Open(selectableIds, PopupTournamentActionResources.ADD_PLAYERS, AddPlayers);
+                }
+                catch (FunctionalException e)
+                {
+                    NavigationManager.NavigateTo(e.RedirectUrl!);
+                    return;
+                }
+            };
+        }
+
+        private EventCallback<IEnumerable<int>> AddPlayers => EventCallback.Factory.Create(this, async (IEnumerable<int> selectedItemIds) =>
+        {
+            try
+            {
+                TournamentInProgressDto tournamentInProgress = TournamentInProgressStore.CheckTournamentAlwaysInProgress();
+
+                APICallResult<IEnumerable<PlayerPlayingDto>> result = await TournamentService.AddPlayersIntoTournamentInProgress(selectedItemIds, tournamentInProgress.Id);
+
+                if (!result.Success)
+                {
+                    if (!string.IsNullOrEmpty(result.RedirectUrl))
+                    {
+                        throw new FunctionalException(result.ErrorMessage!, result.RedirectUrl);
+                    }
+                    PopupEventHandler.Open(
+                                msg: result.ErrorMessage!,
+                                isError: true,
+                                title: MainLabelResources.ERROR,
+                                onValid: null
+                                );
+                    return;
+                }
+
+                tournamentInProgress = TournamentInProgressStore.AddPlayers(result.Data);
+
+                InitializedData(tournamentInProgress);
+
+                StateHasChanged();
+            }
+            catch (FunctionalException ex)
+            {
+                NavigationManager.NavigateTo(ex.RedirectUrl!);
+                return;
+            }
+        });
 
         private Action<int?> CancelTournamentInProgress()
         {

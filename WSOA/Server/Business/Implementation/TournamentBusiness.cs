@@ -217,6 +217,41 @@ namespace WSOA.Server.Business.Implementation
             return result;
         }
 
+        public APICallResult<PlayerSelectionViewModel> LoadPlayersForPlayingTournamentInProgress(int tournamentId, ISession session)
+        {
+            APICallResult<PlayerSelectionViewModel> result = new APICallResult<PlayerSelectionViewModel>(true);
+
+            try
+            {
+                session.CanUserPerformAction(_userRepository, BusinessActionResources.EDIT_TOURNAMENT_IN_PROGRESS);
+
+                Tournament tournament = _tournamentRepository.GetTournamentById(tournamentId);
+                if (!tournament.IsInProgress)
+                {
+                    throw new FunctionalException(TournamentMessageResources.NO_TOURNAMENT_IN_PROGRESS, string.Format(RouteBusinessResources.MAIN_ERROR, TournamentMessageResources.NO_TOURNAMENT_IN_PROGRESS));
+                }
+
+                IEnumerable<PlayerDto> presentPlayers = _playerRepository.GetPlayersByTournamentIdAndPresenceStateCode(tournamentId, PresenceStateResources.PRESENT_CODE);
+                IEnumerable<User> availableUsers = _userRepository.GetAllUsers(blacklistUserIds: presentPlayers.Select(pla => pla.User.Id));
+
+                result.Data = new PlayerSelectionViewModel(presentPlayers, availableUsers);
+            }
+            catch (FunctionalException e)
+            {
+                string errorMsg = e.Message;
+                _log.Error(errorMsg);
+                return new APICallResult<PlayerSelectionViewModel>(errorMsg, e.RedirectUrl);
+            }
+            catch (Exception e)
+            {
+                _log.Error(e.Message);
+                string errorMsg = MainBusinessResources.TECHNICAL_ERROR;
+                return new APICallResult<PlayerSelectionViewModel>(errorMsg, string.Format(RouteBusinessResources.MAIN_ERROR, errorMsg));
+            }
+
+            return result;
+        }
+
         public APICallResult<PlayerSelectionViewModel> LoadPlayersForPlayingTournament(int tournamentId, ISession session)
         {
             APICallResult<PlayerSelectionViewModel> result = new APICallResult<PlayerSelectionViewModel>(true);
@@ -927,6 +962,74 @@ namespace WSOA.Server.Business.Implementation
                 _eliminationRepository.DeleteEliminations(tournamentToCancelDto.EliminationsToDelete);
                 _tournamentRepository.SaveTournament(tournamentToCancelDto.TournamentToCancel);
                 _playerRepository.SavePlayers(tournamentToCancelDto.PlayersToUpdate);
+
+                _transactionManager.CommitTransaction();
+
+                result.Success = true;
+            }
+            catch (FunctionalException e)
+            {
+                _transactionManager.RollbackTransaction();
+                string errorMsg = e.Message;
+                _log.Error(errorMsg);
+                result.ErrorMessage = errorMsg;
+                result.RedirectUrl = e.RedirectUrl;
+            }
+            catch (Exception e)
+            {
+                _transactionManager.RollbackTransaction();
+                string errorMsg = MainBusinessResources.TECHNICAL_ERROR;
+                _log.Error(e.Message);
+                result.ErrorMessage = errorMsg;
+                result.RedirectUrl = string.Format(RouteBusinessResources.MAIN_ERROR, errorMsg);
+            }
+
+            return result;
+        }
+
+        public APICallResult<IEnumerable<PlayerPlayingDto>> AddPlayersIntoTournamentInProgress(IEnumerable<int> usrIds, int tournamentId, ISession session)
+        {
+            APICallResult<IEnumerable<PlayerPlayingDto>> result = new APICallResult<IEnumerable<PlayerPlayingDto>>(false);
+
+            try
+            {
+                _transactionManager.BeginTransaction();
+
+                session.CanUserPerformAction(_userRepository, BusinessActionResources.EDIT_TOURNAMENT_IN_PROGRESS);
+
+                IEnumerable<User> usersToAddIntoTournament = _userRepository.GetUsersByIds(usrIds);
+                if (usersToAddIntoTournament.IsNullOrEmpty() || usersToAddIntoTournament.Count() != usrIds.Count())
+                {
+                    throw new FunctionalException(
+                        UserBusinessMessageResources.USER_NO_EXISTS_IN_DB,
+                        string.Format(RouteBusinessResources.MAIN_ERROR, UserBusinessMessageResources.USER_NO_EXISTS_IN_DB));
+                }
+
+                Tournament tournamentInProgress = _tournamentRepository.GetTournamentById(tournamentId);
+                if (!tournamentInProgress.IsInProgress)
+                {
+                    throw new FunctionalException(
+                        TournamentMessageResources.NO_TOURNAMENT_IN_PROGRESS,
+                        string.Format(RouteBusinessResources.MAIN_ERROR, TournamentMessageResources.NO_TOURNAMENT_IN_PROGRESS));
+                }
+
+                IEnumerable<Player> playersAlreadyAttachedIntoTournament = _playerRepository.GetPlayersByTournamentIdAndUserIds(tournamentId, usrIds);
+                foreach (Player player in playersAlreadyAttachedIntoTournament)
+                {
+                    player.PresenceStateCode = PresenceStateResources.PRESENT_CODE;
+                }
+
+                IEnumerable<Player> playersToAddIntoTournament = usersToAddIntoTournament.Where(usr => !playersAlreadyAttachedIntoTournament.Select(pla => pla.UserId).Contains(usr.Id))
+                                                                                         .Select(usr => new Player
+                                                                                         {
+                                                                                             UserId = usr.Id,
+                                                                                             PlayedTournamentId = tournamentId,
+                                                                                             PresenceStateCode = PresenceStateResources.PRESENT_CODE
+                                                                                         });
+
+                _playerRepository.SavePlayers(playersToAddIntoTournament.Concat(playersAlreadyAttachedIntoTournament));
+
+                result.Data = _playerRepository.GetPlayerPlayingDtosByUserIdsAndTournamentId(usrIds, tournamentId);
 
                 _transactionManager.CommitTransaction();
 

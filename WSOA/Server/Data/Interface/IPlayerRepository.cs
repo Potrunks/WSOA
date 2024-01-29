@@ -44,5 +44,15 @@ namespace WSOA.Server.Data.Interface
         /// Get player dtos by player Ids.
         /// </summary>
         IEnumerable<PlayerDto> GetPlayerDtosByPlayerIds(IEnumerable<int> playerIds);
+
+        /// <summary>
+        /// Get player playing data by user ids and tournament id.
+        /// </summary>
+        List<PlayerPlayingDto> GetPlayerPlayingDtosByUserIdsAndTournamentId(IEnumerable<int> userIds, int tournamentId);
+
+        /// <summary>
+        /// Get players by tournament ID and user IDs.
+        /// </summary>
+        List<Player> GetPlayersByTournamentIdAndUserIds(int tournamentId, IEnumerable<int> userIds);
     }
 }

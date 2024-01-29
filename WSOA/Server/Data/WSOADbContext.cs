@@ -332,6 +332,11 @@ namespace WSOA.Server.Data
                 {
                     Code = BusinessActionResources.CANCEL_TOURNAMENT_IN_PROGRESS,
                     Label = "Annuler un tournoi en cours"
+                },
+                new BusinessAction
+                {
+                    Code = BusinessActionResources.EDIT_TOURNAMENT_IN_PROGRESS,
+                    Label = "Editer un tournoi en cours"
                 }
             );
 
@@ -372,6 +377,12 @@ namespace WSOA.Server.Data
                     Id = 6,
                     ProfileCode = "ORGA",
                     BusinessActionCode = BusinessActionResources.CANCEL_TOURNAMENT_IN_PROGRESS
+                },
+                new BusinessActionByProfileCode
+                {
+                    Id = 7,
+                    ProfileCode = "ORGA",
+                    BusinessActionCode = BusinessActionResources.EDIT_TOURNAMENT_IN_PROGRESS
                 }
             );
 

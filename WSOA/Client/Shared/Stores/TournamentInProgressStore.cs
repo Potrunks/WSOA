@@ -134,6 +134,30 @@ namespace WSOA.Client.Shared.Stores
             return tournamentInProgress;
         }
 
+        public TournamentInProgressDto AddPlayers(IEnumerable<PlayerPlayingDto> playersToAdd)
+        {
+            TournamentInProgressDto tournamentInProgress = CheckTournamentAlwaysInProgress();
+
+            int totalJackpotBefore = tournamentInProgress.CalculateTotalJackpot();
+
+            tournamentInProgress.PlayerPlayings = tournamentInProgress.PlayerPlayings.Concat(playersToAdd);
+
+            int totalJackpotAfter = tournamentInProgress.CalculateTotalJackpot();
+
+            int totalJackpotDiff = totalJackpotBefore - totalJackpotAfter;
+            if (totalJackpotDiff > 0)
+            {
+                int positionCanBeModify = tournamentInProgress.WinnableMoneyByPosition.First(win => win.Value >= totalJackpotDiff).Key;
+                tournamentInProgress.WinnableMoneyByPosition[positionCanBeModify] = tournamentInProgress.WinnableMoneyByPosition[positionCanBeModify] - totalJackpotDiff;
+            }
+            else
+            {
+                tournamentInProgress.WinnableMoneyByPosition[1] = tournamentInProgress.WinnableMoneyByPosition[1] + Math.Abs(totalJackpotDiff);
+            }
+
+            return tournamentInProgress;
+        }
+
         public TournamentInProgressDto RemovePlayer(int playerId)
         {
             TournamentInProgressDto tournamentInProgress = CheckTournamentAlwaysInProgress();

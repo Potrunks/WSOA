@@ -103,5 +103,10 @@ namespace WSOA.Server.Data.Implementation
                 .First()
                 .User;
         }
+
+        public IEnumerable<User> GetUsersByIds(IEnumerable<int> userIds)
+        {
+            return _dbContext.Users.Where(usr => userIds.Contains(usr.Id));
+        }
     }
 }

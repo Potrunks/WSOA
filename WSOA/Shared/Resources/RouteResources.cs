@@ -12,5 +12,6 @@
         public const string REMOVE_PLAYER_NVR_COME = "api/tournament/player/{0}/neverCome";
         public const string CANCEL_TOURNAMENT_IN_PROGRESS = "api/tournament/inProgress/{0}/cancel";
         public const string HOME = "/home";
+        public const string ADD_PLAYERS_TOURNAMENT_IN_PROGRESS = "api/tournament/inProgress/{0}/addPlayers";
     }
 }

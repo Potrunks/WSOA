@@ -101,5 +101,17 @@ namespace WSOA.Client.Services.Implementation
             HttpResponseMessage response = await _httpClient.GetAsync(string.Format(RouteResources.CANCEL_TOURNAMENT_IN_PROGRESS, tournamentInProgressId));
             return response.Content.ToObject<APICallResultBase>();
         }
+
+        public async Task<APICallResult<IEnumerable<PlayerPlayingDto>>> AddPlayersIntoTournamentInProgress(IEnumerable<int> usrIds, int tournamentId)
+        {
+            HttpResponseMessage response = await _httpClient.PostAsync(string.Format(RouteResources.ADD_PLAYERS_TOURNAMENT_IN_PROGRESS, tournamentId), usrIds.ToJsonUtf8());
+            return response.Content.ToObject<APICallResult<IEnumerable<PlayerPlayingDto>>>();
+        }
+
+        public async Task<APICallResult<PlayerSelectionViewModel>> LoadPlayersForPlayingTournamentInProgress(int tournamentId)
+        {
+            HttpResponseMessage response = await _httpClient.GetAsync(string.Format(ApiRouteResources.ADD_PLAYERS_TOURNAMENT_IN_PROGRESS, tournamentId));
+            return response.Content.ToObject<APICallResult<PlayerSelectionViewModel>>();
+        }
     }
 }

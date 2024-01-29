@@ -72,6 +72,16 @@ namespace WSOA.Server.Controllers
         }
 
         /// <summary>
+        /// Load users can be add into tournament in progress.
+        /// </summary>
+        [HttpGet]
+        [Route("api/tournament/inProgress/{tournamentId}/load/newPlayers")]
+        public APICallResult<PlayerSelectionViewModel> LoadPlayersForPlayingTournamentInProgress(int tournamentId)
+        {
+            return _tournamentBusiness.LoadPlayersForPlayingTournamentInProgress(tournamentId, HttpContext.Session);
+        }
+
+        /// <summary>
         /// Save and play the tournament selected.
         /// </summary>
         [HttpPost]
@@ -151,11 +161,24 @@ namespace WSOA.Server.Controllers
             return _tournamentBusiness.RemovePlayerNeverComeIntoTournamentInProgress(playerId, HttpContext.Session);
         }
 
+        /// <summary>
+        /// Cancel tournament in progress.
+        /// </summary>
         [HttpGet]
         [Route("api/tournament/inProgress/{tournamentInProgressId}/cancel")]
         public APICallResultBase CancelTournamentInProgress(int tournamentInProgressId)
         {
             return _tournamentBusiness.CancelTournamentInProgress(tournamentInProgressId, HttpContext.Session);
+        }
+
+        /// <summary>
+        /// Add players into tournament in progress.
+        /// </summary>
+        [HttpPost]
+        [Route("api/tournament/inProgress/{tournamentId}/addPlayers")]
+        public APICallResult<IEnumerable<PlayerPlayingDto>> AddPlayersIntoTournamentInProgress([FromBody] IEnumerable<int> usrIds, int tournamentId)
+        {
+            return _tournamentBusiness.AddPlayersIntoTournamentInProgress(usrIds, tournamentId, HttpContext.Session);
         }
     }
 }

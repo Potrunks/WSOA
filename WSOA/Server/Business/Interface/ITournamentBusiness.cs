@@ -76,5 +76,15 @@ namespace WSOA.Server.Business.Interface
         /// Cancel the tournament in progress
         /// </summary>
         APICallResultBase CancelTournamentInProgress(int tournamentInProgressId, ISession session);
+
+        /// <summary>
+        /// Add new players into selected tournament in progress.
+        /// </summary>
+        APICallResult<IEnumerable<PlayerPlayingDto>> AddPlayersIntoTournamentInProgress(IEnumerable<int> usrIds, int tournamentId, ISession session);
+
+        /// <summary>
+        /// Load users can be add into tournament in progress.
+        /// </summary>
+        APICallResult<PlayerSelectionViewModel> LoadPlayersForPlayingTournamentInProgress(int tournamentId, ISession session);
     }
 }

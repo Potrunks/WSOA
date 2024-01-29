@@ -76,5 +76,15 @@ namespace WSOA.Client.Services.Interface
         /// Cancel tournament in progress.
         /// </summary>
         Task<APICallResultBase> CancelTournamentInProgress(int tournamentInProgressId);
+
+        /// <summary>
+        /// Add players into tournament in progress.
+        /// </summary>
+        Task<APICallResult<IEnumerable<PlayerPlayingDto>>> AddPlayersIntoTournamentInProgress(IEnumerable<int> usrIds, int tournamentId);
+
+        /// <summary>
+        /// Load users can be add into tournament in progress.
+        /// </summary>
+        Task<APICallResult<PlayerSelectionViewModel>> LoadPlayersForPlayingTournamentInProgress(int tournamentId);
     }
 }

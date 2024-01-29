@@ -8,7 +8,7 @@ using WSOA.Server.Data.Interface;
 var builder = WebApplication.CreateBuilder(args);
 
 // Database configuration
-string dbConnectionString = builder.Configuration.GetConnectionString("WSOA_DB");
+string? dbConnectionString = builder.Configuration.GetConnectionString("WSOA_DB");
 builder.Services.AddDbContext<WSOADbContext>(options =>
 {
     options.UseMySql(dbConnectionString, ServerVersion.AutoDetect(dbConnectionString));

@@ -25,6 +25,17 @@ namespace WSOA.Server.Data.Implementation
             .SingleOrDefault();
         }
 
+        public List<Player> GetPlayersByTournamentIdAndUserIds(int tournamentId, IEnumerable<int> userIds)
+        {
+            return (
+                        from player in _dbContext.Players
+                        where player.PlayedTournamentId == tournamentId
+                                && userIds.Contains(player.UserId)
+                        select player
+                    )
+                    .ToList();
+        }
+
         public IEnumerable<PlayerDto> GetPlayersByTournamentIdAndPresenceStateCode(int tournamentId, string presenceStateCode)
         {
             return
@@ -117,6 +128,54 @@ namespace WSOA.Server.Data.Implementation
                         EliminationsAsVictim = grouped.Where(gr => gr.elim_as_victim != null).Select(gr => gr.elim_as_victim)
                     }
                 );
+        }
+
+        public List<PlayerPlayingDto> GetPlayerPlayingDtosByUserIdsAndTournamentId(IEnumerable<int> userIds, int tournamentId)
+        {
+            var raw = (
+                    from player in _dbContext.Players
+                    join user in _dbContext.Users on player.UserId equals user.Id
+                    join tournament in _dbContext.Tournaments on player.PlayedTournamentId equals tournament.Id
+                    join elimination in _dbContext.Eliminations on player.Id equals elimination.PlayerVictimId into left_elimination
+                    from elimination in left_elimination.DefaultIfEmpty()
+                    join bonus_earned in _dbContext.BonusTournamentEarneds on player.Id equals bonus_earned.PlayerId into left_bonus_earned
+                    from bonus_earned in left_bonus_earned.DefaultIfEmpty()
+                    join bonus in _dbContext.BonusTournaments on bonus_earned.BonusTournamentCode equals bonus.Code into left_bonus
+                    from bonus in left_bonus.DefaultIfEmpty()
+                    where userIds.Contains(user.Id) && tournament.Id == tournamentId
+                    group new { user, elimination, bonus_earned, bonus } by player into grouped
+                    select new
+                    {
+                        User = grouped.Select(gr => gr.user).Single(),
+                        Player = grouped.Key,
+                        Eliminations = grouped.Select(gr => gr.elimination),
+                        BonusEarned = grouped.Select(gr => gr.bonus_earned),
+                        Bonus = grouped.Select(gr => gr.bonus)
+                    }
+                )
+                .ToList();
+
+            return raw.Select(r => new PlayerPlayingDto
+            {
+                Id = r.Player.Id,
+                FirstName = r.User.FirstName,
+                LastName = r.User.LastName,
+                TotalAddOn = r.Player.TotalAddOn,
+                TotalRebuy = r.Player.TotalReBuy,
+                IsEliminated = r.Eliminations.Any(eli => eli != null),
+                BonusTournamentEarnedsByBonusTournamentCode = (
+                    from b_earned in r.BonusEarned.Where(be => be != null)
+                    join b in r.Bonus.Where(b => b != null) on b_earned.BonusTournamentCode equals b.Code
+                    select new BonusTournamentEarnedDto
+                    {
+                        Code = b.Code,
+                        Label = b.Label,
+                        LogoPath = b.LogoPath,
+                        Occurence = b_earned.Occurrence
+                    }
+                )
+                .ToDictionary(sel => sel.Code)
+            }).ToList();
         }
     }
 }
