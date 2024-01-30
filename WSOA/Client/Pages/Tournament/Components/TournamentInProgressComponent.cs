@@ -512,6 +512,8 @@ namespace WSOA.Client.Pages.Tournament.Components
 
             try
             {
+                TournamentInProgressDto tournamentInProgressDto = TournamentInProgressStore.CheckTournamentAlwaysInProgress();
+
                 actions.Add(new PopupButtonViewModel
                 {
                     Action = CancelTournamentInProgress(),
@@ -524,8 +526,15 @@ namespace WSOA.Client.Pages.Tournament.Components
                     Label = PopupTournamentInProgressActionResources.ADD_PLAYER
                 });
 
-                // Switch etape tournoi (normal <-> addon <-> Table final)
-                // Suivante (a afficher si on est pas en table final)
+                if (!tournamentInProgressDto.IsFinalTable)
+                {
+                    actions.Add(new PopupButtonViewModel
+                    {
+                        Action = GoToNextStep(),
+                        Label = "Etape suivante"
+                    });
+                }
+
                 // Précédente (a afficher si on est pas en normal mode)
 
                 // Changer repartition gain
@@ -644,6 +653,51 @@ namespace WSOA.Client.Pages.Tournament.Components
                         TournamentInProgressStore.Clean();
                         NavigationManager.NavigateTo(string.Format(RouteResources.MAIN_ERROR, TournamentMessageResources.TOURNAMENT_IN_PROGRESS_CANCELLED));
                         return;
+                    }
+                }
+                catch (FunctionalException e)
+                {
+                    NavigationManager.NavigateTo(e.RedirectUrl!);
+                    return;
+                }
+            };
+        }
+
+        private Action<int?> GoToNextStep()
+        {
+            return async (int? tournamentInProgressId) =>
+            {
+                try
+                {
+                    TournamentInProgressStore.CheckTournamentAlwaysInProgress();
+
+                    APICallResult<TournamentStepEnum> result = await TournamentService.GoToTournamentInProgressNextStep(tournamentInProgressId!.Value);
+
+                    if (!result.Success)
+                    {
+                        if (!string.IsNullOrEmpty(result.RedirectUrl))
+                        {
+                            NavigationManager.NavigateTo(result.RedirectUrl);
+                            return;
+                        }
+                        else
+                        {
+                            PopupEventHandler.Open(
+                                msg: result.ErrorMessage!,
+                                isError: true,
+                                title: MainLabelResources.ERROR,
+                                onValid: null
+                                );
+                            return;
+                        }
+                    }
+                    else
+                    {
+                        TournamentInProgressDto tournamentInProgress = TournamentInProgressStore.GoToNextStep(result.Data);
+
+                        InitializedData(tournamentInProgress);
+
+                        StateHasChanged();
                     }
                 }
                 catch (FunctionalException e)

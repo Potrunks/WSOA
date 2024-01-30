@@ -1,5 +1,6 @@
 ﻿using WSOA.Shared.Dtos;
 using WSOA.Shared.Entity;
+using WSOA.Shared.Resources;
 using WSOA.Shared.Result;
 using WSOA.Shared.ViewModel;
 
@@ -86,5 +87,10 @@ namespace WSOA.Server.Business.Interface
         /// Load users can be add into tournament in progress.
         /// </summary>
         APICallResult<PlayerSelectionViewModel> LoadPlayersForPlayingTournamentInProgress(int tournamentId, ISession session);
+
+        /// <summary>
+        /// Go to next step for tournament in progress.
+        /// </summary>
+        APICallResult<TournamentStepEnum> GoToTournamentInProgressNextStep(int tournamentId, ISession session);
     }
 }

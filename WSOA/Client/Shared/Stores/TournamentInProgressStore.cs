@@ -204,5 +204,26 @@ namespace WSOA.Client.Shared.Stores
         {
             Data = null;
         }
+
+        public TournamentInProgressDto GoToNextStep(TournamentStepEnum newTournamentStep)
+        {
+            TournamentInProgressDto tournamentInProgress = CheckTournamentAlwaysInProgress();
+
+            switch (newTournamentStep)
+            {
+                case TournamentStepEnum.ADDON:
+                    tournamentInProgress.IsAddOn = true;
+                    foreach (PlayerPlayingDto player in tournamentInProgress.PlayerPlayings)
+                    {
+                        player.TotalAddOn = 0;
+                    }
+                    break;
+                case TournamentStepEnum.FINAL_TABLE:
+                    tournamentInProgress.IsFinalTable = true;
+                    break;
+            }
+
+            return tournamentInProgress;
+        }
     }
 }

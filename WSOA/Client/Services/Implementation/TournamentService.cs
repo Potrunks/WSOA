@@ -113,5 +113,11 @@ namespace WSOA.Client.Services.Implementation
             HttpResponseMessage response = await _httpClient.GetAsync(string.Format(ApiRouteResources.ADD_PLAYERS_TOURNAMENT_IN_PROGRESS, tournamentId));
             return response.Content.ToObject<APICallResult<PlayerSelectionViewModel>>();
         }
+
+        public async Task<APICallResult<TournamentStepEnum>> GoToTournamentInProgressNextStep(int tournamentId)
+        {
+            HttpResponseMessage response = await _httpClient.GetAsync(string.Format("api/tournament/inProgress/{0}/nextStep", tournamentId));
+            return response.Content.ToObject<APICallResult<TournamentStepEnum>>();
+        }
     }
 }

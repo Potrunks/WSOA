@@ -180,5 +180,12 @@ namespace WSOA.Server.Controllers
         {
             return _tournamentBusiness.AddPlayersIntoTournamentInProgress(usrIds, tournamentId, HttpContext.Session);
         }
+
+        [HttpGet]
+        [Route("api/tournament/inProgress/{tournamentId}/nextStep")]
+        public APICallResult<TournamentStepEnum> GoToTournamentInProgressNextStep(int tournamentId)
+        {
+            return _tournamentBusiness.GoToTournamentInProgressNextStep(tournamentId, HttpContext.Session);
+        }
     }
 }

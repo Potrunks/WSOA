@@ -1054,5 +1054,85 @@ namespace WSOA.Server.Business.Implementation
 
             return result;
         }
+
+        public APICallResult<TournamentStepEnum> GoToTournamentInProgressNextStep(int tournamentId, ISession session)
+        {
+            APICallResult<TournamentStepEnum> result = new APICallResult<TournamentStepEnum>(false);
+
+            try
+            {
+                _transactionManager.BeginTransaction();
+
+                session.CanUserPerformAction(_userRepository, BusinessActionResources.EDIT_TOURNAMENT_IN_PROGRESS);
+
+                TournamentDto tournamentInProgressDto = _tournamentRepository.GetTournamentDtoById(tournamentId);
+
+                if (!tournamentInProgressDto.Tournament.IsInProgress)
+                {
+                    string errorMsg = TournamentMessageResources.NO_TOURNAMENT_IN_PROGRESS;
+                    throw new FunctionalException(errorMsg, string.Format(RouteBusinessResources.MAIN_ERROR, errorMsg));
+                }
+
+                IEnumerable<Player> playersPresent = tournamentInProgressDto.Players.Select(pla => pla.Player).Where(pla => pla.PresenceStateCode == PresenceStateResources.PRESENT_CODE);
+                TournamentStepEnum currentTournamentStep = GetCurrentTournamentStep(playersPresent);
+                List<Player> playersUpdated = new List<Player>();
+
+                foreach (Player player in playersPresent)
+                {
+                    switch (currentTournamentStep)
+                    {
+                        case TournamentStepEnum.NORMAL:
+                            player.WasAddOn = true;
+                            player.TotalAddOn = 0;
+                            result.Data = TournamentStepEnum.ADDON;
+                            break;
+                        case TournamentStepEnum.ADDON:
+                            player.WasFinalTable = true;
+                            result.Data = TournamentStepEnum.FINAL_TABLE;
+                            break;
+                    }
+                    playersUpdated.Add(player);
+                }
+
+                _playerRepository.SavePlayers(playersUpdated);
+
+                _transactionManager.CommitTransaction();
+
+                result.Success = true;
+            }
+            catch (FunctionalException e)
+            {
+                _transactionManager.RollbackTransaction();
+                string errorMsg = e.Message;
+                _log.Error(errorMsg);
+                result.ErrorMessage = errorMsg;
+                result.RedirectUrl = e.RedirectUrl;
+            }
+            catch (Exception e)
+            {
+                _transactionManager.RollbackTransaction();
+                string errorMsg = MainBusinessResources.TECHNICAL_ERROR;
+                _log.Error(e.Message);
+                result.ErrorMessage = errorMsg;
+                result.RedirectUrl = string.Format(RouteBusinessResources.MAIN_ERROR, errorMsg);
+            }
+
+            return result;
+        }
+
+        private TournamentStepEnum GetCurrentTournamentStep(IEnumerable<Player> players)
+        {
+            if (players.Any(pla => pla.WasFinalTable.GetValueOrDefault() && pla.PresenceStateCode == PresenceStateResources.PRESENT_CODE))
+            {
+                return TournamentStepEnum.FINAL_TABLE;
+            }
+
+            if (players.Any(pla => pla.WasAddOn.GetValueOrDefault() && pla.PresenceStateCode == PresenceStateResources.PRESENT_CODE))
+            {
+                return TournamentStepEnum.ADDON;
+            }
+
+            return TournamentStepEnum.NORMAL;
+        }
     }
 }
