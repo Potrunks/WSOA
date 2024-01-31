@@ -1,4 +1,5 @@
 ﻿using WSOA.Shared.Dtos;
+using WSOA.Shared.Entity;
 
 namespace WSOA.Shared.ViewModel
 {
@@ -17,9 +18,9 @@ namespace WSOA.Shared.ViewModel
             });
             TournamentNumber = tournamentInProgressDto.TournamentNumber;
             Season = tournamentInProgressDto.Season;
-            PlayerPlayingDto? winnerLastTournament = tournamentInProgressDto.PlayerPlayings.SingleOrDefault(pla => pla.HasWinLastTournament);
+            User? winnerLastTournament = tournamentInProgressDto.LastWinner;
             WinnerLastTournamentFullName = winnerLastTournament != null ? $"{winnerLastTournament.FirstName} {winnerLastTournament.LastName}" : "Personne";
-            PlayerPlayingDto? firstRanked = tournamentInProgressDto.PlayerPlayings.SingleOrDefault(pla => pla.IsActualFirstSeasonRank);
+            User? firstRanked = tournamentInProgressDto.FirstSeasonRanked;
             FirstRankedFullName = firstRanked != null ? $"{firstRanked.FirstName} {firstRanked.LastName}" : "Personne";
             Step = tournamentInProgressDto.IsFinalTable ? "Table finale" :
                     tournamentInProgressDto.IsAddOn ? "Add-On" :

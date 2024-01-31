@@ -101,8 +101,6 @@ namespace WSOA.Test.Business
                 Assert.AreEqual(usr.LastName, playerResult.LastName);
                 Assert.AreEqual(_availableBonus.Count, playerResult.BonusTournamentEarnedsByBonusTournamentCode.Count);
                 Assert.AreEqual(false, playerResult.IsEliminated);
-                Assert.AreEqual(false, playerResult.HasWinLastTournament);
-                Assert.AreEqual(false, playerResult.IsActualFirstSeasonRank);
             }
         }
 
@@ -164,11 +162,6 @@ namespace WSOA.Test.Business
 
             VerifyAPICallResultSuccess(result, null);
             Assert.AreEqual(1, result.Data.TournamentNumber);
-            foreach (PlayerPlayingDto playerResult in result.Data.PlayerPlayings)
-            {
-                Assert.AreEqual(false, playerResult.HasWinLastTournament);
-                Assert.AreEqual(false, playerResult.IsActualFirstSeasonRank);
-            }
         }
 
         [TestMethod]
@@ -179,7 +172,6 @@ namespace WSOA.Test.Business
             APICallResult<TournamentInProgressDto> result = ExecuteLoadTournamentInProgress();
 
             VerifyAPICallResultSuccess(result, null);
-            Assert.AreEqual(newPlayer.Id, result.Data.PlayerPlayings.Single(pla => pla.HasWinLastTournament).Id);
         }
 
         [TestMethod]
@@ -192,7 +184,6 @@ namespace WSOA.Test.Business
             APICallResult<TournamentInProgressDto> result = ExecuteLoadTournamentInProgress();
 
             VerifyAPICallResultSuccess(result, null);
-            Assert.AreEqual(newPlayer.Id, result.Data.PlayerPlayings.Single(pla => pla.IsActualFirstSeasonRank).Id);
         }
 
         [TestMethod]

@@ -13,9 +13,7 @@ namespace WSOA.Shared.Dtos
         (
             PlayerDto playerDto,
             IDictionary<string, BonusTournament> allBonusByCode,
-            IEnumerable<BonusTournamentEarned> bonusTournamentEarneds,
-            User? lastWinner,
-            User? firstRanked
+            IEnumerable<BonusTournamentEarned> bonusTournamentEarneds
         )
         {
             Id = playerDto.Player.Id;
@@ -25,8 +23,6 @@ namespace WSOA.Shared.Dtos
             TotalAddOn = playerDto.Player.TotalAddOn;
             BonusTournamentEarnedsByBonusTournamentCode = bonusTournamentEarneds.ToDictionary(bonus => bonus.BonusTournamentCode, bonus => new BonusTournamentEarnedDto(allBonusByCode[bonus.BonusTournamentCode], bonus));
             IsEliminated = playerDto.Player.CurrentTournamentPosition != null;
-            HasWinLastTournament = lastWinner != null && lastWinner.Id == playerDto.User.Id;
-            IsActualFirstSeasonRank = firstRanked != null && firstRanked.Id == playerDto.User.Id;
         }
 
         public int Id { get; set; }
@@ -42,9 +38,5 @@ namespace WSOA.Shared.Dtos
         public IDictionary<string, BonusTournamentEarnedDto> BonusTournamentEarnedsByBonusTournamentCode { get; set; }
 
         public bool IsEliminated { get; set; }
-
-        public bool HasWinLastTournament { get; set; }
-
-        public bool IsActualFirstSeasonRank { get; set; }
     }
 }

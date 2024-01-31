@@ -92,5 +92,10 @@ namespace WSOA.Client.Services.Interface
         /// Go to next step for tournament in progress.
         /// </summary>
         Task<APICallResult<TournamentStepEnum>> GoToTournamentInProgressNextStep(int tournamentId);
+
+        /// <summary>
+        /// Go to previous step for tournament in progress.
+        /// </summary>
+        Task<APICallResult<TournamentStepEnum>> GoToTournamentInProgressPreviousStep(int tournamentId);
     }
 }

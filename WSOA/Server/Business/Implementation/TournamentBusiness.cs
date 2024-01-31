@@ -169,7 +169,7 @@ namespace WSOA.Server.Business.Implementation
             APICallResult<PlayerViewModel> result = new APICallResult<PlayerViewModel>(true);
 
             int tournamentId = formVM.TournamentId;
-            string presenceStateCode = formVM.PresenceStateCode;
+            string presenceStateCode = formVM.PresenceStateCode!;
 
             try
             {
@@ -334,7 +334,7 @@ namespace WSOA.Server.Business.Implementation
                 IDictionary<int, Player> selectedPlayersAlreadySignUpByUsrId = currentTournament.Players.Where(pla => tournamentPrepared.SelectedUserIds.Contains(pla.Player.UserId)).ToDictionary(pla => pla.User.Id, pla => pla.Player);
                 foreach (int selectedUsrId in tournamentPrepared.SelectedUserIds)
                 {
-                    Player selectedPlayer;
+                    Player? selectedPlayer;
                     if (selectedPlayersAlreadySignUpByUsrId.TryGetValue(selectedUsrId, out selectedPlayer))
                     {
                         selectedPlayer.PresenceStateCode = PresenceStateResources.PRESENT_CODE;
@@ -1089,6 +1089,71 @@ namespace WSOA.Server.Business.Implementation
                         case TournamentStepEnum.ADDON:
                             player.WasFinalTable = true;
                             result.Data = TournamentStepEnum.FINAL_TABLE;
+                            break;
+                    }
+                    playersUpdated.Add(player);
+                }
+
+                _playerRepository.SavePlayers(playersUpdated);
+
+                _transactionManager.CommitTransaction();
+
+                result.Success = true;
+            }
+            catch (FunctionalException e)
+            {
+                _transactionManager.RollbackTransaction();
+                string errorMsg = e.Message;
+                _log.Error(errorMsg);
+                result.ErrorMessage = errorMsg;
+                result.RedirectUrl = e.RedirectUrl;
+            }
+            catch (Exception e)
+            {
+                _transactionManager.RollbackTransaction();
+                string errorMsg = MainBusinessResources.TECHNICAL_ERROR;
+                _log.Error(e.Message);
+                result.ErrorMessage = errorMsg;
+                result.RedirectUrl = string.Format(RouteBusinessResources.MAIN_ERROR, errorMsg);
+            }
+
+            return result;
+        }
+
+        public APICallResult<TournamentStepEnum> GoToTournamentInProgressPreviousStep(int tournamentId, ISession session)
+        {
+            APICallResult<TournamentStepEnum> result = new APICallResult<TournamentStepEnum>(false);
+
+            try
+            {
+                _transactionManager.BeginTransaction();
+
+                session.CanUserPerformAction(_userRepository, BusinessActionResources.EDIT_TOURNAMENT_IN_PROGRESS);
+
+                TournamentDto tournamentInProgressDto = _tournamentRepository.GetTournamentDtoById(tournamentId);
+
+                if (!tournamentInProgressDto.Tournament.IsInProgress)
+                {
+                    string errorMsg = TournamentMessageResources.NO_TOURNAMENT_IN_PROGRESS;
+                    throw new FunctionalException(errorMsg, string.Format(RouteBusinessResources.MAIN_ERROR, errorMsg));
+                }
+
+                IEnumerable<Player> playersPresent = tournamentInProgressDto.Players.Select(pla => pla.Player).Where(pla => pla.PresenceStateCode == PresenceStateResources.PRESENT_CODE);
+                TournamentStepEnum currentTournamentStep = GetCurrentTournamentStep(playersPresent);
+                List<Player> playersUpdated = new List<Player>();
+
+                foreach (Player player in playersPresent)
+                {
+                    switch (currentTournamentStep)
+                    {
+                        case TournamentStepEnum.FINAL_TABLE:
+                            player.WasFinalTable = null;
+                            result.Data = TournamentStepEnum.ADDON;
+                            break;
+                        case TournamentStepEnum.ADDON:
+                            player.WasAddOn = null;
+                            player.TotalAddOn = null;
+                            result.Data = TournamentStepEnum.NORMAL;
                             break;
                     }
                     playersUpdated.Add(player);

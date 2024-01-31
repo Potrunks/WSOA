@@ -92,5 +92,10 @@ namespace WSOA.Server.Business.Interface
         /// Go to next step for tournament in progress.
         /// </summary>
         APICallResult<TournamentStepEnum> GoToTournamentInProgressNextStep(int tournamentId, ISession session);
+
+        /// <summary>
+        /// Go to previous step for tournament in progress.
+        /// </summary>
+        APICallResult<TournamentStepEnum> GoToTournamentInProgressPreviousStep(int tournamentId, ISession session);
     }
 }

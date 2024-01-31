@@ -181,11 +181,24 @@ namespace WSOA.Server.Controllers
             return _tournamentBusiness.AddPlayersIntoTournamentInProgress(usrIds, tournamentId, HttpContext.Session);
         }
 
+        /// <summary>
+        /// Go to next step for tournament in progress.
+        /// </summary>
         [HttpGet]
         [Route("api/tournament/inProgress/{tournamentId}/nextStep")]
         public APICallResult<TournamentStepEnum> GoToTournamentInProgressNextStep(int tournamentId)
         {
             return _tournamentBusiness.GoToTournamentInProgressNextStep(tournamentId, HttpContext.Session);
+        }
+
+        /// <summary>
+        /// Go to previous step for tournament in progress.
+        /// </summary>
+        [HttpGet]
+        [Route("api/tournament/inProgress/{tournamentId}/previousStep")]
+        public APICallResult<TournamentStepEnum> GoToTournamentInProgressPreviousStep(int tournamentId)
+        {
+            return _tournamentBusiness.GoToTournamentInProgressPreviousStep(tournamentId, HttpContext.Session);
         }
     }
 }

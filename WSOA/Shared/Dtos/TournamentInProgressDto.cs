@@ -32,16 +32,18 @@ namespace WSOA.Shared.Dtos
             PlayerPlayings = players.Select(player =>
             {
                 IEnumerable<BonusTournamentEarned> currentBonusTournamentEarneds = new List<BonusTournamentEarned>();
-                if (bonusEarnedsByPlayerId.TryGetValue(player.Player.Id, out IEnumerable<BonusTournamentEarned> value))
+                if (bonusEarnedsByPlayerId.TryGetValue(player.Player.Id, out IEnumerable<BonusTournamentEarned>? value))
                 {
                     currentBonusTournamentEarneds = value;
                 }
-                return new PlayerPlayingDto(player, winnableBonusByCode, currentBonusTournamentEarneds, lastWinner, firstRankUser);
+                return new PlayerPlayingDto(player, winnableBonusByCode, currentBonusTournamentEarneds);
             });
             WinnableMoneyByPosition = new Dictionary<int, int>
             {
                 { 1, CalculateTotalJackpot() }
             };
+            LastWinner = lastWinner;
+            FirstSeasonRanked = firstRankUser;
         }
 
         public int Id { get; set; }
@@ -63,6 +65,10 @@ namespace WSOA.Shared.Dtos
         public IEnumerable<PlayerPlayingDto> PlayerPlayings { get; set; }
 
         public IDictionary<int, int> WinnableMoneyByPosition { get; set; }
+
+        public User? LastWinner { get; set; }
+
+        public User? FirstSeasonRanked { get; set; }
 
         public string? GetNameFirstPlayerDefinitivelyEliminated(IEnumerable<int> playerIds)
         {

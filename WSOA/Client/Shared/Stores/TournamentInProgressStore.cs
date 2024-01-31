@@ -225,5 +225,30 @@ namespace WSOA.Client.Shared.Stores
 
             return tournamentInProgress;
         }
+
+        public TournamentInProgressDto GoToPreviousStep(TournamentStepEnum newTournamentStep)
+        {
+            TournamentInProgressDto tournamentInProgress = CheckTournamentAlwaysInProgress();
+
+            switch (newTournamentStep)
+            {
+                case TournamentStepEnum.ADDON:
+                    tournamentInProgress.IsFinalTable = false;
+                    break;
+                case TournamentStepEnum.NORMAL:
+                    tournamentInProgress.IsAddOn = false;
+                    foreach (PlayerPlayingDto player in tournamentInProgress.PlayerPlayings)
+                    {
+                        player.TotalAddOn = null;
+                    }
+                    tournamentInProgress.WinnableMoneyByPosition = new Dictionary<int, int>
+                    {
+                        { 1, tournamentInProgress.CalculateTotalJackpot() }
+                    };
+                    break;
+            }
+
+            return tournamentInProgress;
+        }
     }
 }

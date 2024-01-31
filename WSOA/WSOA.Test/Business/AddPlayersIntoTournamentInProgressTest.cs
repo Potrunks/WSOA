@@ -26,6 +26,7 @@ namespace WSOA.Test.Business
         private Mock<ITransactionManager> _transactionManagerMock;
         private IUserRepository _userRepository;
         private IPlayerRepository _playerRepository;
+        private ITournamentRepository _tournamentRepository;
         private ITournamentBusiness _tournamentBusiness;
 
         [TestInitialize]
@@ -43,12 +44,13 @@ namespace WSOA.Test.Business
             _transactionManagerMock = CreateITransactionManagerMock();
             _userRepository = new UserRepository(_dbContext);
             _playerRepository = new PlayerRepository(_dbContext);
+            _tournamentRepository = new TournamentRepository(_dbContext);
 
             _tournamentBusiness = new TournamentBusiness
                 (
                     _transactionManagerMock.Object,
                     null,
-                    null,
+                    _tournamentRepository,
                     null,
                     _userRepository,
                     null,
