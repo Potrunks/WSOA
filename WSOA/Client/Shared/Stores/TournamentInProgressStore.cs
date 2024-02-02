@@ -250,5 +250,14 @@ namespace WSOA.Client.Shared.Stores
 
             return tournamentInProgress;
         }
+
+        public TournamentInProgressDto UpdateWinnableMoneysByPosition(IDictionary<int, int> winnableMoneysByPositionUpdated)
+        {
+            TournamentInProgressDto tournamentInProgressDto = CheckTournamentAlwaysInProgress();
+
+            tournamentInProgressDto.WinnableMoneyByPosition = winnableMoneysByPositionUpdated;
+
+            return tournamentInProgressDto;
+        }
     }
 }

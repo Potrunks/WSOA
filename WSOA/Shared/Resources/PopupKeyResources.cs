@@ -7,6 +7,7 @@
         MENU = 2,
         ID_SELECT_OPTION = 3,
         CODE_SELECT = 4,
-        INPUT_NUMBER = 5
+        INPUT_NUMBER = 5,
+        DISPATCH_JACKPOT = 6
     }
 }

@@ -33,5 +33,11 @@ namespace WSOA.Client.Shared.EventHandlers
         public int? InputNumber { get; set; }
 
         public Action<int, int>? OnValidInputNumberForConcernedId { get; set; }
+
+        public IDictionary<int, int>? WinnableMoneysByPosition { get; set; }
+
+        public int? TotalJackpot { get; set; }
+
+        public EventCallback<IDictionary<int, int>>? OnValidWinnableMoneysByPosition { get; set; }
     }
 }

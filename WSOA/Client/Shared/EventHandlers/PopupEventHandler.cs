@@ -122,6 +122,14 @@ namespace WSOA.Client.Shared.EventHandlers
             Open(PopupKeyResources.INPUT_NUMBER, title);
         }
 
+        public void OpenDispatchJackpotPopup(IDictionary<int, int> winnableMoneyByPosition, int totalJackpot, EventCallback<IDictionary<int, int>> onValidDispatchJackpot)
+        {
+            CurrentPopupOpen.WinnableMoneysByPosition = winnableMoneyByPosition;
+            CurrentPopupOpen.TotalJackpot = totalJackpot;
+            CurrentPopupOpen.OnValidWinnableMoneysByPosition = onValidDispatchJackpot;
+            Open(PopupKeyResources.DISPATCH_JACKPOT, "Répartition des gains");
+        }
+
         public void Close()
         {
             OnPopupClose.Invoke(this, CurrentPopupOpen);
@@ -140,6 +148,9 @@ namespace WSOA.Client.Shared.EventHandlers
             CurrentPopupOpen.OnValidSelectedCode = null;
             CurrentPopupOpen.OnValidInputNumberForConcernedId = null;
             CurrentPopupOpen.InputNumber = null;
+            CurrentPopupOpen.WinnableMoneysByPosition = null;
+            CurrentPopupOpen.OnValidWinnableMoneysByPosition = null;
+            CurrentPopupOpen.TotalJackpot = null;
         }
     }
 }

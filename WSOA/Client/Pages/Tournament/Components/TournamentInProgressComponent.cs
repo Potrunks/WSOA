@@ -545,6 +545,11 @@ namespace WSOA.Client.Pages.Tournament.Components
                 }
 
                 // Changer repartition gain
+                actions.Add(new PopupButtonViewModel
+                {
+                    Action = OpenDispatchJackpotPopup(),
+                    Label = "Modifier répartition gains"
+                });
             }
             catch (FunctionalException e)
             {
@@ -617,8 +622,6 @@ namespace WSOA.Client.Pages.Tournament.Components
                 tournamentInProgress = TournamentInProgressStore.AddPlayers(result.Data);
 
                 InitializedData(tournamentInProgress);
-
-                StateHasChanged();
             }
             catch (FunctionalException ex)
             {
@@ -759,5 +762,32 @@ namespace WSOA.Client.Pages.Tournament.Components
                 }
             };
         }
+
+        private Action<int?> OpenDispatchJackpotPopup()
+        {
+            return (int? tournamentId) =>
+            {
+                try
+                {
+                    TournamentInProgressDto tournamentInProgressDto = TournamentInProgressStore.CheckTournamentAlwaysInProgress();
+
+                    PopupEventHandler.OpenDispatchJackpotPopup(tournamentInProgressDto.WinnableMoneyByPosition, tournamentInProgressDto.CalculateTotalJackpot(), OnValidDispatchJackpot);
+                }
+                catch (FunctionalException e)
+                {
+                    NavigationManager.NavigateTo(e.RedirectUrl!);
+                    return;
+                }
+            };
+        }
+
+        private EventCallback<IDictionary<int, int>> OnValidDispatchJackpot => EventCallback.Factory.Create(this, (IDictionary<int, int> winnableMoneysByPosition) =>
+        {
+            TournamentInProgressStore.CheckTournamentAlwaysInProgress();
+
+            TournamentInProgressDto tournamentInProgressDto = TournamentInProgressStore.UpdateWinnableMoneysByPosition(winnableMoneysByPosition);
+
+            InitializedData(tournamentInProgressDto);
+        });
     }
 }
