@@ -1,0 +1,24 @@
+﻿@using WSOA.Client.Shared.Buttons.Main
+@using WSOA.Client.Shared.Buttons.Resources;
+@using WSOA.Client.Shared.Fields.Selects.CodeText
+@using WSOA.Client.Shared.Popups.Components;
+@using WSOA.Shared.ViewModel;
+@inherits PopupCodeSelectComponent
+
+@if (IsDisplay)
+{
+    <div class="c-popupCodeSelect__mainContainer">
+        <div class="c-popupCodeSelect__emptyZone">
+            <div class="c-popupCodeSelect__containerZone">
+                <div class="c-popupCodeSelect__title">@Title</div>
+                <EditForm Model="@Form">
+                    <CodeTextSelectField @bind-InputValue="@Form.SelectedCode" Label="Bonus" Options="@Items.ToDictionary(item => item.Value, item => item.Label)" />
+                </EditForm>
+                <div class="c-popupCodeSelect__panelButtons">
+                    <MainButton IsPrimary="true" Label="@ButtonLabelResources.VALIDATE" Type="button" OnClick="() => ValidPopup.InvokeAsync()" />
+                    <MainButton Label="@ButtonLabelResources.CLOSE" Type="button" OnClick="() => ClosePopup.InvokeAsync()" />
+                </div>
+            </div>
+        </div>
+    </div>
+}

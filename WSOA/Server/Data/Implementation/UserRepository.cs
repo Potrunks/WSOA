@@ -1,5 +1,6 @@
 ﻿using WSOA.Server.Data.Interface;
 using WSOA.Shared.Entity;
+using WSOA.Shared.Resources;
 
 namespace WSOA.Server.Data.Implementation
 {
@@ -63,6 +64,49 @@ namespace WSOA.Server.Data.Implementation
                     select ba_by_prof
                 )
                 .Any();
+        }
+
+        public User GetUserWinnerByTournamentId(int tournamentId)
+        {
+            return
+                (
+                    from user in _dbContext.Users
+                    join player in _dbContext.Players on user.Id equals player.UserId
+                    join tournament in _dbContext.Tournaments on player.PlayedTournamentId equals tournament.Id
+                    where
+                        tournament.Id == tournamentId
+                        && player.CurrentTournamentPosition == 1
+                    select user
+                )
+                .Single();
+        }
+
+        public User GetFirstRankUserBySeasonCode(string seasonCode)
+        {
+            return
+                (
+                    from user in _dbContext.Users
+                    join player in _dbContext.Players on user.Id equals player.UserId
+                    join tournament in _dbContext.Tournaments on player.PlayedTournamentId equals tournament.Id
+                    where
+                        tournament.Season == seasonCode
+                        && player.PresenceStateCode == PresenceStateResources.PRESENT_CODE
+                        && tournament.IsOver == true
+                    group new { player } by user into grouped
+                    select new
+                    {
+                        User = grouped.Key,
+                        Points = grouped.Sum(gr => gr.player.TotalWinningsPoint)
+                    }
+                )
+                .OrderByDescending(dto => dto.Points)
+                .First()
+                .User;
+        }
+
+        public IEnumerable<User> GetUsersByIds(IEnumerable<int> userIds)
+        {
+            return _dbContext.Users.Where(usr => userIds.Contains(usr.Id));
         }
     }
 }

@@ -1,0 +1,10 @@
+﻿@using WSOA.Client.Shared.Counters.Components;
+@inherits LogoBadgeCounterComponent
+
+<div class="c-logoBadgeCounter__container-main" style="@($"width: {LogoPixelSize + 15}px; height: {LogoPixelSize + 15}px;")">
+    <img class="c-logoBadgeCounter__logo" src="@LogoPath" style="width: @($"{LogoPixelSize}px;")" />
+    @if (CounterValue > 0)
+    {
+        <div class="c-logoBadgeCounter__value">@CounterValue</div>
+    }
+</div>

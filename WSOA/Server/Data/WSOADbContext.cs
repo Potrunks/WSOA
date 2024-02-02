@@ -1,5 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using WSOA.Shared.Entity;
+using WSOA.Shared.Resources;
 
 namespace WSOA.Server.Data
 {
@@ -139,6 +140,15 @@ namespace WSOA.Server.Data
                     Description = "Lancer un tournoi",
                     Order = 2,
                     Url = "/tournament/execute"
+                },
+                new MainNavSubSection
+                {
+                    Id = 6,
+                    Label = "Tournoi en cours",
+                    MainNavSectionId = 3,
+                    Description = "Tournoi en cours",
+                    Order = 3,
+                    Url = "/tournament/inProgress"
                 }
             );
 
@@ -213,6 +223,13 @@ namespace WSOA.Server.Data
                 {
                     Id = 11,
                     MainNavSubSectionId = 5,
+                    ProfileCode = "ORGA"
+                },
+                // TOURNOI EN COURS
+                new MainNavSubSectionByProfileCode
+                {
+                    Id = 12,
+                    MainNavSubSectionId = 6,
                     ProfileCode = "ORGA"
                 }
             );
@@ -290,6 +307,36 @@ namespace WSOA.Server.Data
                 {
                     Code = "EXEC_TOURNAMENT",
                     Label = "Executer un tournoi"
+                },
+                new BusinessAction
+                {
+                    Code = "ELIM_PLAYER",
+                    Label = "Eliminer un joueur"
+                },
+                new BusinessAction
+                {
+                    Code = BusinessActionResources.EDIT_BONUS_TOURNAMENT_EARNED,
+                    Label = "Editer le bonus d'un joueur"
+                },
+                new BusinessAction
+                {
+                    Code = BusinessActionResources.EDIT_TOTAL_ADDON,
+                    Label = "Editer l'add-on d'un joueur"
+                },
+                new BusinessAction
+                {
+                    Code = BusinessActionResources.EDIT_PLAYER_PRESENCE,
+                    Label = "Editer le statut présence du joueur"
+                },
+                new BusinessAction
+                {
+                    Code = BusinessActionResources.CANCEL_TOURNAMENT_IN_PROGRESS,
+                    Label = "Annuler un tournoi en cours"
+                },
+                new BusinessAction
+                {
+                    Code = BusinessActionResources.EDIT_TOURNAMENT_IN_PROGRESS,
+                    Label = "Editer un tournoi en cours"
                 }
             );
 
@@ -300,6 +347,81 @@ namespace WSOA.Server.Data
                     Id = 1,
                     ProfileCode = "ORGA",
                     BusinessActionCode = "EXEC_TOURNAMENT"
+                },
+                new BusinessActionByProfileCode
+                {
+                    Id = 2,
+                    ProfileCode = "ORGA",
+                    BusinessActionCode = "ELIM_PLAYER"
+                },
+                new BusinessActionByProfileCode
+                {
+                    Id = 3,
+                    ProfileCode = "ORGA",
+                    BusinessActionCode = BusinessActionResources.EDIT_BONUS_TOURNAMENT_EARNED
+                },
+                new BusinessActionByProfileCode
+                {
+                    Id = 4,
+                    ProfileCode = "ORGA",
+                    BusinessActionCode = BusinessActionResources.EDIT_TOTAL_ADDON
+                },
+                new BusinessActionByProfileCode
+                {
+                    Id = 5,
+                    ProfileCode = "ORGA",
+                    BusinessActionCode = BusinessActionResources.EDIT_PLAYER_PRESENCE
+                },
+                new BusinessActionByProfileCode
+                {
+                    Id = 6,
+                    ProfileCode = "ORGA",
+                    BusinessActionCode = BusinessActionResources.CANCEL_TOURNAMENT_IN_PROGRESS
+                },
+                new BusinessActionByProfileCode
+                {
+                    Id = 7,
+                    ProfileCode = "ORGA",
+                    BusinessActionCode = BusinessActionResources.EDIT_TOURNAMENT_IN_PROGRESS
+                }
+            );
+
+            modelBuilder.Entity<BonusTournament>().HasData
+            (
+                new BonusTournament
+                {
+                    Code = BonusTournamentResources.FIRST_RANKED_KILLED,
+                    Label = "Elimination 1er au classement",
+                    PointAmount = 20,
+                    LogoPath = "images/black_skull.png"
+                },
+                new BonusTournament
+                {
+                    Code = BonusTournamentResources.PREVIOUS_WINNER_KILLED,
+                    Label = "Elimination 1er au précédent tournoi",
+                    PointAmount = 20,
+                    LogoPath = "images/white_skull.png"
+                },
+                new BonusTournament
+                {
+                    Code = BonusTournamentResources.FOUR_OF_A_KIND,
+                    Label = "Carré",
+                    PointAmount = 10,
+                    LogoPath = "images/four_kind.png"
+                },
+                new BonusTournament
+                {
+                    Code = BonusTournamentResources.STRAIGHT_FLUSH,
+                    Label = "Quinte flush",
+                    PointAmount = 30,
+                    LogoPath = "images/straight_flush.png"
+                },
+                new BonusTournament
+                {
+                    Code = BonusTournamentResources.ROYAL_STRAIGHT_FLUSH,
+                    Label = "Quinte flush royale",
+                    PointAmount = 50,
+                    LogoPath = "images/royal_straight_flush.png"
                 }
             );
         }
@@ -319,5 +441,6 @@ namespace WSOA.Server.Data
         public DbSet<PresenceState> PresenceStates { get; set; }
         public DbSet<BusinessAction> BusinessActions { get; set; }
         public DbSet<BusinessActionByProfileCode> BusinessActionsByProfileCode { get; set; }
+        public DbSet<Elimination> Eliminations { get; set; }
     }
 }

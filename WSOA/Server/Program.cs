@@ -8,7 +8,7 @@ using WSOA.Server.Data.Interface;
 var builder = WebApplication.CreateBuilder(args);
 
 // Database configuration
-string dbConnectionString = builder.Configuration.GetConnectionString("WSOA_DB");
+string? dbConnectionString = builder.Configuration.GetConnectionString("WSOA_DB");
 builder.Services.AddDbContext<WSOADbContext>(options =>
 {
     options.UseMySql(dbConnectionString, ServerVersion.AutoDetect(dbConnectionString));
@@ -22,6 +22,9 @@ builder.Services.AddScoped<IMenuRepository, MenuRepository>();
 builder.Services.AddScoped<ITournamentRepository, TournamentRepository>();
 builder.Services.AddScoped<IAddressRepository, AddressRepository>();
 builder.Services.AddScoped<IPlayerRepository, PlayerRepository>();
+builder.Services.AddScoped<IBonusTournamentRepository, BonusTournamentRepository>();
+builder.Services.AddScoped<IEliminationRepository, EliminationRepository>();
+builder.Services.AddScoped<IBonusTournamentEarnedRepository, BonusTournamentEarnedRepository>();
 
 builder.Services.AddScoped<ITransactionManager, TransactionManager>();
 builder.Services.AddScoped<IMailService, MailService>();

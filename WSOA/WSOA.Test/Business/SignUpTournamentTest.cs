@@ -32,10 +32,10 @@ namespace WSOA.Test.Business
         [TestInitialize]
         public void Init()
         {
-            _currentTournament = CreateTournament(1);
+            _currentTournament = CreateTournament(1, 0);
             _formVM = CreateSignUpTournamentFormViewModel(_currentTournament.Id, PresenceStateResources.PRESENT_CODE);
 
-            _currentUser = CreateUser(1);
+            _currentUser = CreateUser(1, 1);
             _sessionMock = CreateISessionMock(_currentUser.ProfileCode, _currentUser.Id);
 
             _transactionManagerMock = CreateITransactionManagerMock();
@@ -63,7 +63,10 @@ namespace WSOA.Test.Business
                     null,
                     _userRepositoryMock.Object,
                     null,
-                    _playerRepositoryMock.Object
+                    _playerRepositoryMock.Object,
+                    null,
+                    null,
+                    null
                 );
         }
 

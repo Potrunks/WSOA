@@ -83,7 +83,7 @@ namespace WSOA.Test.Business
         [TestMethod]
         public void ShouldCreateLinkAccountCreation()
         {
-            LinkAccountCreation linkCreated = null;
+            LinkAccountCreation? linkCreated = null;
             _accountRepositoryMock.Setup(m => m.SaveLinkAccountCreation(It.IsAny<LinkAccountCreation>()))
                                     .Callback<LinkAccountCreation>((link) => linkCreated = link);
 
@@ -93,7 +93,7 @@ namespace WSOA.Test.Business
             Assert.AreEqual(null, result.ErrorMessage);
             Assert.AreEqual(null, result.WarningMessage);
             Assert.AreEqual(null, result.RedirectUrl);
-            Assert.AreEqual(_linkAccountCreationVM.RecipientMail, linkCreated.RecipientMail);
+            Assert.AreEqual(_linkAccountCreationVM.RecipientMail, linkCreated!.RecipientMail);
             Assert.AreEqual(_linkAccountCreationVM.ProfileCodeSelected, linkCreated.ProfileCode);
             Assert.AreEqual(DateTime.UtcNow.AddDays(AccountBusinessResources.LINK_ACCOUNT_CREATION_EXPIRATION_DAY_DELAY).Day, linkCreated.ExpirationDate.Day);
             _transactionManagerMock.Verify(t => t.BeginTransaction(), Times.Once());

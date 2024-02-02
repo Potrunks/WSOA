@@ -1,28 +1,39 @@
 ﻿@using WSOA.Client.Shared.Layout.Components;
 @using WSOA.Client.Shared.Loaders
 @using WSOA.Client.Shared.NavMenus.Main;
+@using WSOA.Client.Shared.Popups
+@using WSOA.Shared.Resources;
 @using WSOA.Shared.ViewModel;
 @inherits DownNavMenuLayoutComponent
 
 <div class="layout_container">
-    <div class="body_container">
-        @Body
-    </div>
-    <div id="MainNavMenu" class="navMenu_container">
-        @if (_isLoading)
-        {
-            <LineLoader Height="65" />
-        }
-        else
-        {
-            <CascadingValue Value="SectionEventHandler" Name="SectionEventHandler">
-                <CascadingValue Value="SubSectionEventHandler" Name="SubSectionEventHandler">
-                    @foreach (MainNavSectionViewModel mainNavSectionVM in _mainNavSectionVMs)
-                    {
-                        <MainNavSection ViewModel="@mainNavSectionVM" />
-                    }
+    <CascadingValue Value="PopupEventHandler" Name="PopupEventHandler">
+        <div class="body_container app_layout">
+            @Body
+        </div>
+        <div class="navMenu_container app_layout">
+            @if (_isLoading)
+            {
+                <LineLoader Height="65" />
+            }
+            else
+            {
+                <CascadingValue Value="SectionEventHandler" Name="SectionEventHandler">
+                    <CascadingValue Value="SubSectionEventHandler" Name="SubSectionEventHandler">
+                        @foreach (MainNavSectionViewModel mainNavSectionVM in _mainNavSectionVMs)
+                        {
+                            <MainNavSection ViewModel="@mainNavSectionVM" />
+                        }
+                    </CascadingValue>
                 </CascadingValue>
-            </CascadingValue>
-        }
-    </div>
+            }
+        </div>
+        <PopupMessage Key="@PopupKeyResources.MESSAGE" />
+        <PopupIdsSelect Key="@PopupKeyResources.MULTI_ID_SELECT" />
+        <PopupIdSelect Key="@PopupKeyResources.ID_SELECT_OPTION" />
+        <PopupCodeSelect Key="@PopupKeyResources.CODE_SELECT" />
+        <PopupMenu Key="@PopupKeyResources.MENU" />
+        <PopupInputNumber Key="PopupKeyResources.INPUT_NUMBER" />
+        <PopupDispatchJackpot Key="PopupKeyResources.DISPATCH_JACKPOT" />
+    </CascadingValue>
 </div>

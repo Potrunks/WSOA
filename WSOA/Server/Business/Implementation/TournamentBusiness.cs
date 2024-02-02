@@ -1,4 +1,5 @@
 ﻿using log4net;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using WSOA.Server.Business.Interface;
 using WSOA.Server.Business.Resources;
@@ -23,6 +24,9 @@ namespace WSOA.Server.Business.Implementation
         private readonly IUserRepository _userRepository;
         private readonly IAddressRepository _addressRepository;
         private readonly IPlayerRepository _playerRepository;
+        private readonly IBonusTournamentRepository _bonusTournamentRepository;
+        private readonly IEliminationRepository _eliminationRepository;
+        private readonly IBonusTournamentEarnedRepository _bonusTournamentEarnedRepository;
 
         private readonly ILog _log = LogManager.GetLogger(nameof(TournamentBusiness));
 
@@ -34,7 +38,10 @@ namespace WSOA.Server.Business.Implementation
             IMailService mailService,
             IUserRepository userRepository,
             IAddressRepository addressRepository,
-            IPlayerRepository playerRepository
+            IPlayerRepository playerRepository,
+            IBonusTournamentRepository bonusTournamentRepository,
+            IEliminationRepository eliminationRepository,
+            IBonusTournamentEarnedRepository bonusTournamentEarnedRepository
         )
         {
             _transactionManager = transactionManager;
@@ -44,6 +51,9 @@ namespace WSOA.Server.Business.Implementation
             _userRepository = userRepository;
             _addressRepository = addressRepository;
             _playerRepository = playerRepository;
+            _bonusTournamentRepository = bonusTournamentRepository;
+            _eliminationRepository = eliminationRepository;
+            _bonusTournamentEarnedRepository = bonusTournamentEarnedRepository;
         }
 
         public APICallResultBase CreateTournament(TournamentCreationFormViewModel form, ISession session)
@@ -61,12 +71,19 @@ namespace WSOA.Server.Business.Implementation
                 _tournamentRepository.SaveTournament(newTournament);
 
                 IEnumerable<User> allUsers = _userRepository.GetAllUsers();
-                _mailService.SendMails
-                (
-                    allUsers.Select(usr => usr.Email),
-                    TournamentBusinessResources.MAIL_SUBJECT_NEW_TOURNAMENT,
-                    string.Format(TournamentBusinessResources.MAIL_BODY_NEW_TOURNAMENT, form.BaseUri)
-                );
+                try
+                {
+                    _mailService.SendMails
+                    (
+                        allUsers.Select(usr => usr.Email),
+                        TournamentBusinessResources.MAIL_SUBJECT_NEW_TOURNAMENT,
+                        string.Format(TournamentBusinessResources.MAIL_BODY_NEW_TOURNAMENT, form.BaseUri)
+                    );
+                }
+                catch (Exception e)
+                {
+                    _log.Error(e);
+                }
 
                 _transactionManager.CommitTransaction();
             }
@@ -152,7 +169,7 @@ namespace WSOA.Server.Business.Implementation
             APICallResult<PlayerViewModel> result = new APICallResult<PlayerViewModel>(true);
 
             int tournamentId = formVM.TournamentId;
-            string presenceStateCode = formVM.PresenceStateCode;
+            string presenceStateCode = formVM.PresenceStateCode!;
 
             try
             {
@@ -200,6 +217,41 @@ namespace WSOA.Server.Business.Implementation
             return result;
         }
 
+        public APICallResult<PlayerSelectionViewModel> LoadPlayersForPlayingTournamentInProgress(int tournamentId, ISession session)
+        {
+            APICallResult<PlayerSelectionViewModel> result = new APICallResult<PlayerSelectionViewModel>(true);
+
+            try
+            {
+                session.CanUserPerformAction(_userRepository, BusinessActionResources.EDIT_TOURNAMENT_IN_PROGRESS);
+
+                Tournament tournament = _tournamentRepository.GetTournamentById(tournamentId);
+                if (!tournament.IsInProgress)
+                {
+                    throw new FunctionalException(TournamentMessageResources.NO_TOURNAMENT_IN_PROGRESS, string.Format(RouteBusinessResources.MAIN_ERROR, TournamentMessageResources.NO_TOURNAMENT_IN_PROGRESS));
+                }
+
+                IEnumerable<PlayerDto> presentPlayers = _playerRepository.GetPlayersByTournamentIdAndPresenceStateCode(tournamentId, PresenceStateResources.PRESENT_CODE);
+                IEnumerable<User> availableUsers = _userRepository.GetAllUsers(blacklistUserIds: presentPlayers.Select(pla => pla.User.Id));
+
+                result.Data = new PlayerSelectionViewModel(presentPlayers, availableUsers);
+            }
+            catch (FunctionalException e)
+            {
+                string errorMsg = e.Message;
+                _log.Error(errorMsg);
+                return new APICallResult<PlayerSelectionViewModel>(errorMsg, e.RedirectUrl);
+            }
+            catch (Exception e)
+            {
+                _log.Error(e.Message);
+                string errorMsg = MainBusinessResources.TECHNICAL_ERROR;
+                return new APICallResult<PlayerSelectionViewModel>(errorMsg, string.Format(RouteBusinessResources.MAIN_ERROR, errorMsg));
+            }
+
+            return result;
+        }
+
         public APICallResult<PlayerSelectionViewModel> LoadPlayersForPlayingTournament(int tournamentId, ISession session)
         {
             APICallResult<PlayerSelectionViewModel> result = new APICallResult<PlayerSelectionViewModel>(true);
@@ -207,7 +259,8 @@ namespace WSOA.Server.Business.Implementation
             try
             {
                 session.CanUserPerformAction(_userRepository, BusinessActionResources.EXECUTE_TOURNAMENT);
-                CanExecuteTournament(tournamentId);
+                Tournament tournament = _tournamentRepository.GetTournamentById(tournamentId);
+                CanExecuteTournament(tournament);
                 IEnumerable<PlayerDto> presentPlayers = _playerRepository.GetPlayersByTournamentIdAndPresenceStateCode(tournamentId, PresenceStateResources.PRESENT_CODE);
                 IEnumerable<User> availableUsers = _userRepository.GetAllUsers(blacklistUserIds: presentPlayers.Select(pla => pla.User.Id));
                 result.Data = new PlayerSelectionViewModel(presentPlayers, availableUsers);
@@ -228,24 +281,35 @@ namespace WSOA.Server.Business.Implementation
             return result;
         }
 
-        private void CanExecuteTournament(int tournamentId)
+        private void CanExecuteTournament(Tournament tournament)
         {
-            bool existsTournamentInProgress = _tournamentRepository.ExistsTournamentByIsInProgress(true);
-            if (existsTournamentInProgress)
+            try
             {
-                string errorMsg = TournamentBusinessResources.EXISTS_TOURNAMENT_IN_PROGRESS;
-                throw new FunctionalException(errorMsg, string.Format(RouteBusinessResources.MAIN_ERROR, errorMsg));
-            }
+                bool existsTournamentInProgress = _tournamentRepository.ExistsTournamentByIsInProgress(true);
+                if (existsTournamentInProgress)
+                {
+                    throw new FunctionalException(TournamentBusinessResources.EXISTS_TOURNAMENT_IN_PROGRESS, null);
+                }
 
-            bool canExecute = _tournamentRepository.ExistsTournamentByTournamentIdIsOverAndIsInProgress(tournamentId, false, false);
-            if (!canExecute)
+                bool canExecute = _tournamentRepository.ExistsTournamentByTournamentIdIsOverAndIsInProgress(tournament.Id, false, false);
+                if (!canExecute)
+                {
+                    throw new FunctionalException(TournamentBusinessResources.CANNOT_EXECUTE_TOURNAMENT, null);
+                }
+
+                Tournament? lastTournament = _tournamentRepository.GetLastFinishedTournamentBySeason(tournament.Season);
+                if (lastTournament != null && tournament.StartDate <= lastTournament.StartDate)
+                {
+                    throw new FunctionalException(TournamentMessageResources.TOURNAMENT_PAST, null);
+                }
+            }
+            catch (Exception e)
             {
-                string errorMsg = TournamentBusinessResources.CANNOT_EXECUTE_TOURNAMENT;
-                throw new FunctionalException(errorMsg, string.Format(RouteBusinessResources.MAIN_ERROR, errorMsg));
+                throw new FunctionalException(e.Message, string.Format(RouteBusinessResources.MAIN_ERROR, e.Message));
             }
         }
 
-        public APICallResultBase PlayTournamentPrepared(TournamentPreparedDto tournamentPrepared, ISession session)
+        public APICallResultBase SaveTournamentPrepared(TournamentPreparedDto tournamentPrepared, ISession session)
         {
             APICallResultBase result = new APICallResultBase(false);
 
@@ -255,18 +319,26 @@ namespace WSOA.Server.Business.Implementation
 
                 session.CanUserPerformAction(_userRepository, BusinessActionResources.EXECUTE_TOURNAMENT);
 
+                if (!tournamentPrepared.SelectedUserIds.Any())
+                {
+                    string errorMsg = TournamentMessageResources.TOURNAMENT_NO_PLAYER_SELECTED;
+                    throw new FunctionalException(errorMsg, string.Format(RouteBusinessResources.MAIN_ERROR, errorMsg));
+                }
+
                 TournamentDto currentTournament = _tournamentRepository.GetTournamentDtoById(tournamentPrepared.TournamentId);
 
-                CanExecuteTournament(currentTournament.Tournament.Id);
+                CanExecuteTournament(currentTournament.Tournament);
 
                 List<Player> newPlayers = new List<Player>();
+                List<Player> updatedPlayers = new List<Player>();
                 IDictionary<int, Player> selectedPlayersAlreadySignUpByUsrId = currentTournament.Players.Where(pla => tournamentPrepared.SelectedUserIds.Contains(pla.Player.UserId)).ToDictionary(pla => pla.User.Id, pla => pla.Player);
                 foreach (int selectedUsrId in tournamentPrepared.SelectedUserIds)
                 {
-                    Player selectedPlayer;
+                    Player? selectedPlayer;
                     if (selectedPlayersAlreadySignUpByUsrId.TryGetValue(selectedUsrId, out selectedPlayer))
                     {
                         selectedPlayer.PresenceStateCode = PresenceStateResources.PRESENT_CODE;
+                        updatedPlayers.Add(selectedPlayer);
                     }
                     else
                     {
@@ -286,11 +358,13 @@ namespace WSOA.Server.Business.Implementation
                 currentTournament.Tournament.IsInProgress = true;
 
                 _playerRepository.DeletePlayers(playersToDelete);
-                _playerRepository.SavePlayers(currentTournament.Players.Select(pla => pla.Player).Concat(newPlayers));
+                _playerRepository.SavePlayers(updatedPlayers.Concat(newPlayers));
                 _tournamentRepository.SaveTournament(currentTournament.Tournament);
 
+                MainNavSubSection tournamentInProgressSubSection = _menuRepository.GetMainNavSubSectionByUrl(RouteBusinessResources.TOURNAMENT_IN_PROGRESS);
+                result.RedirectUrl = $"{tournamentInProgressSubSection.Url}/{tournamentInProgressSubSection.Id}";
+
                 result.Success = true;
-                result.RedirectUrl = RouteBusinessResources.TOURNAMENT_IN_PROGRESS;
 
                 _transactionManager.CommitTransaction();
             }
@@ -310,6 +384,820 @@ namespace WSOA.Server.Business.Implementation
             }
 
             return result;
+        }
+
+        public APICallResult<TournamentInProgressDto> LoadTournamentInProgress(int subSectionId, ISession session)
+        {
+            APICallResult<TournamentInProgressDto> result = new APICallResult<TournamentInProgressDto>(false);
+
+            try
+            {
+                session.CanUserPerformAction(_menuRepository, subSectionId);
+
+                Tournament? tournamentInProgress = _tournamentRepository.GetTournamentInProgress();
+                if (tournamentInProgress == null)
+                {
+                    string errorMsg = TournamentMessageResources.NO_TOURNAMENT_IN_PROGRESS;
+                    throw new FunctionalException(errorMsg, string.Format(RouteResources.MAIN_ERROR, errorMsg));
+                }
+
+                IEnumerable<PlayerDto> presentPlayers = _playerRepository.GetPlayersByTournamentIdAndPresenceStateCode(tournamentInProgress.Id, PresenceStateResources.PRESENT_CODE);
+                if (!presentPlayers.Any())
+                {
+                    string errorMsg = TournamentMessageResources.NO_PLAYERS_PRESENT;
+                    throw new FunctionalException(errorMsg, string.Format(RouteResources.MAIN_ERROR, errorMsg));
+                }
+
+                IDictionary<string, BonusTournament> winnableBonusByCode = _bonusTournamentRepository.GetAll().ToDictionary(bonus => bonus.Code);
+                IDictionary<int, IEnumerable<BonusTournamentEarned>> bonusEarnedsByPlayerId = _playerRepository.GetBonusTournamentEarnedsByPlayerIds(presentPlayers.Select(pla => pla.Player.Id));
+
+                UsersBestDto usersBestDto = GetBestUsersByCurrentSeasonTournament(tournamentInProgress);
+
+                result.Data = new TournamentInProgressDto(tournamentInProgress, presentPlayers, winnableBonusByCode, bonusEarnedsByPlayerId, usersBestDto.TotalSeasonTournamentPlayed, usersBestDto.WinnerPreviousTournament, usersBestDto.FirstRanked);
+
+                result.Success = true;
+            }
+            catch (FunctionalException e)
+            {
+                string errorMsg = e.Message;
+                _log.Error(errorMsg);
+                return new APICallResult<TournamentInProgressDto>(errorMsg, e.RedirectUrl);
+            }
+            catch (Exception e)
+            {
+                string errorMsg = MainBusinessResources.TECHNICAL_ERROR;
+                _log.Error(e.Message);
+                return new APICallResult<TournamentInProgressDto>(errorMsg, string.Format(RouteBusinessResources.MAIN_ERROR, errorMsg));
+            }
+
+            return result;
+        }
+
+        private UsersBestDto GetBestUsersByCurrentSeasonTournament(Tournament tournament)
+        {
+            User? lastWinner = null;
+            User? firstRankUser = null;
+
+            int tournamentNb = _tournamentRepository.GetTournamentNumber(tournament);
+            if (tournamentNb > 1)
+            {
+                Tournament tournamentPrevious = _tournamentRepository.GetPreviousTournament(tournament);
+                lastWinner = _userRepository.GetUserWinnerByTournamentId(tournamentPrevious.Id);
+                firstRankUser = _userRepository.GetFirstRankUserBySeasonCode(tournament.Season);
+            }
+
+            return new UsersBestDto
+            {
+                FirstRanked = firstRankUser,
+                WinnerPreviousTournament = lastWinner,
+                TotalSeasonTournamentPlayed = tournamentNb
+            };
+        }
+
+        public APICallResult<EliminationCreationResultDto> EliminatePlayer(EliminationCreationDto eliminationDto, ISession session)
+        {
+            APICallResult<EliminationCreationResultDto> result = new APICallResult<EliminationCreationResultDto>(false);
+
+            try
+            {
+                _transactionManager.BeginTransaction();
+
+                result.Data = new EliminationCreationResultDto();
+
+                session.CanUserPerformAction(_userRepository, BusinessActionResources.ELIMINATE_PLAYER);
+
+                IEnumerable<int> playerConcernedIds = new List<int> { eliminationDto.EliminatedPlayerId, eliminationDto.EliminatorPlayerId };
+
+                IDictionary<int, Player> players = _playerRepository.GetPlayersByIds(playerConcernedIds);
+                if (players.Count != 2)
+                {
+                    throw new Exception
+                        (
+                            string.Format
+                            (
+                                TournamentMessageResources.PLAYERS_ELIMINATION_CONCERNED_MISSING,
+                                eliminationDto.EliminatedPlayerId,
+                                eliminationDto.EliminatorPlayerId
+                            )
+                        );
+                }
+
+                IEnumerable<Elimination> existingEliminations = _eliminationRepository.GetEliminationsByPlayerVictimIds(playerConcernedIds);
+                if (existingEliminations.Any(elim => elim.IsDefinitive))
+                {
+                    throw new FunctionalException(TournamentMessageResources.PLAYERS_ALREADY_DEFINITIVELY_ELIMINATED, null);
+                }
+
+                Player eliminatedPlayer = players[eliminationDto.EliminatedPlayerId];
+                if (eliminationDto.HasReBuy)
+                {
+                    eliminatedPlayer.TotalReBuy = eliminatedPlayer.TotalReBuy == null ? 1 : eliminatedPlayer.TotalReBuy + 1;
+                }
+                if (!eliminationDto.HasReBuy && eliminatedPlayer.TotalReBuy == null && !eliminatedPlayer.WasAddOn.GetValueOrDefault())
+                {
+                    eliminatedPlayer.TotalReBuy = 0;
+                }
+                _playerRepository.SavePlayer(eliminatedPlayer);
+
+                result.Data.EliminatedPlayerTotalReBuy = eliminatedPlayer.TotalReBuy;
+
+                Elimination elimination = new Elimination
+                {
+                    IsDefinitive = !eliminationDto.HasReBuy,
+                    PlayerEliminatorId = eliminationDto.EliminatorPlayerId,
+                    PlayerVictimId = eliminatedPlayer.Id,
+                    CreationDate = DateTime.UtcNow
+                };
+                _eliminationRepository.SaveElimination(elimination);
+
+                Tournament currentTournament = _tournamentRepository.GetTournamentById(eliminatedPlayer.PlayedTournamentId);
+                IEnumerable<PlayerDto> allPlayers = _playerRepository.GetPlayersByTournamentIdAndPresenceStateCode(eliminatedPlayer.PlayedTournamentId, PresenceStateResources.PRESENT_CODE);
+                int nbPlayers = allPlayers.Where(pla => pla.Player.CurrentTournamentPosition == null)
+                                          .Count();
+
+                if (elimination.IsDefinitive)
+                {
+                    eliminatedPlayer.CurrentTournamentPosition = nbPlayers;
+                    eliminatedPlayer.WasAddOn = eliminationDto.IsAddOn;
+                    eliminatedPlayer.WasFinalTable = eliminationDto.IsFinalTable;
+
+                    if (eliminatedPlayer.CurrentTournamentPosition.Value > TournamentPointsResources.TournamentPointAmountByPosition.Keys.Max())
+                    {
+                        eliminatedPlayer.TotalWinningsPoint = TournamentPointsResources.MinimumPointAmount;
+                    }
+                    else
+                    {
+                        eliminatedPlayer.TotalWinningsPoint = TournamentPointsResources.TournamentPointAmountByPosition[eliminatedPlayer.CurrentTournamentPosition.Value];
+                    }
+
+                    if (eliminatedPlayer.CurrentTournamentPosition <= eliminationDto.WinnableMoneyByPosition.Keys.Max())
+                    {
+                        eliminatedPlayer.TotalWinningsAmount = eliminationDto.WinnableMoneyByPosition[eliminatedPlayer.CurrentTournamentPosition.Value];
+                    }
+                    else
+                    {
+                        eliminatedPlayer.TotalWinningsAmount = 0;
+                    }
+
+                    _playerRepository.SavePlayer(eliminatedPlayer);
+
+                    UsersBestDto usersBestDto = GetBestUsersByCurrentSeasonTournament(currentTournament);
+                    if (usersBestDto.FirstRanked != null && usersBestDto.FirstRanked.Id == eliminatedPlayer.UserId)
+                    {
+                        BonusTournament firstRankedKilledBonus = _bonusTournamentRepository.GetBonusTournamentByCode(BonusTournamentResources.FIRST_RANKED_KILLED);
+                        BonusTournamentEarned newBonus = new BonusTournamentEarned
+                        {
+                            BonusTournamentCode = firstRankedKilledBonus.Code,
+                            PlayerId = eliminationDto.EliminatorPlayerId,
+                            PointAmount = firstRankedKilledBonus.PointAmount,
+                            Occurrence = 1
+                        };
+                        _bonusTournamentEarnedRepository.SaveBonusTournamentEarned(newBonus);
+                        result.Data.EliminatorPlayerWonBonusCodes.Add(newBonus.BonusTournamentCode);
+                    }
+
+                    if (usersBestDto.WinnerPreviousTournament != null && usersBestDto.WinnerPreviousTournament.Id == eliminatedPlayer.UserId)
+                    {
+                        BonusTournament firstRankedKilledBonus = _bonusTournamentRepository.GetBonusTournamentByCode(BonusTournamentResources.PREVIOUS_WINNER_KILLED);
+                        BonusTournamentEarned newBonus = new BonusTournamentEarned
+                        {
+                            BonusTournamentCode = firstRankedKilledBonus.Code,
+                            PlayerId = eliminationDto.EliminatorPlayerId,
+                            PointAmount = firstRankedKilledBonus.PointAmount,
+                            Occurrence = 1
+                        };
+                        _bonusTournamentEarnedRepository.SaveBonusTournamentEarned(newBonus);
+                        result.Data.EliminatorPlayerWonBonusCodes.Add(newBonus.BonusTournamentCode);
+                    }
+                }
+
+                if (nbPlayers == 2)
+                {
+                    Player winner = players[eliminationDto.EliminatorPlayerId];
+                    winner.TotalWinningsPoint = TournamentPointsResources.TournamentPointAmountByPosition[1];
+                    winner.CurrentTournamentPosition = 1;
+                    winner.WasAddOn = eliminationDto.IsAddOn;
+                    winner.WasFinalTable = eliminationDto.IsFinalTable;
+                    winner.TotalWinningsAmount = eliminationDto.WinnableMoneyByPosition[1];
+                    _playerRepository.SavePlayer(winner);
+
+                    currentTournament.IsOver = true;
+                    currentTournament.IsInProgress = false;
+                    _tournamentRepository.SaveTournament(currentTournament);
+
+                    result.Data.IsTournamentOver = currentTournament.IsOver;
+                }
+
+                result.Success = true;
+
+                _transactionManager.CommitTransaction();
+            }
+            catch (FunctionalException e)
+            {
+                _transactionManager.RollbackTransaction();
+                string errorMsg = e.Message;
+                _log.Error(errorMsg);
+                result.ErrorMessage = errorMsg;
+                result.RedirectUrl = e.RedirectUrl;
+            }
+            catch (Exception e)
+            {
+                _transactionManager.RollbackTransaction();
+                string errorMsg = MainBusinessResources.TECHNICAL_ERROR;
+                _log.Error(e.Message);
+                result.ErrorMessage = errorMsg;
+                result.RedirectUrl = string.Format(RouteBusinessResources.MAIN_ERROR, errorMsg);
+            }
+
+            return result;
+        }
+
+        public APICallResult<BonusTournamentEarnedEditResultDto> SaveBonusTournamentEarned(BonusTournamentEarnedEditDto bonusEarnedDto, ISession session)
+        {
+            APICallResult<BonusTournamentEarnedEditResultDto> result = new APICallResult<BonusTournamentEarnedEditResultDto>(false);
+
+            try
+            {
+                _transactionManager.BeginTransaction();
+
+                session.CanUserPerformAction(_userRepository, BusinessActionResources.EDIT_BONUS_TOURNAMENT_EARNED);
+
+                BonusTournamentEarned bonusTournamentEarned = new BonusTournamentEarned
+                {
+                    BonusTournamentCode = bonusEarnedDto.ConcernedBonusTournament.Code,
+                    Occurrence = 1,
+                    PlayerId = bonusEarnedDto.ConcernedPlayerId,
+                    PointAmount = bonusEarnedDto.ConcernedBonusTournament.PointAmount
+                };
+                bonusTournamentEarned = _bonusTournamentEarnedRepository.SaveBonusTournamentEarned(bonusTournamentEarned);
+
+                _transactionManager.CommitTransaction();
+
+                result.Data = new BonusTournamentEarnedEditResultDto
+                {
+                    EditedBonusTournamentEarned = bonusTournamentEarned
+                };
+                result.Success = true;
+            }
+            catch (FunctionalException e)
+            {
+                _transactionManager.RollbackTransaction();
+                string errorMsg = e.Message;
+                _log.Error(errorMsg);
+                result.ErrorMessage = errorMsg;
+                result.RedirectUrl = e.RedirectUrl;
+            }
+            catch (Exception e)
+            {
+                _transactionManager.RollbackTransaction();
+                string errorMsg = MainBusinessResources.TECHNICAL_ERROR;
+                _log.Error(e.Message);
+                result.ErrorMessage = errorMsg;
+                result.RedirectUrl = string.Format(RouteBusinessResources.MAIN_ERROR, errorMsg);
+            }
+
+            return result;
+        }
+
+        public APICallResult<BonusTournamentEarnedEditResultDto> DeleteBonusTournamentEarned(BonusTournamentEarnedEditDto bonusTournamentEarnedEditDto, ISession session)
+        {
+            APICallResult<BonusTournamentEarnedEditResultDto> result = new APICallResult<BonusTournamentEarnedEditResultDto>(false);
+
+            try
+            {
+                _transactionManager.BeginTransaction();
+
+                session.CanUserPerformAction(_userRepository, BusinessActionResources.EDIT_BONUS_TOURNAMENT_EARNED);
+
+                BonusTournamentEarned bonusTournamentEarnedUpdated = _bonusTournamentEarnedRepository.DeleteBonusTournamentEarned(bonusTournamentEarnedEditDto.ConcernedPlayerId, bonusTournamentEarnedEditDto.ConcernedBonusTournament.Code);
+
+                _transactionManager.CommitTransaction();
+
+                result.Data = new BonusTournamentEarnedEditResultDto
+                {
+                    EditedBonusTournamentEarned = bonusTournamentEarnedUpdated
+                };
+                result.Success = true;
+            }
+            catch (FunctionalException e)
+            {
+                _transactionManager.RollbackTransaction();
+                string errorMsg = e.Message;
+                _log.Error(errorMsg);
+                result.ErrorMessage = errorMsg;
+                result.RedirectUrl = e.RedirectUrl;
+            }
+            catch (Exception e)
+            {
+                _transactionManager.RollbackTransaction();
+                string errorMsg = MainBusinessResources.TECHNICAL_ERROR;
+                _log.Error(e.Message);
+                result.ErrorMessage = errorMsg;
+                result.RedirectUrl = string.Format(RouteBusinessResources.MAIN_ERROR, errorMsg);
+            }
+
+            return result;
+        }
+
+        public APICallResult<CancelEliminationResultDto> CancelLastPlayerElimination(EliminationEditionDto eliminationEditionDto, ISession session)
+        {
+            APICallResult<CancelEliminationResultDto> result = new APICallResult<CancelEliminationResultDto>(false);
+            IEnumerable<BonusTournament>? bonusTournamentsLostByEliminator = null;
+
+            try
+            {
+                _transactionManager.BeginTransaction();
+
+                session.CanUserPerformAction(_userRepository, BusinessActionResources.ELIMINATE_PLAYER);
+
+                PlayerEliminationsDto existingPlayerWithEliminations = _eliminationRepository.GetPlayerEliminationsDtosByPlayerVictimIds(new List<int> { eliminationEditionDto.EliminatedPlayerId }).Single();
+
+                Elimination lastElimination = existingPlayerWithEliminations.EliminatedPlayerEliminations.OrderByDescending(elim => elim.CreationDate).First();
+                Player eliminatorPlayer = existingPlayerWithEliminations.EliminatorPlayersById[lastElimination.PlayerEliminatorId];
+                Player eliminatedPlayer = existingPlayerWithEliminations.EliminatedPlayer;
+
+                if (lastElimination.IsDefinitive)
+                {
+                    eliminatedPlayer.CurrentTournamentPosition = null;
+                    eliminatedPlayer.WasAddOn = eliminationEditionDto.IsAddOn;
+                    eliminatedPlayer.WasFinalTable = eliminationEditionDto.IsFinalTable;
+                    eliminatedPlayer.TotalWinningsPoint = null;
+                    eliminatedPlayer.TotalWinningsAmount = null;
+
+                    KeyValuePair<int, IEnumerable<BonusTournamentEarned>> eliminatorBonus = _playerRepository.GetBonusTournamentEarnedsByPlayerIds(new List<int> { eliminatorPlayer.Id }).SingleOrDefault();
+                    if (eliminatorBonus.Value != null && eliminatorBonus.Value.Any(bon => new List<string> { BonusTournamentResources.FIRST_RANKED_KILLED, BonusTournamentResources.PREVIOUS_WINNER_KILLED }.Contains(bon.BonusTournamentCode)))
+                    {
+                        IDictionary<string, BonusTournamentEarned> eliminatorBonusByCode = eliminatorBonus.Value.ToDictionary(bon => bon.BonusTournamentCode);
+                        UsersBestDto usersBestDto = GetBestUsersByCurrentSeasonTournament(existingPlayerWithEliminations.Tournament);
+                        List<BonusTournamentEarned> eliminatorBonusToDelete = new List<BonusTournamentEarned>();
+
+                        if (usersBestDto.FirstRanked != null
+                            && usersBestDto.FirstRanked.Id == existingPlayerWithEliminations.EliminatedUser.Id
+                            && eliminatorBonusByCode.TryGetValue(BonusTournamentResources.FIRST_RANKED_KILLED, out BonusTournamentEarned? firstRankedKilledBonus))
+                        {
+                            eliminatorBonusToDelete.Add(firstRankedKilledBonus);
+                        }
+
+                        if (usersBestDto.WinnerPreviousTournament != null
+                            && usersBestDto.WinnerPreviousTournament.Id == existingPlayerWithEliminations.EliminatedUser.Id
+                            && eliminatorBonusByCode.TryGetValue(BonusTournamentResources.PREVIOUS_WINNER_KILLED, out BonusTournamentEarned? previousWinnerKilledBonus))
+                        {
+                            eliminatorBonusToDelete.Add(previousWinnerKilledBonus);
+                        }
+
+                        _bonusTournamentEarnedRepository.DeleteBonusTournamentEarneds(eliminatorBonusToDelete);
+
+                        bonusTournamentsLostByEliminator = _bonusTournamentRepository.GetBonusTournamentsByCodes(eliminatorBonusToDelete.Select(bonus => bonus.BonusTournamentCode));
+                    }
+                }
+                else
+                {
+                    eliminatedPlayer.TotalReBuy--;
+                }
+
+                eliminatedPlayer.TotalReBuy = eliminatedPlayer.TotalReBuy == 0 ? null : eliminatedPlayer.TotalReBuy;
+
+                _eliminationRepository.DeleteElimination(lastElimination);
+
+                _transactionManager.CommitTransaction();
+
+                result.Data = new CancelEliminationResultDto
+                {
+                    PlayerEliminated = eliminatedPlayer,
+                    PlayerEliminator = eliminatorPlayer,
+                    BonusTournamentsLostByEliminator = bonusTournamentsLostByEliminator,
+                    EliminationCanceled = lastElimination
+                };
+                result.Success = true;
+            }
+            catch (FunctionalException e)
+            {
+                _transactionManager.RollbackTransaction();
+                string errorMsg = e.Message;
+                _log.Error(errorMsg);
+                result.ErrorMessage = errorMsg;
+                result.RedirectUrl = e.RedirectUrl;
+            }
+            catch (Exception e)
+            {
+                _transactionManager.RollbackTransaction();
+                string errorMsg = MainBusinessResources.TECHNICAL_ERROR;
+                _log.Error(e.Message);
+                result.ErrorMessage = errorMsg;
+                result.RedirectUrl = string.Format(RouteBusinessResources.MAIN_ERROR, errorMsg);
+            }
+
+            return result;
+        }
+
+        public APICallResult<Player> EditPlayerTotalAddon(int playerId, int addonNb, ISession session)
+        {
+            APICallResult<Player> result = new APICallResult<Player>(false);
+
+            try
+            {
+                _transactionManager.BeginTransaction();
+
+                session.CanUserPerformAction(_userRepository, BusinessActionResources.EDIT_TOTAL_ADDON);
+
+                if (addonNb < 0)
+                {
+                    throw new FunctionalException(TournamentBusinessResources.TOTAL_ADDON_GIVEN_LESS_THAN_ZERO, null);
+                }
+
+                Player playerConcerned = _playerRepository.GetPlayersByIds(new List<int> { playerId }).Single().Value;
+                if (!playerConcerned.WasAddOn.GetValueOrDefault())
+                {
+                    throw new FunctionalException(TournamentBusinessResources.PLAYER_NOT_IN_ADDON, null);
+                }
+
+                if (playerConcerned.TotalAddOn != addonNb)
+                {
+                    playerConcerned.TotalAddOn = addonNb;
+                    _playerRepository.SavePlayer(playerConcerned);
+                }
+
+                _transactionManager.CommitTransaction();
+
+                result.Success = true;
+                result.Data = playerConcerned;
+            }
+            catch (FunctionalException e)
+            {
+                _transactionManager.RollbackTransaction();
+                string errorMsg = e.Message;
+                _log.Error(errorMsg);
+                result.ErrorMessage = errorMsg;
+                result.RedirectUrl = e.RedirectUrl;
+            }
+            catch (Exception e)
+            {
+                _transactionManager.RollbackTransaction();
+                string errorMsg = MainBusinessResources.TECHNICAL_ERROR;
+                _log.Error(e.Message);
+                result.ErrorMessage = errorMsg;
+                result.RedirectUrl = string.Format(RouteBusinessResources.MAIN_ERROR, errorMsg);
+            }
+
+            return result;
+        }
+
+        public APICallResultBase RemovePlayerNeverComeIntoTournamentInProgress(int playerId, ISession session)
+        {
+            APICallResultBase result = new APICallResultBase(false);
+
+            try
+            {
+                _transactionManager.BeginTransaction();
+
+                session.CanUserPerformAction(_userRepository, BusinessActionResources.EDIT_PLAYER_PRESENCE);
+
+                PlayerDto playerNeverCome = _playerRepository.GetPlayerDtosByPlayerIds(new List<int> { playerId }).Single();
+
+                if (playerNeverCome.Player.PresenceStateCode != PresenceStateResources.PRESENT_CODE)
+                {
+                    _log.Warn($"Player ID {playerId} is declared with a presence state code {playerNeverCome.Player.PresenceStateCode}. It should not be functionnaly possible to allow this presence state code when player need to be remove from the tournament in progress.");
+                    result.WarningMessage = TournamentMessageResources.PLAYER_ALREADY_NOT_PRESENT;
+                }
+
+                if (playerNeverCome.Player.TotalReBuy != null)
+                {
+                    throw new FunctionalException(TournamentMessageResources.REMOVE_PLAYER_FROM_TOURNAMENT_REBUY_ERROR, null);
+                }
+
+                if (playerNeverCome.Player.TotalAddOn != null || playerNeverCome.Player.WasAddOn.GetValueOrDefault())
+                {
+                    throw new FunctionalException(TournamentMessageResources.REMOVE_PLAYER_FROM_TOURNAMENT_ADDON_ERROR, null);
+                }
+
+                if (playerNeverCome.Player.WasFinalTable.GetValueOrDefault())
+                {
+                    throw new FunctionalException(TournamentMessageResources.REMOVE_PLAYER_FROM_TOURNAMENT_FINAL_TABLE_ERROR, null);
+                }
+
+                if (playerNeverCome.Player.TotalWinningsPoint != null)
+                {
+                    throw new FunctionalException(TournamentMessageResources.REMOVE_PLAYER_FROM_TOURNAMENT_PTS_EARNED_ERROR, null);
+                }
+
+                if (playerNeverCome.Player.CurrentTournamentPosition != null)
+                {
+                    throw new FunctionalException(TournamentMessageResources.REMOVE_PLAYER_FROM_TOURNAMENT_POSITION_EARNED_ERROR, null);
+                }
+
+                if (!playerNeverCome.Tournament.IsInProgress)
+                {
+                    throw new FunctionalException(TournamentMessageResources.REMOVE_PLAYER_FROM_TOURNAMENT_IN_PROGRESS_ERROR, null);
+                }
+
+                if (playerNeverCome.EliminationsAsEliminator.Any())
+                {
+                    throw new FunctionalException(TournamentMessageResources.REMOVE_PLAYER_FROM_TOURNAMENT_ELIMINATOR_ERROR, null);
+                }
+
+                if (playerNeverCome.BonusTournamentEarneds.Any())
+                {
+                    throw new FunctionalException(TournamentMessageResources.REMOVE_PLAYER_FROM_TOURNAMENT_BONUS_ERROR, null);
+                }
+
+                playerNeverCome.Player.PresenceStateCode = PresenceStateResources.ABSENT_CODE;
+
+                _playerRepository.SavePlayer(playerNeverCome.Player);
+
+                _transactionManager.CommitTransaction();
+
+                result.Success = true;
+            }
+            catch (FunctionalException e)
+            {
+                _transactionManager.RollbackTransaction();
+                string errorMsg = e.Message;
+                _log.Error(errorMsg);
+                result.ErrorMessage = errorMsg;
+                result.RedirectUrl = e.RedirectUrl;
+            }
+            catch (Exception e)
+            {
+                _transactionManager.RollbackTransaction();
+                string errorMsg = MainBusinessResources.TECHNICAL_ERROR;
+                _log.Error(e.Message);
+                result.ErrorMessage = errorMsg;
+                result.RedirectUrl = string.Format(RouteBusinessResources.MAIN_ERROR, errorMsg);
+            }
+
+            return result;
+        }
+
+        public APICallResultBase CancelTournamentInProgress(int tournamentInProgressId, ISession session)
+        {
+            APICallResultBase result = new APICallResultBase(false);
+
+            try
+            {
+                _transactionManager.BeginTransaction();
+
+                session.CanUserPerformAction(_userRepository, BusinessActionResources.CANCEL_TOURNAMENT_IN_PROGRESS);
+
+                TournamentToCancelDto tournamentToCancelDto = _tournamentRepository.GetTournamentToCancelDtoByTournamentId(tournamentInProgressId);
+
+                if (!tournamentToCancelDto.TournamentToCancel.IsInProgress)
+                {
+                    throw new FunctionalException(TournamentBusinessResources.TOURNAMENT_NOT_IN_PROGRESS, null);
+                }
+
+                tournamentToCancelDto.TournamentToCancel.IsInProgress = false;
+
+                foreach (Player playerToUpdate in tournamentToCancelDto.PlayersToUpdate)
+                {
+                    playerToUpdate.TotalWinningsPoint = null;
+                    playerToUpdate.CurrentTournamentPosition = null;
+                    playerToUpdate.TotalReBuy = null;
+                    playerToUpdate.TotalAddOn = null;
+                    playerToUpdate.WasFinalTable = null;
+                    playerToUpdate.WasAddOn = null;
+                    playerToUpdate.TotalWinningsAmount = null;
+                }
+
+                _bonusTournamentEarnedRepository.DeleteBonusTournamentEarneds(tournamentToCancelDto.BonusToDelete);
+                _eliminationRepository.DeleteEliminations(tournamentToCancelDto.EliminationsToDelete);
+                _tournamentRepository.SaveTournament(tournamentToCancelDto.TournamentToCancel);
+                _playerRepository.SavePlayers(tournamentToCancelDto.PlayersToUpdate);
+
+                _transactionManager.CommitTransaction();
+
+                result.Success = true;
+            }
+            catch (FunctionalException e)
+            {
+                _transactionManager.RollbackTransaction();
+                string errorMsg = e.Message;
+                _log.Error(errorMsg);
+                result.ErrorMessage = errorMsg;
+                result.RedirectUrl = e.RedirectUrl;
+            }
+            catch (Exception e)
+            {
+                _transactionManager.RollbackTransaction();
+                string errorMsg = MainBusinessResources.TECHNICAL_ERROR;
+                _log.Error(e.Message);
+                result.ErrorMessage = errorMsg;
+                result.RedirectUrl = string.Format(RouteBusinessResources.MAIN_ERROR, errorMsg);
+            }
+
+            return result;
+        }
+
+        public APICallResult<IEnumerable<PlayerPlayingDto>> AddPlayersIntoTournamentInProgress(IEnumerable<int> usrIds, int tournamentId, ISession session)
+        {
+            APICallResult<IEnumerable<PlayerPlayingDto>> result = new APICallResult<IEnumerable<PlayerPlayingDto>>(false);
+
+            try
+            {
+                _transactionManager.BeginTransaction();
+
+                session.CanUserPerformAction(_userRepository, BusinessActionResources.EDIT_TOURNAMENT_IN_PROGRESS);
+
+                IEnumerable<User> usersToAddIntoTournament = _userRepository.GetUsersByIds(usrIds);
+                if (usersToAddIntoTournament.IsNullOrEmpty() || usersToAddIntoTournament.Count() != usrIds.Count())
+                {
+                    throw new FunctionalException(
+                        UserBusinessMessageResources.USER_NO_EXISTS_IN_DB,
+                        string.Format(RouteBusinessResources.MAIN_ERROR, UserBusinessMessageResources.USER_NO_EXISTS_IN_DB));
+                }
+
+                Tournament tournamentInProgress = _tournamentRepository.GetTournamentById(tournamentId);
+                if (!tournamentInProgress.IsInProgress)
+                {
+                    throw new FunctionalException(
+                        TournamentMessageResources.NO_TOURNAMENT_IN_PROGRESS,
+                        string.Format(RouteBusinessResources.MAIN_ERROR, TournamentMessageResources.NO_TOURNAMENT_IN_PROGRESS));
+                }
+
+                IEnumerable<Player> playersAlreadyAttachedIntoTournament = _playerRepository.GetPlayersByTournamentIdAndUserIds(tournamentId, usrIds);
+                foreach (Player player in playersAlreadyAttachedIntoTournament)
+                {
+                    player.PresenceStateCode = PresenceStateResources.PRESENT_CODE;
+                }
+
+                IEnumerable<Player> playersToAddIntoTournament = usersToAddIntoTournament.Where(usr => !playersAlreadyAttachedIntoTournament.Select(pla => pla.UserId).Contains(usr.Id))
+                                                                                         .Select(usr => new Player
+                                                                                         {
+                                                                                             UserId = usr.Id,
+                                                                                             PlayedTournamentId = tournamentId,
+                                                                                             PresenceStateCode = PresenceStateResources.PRESENT_CODE
+                                                                                         });
+
+                _playerRepository.SavePlayers(playersToAddIntoTournament.Concat(playersAlreadyAttachedIntoTournament));
+
+                result.Data = _playerRepository.GetPlayerPlayingDtosByUserIdsAndTournamentId(usrIds, tournamentId);
+
+                _transactionManager.CommitTransaction();
+
+                result.Success = true;
+            }
+            catch (FunctionalException e)
+            {
+                _transactionManager.RollbackTransaction();
+                string errorMsg = e.Message;
+                _log.Error(errorMsg);
+                result.ErrorMessage = errorMsg;
+                result.RedirectUrl = e.RedirectUrl;
+            }
+            catch (Exception e)
+            {
+                _transactionManager.RollbackTransaction();
+                string errorMsg = MainBusinessResources.TECHNICAL_ERROR;
+                _log.Error(e.Message);
+                result.ErrorMessage = errorMsg;
+                result.RedirectUrl = string.Format(RouteBusinessResources.MAIN_ERROR, errorMsg);
+            }
+
+            return result;
+        }
+
+        public APICallResult<TournamentStepEnum> GoToTournamentInProgressNextStep(int tournamentId, ISession session)
+        {
+            APICallResult<TournamentStepEnum> result = new APICallResult<TournamentStepEnum>(false);
+
+            try
+            {
+                _transactionManager.BeginTransaction();
+
+                session.CanUserPerformAction(_userRepository, BusinessActionResources.EDIT_TOURNAMENT_IN_PROGRESS);
+
+                TournamentDto tournamentInProgressDto = _tournamentRepository.GetTournamentDtoById(tournamentId);
+
+                if (!tournamentInProgressDto.Tournament.IsInProgress)
+                {
+                    string errorMsg = TournamentMessageResources.NO_TOURNAMENT_IN_PROGRESS;
+                    throw new FunctionalException(errorMsg, string.Format(RouteBusinessResources.MAIN_ERROR, errorMsg));
+                }
+
+                IEnumerable<Player> playersPresent = tournamentInProgressDto.Players.Select(pla => pla.Player).Where(pla => pla.PresenceStateCode == PresenceStateResources.PRESENT_CODE);
+                TournamentStepEnum currentTournamentStep = GetCurrentTournamentStep(playersPresent);
+                List<Player> playersUpdated = new List<Player>();
+
+                foreach (Player player in playersPresent)
+                {
+                    switch (currentTournamentStep)
+                    {
+                        case TournamentStepEnum.NORMAL:
+                            player.WasAddOn = true;
+                            player.TotalAddOn = 0;
+                            result.Data = TournamentStepEnum.ADDON;
+                            break;
+                        case TournamentStepEnum.ADDON:
+                            player.WasFinalTable = true;
+                            result.Data = TournamentStepEnum.FINAL_TABLE;
+                            break;
+                    }
+                    playersUpdated.Add(player);
+                }
+
+                _playerRepository.SavePlayers(playersUpdated);
+
+                _transactionManager.CommitTransaction();
+
+                result.Success = true;
+            }
+            catch (FunctionalException e)
+            {
+                _transactionManager.RollbackTransaction();
+                string errorMsg = e.Message;
+                _log.Error(errorMsg);
+                result.ErrorMessage = errorMsg;
+                result.RedirectUrl = e.RedirectUrl;
+            }
+            catch (Exception e)
+            {
+                _transactionManager.RollbackTransaction();
+                string errorMsg = MainBusinessResources.TECHNICAL_ERROR;
+                _log.Error(e.Message);
+                result.ErrorMessage = errorMsg;
+                result.RedirectUrl = string.Format(RouteBusinessResources.MAIN_ERROR, errorMsg);
+            }
+
+            return result;
+        }
+
+        public APICallResult<TournamentStepEnum> GoToTournamentInProgressPreviousStep(int tournamentId, ISession session)
+        {
+            APICallResult<TournamentStepEnum> result = new APICallResult<TournamentStepEnum>(false);
+
+            try
+            {
+                _transactionManager.BeginTransaction();
+
+                session.CanUserPerformAction(_userRepository, BusinessActionResources.EDIT_TOURNAMENT_IN_PROGRESS);
+
+                TournamentDto tournamentInProgressDto = _tournamentRepository.GetTournamentDtoById(tournamentId);
+
+                if (!tournamentInProgressDto.Tournament.IsInProgress)
+                {
+                    string errorMsg = TournamentMessageResources.NO_TOURNAMENT_IN_PROGRESS;
+                    throw new FunctionalException(errorMsg, string.Format(RouteBusinessResources.MAIN_ERROR, errorMsg));
+                }
+
+                IEnumerable<Player> playersPresent = tournamentInProgressDto.Players.Select(pla => pla.Player).Where(pla => pla.PresenceStateCode == PresenceStateResources.PRESENT_CODE);
+                TournamentStepEnum currentTournamentStep = GetCurrentTournamentStep(playersPresent);
+                List<Player> playersUpdated = new List<Player>();
+
+                foreach (Player player in playersPresent)
+                {
+                    switch (currentTournamentStep)
+                    {
+                        case TournamentStepEnum.FINAL_TABLE:
+                            player.WasFinalTable = null;
+                            result.Data = TournamentStepEnum.ADDON;
+                            break;
+                        case TournamentStepEnum.ADDON:
+                            player.WasAddOn = null;
+                            player.TotalAddOn = null;
+                            result.Data = TournamentStepEnum.NORMAL;
+                            break;
+                    }
+                    playersUpdated.Add(player);
+                }
+
+                _playerRepository.SavePlayers(playersUpdated);
+
+                _transactionManager.CommitTransaction();
+
+                result.Success = true;
+            }
+            catch (FunctionalException e)
+            {
+                _transactionManager.RollbackTransaction();
+                string errorMsg = e.Message;
+                _log.Error(errorMsg);
+                result.ErrorMessage = errorMsg;
+                result.RedirectUrl = e.RedirectUrl;
+            }
+            catch (Exception e)
+            {
+                _transactionManager.RollbackTransaction();
+                string errorMsg = MainBusinessResources.TECHNICAL_ERROR;
+                _log.Error(e.Message);
+                result.ErrorMessage = errorMsg;
+                result.RedirectUrl = string.Format(RouteBusinessResources.MAIN_ERROR, errorMsg);
+            }
+
+            return result;
+        }
+
+        private TournamentStepEnum GetCurrentTournamentStep(IEnumerable<Player> players)
+        {
+            if (players.Any(pla => pla.WasFinalTable.GetValueOrDefault() && pla.PresenceStateCode == PresenceStateResources.PRESENT_CODE))
+            {
+                return TournamentStepEnum.FINAL_TABLE;
+            }
+
+            if (players.Any(pla => pla.WasAddOn.GetValueOrDefault() && pla.PresenceStateCode == PresenceStateResources.PRESENT_CODE))
+            {
+                return TournamentStepEnum.ADDON;
+            }
+
+            return TournamentStepEnum.NORMAL;
         }
     }
 }

@@ -1,0 +1,60 @@
+﻿.c-popupInputNumber__mainContainer {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+}
+
+.c-popupInputNumber__emptyZone {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.c-popupInputNumber__containerZone {
+    width: 75%;
+    background: #EDE8DF;
+    padding: 10px;
+    box-shadow: 12px 12px 2px 1px rgba(0, 0, 0, 0.15);
+    border-radius: 10px;
+}
+
+.c-popupInputNumber__title {
+    width: 100%;
+    text-decoration: underline;
+    text-underline-offset: 7px;
+    text-decoration-color: red;
+    text-decoration-thickness: 2px;
+    padding-bottom: 10px;
+    text-align: center;
+}
+
+.c-popupInputNumber__field {
+    display: flex;
+    width: 100%;
+    justify-content: space-evenly;
+    align-items: center;
+    margin-bottom: 10px;
+}
+
+.c-popupInputNumber__field-numberModificatorImage {
+    width: 50px;
+}
+
+.c-popupInputNumber__field-value {
+    font-size: 25px;
+    width: 30px;
+    text-align: center;
+}
+
+.c-popupInputNumber__panelButtons {
+    width: 100%;
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+}
+
+::deep .mainButton {
+    width: 48%;
+}

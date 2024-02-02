@@ -1,0 +1,51 @@
+﻿.c-selectItemsWithOption__popup {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+}
+
+.c-selectItemsWithOption__emptyZone {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.c-selectItemsWithOption__containerZone {
+    width: 75%;
+    background: #EDE8DF;
+    padding: 10px;
+    box-shadow: 12px 12px 2px 1px rgba(0, 0, 0, 0.15);
+    border-radius: 10px;
+}
+
+.c-selectItemsWithOption__title {
+    width: 100%;
+    text-decoration: underline;
+    text-underline-offset: 7px;
+    text-decoration-color: red;
+    text-decoration-thickness: 2px;
+    padding-bottom: 10px;
+    text-align: center;
+}
+
+::deep form {
+    width: 100%;
+    padding-bottom: 10px;
+}
+
+::deep .selectField_mainContainer {
+    padding-bottom: 10px;
+}
+
+.c-selectItemsWithOption__panelButtons {
+    width: 100%;
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+}
+
+::deep .mainButton {
+    width: 48%;
+}

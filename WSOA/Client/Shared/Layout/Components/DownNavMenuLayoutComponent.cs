@@ -18,6 +18,8 @@ namespace WSOA.Client.Shared.Layout.Components
 
         public MainNavSubSectionEventHandler SubSectionEventHandler { get; set; } = new MainNavSubSectionEventHandler();
 
+        public PopupEventHandler PopupEventHandler { get; set; } = new PopupEventHandler();
+
         public List<MainNavSectionViewModel> _mainNavSectionVMs = new List<MainNavSectionViewModel>();
 
         public bool _isLoading = false;

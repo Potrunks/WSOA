@@ -9,14 +9,16 @@ namespace WSOA.Shared.Dtos
 
         }
 
-        public PlayerDto(Player player, User user)
-        {
-            Player = player;
-            User = user;
-        }
-
         public Player Player { get; set; }
 
         public User User { get; set; }
+
+        public IEnumerable<Elimination> EliminationsAsEliminator { get; set; }
+
+        public IEnumerable<Elimination> EliminationsAsVictim { get; set; }
+
+        public IEnumerable<BonusTournamentEarned> BonusTournamentEarneds { get; set; }
+
+        public Tournament Tournament { get; set; }
     }
 }

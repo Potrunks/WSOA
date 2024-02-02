@@ -34,5 +34,30 @@ namespace WSOA.Server.Data.Interface
         /// Get tournament DTO by ID.
         /// </summary>
         TournamentDto GetTournamentDtoById(int tournamentId);
+
+        /// <summary>
+        /// Get tournament in progress.
+        /// </summary>
+        Tournament? GetTournamentInProgress();
+
+        /// <summary>
+        /// Get the tournament number into the season given.
+        /// </summary>
+        int GetTournamentNumber(Tournament tournament);
+
+        /// <summary>
+        /// Get the previous tournament into the same season of the tournament given.
+        /// </summary>
+        Tournament GetPreviousTournament(Tournament currentTournament);
+
+        /// <summary>
+        /// Get the last tournament over by season code given.
+        /// </summary>
+        Tournament? GetLastFinishedTournamentBySeason(string season);
+
+        /// <summary>
+        /// Get all data to cancel a tournament.
+        /// </summary>
+        TournamentToCancelDto GetTournamentToCancelDtoByTournamentId(int tournamentToCancelId);
     }
 }

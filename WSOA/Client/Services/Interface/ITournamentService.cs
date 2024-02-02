@@ -1,4 +1,6 @@
 ﻿using WSOA.Shared.Dtos;
+using WSOA.Shared.Entity;
+using WSOA.Shared.Resources;
 using WSOA.Shared.Result;
 using WSOA.Shared.ViewModel;
 
@@ -34,6 +36,66 @@ namespace WSOA.Client.Services.Interface
         /// <summary>
         /// Save selected tournament and execute it.
         /// </summary>
-        Task<APICallResultBase> PlayTournamentPrepared(TournamentPreparedDto tournamentPrepared);
+        Task<APICallResultBase> SaveTournamentPrepared(TournamentPreparedDto tournamentPrepared);
+
+        /// <summary>
+        /// Load tournament in progress.
+        /// </summary>
+        Task<APICallResult<TournamentInProgressDto>> LoadTournamentInProgress(int subSectionId);
+
+        /// <summary>
+        /// Eliminate selected player and close tournament if it's the final.
+        /// </summary>
+        Task<APICallResult<EliminationCreationResultDto>> EliminatePlayer(EliminationCreationDto elimination);
+
+        /// <summary>
+        /// Save bonus tournament earned by a player
+        /// </summary>
+        Task<APICallResult<BonusTournamentEarnedEditResultDto>> SaveBonusTournamentEarned(BonusTournamentEarnedEditDto bonusTournamentEarnedEditDto);
+
+        /// <summary>
+        /// Delete bonus tournament earned by a player (reduce by one the occurence or delete if occurence updated is zero).
+        /// </summary>
+        Task<APICallResult<BonusTournamentEarnedEditResultDto>> DeleteBonusTournamentEarned(BonusTournamentEarnedEditDto bonusTournamentEarnedEditDto);
+
+        /// <summary>
+        /// Cancel the last player elimination.
+        /// </summary>
+        Task<APICallResult<CancelEliminationResultDto>> CancelLastPlayerEliminationByPlayerId(EliminationEditionDto eliminationEditionDto);
+
+        /// <summary>
+        /// Edit the value of the total addon of the selected player.
+        /// </summary>
+        Task<APICallResult<Player>> EditPlayerTotalAddon(int playerId, int addonNb);
+
+        /// <summary>
+        /// Remove player never come into tournament in progress.
+        /// </summary>
+        Task<APICallResultBase> RemovePlayerNeverComeIntoTournamentInProgress(int playerId);
+
+        /// <summary>
+        /// Cancel tournament in progress.
+        /// </summary>
+        Task<APICallResultBase> CancelTournamentInProgress(int tournamentInProgressId);
+
+        /// <summary>
+        /// Add players into tournament in progress.
+        /// </summary>
+        Task<APICallResult<IEnumerable<PlayerPlayingDto>>> AddPlayersIntoTournamentInProgress(IEnumerable<int> usrIds, int tournamentId);
+
+        /// <summary>
+        /// Load users can be add into tournament in progress.
+        /// </summary>
+        Task<APICallResult<PlayerSelectionViewModel>> LoadPlayersForPlayingTournamentInProgress(int tournamentId);
+
+        /// <summary>
+        /// Go to next step for tournament in progress.
+        /// </summary>
+        Task<APICallResult<TournamentStepEnum>> GoToTournamentInProgressNextStep(int tournamentId);
+
+        /// <summary>
+        /// Go to previous step for tournament in progress.
+        /// </summary>
+        Task<APICallResult<TournamentStepEnum>> GoToTournamentInProgressPreviousStep(int tournamentId);
     }
 }

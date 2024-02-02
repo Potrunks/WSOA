@@ -29,5 +29,30 @@ namespace WSOA.Server.Data.Interface
         /// Delete players.
         /// </summary>
         void DeletePlayers(IEnumerable<Player> players);
+
+        /// <summary>
+        /// Get bonus tournament earned list by player id.
+        /// </summary>
+        IDictionary<int, IEnumerable<BonusTournamentEarned>> GetBonusTournamentEarnedsByPlayerIds(IEnumerable<int> playerIds);
+
+        /// <summary>
+        /// Get players by ids.
+        /// </summary>
+        IDictionary<int, Player> GetPlayersByIds(IEnumerable<int> playerIds);
+
+        /// <summary>
+        /// Get player dtos by player Ids.
+        /// </summary>
+        IEnumerable<PlayerDto> GetPlayerDtosByPlayerIds(IEnumerable<int> playerIds);
+
+        /// <summary>
+        /// Get player playing data by user ids and tournament id.
+        /// </summary>
+        List<PlayerPlayingDto> GetPlayerPlayingDtosByUserIdsAndTournamentId(IEnumerable<int> userIds, int tournamentId);
+
+        /// <summary>
+        /// Get players by tournament ID and user IDs.
+        /// </summary>
+        List<Player> GetPlayersByTournamentIdAndUserIds(int tournamentId, IEnumerable<int> userIds);
     }
 }

@@ -94,12 +94,53 @@ namespace WSOA.Server.Migrations
                         .IsRequired()
                         .HasColumnType("longtext");
 
+                    b.Property<string>("LogoPath")
+                        .IsRequired()
+                        .HasColumnType("longtext");
+
                     b.Property<int>("PointAmount")
                         .HasColumnType("int");
 
                     b.HasKey("Code");
 
                     b.ToTable("BonusTournaments");
+
+                    b.HasData(
+                        new
+                        {
+                            Code = "1ST_RKD_KLD",
+                            Label = "Elimination 1er au classement",
+                            LogoPath = "images/black_skull.png",
+                            PointAmount = 20
+                        },
+                        new
+                        {
+                            Code = "PRV_WNR_KLD",
+                            Label = "Elimination 1er au précédent tournoi",
+                            LogoPath = "images/white_skull.png",
+                            PointAmount = 20
+                        },
+                        new
+                        {
+                            Code = "FOUR_KIND",
+                            Label = "Carré",
+                            LogoPath = "images/four_kind.png",
+                            PointAmount = 10
+                        },
+                        new
+                        {
+                            Code = "STR_FLSH",
+                            Label = "Quinte flush",
+                            LogoPath = "images/straight_flush.png",
+                            PointAmount = 30
+                        },
+                        new
+                        {
+                            Code = "RYL_STR_FLSH",
+                            Label = "Quinte flush royale",
+                            LogoPath = "images/royal_straight_flush.png",
+                            PointAmount = 50
+                        });
                 });
 
             modelBuilder.Entity("WSOA.Shared.Entity.BonusTournamentEarned", b =>
@@ -111,6 +152,9 @@ namespace WSOA.Server.Migrations
                     b.Property<string>("BonusTournamentCode")
                         .IsRequired()
                         .HasColumnType("varchar(255)");
+
+                    b.Property<int>("Occurrence")
+                        .HasColumnType("int");
 
                     b.Property<int>("PlayerId")
                         .HasColumnType("int");
@@ -145,6 +189,36 @@ namespace WSOA.Server.Migrations
                         {
                             Code = "EXEC_TOURNAMENT",
                             Label = "Executer un tournoi"
+                        },
+                        new
+                        {
+                            Code = "ELIM_PLAYER",
+                            Label = "Eliminer un joueur"
+                        },
+                        new
+                        {
+                            Code = "EDIT_BN_TNMT_EARN",
+                            Label = "Editer le bonus d'un joueur"
+                        },
+                        new
+                        {
+                            Code = "EDIT_TOTAL_ADDON",
+                            Label = "Editer l'add-on d'un joueur"
+                        },
+                        new
+                        {
+                            Code = "EDIT_PLAYER_PRESENCE",
+                            Label = "Editer le statut présence du joueur"
+                        },
+                        new
+                        {
+                            Code = "CANCEL_TOURNAMENT_IN_PROGRESS",
+                            Label = "Annuler un tournoi en cours"
+                        },
+                        new
+                        {
+                            Code = "EDIT_TOURNAMENT_IN_PROGRESS",
+                            Label = "Editer un tournoi en cours"
                         });
                 });
 
@@ -176,7 +250,70 @@ namespace WSOA.Server.Migrations
                             Id = 1,
                             BusinessActionCode = "EXEC_TOURNAMENT",
                             ProfileCode = "ORGA"
+                        },
+                        new
+                        {
+                            Id = 2,
+                            BusinessActionCode = "ELIM_PLAYER",
+                            ProfileCode = "ORGA"
+                        },
+                        new
+                        {
+                            Id = 3,
+                            BusinessActionCode = "EDIT_BN_TNMT_EARN",
+                            ProfileCode = "ORGA"
+                        },
+                        new
+                        {
+                            Id = 4,
+                            BusinessActionCode = "EDIT_TOTAL_ADDON",
+                            ProfileCode = "ORGA"
+                        },
+                        new
+                        {
+                            Id = 5,
+                            BusinessActionCode = "EDIT_PLAYER_PRESENCE",
+                            ProfileCode = "ORGA"
+                        },
+                        new
+                        {
+                            Id = 6,
+                            BusinessActionCode = "CANCEL_TOURNAMENT_IN_PROGRESS",
+                            ProfileCode = "ORGA"
+                        },
+                        new
+                        {
+                            Id = 7,
+                            BusinessActionCode = "EDIT_TOURNAMENT_IN_PROGRESS",
+                            ProfileCode = "ORGA"
                         });
+                });
+
+            modelBuilder.Entity("WSOA.Shared.Entity.Elimination", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    b.Property<DateTime>("CreationDate")
+                        .HasColumnType("datetime(6)");
+
+                    b.Property<bool>("IsDefinitive")
+                        .HasColumnType("tinyint(1)");
+
+                    b.Property<int>("PlayerEliminatorId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("PlayerVictimId")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("PlayerEliminatorId");
+
+                    b.HasIndex("PlayerVictimId");
+
+                    b.ToTable("Eliminations");
                 });
 
             modelBuilder.Entity("WSOA.Shared.Entity.LinkAccountCreation", b =>
@@ -336,6 +473,15 @@ namespace WSOA.Server.Migrations
                             MainNavSectionId = 3,
                             Order = 2,
                             Url = "/tournament/execute"
+                        },
+                        new
+                        {
+                            Id = 6,
+                            Description = "Tournoi en cours",
+                            Label = "Tournoi en cours",
+                            MainNavSectionId = 3,
+                            Order = 3,
+                            Url = "/tournament/inProgress"
                         });
                 });
 
@@ -426,6 +572,12 @@ namespace WSOA.Server.Migrations
                             Id = 11,
                             MainNavSubSectionId = 5,
                             ProfileCode = "ORGA"
+                        },
+                        new
+                        {
+                            Id = 12,
+                            MainNavSubSectionId = 6,
+                            ProfileCode = "ORGA"
                         });
                 });
 
@@ -436,9 +588,6 @@ namespace WSOA.Server.Migrations
                         .HasColumnType("int");
 
                     b.Property<int?>("CurrentTournamentPosition")
-                        .HasColumnType("int");
-
-                    b.Property<int?>("EliminatorPlayerId")
                         .HasColumnType("int");
 
                     b.Property<int>("PlayedTournamentId")
@@ -463,12 +612,13 @@ namespace WSOA.Server.Migrations
                     b.Property<int>("UserId")
                         .HasColumnType("int");
 
-                    b.Property<bool>("WasFinalTable")
+                    b.Property<bool?>("WasAddOn")
+                        .HasColumnType("tinyint(1)");
+
+                    b.Property<bool?>("WasFinalTable")
                         .HasColumnType("tinyint(1)");
 
                     b.HasKey("Id");
-
-                    b.HasIndex("EliminatorPlayerId");
 
                     b.HasIndex("PlayedTournamentId");
 
@@ -679,6 +829,25 @@ namespace WSOA.Server.Migrations
                     b.Navigation("Profile");
                 });
 
+            modelBuilder.Entity("WSOA.Shared.Entity.Elimination", b =>
+                {
+                    b.HasOne("WSOA.Shared.Entity.Player", "PlayerEliminator")
+                        .WithMany()
+                        .HasForeignKey("PlayerEliminatorId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("WSOA.Shared.Entity.Player", "PlayerVictim")
+                        .WithMany()
+                        .HasForeignKey("PlayerVictimId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("PlayerEliminator");
+
+                    b.Navigation("PlayerVictim");
+                });
+
             modelBuilder.Entity("WSOA.Shared.Entity.MainNavSubSection", b =>
                 {
                     b.HasOne("WSOA.Shared.Entity.MainNavSection", "MainNavSection")
@@ -711,10 +880,6 @@ namespace WSOA.Server.Migrations
 
             modelBuilder.Entity("WSOA.Shared.Entity.Player", b =>
                 {
-                    b.HasOne("WSOA.Shared.Entity.Player", "EliminatorPlayer")
-                        .WithMany()
-                        .HasForeignKey("EliminatorPlayerId");
-
                     b.HasOne("WSOA.Shared.Entity.Tournament", "PlayedTournament")
                         .WithMany()
                         .HasForeignKey("PlayedTournamentId")
@@ -732,8 +897,6 @@ namespace WSOA.Server.Migrations
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
-
-                    b.Navigation("EliminatorPlayer");
 
                     b.Navigation("PlayedTournament");
 

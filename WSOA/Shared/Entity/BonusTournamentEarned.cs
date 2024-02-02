@@ -21,5 +21,8 @@ namespace WSOA.Shared.Entity
 
         [Required]
         public int PointAmount { get; set; }
+
+        [Required]
+        public int Occurrence { get; set; }
     }
 }

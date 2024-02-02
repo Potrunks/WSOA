@@ -1,4 +1,6 @@
 ﻿using WSOA.Shared.Dtos;
+using WSOA.Shared.Entity;
+using WSOA.Shared.Resources;
 using WSOA.Shared.Result;
 using WSOA.Shared.ViewModel;
 
@@ -34,6 +36,66 @@ namespace WSOA.Server.Business.Interface
         /// <summary>
         /// Save the tournament prepared and declare it as in progress.
         /// </summary>
-        APICallResultBase PlayTournamentPrepared(TournamentPreparedDto tournamentPrepared, ISession session);
+        APICallResultBase SaveTournamentPrepared(TournamentPreparedDto tournamentPrepared, ISession session);
+
+        /// <summary>
+        /// Load tournament in progress.
+        /// </summary>
+        APICallResult<TournamentInProgressDto> LoadTournamentInProgress(int subSectionId, ISession session);
+
+        /// <summary>
+        /// Eliminate player definitively if player dont take rebuy.
+        /// </summary>
+        APICallResult<EliminationCreationResultDto> EliminatePlayer(EliminationCreationDto eliminationDto, ISession session);
+
+        /// <summary>
+        /// Save bonus tournament earned by the player.
+        /// </summary>
+        APICallResult<BonusTournamentEarnedEditResultDto> SaveBonusTournamentEarned(BonusTournamentEarnedEditDto bonusEarnedDto, ISession session);
+
+        /// <summary>
+        /// Delete bonus tournament earned by the player.
+        /// </summary>
+        APICallResult<BonusTournamentEarnedEditResultDto> DeleteBonusTournamentEarned(BonusTournamentEarnedEditDto bonusTournamentEarnedEditDto, ISession session);
+
+        /// <summary>
+        /// Cancel the last elimination of a player victim id.
+        /// </summary>
+        APICallResult<CancelEliminationResultDto> CancelLastPlayerElimination(EliminationEditionDto eliminationEditionDto, ISession session);
+
+        /// <summary>
+        /// Allow to edit the value of total addon of a player.
+        /// </summary>
+        APICallResult<Player> EditPlayerTotalAddon(int playerId, int addonNb, ISession session);
+
+        /// <summary>
+        /// Remove a player that never come really in the tournament.
+        /// </summary>
+        APICallResultBase RemovePlayerNeverComeIntoTournamentInProgress(int playerId, ISession session);
+
+        /// <summary>
+        /// Cancel the tournament in progress
+        /// </summary>
+        APICallResultBase CancelTournamentInProgress(int tournamentInProgressId, ISession session);
+
+        /// <summary>
+        /// Add new players into selected tournament in progress.
+        /// </summary>
+        APICallResult<IEnumerable<PlayerPlayingDto>> AddPlayersIntoTournamentInProgress(IEnumerable<int> usrIds, int tournamentId, ISession session);
+
+        /// <summary>
+        /// Load users can be add into tournament in progress.
+        /// </summary>
+        APICallResult<PlayerSelectionViewModel> LoadPlayersForPlayingTournamentInProgress(int tournamentId, ISession session);
+
+        /// <summary>
+        /// Go to next step for tournament in progress.
+        /// </summary>
+        APICallResult<TournamentStepEnum> GoToTournamentInProgressNextStep(int tournamentId, ISession session);
+
+        /// <summary>
+        /// Go to previous step for tournament in progress.
+        /// </summary>
+        APICallResult<TournamentStepEnum> GoToTournamentInProgressPreviousStep(int tournamentId, ISession session);
     }
 }

@@ -28,8 +28,7 @@
 
     .c-selectPlayers__container-player img,
     .c-selectPlayers__panelButtons-addPlayer img,
-    .c-selectPlayer__icon-blank,
-    .c-selectPlayers__checkbox-addPlayer {
+    .c-selectPlayer__icon-blank {
         width: 35px;
     }
 
@@ -38,9 +37,7 @@
 }
 
 .c-selectPlayers__title,
-.c-selectPlayers__panelButtons,
-.c-selectPlayers__popup-panelButtons,
-.c-selectPlayers__popup-title {
+.c-selectPlayers__panelButtons {
     width: 100%;
     height: 10%;
 }
@@ -69,69 +66,6 @@
     text-decoration-thickness: 2px;
 }
 
-.c-selectPlayers__popup-addPlayers,
-.c-selectPlayers__popup-paymentMissing {
-    position: absolute;
-    z-index: 99;
-    height: 112%;
-    width: 100%;
-}
-
-.c-selectPlayers__popup-emptyZone {
-    height: 100%;
-    width: 100%;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-}
-
-.c-selectPlayers__popup-containerZone {
-    height: 57%;
-    width: 75%;
-    display: flex;
-    flex-direction: column;
-    justify-content: start;
-    align-items: center;
-    background: #EDE8DF;
-    box-shadow: 12px 12px 2px 1px rgba(0, 0, 0, 0.15);
-    border-radius: 10px;
-}
-
-.c-selectPlayers__popup-title {
-    font-size: 20px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    text-decoration: underline;
-    text-underline-offset: 7px;
-    text-decoration-color: red;
-    text-decoration-thickness: 2px;
-}
-
-.c-selectPlayers__popup-availablePlayers,
-.c-selectPlayers__popup-playersDontPaid {
-    height: 80%;
-    width: 100%;
-    overflow: auto;
-}
-
-.c-selectPlayers__popup-availablePlayer {
-    display: grid;
-    width: 100%;
-    grid-template-columns: repeat(20, 1fr);
-    height: 12%;
-}
-
-.c-selectPlayers__checkbox-addPlayer {
-    grid-column: 3;
-    opacity: 0.2;
-    align-self: center;
-}
-
-.checked {
-    opacity: 1;
-}
-
 .c-selectPlayers__label-playerFullName {
     grid-column: 5 / 19;
     text-wrap: nowrap;
@@ -144,124 +78,23 @@
     text-align: center;
 }
 
-.flood {
-    opacity: 0.5;
-}
-
 .c-selectPlayers__label {
     font-size: 20px;
 }
 
-.c-selectPlayers__popup-panelButtons {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding: 5px;
-    height: 12%;
-}
-
-    .c-selectPlayers__popup-panelButtons ::deep .mainButton {
-        width: 49%;
-        height: 100%;
-        font-size: 20px;
-    }
-
-.c-selectPlayers__popup-availablePlayers,
-.c-selectPlayers__popup-playersDontPaid {
-    height: 78%;
-}
-
-@media only screen and (min-width: 768px) {
+@media only screen and (min-width: 390px) {
     .c-selectPlayers__container-player img,
     .c-selectPlayers__panelButtons-addPlayer img,
-    .c-selectPlayer__icon-blank,
-    .c-selectPlayers__checkbox-addPlayer {
-        width: 50px;
+    .c-selectPlayer__icon-blank {
+        width: 40px;
+        margin-right: 10px;
+        margin-left: 10px;
     }
 
     .c-selectPlayers__title,
     .c-selectPlayers__label-playerFullName,
     .c-selectPlayers__label,
-    .c-selectPlayers__panelButtons ::deep .mainButton,
-    .c-selectPlayers__popup-title,
-    .c-selectPlayers__popup-panelButtons ::deep .mainButton {
-        font-size: 30px;
-    }
-}
-
-@media only screen and (min-width: 820px) {
-    .c-selectPlayers__container-player img,
-    .c-selectPlayers__panelButtons-addPlayer img,
-    .c-selectPlayer__icon-blank,
-    .c-selectPlayers__checkbox-addPlayer {
-        width: 70px;
-    }
-
-    .c-selectPlayers__title,
-    .c-selectPlayers__label-playerFullName,
-    .c-selectPlayers__label,
-    .c-selectPlayers__panelButtons ::deep .mainButton,
-    .c-selectPlayers__popup-title,
-    .c-selectPlayers__popup-panelButtons ::deep .mainButton {
-        font-size: 40px;
-    }
-}
-
-@media only screen and (min-width: 1024px) and (min-height: 600px) {
-    .c-selectPlayers__title {
-        padding: 10px 0 0 10px;
-    }
-
-    .c-selectPlayers__container-sub {
-        height: 85%;
-    }
-
-    .c-selectPlayers__container-player img,
-    .c-selectPlayers__panelButtons-addPlayer img,
-    .c-selectPlayer__icon-blank,
-    .c-selectPlayers__checkbox-addPlayer {
-        width: 60px;
-    }
-
-    .c-selectPlayers__title,
-    .c-selectPlayers__label-playerFullName,
-    .c-selectPlayers__label,
-    .c-selectPlayers__panelButtons ::deep .mainButton,
-    .c-selectPlayers__popup-title,
-    .c-selectPlayers__popup-panelButtons ::deep .mainButton {
-        font-size: 40px;
-    }
-
-    .c-selectPlayers__panelButtons {
-        height: 15%;
-    }
-
-    .c-selectPlayers__container-player {
-        height: 25%;
-    }
-
-    .c-selectPlayers__container-player,
-    .c-selectPlayers__panelButtons-addPlayer {
-        padding: 0 20px 0 20px;
-    }
-
-    .c-selectPlayers__popup-panelButtons {
-        height: 20%;
-    }
-
-    .c-selectPlayers__popup-title {
-        height: 15%;
-    }
-
-    .c-selectPlayers__popup-availablePlayers {
-        height: 65%;
-    }
-
-    .c-selectPlayers__popup-availablePlayer {
-        height: 25%;
-    }
-
-    .c-selectPlayers__popup-playersDontPaid {
-        height: 65%;
+    .c-selectPlayers__panelButtons ::deep .mainButton {
+        font-size: 25px;
     }
 }
