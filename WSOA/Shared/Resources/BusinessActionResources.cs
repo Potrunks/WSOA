@@ -9,5 +9,6 @@
         public const string EDIT_PLAYER_PRESENCE = "EDIT_PLAYER_PRESENCE";
         public const string CANCEL_TOURNAMENT_IN_PROGRESS = "CANCEL_TOURNAMENT_IN_PROGRESS";
         public const string EDIT_TOURNAMENT_IN_PROGRESS = "EDIT_TOURNAMENT_IN_PROGRESS";
+        public const string EDIT_PLAYABLE_TOURNAMENT = "EDIT_PLAYABLE_TOURNAMENT";
     }
 }

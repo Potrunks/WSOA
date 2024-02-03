@@ -97,5 +97,10 @@ namespace WSOA.Server.Business.Interface
         /// Go to previous step for tournament in progress.
         /// </summary>
         APICallResult<TournamentStepEnum> GoToTournamentInProgressPreviousStep(int tournamentId, ISession session);
+
+        /// <summary>
+        /// Delete selected playable tournament.
+        /// </summary>
+        APICallResultBase DeletePlayableTournament(int tournamentIdToDelete, ISession session);
     }
 }

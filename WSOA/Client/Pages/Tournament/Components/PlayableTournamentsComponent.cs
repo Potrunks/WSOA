@@ -28,5 +28,10 @@ namespace WSOA.Client.Pages.Tournament.Components
 
             IsLoading = false;
         }
+
+        public EventCallback<int> DeleteTournamentSelectedIntoViewModel => EventCallback.Factory.Create(this, (int tournamentDeletedId) =>
+        {
+            ViewModel.TournamentsVM = ViewModel.TournamentsVM.Where(tou => tou.TournamentId != tournamentDeletedId).ToList();
+        });
     }
 }

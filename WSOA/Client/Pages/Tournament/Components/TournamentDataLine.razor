@@ -97,7 +97,7 @@
                 case TournamentActionMode.PLAY:
                     <MainButton IsPrimary="true" Label="Lancer" Type="button" OnClick="SelectPlayers" />
                     <MainButton Label="Modifier" Type="button" />
-                    <MainButton Label="Supprimer" Type="button" />
+                    <MainButton Label="Supprimer" Type="button" OnClick="@(() => DeletePlayableTournament.InvokeAsync())" />
                     break;
                 default:
                     <span>Erreur : Mode non implementé. Contactez un administrateur</span>

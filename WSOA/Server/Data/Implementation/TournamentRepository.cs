@@ -174,5 +174,11 @@ namespace WSOA.Server.Data.Implementation
                 )
                 .Single();
         }
+
+        public void DeleteTournaments(IEnumerable<Tournament> tournamentsToDelete)
+        {
+            _dbContext.Tournaments.RemoveRange(tournamentsToDelete);
+            _dbContext.SaveChanges();
+        }
     }
 }

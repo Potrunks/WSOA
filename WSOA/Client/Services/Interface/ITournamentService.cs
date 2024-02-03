@@ -97,5 +97,10 @@ namespace WSOA.Client.Services.Interface
         /// Go to previous step for tournament in progress.
         /// </summary>
         Task<APICallResult<TournamentStepEnum>> GoToTournamentInProgressPreviousStep(int tournamentId);
+
+        /// <summary>
+        /// Delete playable tournament by selected ID.
+        /// </summary>
+        Task<APICallResultBase> DeletePlayableTournament(int tournamentToDeleteId);
     }
 }
