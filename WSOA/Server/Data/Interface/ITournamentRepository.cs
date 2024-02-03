@@ -59,5 +59,10 @@ namespace WSOA.Server.Data.Interface
         /// Get all data to cancel a tournament.
         /// </summary>
         TournamentToCancelDto GetTournamentToCancelDtoByTournamentId(int tournamentToCancelId);
+
+        /// <summary>
+        /// Delete tournament list selected.
+        /// </summary>
+        void DeleteTournaments(IEnumerable<Tournament> tournamentsToDelete);
     }
 }

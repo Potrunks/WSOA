@@ -24,6 +24,9 @@ namespace WSOA.Client.Pages.Tournament.Components
         [EditorRequired]
         public TournamentActionMode Mode { get; set; }
 
+        [Parameter]
+        public EventCallback<int> OnDeletePlayableTournament { get; set; }
+
         public IEnumerable<PlayerViewModel> PresencePlayers { get; set; }
 
         public IEnumerable<PlayerViewModel> MaybePlayers { get; set; }
@@ -112,5 +115,21 @@ namespace WSOA.Client.Pages.Tournament.Components
         {
             NavigationManager.NavigateTo($"/tournament/select/players/{Data.TournamentId}");
         }
+
+        public EventCallback DeletePlayableTournament => EventCallback.Factory.Create(this, async () =>
+        {
+            APICallResultBase result = await TournamentService.DeletePlayableTournament(Data.TournamentId);
+
+            if (!result.Success)
+            {
+                string redirectUrl = !string.IsNullOrEmpty(result.RedirectUrl) ?
+                                     result.RedirectUrl :
+                                     string.Format("/main/error/{0}", "Une erreur est survenue pendant la suppression du tournoi. Contactez un administrateur");
+                NavigationManager.NavigateTo(redirectUrl);
+                return;
+            }
+
+            await OnDeletePlayableTournament.InvokeAsync(Data.TournamentId);
+        });
     }
 }

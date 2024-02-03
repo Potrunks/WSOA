@@ -1199,5 +1199,50 @@ namespace WSOA.Server.Business.Implementation
 
             return TournamentStepEnum.NORMAL;
         }
+
+        public APICallResultBase DeletePlayableTournament(int tournamentIdToDelete, ISession session)
+        {
+            APICallResultBase result = new APICallResultBase(false);
+
+            try
+            {
+                _transactionManager.BeginTransaction();
+
+                session.CanUserPerformAction(_userRepository, BusinessActionResources.EDIT_PLAYABLE_TOURNAMENT);
+
+                TournamentDto tournamentToDeleteDto = _tournamentRepository.GetTournamentDtoById(tournamentIdToDelete);
+
+                if (tournamentToDeleteDto.Tournament.IsInProgress || tournamentToDeleteDto.Tournament.IsOver)
+                {
+                    string errorMsg = "Le tournoi ne peut pas être supprimer car il est soit en cours soit déjà fini.";
+                    throw new FunctionalException(errorMsg, string.Format(RouteBusinessResources.MAIN_ERROR, errorMsg));
+                }
+
+                _playerRepository.DeletePlayers(tournamentToDeleteDto.Players.Select(pla => pla.Player));
+                _tournamentRepository.DeleteTournaments(new List<Tournament> { tournamentToDeleteDto.Tournament });
+
+                _transactionManager.CommitTransaction();
+
+                result.Success = true;
+            }
+            catch (FunctionalException e)
+            {
+                _transactionManager.RollbackTransaction();
+                string errorMsg = e.Message;
+                _log.Error(errorMsg);
+                result.ErrorMessage = errorMsg;
+                result.RedirectUrl = e.RedirectUrl;
+            }
+            catch (Exception e)
+            {
+                _transactionManager.RollbackTransaction();
+                string errorMsg = MainBusinessResources.TECHNICAL_ERROR;
+                _log.Error(e.Message);
+                result.ErrorMessage = errorMsg;
+                result.RedirectUrl = string.Format(RouteBusinessResources.MAIN_ERROR, errorMsg);
+            }
+
+            return result;
+        }
     }
 }

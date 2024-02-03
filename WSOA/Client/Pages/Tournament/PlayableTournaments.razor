@@ -21,7 +21,8 @@ else
                     @foreach (TournamentViewModel model in ViewModel.TournamentsVM)
                     {
                         <TournamentDataLine Data="model"
-                                Mode="TournamentActionMode.PLAY" />
+                                Mode="TournamentActionMode.PLAY"
+                                OnDeletePlayableTournament="DeleteTournamentSelectedIntoViewModel"/>
                     }
                 </CascadingValue>
             </CascadingValue>

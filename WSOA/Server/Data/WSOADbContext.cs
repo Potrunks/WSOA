@@ -337,6 +337,11 @@ namespace WSOA.Server.Data
                 {
                     Code = BusinessActionResources.EDIT_TOURNAMENT_IN_PROGRESS,
                     Label = "Editer un tournoi en cours"
+                },
+                new BusinessAction
+                {
+                    Code = BusinessActionResources.EDIT_PLAYABLE_TOURNAMENT,
+                    Label = "Editer un tournoi jouable"
                 }
             );
 
@@ -383,6 +388,12 @@ namespace WSOA.Server.Data
                     Id = 7,
                     ProfileCode = "ORGA",
                     BusinessActionCode = BusinessActionResources.EDIT_TOURNAMENT_IN_PROGRESS
+                },
+                new BusinessActionByProfileCode
+                {
+                    Id = 8,
+                    ProfileCode = "ORGA",
+                    BusinessActionCode = BusinessActionResources.EDIT_PLAYABLE_TOURNAMENT
                 }
             );
 

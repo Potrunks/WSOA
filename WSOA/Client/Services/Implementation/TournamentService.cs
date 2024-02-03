@@ -125,5 +125,11 @@ namespace WSOA.Client.Services.Implementation
             HttpResponseMessage response = await _httpClient.GetAsync(string.Format("api/tournament/inProgress/{0}/previousStep", tournamentId));
             return response.Content.ToObject<APICallResult<TournamentStepEnum>>();
         }
+
+        public async Task<APICallResultBase> DeletePlayableTournament(int tournamentToDeleteId)
+        {
+            HttpResponseMessage response = await _httpClient.GetAsync(string.Format("api/tournament/playable/{0}/delete", tournamentToDeleteId));
+            return response.Content.ToObject<APICallResultBase>();
+        }
     }
 }

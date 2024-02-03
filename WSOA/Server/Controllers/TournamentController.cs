@@ -200,5 +200,15 @@ namespace WSOA.Server.Controllers
         {
             return _tournamentBusiness.GoToTournamentInProgressPreviousStep(tournamentId, HttpContext.Session);
         }
+
+        /// <summary>
+        /// Delete playable tournament selected.
+        /// </summary>
+        [HttpGet]
+        [Route("api/tournament/playable/{tournamentIdToDelete}/delete")]
+        public APICallResultBase DeletePlayableTournament(int tournamentIdToDelete)
+        {
+            return _tournamentBusiness.DeletePlayableTournament(tournamentIdToDelete, HttpContext.Session);
+        }
     }
 }
