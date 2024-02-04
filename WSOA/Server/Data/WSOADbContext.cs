@@ -149,6 +149,16 @@ namespace WSOA.Server.Data
                     Description = "Tournoi en cours",
                     Order = 3,
                     Url = "/tournament/inProgress"
+                },
+                // HOME MAIN NAV SECTION
+                new MainNavSubSection
+                {
+                    Id = 7,
+                    Label = "Saison en cours",
+                    MainNavSectionId = 1,
+                    Description = "Résultats de la saison en cours",
+                    Order = 0,
+                    Url = "/home"
                 }
             );
 
@@ -231,6 +241,31 @@ namespace WSOA.Server.Data
                     Id = 12,
                     MainNavSubSectionId = 6,
                     ProfileCode = "ORGA"
+                },
+                // SEASON IN PROGRESS
+                new MainNavSubSectionByProfileCode
+                {
+                    Id = 13,
+                    MainNavSubSectionId = 7,
+                    ProfileCode = "ADMIN"
+                },
+                new MainNavSubSectionByProfileCode
+                {
+                    Id = 14,
+                    MainNavSubSectionId = 7,
+                    ProfileCode = "ORGA"
+                },
+                new MainNavSubSectionByProfileCode
+                {
+                    Id = 15,
+                    MainNavSubSectionId = 7,
+                    ProfileCode = "PLAYER"
+                },
+                new MainNavSubSectionByProfileCode
+                {
+                    Id = 16,
+                    MainNavSubSectionId = 7,
+                    ProfileCode = "GUEST"
                 }
             );
 
@@ -342,6 +377,11 @@ namespace WSOA.Server.Data
                 {
                     Code = BusinessActionResources.EDIT_PLAYABLE_TOURNAMENT,
                     Label = "Editer un tournoi jouable"
+                },
+                new BusinessAction
+                {
+                    Code = BusinessActionResources.COMMON_DASHBOARD,
+                    Label = "Dashboard commun"
                 }
             );
 
@@ -394,6 +434,30 @@ namespace WSOA.Server.Data
                     Id = 8,
                     ProfileCode = "ORGA",
                     BusinessActionCode = BusinessActionResources.EDIT_PLAYABLE_TOURNAMENT
+                },
+                new BusinessActionByProfileCode
+                {
+                    Id = 9,
+                    ProfileCode = "ORGA",
+                    BusinessActionCode = BusinessActionResources.COMMON_DASHBOARD
+                },
+                new BusinessActionByProfileCode
+                {
+                    Id = 10,
+                    ProfileCode = "ADMIN",
+                    BusinessActionCode = BusinessActionResources.COMMON_DASHBOARD
+                },
+                new BusinessActionByProfileCode
+                {
+                    Id = 11,
+                    ProfileCode = "PLAYER",
+                    BusinessActionCode = BusinessActionResources.COMMON_DASHBOARD
+                },
+                new BusinessActionByProfileCode
+                {
+                    Id = 12,
+                    ProfileCode = "GUEST",
+                    BusinessActionCode = BusinessActionResources.COMMON_DASHBOARD
                 }
             );
 

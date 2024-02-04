@@ -2,6 +2,7 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using WSOA.Server.Data;
 
@@ -10,9 +11,11 @@ using WSOA.Server.Data;
 namespace WSOA.Server.Migrations
 {
     [DbContext(typeof(WSOADbContext))]
-    partial class WSOADbContextModelSnapshot : ModelSnapshot
+    [Migration("20240203230320_Add_New_Business_Action_Dashboard")]
+    partial class Add_New_Business_Action_Dashboard
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -522,15 +525,6 @@ namespace WSOA.Server.Migrations
                             MainNavSectionId = 3,
                             Order = 3,
                             Url = "/tournament/inProgress"
-                        },
-                        new
-                        {
-                            Id = 7,
-                            Description = "Résultats de la saison en cours",
-                            Label = "Saison en cours",
-                            MainNavSectionId = 1,
-                            Order = 0,
-                            Url = "/home"
                         });
                 });
 
@@ -627,30 +621,6 @@ namespace WSOA.Server.Migrations
                             Id = 12,
                             MainNavSubSectionId = 6,
                             ProfileCode = "ORGA"
-                        },
-                        new
-                        {
-                            Id = 13,
-                            MainNavSubSectionId = 7,
-                            ProfileCode = "ADMIN"
-                        },
-                        new
-                        {
-                            Id = 14,
-                            MainNavSubSectionId = 7,
-                            ProfileCode = "ORGA"
-                        },
-                        new
-                        {
-                            Id = 15,
-                            MainNavSubSectionId = 7,
-                            ProfileCode = "PLAYER"
-                        },
-                        new
-                        {
-                            Id = 16,
-                            MainNavSubSectionId = 7,
-                            ProfileCode = "GUEST"
                         });
                 });
 

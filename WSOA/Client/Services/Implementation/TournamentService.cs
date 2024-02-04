@@ -131,5 +131,11 @@ namespace WSOA.Client.Services.Implementation
             HttpResponseMessage response = await _httpClient.GetAsync(string.Format("api/tournament/playable/{0}/delete", tournamentToDeleteId));
             return response.Content.ToObject<APICallResultBase>();
         }
+
+        public async Task<APICallResult<SeasonResultViewModel>> LoadSeasonResult(int seasonSelected)
+        {
+            HttpResponseMessage response = await _httpClient.GetAsync(string.Format("api/season/{0}/result", seasonSelected));
+            return response.Content.ToObject<APICallResult<SeasonResultViewModel>>();
+        }
     }
 }

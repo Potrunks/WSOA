@@ -102,5 +102,10 @@ namespace WSOA.Client.Services.Interface
         /// Delete playable tournament by selected ID.
         /// </summary>
         Task<APICallResultBase> DeletePlayableTournament(int tournamentToDeleteId);
+
+        /// <summary>
+        /// Load season result by selected season.
+        /// </summary>
+        Task<APICallResult<SeasonResultViewModel>> LoadSeasonResult(int seasonSelected);
     }
 }

@@ -1,6 +1,7 @@
 ﻿using WSOA.Server.Data.Interface;
 using WSOA.Shared.Dtos;
 using WSOA.Shared.Entity;
+using WSOA.Shared.Resources;
 
 namespace WSOA.Server.Data.Implementation
 {
@@ -179,6 +180,29 @@ namespace WSOA.Server.Data.Implementation
         {
             _dbContext.Tournaments.RemoveRange(tournamentsToDelete);
             _dbContext.SaveChanges();
+        }
+
+        public IQueryable<SeasonResultDto> GetSeasonResultDto(string season)
+        {
+            return (
+                    from tou in _dbContext.Tournaments
+                    join pla in _dbContext.Players on tou.Id equals pla.PlayedTournamentId
+                    join usr in _dbContext.Users on pla.UserId equals usr.Id
+                    join eli in _dbContext.Eliminations on pla.Id equals eli.PlayerEliminatorId into left_eli
+                    from eli in left_eli.DefaultIfEmpty()
+                    where
+                        tou.IsOver
+                        && tou.Season == season
+                        && pla.PresenceStateCode == PresenceStateResources.PRESENT_CODE
+                    group new { pla, eli, tou, usr } by tou.Season into grouped
+                    select new SeasonResultDto
+                    {
+                        Eliminations = grouped.Select(gr => gr.eli).Where(eli => eli != null).Distinct(),
+                        Players = grouped.Select(gr => gr.pla).Where(pla => pla != null).Distinct(),
+                        Tournaments = grouped.Select(gr => gr.tou).Where(tou => tou != null).Distinct(),
+                        Users = grouped.Select(gr => gr.usr).Where(usr => usr != null).Distinct()
+                    }
+                );
         }
     }
 }
