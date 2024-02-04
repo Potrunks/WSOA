@@ -1244,5 +1244,39 @@ namespace WSOA.Server.Business.Implementation
 
             return result;
         }
+
+        public APICallResult<SeasonResultViewModel> LoadSeasonResult(int season, ISession session)
+        {
+            APICallResult<SeasonResultViewModel> result = new APICallResult<SeasonResultViewModel>(false);
+
+            try
+            {
+                result.Data = new SeasonResultViewModel(season);
+
+                session.CanUserPerformAction(_userRepository, BusinessActionResources.COMMON_DASHBOARD);
+
+                SeasonResultDto? seasonResultDto = _tournamentRepository.GetSeasonResultDto(season.ToString()).SingleOrDefault();
+
+                result.Data = seasonResultDto != null ? new SeasonResultViewModel(seasonResultDto) : result.Data;
+
+                result.Success = true;
+            }
+            catch (FunctionalException e)
+            {
+                string errorMsg = e.Message;
+                _log.Error(errorMsg);
+                result.ErrorMessage = errorMsg;
+                result.RedirectUrl = e.RedirectUrl;
+            }
+            catch (Exception e)
+            {
+                string errorMsg = MainBusinessResources.TECHNICAL_ERROR;
+                _log.Error(e.Message);
+                result.ErrorMessage = errorMsg;
+                result.RedirectUrl = string.Format(RouteBusinessResources.MAIN_ERROR, errorMsg);
+            }
+
+            return result;
+        }
     }
 }

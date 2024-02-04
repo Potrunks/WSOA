@@ -10,5 +10,6 @@
         public const string CANCEL_TOURNAMENT_IN_PROGRESS = "CANCEL_TOURNAMENT_IN_PROGRESS";
         public const string EDIT_TOURNAMENT_IN_PROGRESS = "EDIT_TOURNAMENT_IN_PROGRESS";
         public const string EDIT_PLAYABLE_TOURNAMENT = "EDIT_PLAYABLE_TOURNAMENT";
+        public const string COMMON_DASHBOARD = "COMMON_DASHBOARD";
     }
 }

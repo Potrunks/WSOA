@@ -2,6 +2,7 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using WSOA.Server.Data;
 
@@ -10,9 +11,11 @@ using WSOA.Server.Data;
 namespace WSOA.Server.Migrations
 {
     [DbContext(typeof(WSOADbContext))]
-    partial class WSOADbContextModelSnapshot : ModelSnapshot
+    [Migration("20240204002641_Add_Sub_Section_Season_In_Progress")]
+    partial class Add_Sub_Section_Season_In_Progress
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -627,30 +630,6 @@ namespace WSOA.Server.Migrations
                             Id = 12,
                             MainNavSubSectionId = 6,
                             ProfileCode = "ORGA"
-                        },
-                        new
-                        {
-                            Id = 13,
-                            MainNavSubSectionId = 7,
-                            ProfileCode = "ADMIN"
-                        },
-                        new
-                        {
-                            Id = 14,
-                            MainNavSubSectionId = 7,
-                            ProfileCode = "ORGA"
-                        },
-                        new
-                        {
-                            Id = 15,
-                            MainNavSubSectionId = 7,
-                            ProfileCode = "PLAYER"
-                        },
-                        new
-                        {
-                            Id = 16,
-                            MainNavSubSectionId = 7,
-                            ProfileCode = "GUEST"
                         });
                 });
 

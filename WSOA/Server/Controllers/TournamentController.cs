@@ -210,5 +210,15 @@ namespace WSOA.Server.Controllers
         {
             return _tournamentBusiness.DeletePlayableTournament(tournamentIdToDelete, HttpContext.Session);
         }
+
+        /// <summary>
+        /// Load season result by season selected.
+        /// </summary>
+        [HttpGet]
+        [Route("api/season/{season}/result")]
+        public APICallResult<SeasonResultViewModel> LoadSeasonResult(int season)
+        {
+            return _tournamentBusiness.LoadSeasonResult(season, HttpContext.Session);
+        }
     }
 }
