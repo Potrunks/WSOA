@@ -68,6 +68,6 @@ namespace WSOA.Server.Data.Interface
         /// <summary>
         /// Get the season result by season selected.
         /// </summary>
-        IQueryable<SeasonResultDto> GetSeasonResultDto(string season);
+        SeasonResultDto? GetSeasonResultDto(string season);
     }
 }

@@ -182,9 +182,9 @@ namespace WSOA.Server.Data.Implementation
             _dbContext.SaveChanges();
         }
 
-        public IQueryable<SeasonResultDto> GetSeasonResultDto(string season)
+        public SeasonResultDto? GetSeasonResultDto(string season)
         {
-            return (
+            var rawData = (
                     from tou in _dbContext.Tournaments
                     join pla in _dbContext.Players on tou.Id equals pla.PlayedTournamentId
                     join usr in _dbContext.Users on pla.UserId equals usr.Id
@@ -194,15 +194,22 @@ namespace WSOA.Server.Data.Implementation
                         tou.IsOver
                         && tou.Season == season
                         && pla.PresenceStateCode == PresenceStateResources.PRESENT_CODE
-                    group new { pla, eli, tou, usr } by tou.Season into grouped
-                    select new SeasonResultDto
-                    {
-                        Eliminations = grouped.Select(gr => gr.eli).Where(eli => eli != null).Distinct(),
-                        Players = grouped.Select(gr => gr.pla).Where(pla => pla != null).Distinct(),
-                        Tournaments = grouped.Select(gr => gr.tou).Where(tou => tou != null).Distinct(),
-                        Users = grouped.Select(gr => gr.usr).Where(usr => usr != null).Distinct()
-                    }
-                );
+                    select new { pla, eli, tou, usr }
+                )
+                .ToList();
+
+            if (rawData.Count == 0)
+            {
+                return null;
+            }
+
+            return new SeasonResultDto
+            {
+                Eliminations = rawData.Select(gr => gr.eli).Where(eli => eli != null).Distinct(),
+                Players = rawData.Select(gr => gr.pla).Where(pla => pla != null).Distinct(),
+                Tournaments = rawData.Select(gr => gr.tou).Where(tou => tou != null).Distinct(),
+                Users = rawData.Select(gr => gr.usr).Where(usr => usr != null).Distinct()
+            };
         }
     }
 }

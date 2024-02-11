@@ -1255,7 +1255,7 @@ namespace WSOA.Server.Business.Implementation
 
                 session.CanUserPerformAction(_userRepository, BusinessActionResources.COMMON_DASHBOARD);
 
-                SeasonResultDto? seasonResultDto = _tournamentRepository.GetSeasonResultDto(season.ToString()).SingleOrDefault();
+                SeasonResultDto? seasonResultDto = _tournamentRepository.GetSeasonResultDto(season.ToString());
 
                 result.Data = seasonResultDto != null ? new SeasonResultViewModel(seasonResultDto) : result.Data;
 

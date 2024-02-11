@@ -203,6 +203,12 @@ namespace WSOA.Server.Data
                     MainNavSubSectionId = 3,
                     ProfileCode = "ORGA"
                 },
+                new MainNavSubSectionByProfileCode
+                {
+                    Id = 17,
+                    MainNavSubSectionId = 3,
+                    ProfileCode = "ADMIN"
+                },
                 // FUTURS TOURNOIS
                 new MainNavSubSectionByProfileCode
                 {
@@ -235,12 +241,24 @@ namespace WSOA.Server.Data
                     MainNavSubSectionId = 5,
                     ProfileCode = "ORGA"
                 },
+                new MainNavSubSectionByProfileCode
+                {
+                    Id = 18,
+                    MainNavSubSectionId = 5,
+                    ProfileCode = "ADMIN"
+                },
                 // TOURNOI EN COURS
                 new MainNavSubSectionByProfileCode
                 {
                     Id = 12,
                     MainNavSubSectionId = 6,
                     ProfileCode = "ORGA"
+                },
+                new MainNavSubSectionByProfileCode
+                {
+                    Id = 19,
+                    MainNavSubSectionId = 6,
+                    ProfileCode = "ADMIN"
                 },
                 // SEASON IN PROGRESS
                 new MainNavSubSectionByProfileCode
@@ -276,18 +294,6 @@ namespace WSOA.Server.Data
                     Id = 1,
                     Login = "Potrunks",
                     Password = "1a753d495dab76bf6288f5b5f9736c3af6b60a5bb819f4de4bf75f79af085181"
-                },
-                new Account
-                {
-                    Id = 2,
-                    Login = "PotrunksOrga",
-                    Password = "1a753d495dab76bf6288f5b5f9736c3af6b60a5bb819f4de4bf75f79af085181"
-                },
-                new Account
-                {
-                    Id = 3,
-                    Login = "PotrunksPlayer",
-                    Password = "1a753d495dab76bf6288f5b5f9736c3af6b60a5bb819f4de4bf75f79af085181"
                 }
             );
 
@@ -301,24 +307,6 @@ namespace WSOA.Server.Data
                     Id = 1,
                     ProfileCode = "ADMIN",
                     Email = "potrunks@hotmail.com"
-                },
-                new User
-                {
-                    FirstName = "Organisateur",
-                    LastName = "ORGANISATEUR",
-                    AccountId = 2,
-                    Id = 2,
-                    ProfileCode = "ORGA",
-                    Email = "potrunks@gmail.com"
-                },
-                new User
-                {
-                    FirstName = "Player",
-                    LastName = "PLAYER",
-                    AccountId = 3,
-                    Id = 3,
-                    ProfileCode = "PLAYER",
-                    Email = "arrial.alexis@hotmail.fr"
                 }
             );
 
@@ -458,6 +446,54 @@ namespace WSOA.Server.Data
                     Id = 12,
                     ProfileCode = "GUEST",
                     BusinessActionCode = BusinessActionResources.COMMON_DASHBOARD
+                },
+                new BusinessActionByProfileCode
+                {
+                    Id = 13,
+                    ProfileCode = "ADMIN",
+                    BusinessActionCode = "EXEC_TOURNAMENT"
+                },
+                new BusinessActionByProfileCode
+                {
+                    Id = 14,
+                    ProfileCode = "ADMIN",
+                    BusinessActionCode = "ELIM_PLAYER"
+                },
+                new BusinessActionByProfileCode
+                {
+                    Id = 15,
+                    ProfileCode = "ADMIN",
+                    BusinessActionCode = BusinessActionResources.EDIT_BONUS_TOURNAMENT_EARNED
+                },
+                new BusinessActionByProfileCode
+                {
+                    Id = 16,
+                    ProfileCode = "ADMIN",
+                    BusinessActionCode = BusinessActionResources.EDIT_TOTAL_ADDON
+                },
+                new BusinessActionByProfileCode
+                {
+                    Id = 17,
+                    ProfileCode = "ADMIN",
+                    BusinessActionCode = BusinessActionResources.EDIT_PLAYER_PRESENCE
+                },
+                new BusinessActionByProfileCode
+                {
+                    Id = 18,
+                    ProfileCode = "ADMIN",
+                    BusinessActionCode = BusinessActionResources.CANCEL_TOURNAMENT_IN_PROGRESS
+                },
+                new BusinessActionByProfileCode
+                {
+                    Id = 19,
+                    ProfileCode = "ADMIN",
+                    BusinessActionCode = BusinessActionResources.EDIT_TOURNAMENT_IN_PROGRESS
+                },
+                new BusinessActionByProfileCode
+                {
+                    Id = 20,
+                    ProfileCode = "ADMIN",
+                    BusinessActionCode = BusinessActionResources.EDIT_PLAYABLE_TOURNAMENT
                 }
             );
 
