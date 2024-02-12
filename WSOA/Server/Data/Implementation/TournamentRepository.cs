@@ -127,22 +127,16 @@ namespace WSOA.Server.Data.Implementation
             return tournaments.IndexOf(tournament) + 1;
         }
 
-        public Tournament GetPreviousTournament(Tournament currentTournament)
+        public Tournament? GetPreviousTournament(Tournament currentTournament)
         {
-            List<Tournament> tournaments = new List<Tournament> { currentTournament };
-            tournaments.AddRange(_dbContext.Tournaments.Where(tou => tou.Season == currentTournament.Season && tou.IsOver));
-            List<Tournament> orderedTournaments = tournaments.OrderBy(tou => tou.StartDate).ToList();
-
-            int indexOfCurrentTournament = orderedTournaments.IndexOf(currentTournament);
-
-            if (tournaments.Count == 1)
-            {
-                return currentTournament;
-            }
-            else
-            {
-                return orderedTournaments[indexOfCurrentTournament - 1];
-            }
+            string previousSeason = (int.Parse(currentTournament.Season) - 1).ToString();
+            return _dbContext.Tournaments.Where(tou => ((currentTournament.Season == SeasonResources.OUT_OF_SEASON && currentTournament.Season == tou.Season)
+                                                         || (currentTournament.Season != SeasonResources.OUT_OF_SEASON && (tou.Season == currentTournament.Season || tou.Season == previousSeason)))
+                                                       && tou.IsOver
+                                                       && tou.Id != currentTournament.Id
+                                         )
+                                         .OrderByDescending(tou => tou.StartDate)
+                                         .FirstOrDefault();
         }
 
         public Tournament? GetLastFinishedTournamentBySeason(string season)
@@ -190,11 +184,13 @@ namespace WSOA.Server.Data.Implementation
                     join usr in _dbContext.Users on pla.UserId equals usr.Id
                     join eli in _dbContext.Eliminations on pla.Id equals eli.PlayerEliminatorId into left_eli
                     from eli in left_eli.DefaultIfEmpty()
+                    join bon in _dbContext.BonusTournamentEarneds on pla.Id equals bon.PlayerId into left_bon
+                    from bon in left_bon.DefaultIfEmpty()
                     where
                         tou.IsOver
                         && tou.Season == season
                         && pla.PresenceStateCode == PresenceStateResources.PRESENT_CODE
-                    select new { pla, eli, tou, usr }
+                    select new { pla, eli, tou, usr, bon }
                 )
                 .ToList();
 
@@ -208,7 +204,8 @@ namespace WSOA.Server.Data.Implementation
                 Eliminations = rawData.Select(gr => gr.eli).Where(eli => eli != null).Distinct(),
                 Players = rawData.Select(gr => gr.pla).Where(pla => pla != null).Distinct(),
                 Tournaments = rawData.Select(gr => gr.tou).Where(tou => tou != null).Distinct(),
-                Users = rawData.Select(gr => gr.usr).Where(usr => usr != null).Distinct()
+                Users = rawData.Select(gr => gr.usr).Where(usr => usr != null).Distinct(),
+                BonusEarneds = rawData.Select(raw => raw.bon).Where(bon => bon != null).Distinct()
             };
         }
     }

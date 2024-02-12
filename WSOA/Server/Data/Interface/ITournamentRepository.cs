@@ -48,7 +48,7 @@ namespace WSOA.Server.Data.Interface
         /// <summary>
         /// Get the previous tournament into the same season of the tournament given.
         /// </summary>
-        Tournament GetPreviousTournament(Tournament currentTournament);
+        Tournament? GetPreviousTournament(Tournament currentTournament);
 
         /// <summary>
         /// Get the last tournament over by season code given.

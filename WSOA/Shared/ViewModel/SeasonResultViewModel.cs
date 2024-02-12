@@ -10,7 +10,14 @@ namespace WSOA.Shared.ViewModel
         {
             Season = seasonResultDto.Tournaments.First().Season;
             NbTournamentPlayed = seasonResultDto.Tournaments.Count();
-            PlayerPointList = seasonResultDto.Users.Select(usr => new PlayerPointViewModel(usr, seasonResultDto.Players.Where(pla => pla.UserId == usr.Id)));
+            PlayerPointList = seasonResultDto.Users.Select(usr => new PlayerPointViewModel(
+                    usr,
+                    seasonResultDto.Players.Where(pla => pla.UserId == usr.Id),
+                    (from bon in seasonResultDto.BonusEarneds
+                     join pla in seasonResultDto.Players on bon.PlayerId equals pla.Id
+                     where pla.UserId == usr.Id
+                     select bon).ToList()
+                ));
             //PlayerProfitabilityList = seasonResultDto.Users.Select(usr => new PlayerProfitabilityViewModel
             //(
             //    usr,
