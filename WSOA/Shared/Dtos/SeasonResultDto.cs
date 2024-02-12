@@ -13,5 +13,7 @@ namespace WSOA.Shared.Dtos
         public IEnumerable<Elimination> Eliminations { get; set; }
 
         public IEnumerable<User> Users { get; set; }
+
+        public IEnumerable<BonusTournamentEarned> BonusEarneds { get; set; }
     }
 }

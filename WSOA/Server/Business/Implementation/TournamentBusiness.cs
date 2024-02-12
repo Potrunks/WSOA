@@ -439,9 +439,9 @@ namespace WSOA.Server.Business.Implementation
             User? firstRankUser = null;
 
             int tournamentNb = _tournamentRepository.GetTournamentNumber(tournament);
-            if (tournamentNb > 1)
+            Tournament? tournamentPrevious = _tournamentRepository.GetPreviousTournament(tournament);
+            if (tournamentPrevious != null)
             {
-                Tournament tournamentPrevious = _tournamentRepository.GetPreviousTournament(tournament);
                 lastWinner = _userRepository.GetUserWinnerByTournamentId(tournamentPrevious.Id);
                 firstRankUser = _userRepository.GetFirstRankUserBySeasonCode(tournament.Season);
             }

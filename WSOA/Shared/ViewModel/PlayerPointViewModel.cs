@@ -10,9 +10,9 @@ namespace WSOA.Shared.ViewModel
 
         }
 
-        public PlayerPointViewModel(User user, IEnumerable<Player> players)
+        public PlayerPointViewModel(User user, IEnumerable<Player> players, IEnumerable<BonusTournamentEarned> bonusEarneds)
         {
-            Point = players.Where(pla => pla.UserId == user.Id).Sum(pla => pla.TotalWinningsPoint.GetValueOrDefault());
+            Point = players.Sum(pla => pla.TotalWinningsPoint.GetValueOrDefault()) + bonusEarneds.Sum(bon => bon.PointAmount);
             FullName = StringFormatUtil.ToFullFirstNameAndFirstLetterLastName(user.FirstName, user.LastName);
         }
 
