@@ -48,6 +48,7 @@ namespace WSOA.Test.Business
                     _playerRepository,
                     null,
                     null,
+                    null,
                     null
                 );
         }
@@ -79,6 +80,7 @@ namespace WSOA.Test.Business
                 _userRepository,
                 null,
                 _playerRepository,
+                null,
                 null,
                 null,
                 null

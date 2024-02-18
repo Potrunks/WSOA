@@ -56,6 +56,7 @@ namespace WSOA.Test.Business
                     null,
                     null,
                     null,
+                    null,
                     null
                 );
         }

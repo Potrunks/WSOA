@@ -9,5 +9,9 @@
         public bool IsAddOn { get; set; }
 
         public bool IsFinalTable { get; set; }
+
+        public int TournamentId { get; set; }
+
+        public int BuyIn { get; set; }
     }
 }

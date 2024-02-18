@@ -70,7 +70,8 @@ namespace WSOA.Test.Business
                 _playerRepository,
                 _bonusTournamentRepository,
                 _eliminationRepository,
-                _bonusTournamentEarnedRepository
+                _bonusTournamentEarnedRepository,
+                null
             );
         }
 
@@ -170,7 +171,8 @@ namespace WSOA.Test.Business
                 _playerRepository,
                 _bonusTournamentRepository,
                 _eliminationRepository,
-                _bonusTournamentEarnedRepository
+                _bonusTournamentEarnedRepository,
+                null
             );
 
             APICallResult<CancelEliminationResultDto> result = ExecuteCancelElimination();

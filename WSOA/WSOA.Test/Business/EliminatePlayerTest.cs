@@ -151,7 +151,8 @@ namespace WSOA.Test.Business
                     _playerRepository,
                     _bonusTournamentRepository,
                     _eliminationRepositoryMock.Object,
-                    _bonusTournamentRepositoryMock.Object
+                    _bonusTournamentRepositoryMock.Object,
+                    null
                 );
         }
 
@@ -290,7 +291,8 @@ namespace WSOA.Test.Business
                     _playerRepository,
                     _bonusTournamentRepository,
                     _eliminationRepositoryMock.Object,
-                    _bonusTournamentRepositoryMock.Object
+                    _bonusTournamentRepositoryMock.Object,
+                    null
                 );
 
             APICallResult<EliminationCreationResultDto> result = ExecuteEliminatePlayer();
