@@ -84,16 +84,16 @@ namespace WSOA.Client.Services.Implementation
             return response.Content.ToObject<APICallResult<CancelEliminationResultDto>>();
         }
 
-        public async Task<APICallResult<Player>> EditPlayerTotalAddon(int playerId, int addonNb)
+        public async Task<APICallResult<PlayerAddonEditionResultDto>> EditPlayerTotalAddon(int playerId, int addonNb)
         {
             HttpResponseMessage response = await _httpClient.GetAsync(string.Format(RouteResources.EDIT_ADDON_PLAYER, playerId, addonNb));
-            return response.Content.ToObject<APICallResult<Player>>();
+            return response.Content.ToObject<APICallResult<PlayerAddonEditionResultDto>>();
         }
 
-        public async Task<APICallResultBase> RemovePlayerNeverComeIntoTournamentInProgress(int playerId)
+        public async Task<APICallResult<IEnumerable<JackpotDistribution>>> RemovePlayerNeverComeIntoTournamentInProgress(int playerId)
         {
             HttpResponseMessage response = await _httpClient.GetAsync(string.Format(RouteResources.REMOVE_PLAYER_NVR_COME, playerId));
-            return response.Content.ToObject<APICallResultBase>();
+            return response.Content.ToObject<APICallResult<IEnumerable<JackpotDistribution>>>();
         }
 
         public async Task<APICallResultBase> CancelTournamentInProgress(int tournamentInProgressId)
@@ -102,10 +102,10 @@ namespace WSOA.Client.Services.Implementation
             return response.Content.ToObject<APICallResultBase>();
         }
 
-        public async Task<APICallResult<IEnumerable<PlayerPlayingDto>>> AddPlayersIntoTournamentInProgress(IEnumerable<int> usrIds, int tournamentId)
+        public async Task<APICallResult<AddPlayersResultDto>> AddPlayersIntoTournamentInProgress(IEnumerable<int> usrIds, int tournamentId)
         {
             HttpResponseMessage response = await _httpClient.PostAsync(string.Format(RouteResources.ADD_PLAYERS_TOURNAMENT_IN_PROGRESS, tournamentId), usrIds.ToJsonUtf8());
-            return response.Content.ToObject<APICallResult<IEnumerable<PlayerPlayingDto>>>();
+            return response.Content.ToObject<APICallResult<AddPlayersResultDto>>();
         }
 
         public async Task<APICallResult<PlayerSelectionViewModel>> LoadPlayersForPlayingTournamentInProgress(int tournamentId)
@@ -120,10 +120,10 @@ namespace WSOA.Client.Services.Implementation
             return response.Content.ToObject<APICallResult<TournamentStepEnum>>();
         }
 
-        public async Task<APICallResult<TournamentStepEnum>> GoToTournamentInProgressPreviousStep(int tournamentId)
+        public async Task<APICallResult<SwitchTournamentStepResultDto>> GoToTournamentInProgressPreviousStep(int tournamentId)
         {
             HttpResponseMessage response = await _httpClient.GetAsync(string.Format("api/tournament/inProgress/{0}/previousStep", tournamentId));
-            return response.Content.ToObject<APICallResult<TournamentStepEnum>>();
+            return response.Content.ToObject<APICallResult<SwitchTournamentStepResultDto>>();
         }
 
         public async Task<APICallResultBase> DeletePlayableTournament(int tournamentToDeleteId)
@@ -136,6 +136,12 @@ namespace WSOA.Client.Services.Implementation
         {
             HttpResponseMessage response = await _httpClient.GetAsync(string.Format("api/season/{0}/result", seasonSelected));
             return response.Content.ToObject<APICallResult<SeasonResultViewModel>>();
+        }
+
+        public async Task<APICallResult<IEnumerable<JackpotDistribution>>> EditWinnableMoneysByPosition(IDictionary<int, int> winnableMoneysByPosition, int tournamentId)
+        {
+            HttpResponseMessage response = await _httpClient.PostAsync(string.Format("api/tournament/inProgress/{0}/editWinnableMoneys", tournamentId), winnableMoneysByPosition.ToJsonUtf8());
+            return response.Content.ToObject<APICallResult<IEnumerable<JackpotDistribution>>>();
         }
     }
 }

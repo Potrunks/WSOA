@@ -146,7 +146,7 @@ namespace WSOA.Server.Controllers
         /// </summary>
         [HttpGet]
         [Route("api/tournament/player/{playerId}/addon/{addonNb}")]
-        public APICallResult<Player> EditPlayerTotalAddon(int playerId, int addonNb)
+        public APICallResult<PlayerAddonEditionResultDto> EditPlayerTotalAddon(int playerId, int addonNb)
         {
             return _tournamentBusiness.EditPlayerTotalAddon(playerId, addonNb, HttpContext.Session);
         }
@@ -156,7 +156,7 @@ namespace WSOA.Server.Controllers
         /// </summary>
         [HttpGet]
         [Route("api/tournament/player/{playerId}/neverCome")]
-        public APICallResultBase RemovePlayerNeverComeIntoTournamentInProgress(int playerId)
+        public APICallResult<IEnumerable<JackpotDistribution>> RemovePlayerNeverComeIntoTournamentInProgress(int playerId)
         {
             return _tournamentBusiness.RemovePlayerNeverComeIntoTournamentInProgress(playerId, HttpContext.Session);
         }
@@ -176,7 +176,7 @@ namespace WSOA.Server.Controllers
         /// </summary>
         [HttpPost]
         [Route("api/tournament/inProgress/{tournamentId}/addPlayers")]
-        public APICallResult<IEnumerable<PlayerPlayingDto>> AddPlayersIntoTournamentInProgress([FromBody] IEnumerable<int> usrIds, int tournamentId)
+        public APICallResult<AddPlayersResultDto> AddPlayersIntoTournamentInProgress([FromBody] IEnumerable<int> usrIds, int tournamentId)
         {
             return _tournamentBusiness.AddPlayersIntoTournamentInProgress(usrIds, tournamentId, HttpContext.Session);
         }
@@ -196,7 +196,7 @@ namespace WSOA.Server.Controllers
         /// </summary>
         [HttpGet]
         [Route("api/tournament/inProgress/{tournamentId}/previousStep")]
-        public APICallResult<TournamentStepEnum> GoToTournamentInProgressPreviousStep(int tournamentId)
+        public APICallResult<SwitchTournamentStepResultDto> GoToTournamentInProgressPreviousStep(int tournamentId)
         {
             return _tournamentBusiness.GoToTournamentInProgressPreviousStep(tournamentId, HttpContext.Session);
         }
@@ -219,6 +219,16 @@ namespace WSOA.Server.Controllers
         public APICallResult<SeasonResultViewModel> LoadSeasonResult(int season)
         {
             return _tournamentBusiness.LoadSeasonResult(season, HttpContext.Session);
+        }
+
+        /// <summary>
+        /// Edit winnable moneys by position during a tournament in progress.
+        /// </summary>
+        [HttpPost]
+        [Route("api/tournament/inProgress/{tournamentId}/editWinnableMoneys")]
+        public APICallResult<IEnumerable<JackpotDistribution>> EditWinnableMoneysByPosition([FromBody] IDictionary<int, int> winnableMoneysByPosition, int tournamentId)
+        {
+            return _tournamentBusiness.EditWinnableMoneysByPosition(winnableMoneysByPosition, tournamentId, HttpContext.Session);
         }
     }
 }

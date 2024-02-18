@@ -58,7 +58,8 @@ namespace WSOA.Test.Business
                 null,
                 null,
                 null,
-                _bonusTournamentEarnedRepository
+                _bonusTournamentEarnedRepository,
+                null
             );
         }
 
@@ -108,7 +109,8 @@ namespace WSOA.Test.Business
                 null,
                 null,
                 null,
-                _bonusTournamentEarnedRepository
+                _bonusTournamentEarnedRepository,
+                null
             );
 
             APICallResult<BonusTournamentEarnedEditResultDto> result = ExecuteSaveBonusTournamentEarned();

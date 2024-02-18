@@ -66,12 +66,12 @@ namespace WSOA.Server.Business.Interface
         /// <summary>
         /// Allow to edit the value of total addon of a player.
         /// </summary>
-        APICallResult<Player> EditPlayerTotalAddon(int playerId, int addonNb, ISession session);
+        APICallResult<PlayerAddonEditionResultDto> EditPlayerTotalAddon(int playerId, int addonNb, ISession session);
 
         /// <summary>
         /// Remove a player that never come really in the tournament.
         /// </summary>
-        APICallResultBase RemovePlayerNeverComeIntoTournamentInProgress(int playerId, ISession session);
+        APICallResult<IEnumerable<JackpotDistribution>> RemovePlayerNeverComeIntoTournamentInProgress(int playerId, ISession session);
 
         /// <summary>
         /// Cancel the tournament in progress
@@ -81,7 +81,7 @@ namespace WSOA.Server.Business.Interface
         /// <summary>
         /// Add new players into selected tournament in progress.
         /// </summary>
-        APICallResult<IEnumerable<PlayerPlayingDto>> AddPlayersIntoTournamentInProgress(IEnumerable<int> usrIds, int tournamentId, ISession session);
+        APICallResult<AddPlayersResultDto> AddPlayersIntoTournamentInProgress(IEnumerable<int> usrIds, int tournamentId, ISession session);
 
         /// <summary>
         /// Load users can be add into tournament in progress.
@@ -96,7 +96,7 @@ namespace WSOA.Server.Business.Interface
         /// <summary>
         /// Go to previous step for tournament in progress.
         /// </summary>
-        APICallResult<TournamentStepEnum> GoToTournamentInProgressPreviousStep(int tournamentId, ISession session);
+        APICallResult<SwitchTournamentStepResultDto> GoToTournamentInProgressPreviousStep(int tournamentId, ISession session);
 
         /// <summary>
         /// Delete selected playable tournament.
@@ -107,5 +107,10 @@ namespace WSOA.Server.Business.Interface
         /// Load season result by selected season.
         /// </summary>
         APICallResult<SeasonResultViewModel> LoadSeasonResult(int season, ISession session);
+
+        /// <summary>
+        /// Edit winnable moneys by position during a tournament in progress.
+        /// </summary>
+        APICallResult<IEnumerable<JackpotDistribution>> EditWinnableMoneysByPosition(IDictionary<int, int> winnableMoneysByPosition, int tournamentId, ISession session);
     }
 }

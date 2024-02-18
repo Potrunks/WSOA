@@ -345,7 +345,9 @@ namespace WSOA.Client.Pages.Tournament.Components
                     {
                         EliminatedPlayerId = playerId!.Value,
                         IsAddOn = tournamentInProgress.IsAddOn,
-                        IsFinalTable = tournamentInProgress.IsFinalTable
+                        IsFinalTable = tournamentInProgress.IsFinalTable,
+                        TournamentId = tournamentInProgress.Id,
+                        BuyIn = tournamentInProgress.BuyIn
                     };
                     APICallResult<CancelEliminationResultDto> result = await TournamentService.CancelLastPlayerEliminationByPlayerId(eliminationEditionDto);
 
@@ -390,7 +392,7 @@ namespace WSOA.Client.Pages.Tournament.Components
                 {
                     TournamentInProgressStore.CheckTournamentAlwaysInProgress();
 
-                    APICallResultBase result = await TournamentService.RemovePlayerNeverComeIntoTournamentInProgress(playerId!.Value);
+                    APICallResult<IEnumerable<JackpotDistribution>> result = await TournamentService.RemovePlayerNeverComeIntoTournamentInProgress(playerId!.Value);
 
                     if (!result.Success)
                     {
@@ -411,7 +413,7 @@ namespace WSOA.Client.Pages.Tournament.Components
                         }
                     }
 
-                    TournamentInProgressDto tournamentInProgress = TournamentInProgressStore.RemovePlayer(playerId!.Value);
+                    TournamentInProgressDto tournamentInProgress = TournamentInProgressStore.RemovePlayer(playerId!.Value, result.Data);
 
                     InitializedData(tournamentInProgress);
 
@@ -461,7 +463,7 @@ namespace WSOA.Client.Pages.Tournament.Components
                 {
                     TournamentInProgressDto tournamentInProgress = TournamentInProgressStore.CheckTournamentAlwaysInProgress();
 
-                    APICallResult<Player> result = await TournamentService.EditPlayerTotalAddon(playerId, addonNb);
+                    APICallResult<PlayerAddonEditionResultDto> result = await TournamentService.EditPlayerTotalAddon(playerId, addonNb);
 
                     if (!result.Success)
                     {
@@ -602,7 +604,7 @@ namespace WSOA.Client.Pages.Tournament.Components
             {
                 TournamentInProgressDto tournamentInProgress = TournamentInProgressStore.CheckTournamentAlwaysInProgress();
 
-                APICallResult<IEnumerable<PlayerPlayingDto>> result = await TournamentService.AddPlayersIntoTournamentInProgress(selectedItemIds, tournamentInProgress.Id);
+                APICallResult<AddPlayersResultDto> result = await TournamentService.AddPlayersIntoTournamentInProgress(selectedItemIds, tournamentInProgress.Id);
 
                 if (!result.Success)
                 {
@@ -726,7 +728,7 @@ namespace WSOA.Client.Pages.Tournament.Components
                 {
                     TournamentInProgressStore.CheckTournamentAlwaysInProgress();
 
-                    APICallResult<TournamentStepEnum> result = await TournamentService.GoToTournamentInProgressPreviousStep(tournamentInProgressId!.Value);
+                    APICallResult<SwitchTournamentStepResultDto> result = await TournamentService.GoToTournamentInProgressPreviousStep(tournamentInProgressId!.Value);
 
                     if (!result.Success)
                     {
@@ -781,13 +783,41 @@ namespace WSOA.Client.Pages.Tournament.Components
             };
         }
 
-        private EventCallback<IDictionary<int, int>> OnValidDispatchJackpot => EventCallback.Factory.Create(this, (IDictionary<int, int> winnableMoneysByPosition) =>
+        private EventCallback<IDictionary<int, int>> OnValidDispatchJackpot => EventCallback.Factory.Create(this, async (IDictionary<int, int> winnableMoneysByPosition) =>
         {
-            TournamentInProgressStore.CheckTournamentAlwaysInProgress();
+            try
+            {
+                TournamentInProgressDto tournamentInProgressDto = TournamentInProgressStore.CheckTournamentAlwaysInProgress();
 
-            TournamentInProgressDto tournamentInProgressDto = TournamentInProgressStore.UpdateWinnableMoneysByPosition(winnableMoneysByPosition);
+                APICallResult<IEnumerable<JackpotDistribution>> result = await TournamentService.EditWinnableMoneysByPosition(winnableMoneysByPosition, tournamentInProgressDto.Id);
+                if (!result.Success)
+                {
+                    if (!string.IsNullOrEmpty(result.RedirectUrl))
+                    {
+                        NavigationManager.NavigateTo(result.RedirectUrl);
+                        return;
+                    }
+                    else
+                    {
+                        PopupEventHandler.Open(
+                            msg: result.ErrorMessage!,
+                            isError: true,
+                            title: MainLabelResources.ERROR,
+                            onValid: null
+                            );
+                        return;
+                    }
+                }
 
-            InitializedData(tournamentInProgressDto);
+                tournamentInProgressDto = TournamentInProgressStore.UpdateWinnableMoneysByPosition(result.Data);
+
+                InitializedData(tournamentInProgressDto);
+            }
+            catch (FunctionalException e)
+            {
+                NavigationManager.NavigateTo(e.RedirectUrl!);
+                return;
+            }
         });
     }
 }

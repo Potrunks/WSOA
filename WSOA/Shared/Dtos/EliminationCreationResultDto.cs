@@ -1,4 +1,6 @@
-﻿namespace WSOA.Shared.Dtos
+﻿using WSOA.Shared.Entity;
+
+namespace WSOA.Shared.Dtos
 {
     public class EliminationCreationResultDto
     {
@@ -12,5 +14,7 @@
         public List<string> EliminatorPlayerWonBonusCodes { get; set; }
 
         public bool IsTournamentOver { get; set; }
+
+        public IEnumerable<JackpotDistribution> UpdatedJackpotDistributions { get; set; }
     }
 }

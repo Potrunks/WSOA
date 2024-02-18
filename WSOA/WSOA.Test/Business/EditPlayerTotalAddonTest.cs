@@ -6,6 +6,7 @@ using WSOA.Server.Business.Interface;
 using WSOA.Server.Business.Resources;
 using WSOA.Server.Data.Implementation;
 using WSOA.Server.Data.Interface;
+using WSOA.Shared.Dtos;
 using WSOA.Shared.Entity;
 using WSOA.Shared.Resources;
 using WSOA.Shared.Result;
@@ -50,6 +51,7 @@ namespace WSOA.Test.Business
                     _playerRepository,
                     null,
                     null,
+                    null,
                     null
                 );
         }
@@ -57,12 +59,12 @@ namespace WSOA.Test.Business
         [TestMethod]
         public void ShouldEditPlayerTotalAddonValue_WhenNewValueGiven()
         {
-            APICallResult<Player> result = ExecuteEditPlayerTotalAddon();
+            APICallResult<PlayerAddonEditionResultDto> result = ExecuteEditPlayerTotalAddon();
 
             VerifyAPICallResultSuccess(result, null);
             VerifyTransactionManagerCommit(_transactionManagerMock);
-            Assert.AreEqual(_playerConcerned.Id, result.Data.Id);
-            Assert.AreEqual(_totalAddon, result.Data.TotalAddOn);
+            Assert.AreEqual(_playerConcerned.Id, result.Data.PlayerUpdated.Id);
+            Assert.AreEqual(_totalAddon, result.Data.PlayerUpdated.TotalAddOn);
         }
 
         [TestMethod]
@@ -84,10 +86,11 @@ namespace WSOA.Test.Business
                     _playerRepository,
                     null,
                     null,
+                    null,
                     null
                 );
 
-            APICallResult<Player> result = ExecuteEditPlayerTotalAddon();
+            APICallResult<PlayerAddonEditionResultDto> result = ExecuteEditPlayerTotalAddon();
 
             string expectedErrorMsg = MainBusinessResources.USER_CANNOT_PERFORM_ACTION;
             VerifyAPICallResultError
@@ -104,7 +107,7 @@ namespace WSOA.Test.Business
         {
             _totalAddon = -1;
 
-            APICallResult<Player> result = ExecuteEditPlayerTotalAddon();
+            APICallResult<PlayerAddonEditionResultDto> result = ExecuteEditPlayerTotalAddon();
 
             string expectedErrorMsg = TournamentBusinessResources.TOTAL_ADDON_GIVEN_LESS_THAN_ZERO;
             VerifyAPICallResultError
@@ -123,7 +126,7 @@ namespace WSOA.Test.Business
             _dbContext.Players.Remove(_playerConcerned);
             _dbContext.SaveChanges();
 
-            APICallResult<Player> result = _tournamentBusiness.EditPlayerTotalAddon(deletedPlayerId, _totalAddon, _sessionMock.Object);
+            APICallResult<PlayerAddonEditionResultDto> result = _tournamentBusiness.EditPlayerTotalAddon(deletedPlayerId, _totalAddon, _sessionMock.Object);
 
             string expectedErrorMsg = MainBusinessResources.TECHNICAL_ERROR;
             VerifyAPICallResultError
@@ -141,7 +144,7 @@ namespace WSOA.Test.Business
             _playerConcerned.WasAddOn = false;
             _dbContext.SaveChanges();
 
-            APICallResult<Player> result = ExecuteEditPlayerTotalAddon();
+            APICallResult<PlayerAddonEditionResultDto> result = ExecuteEditPlayerTotalAddon();
 
             string expectedErrorMsg = TournamentBusinessResources.PLAYER_NOT_IN_ADDON;
             VerifyAPICallResultError
@@ -153,7 +156,7 @@ namespace WSOA.Test.Business
             VerifyTransactionManagerRollback(_transactionManagerMock);
         }
 
-        private APICallResult<Player> ExecuteEditPlayerTotalAddon()
+        private APICallResult<PlayerAddonEditionResultDto> ExecuteEditPlayerTotalAddon()
         {
             return _tournamentBusiness.EditPlayerTotalAddon(_playerConcerned.Id, _totalAddon, _sessionMock.Object);
         }

@@ -13,5 +13,7 @@ namespace WSOA.Shared.Dtos
         public Elimination EliminationCanceled { get; set; }
 
         public IEnumerable<BonusTournament>? BonusTournamentsLostByEliminator { get; set; }
+
+        public IEnumerable<JackpotDistribution> UpdatedJackpotDistributions { get; set; }
     }
 }

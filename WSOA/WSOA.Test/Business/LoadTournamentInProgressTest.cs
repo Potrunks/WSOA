@@ -67,6 +67,7 @@ namespace WSOA.Test.Business
                     _playerRepository,
                     _bonusTournamentRepository,
                     null,
+                    null,
                     null
                 );
         }

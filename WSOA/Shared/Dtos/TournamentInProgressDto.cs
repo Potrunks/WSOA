@@ -18,7 +18,8 @@ namespace WSOA.Shared.Dtos
             IDictionary<int, IEnumerable<BonusTournamentEarned>> bonusEarnedsByPlayerId,
             int tournamentNb,
             User? lastWinner,
-            User? firstRankUser
+            User? firstRankUser,
+            IEnumerable<JackpotDistribution> jackpotDistributions
         )
         {
             Id = tournament.Id;
@@ -38,10 +39,7 @@ namespace WSOA.Shared.Dtos
                 }
                 return new PlayerPlayingDto(player, winnableBonusByCode, currentBonusTournamentEarneds);
             });
-            WinnableMoneyByPosition = new Dictionary<int, int>
-            {
-                { 1, CalculateTotalJackpot() }
-            };
+            WinnableMoneyByPosition = jackpotDistributions.Where(jac => jac.TournamentId == tournament.Id).ToDictionary(jac => jac.PlayerPosition, jac => jac.Amount);
             LastWinner = lastWinner;
             FirstSeasonRanked = firstRankUser;
         }

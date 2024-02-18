@@ -36,7 +36,7 @@ namespace WSOA.Client.Shared.Stores
             if (elimination.HasReBuy)
             {
                 eliminatedPlayer.TotalRebuy = eliminationResult.EliminatedPlayerTotalReBuy;
-                tournamentInProgress.WinnableMoneyByPosition[1] = tournamentInProgress.WinnableMoneyByPosition[1] + tournamentInProgress.BuyIn;
+                tournamentInProgress.WinnableMoneyByPosition = eliminationResult.UpdatedJackpotDistributions.ToDictionary(jac => jac.PlayerPosition, jac => jac.Amount);
             }
             else
             {
@@ -90,9 +90,7 @@ namespace WSOA.Client.Shared.Stores
 
             PlayerPlayingDto eliminatedPlayer = tournamentInProgress.PlayerPlayings.Single(pla => pla.Id == result.PlayerEliminated.Id);
             eliminatedPlayer.IsEliminated = false;
-            int totalAmountDiff = ((eliminatedPlayer.TotalRebuy ?? 0) - (result.PlayerEliminated.TotalReBuy ?? 0)) * tournamentInProgress.BuyIn;
-            int positionCanBeModify = tournamentInProgress.WinnableMoneyByPosition.First(win => win.Value >= totalAmountDiff).Key;
-            tournamentInProgress.WinnableMoneyByPosition[positionCanBeModify] = tournamentInProgress.WinnableMoneyByPosition[positionCanBeModify] - totalAmountDiff;
+            tournamentInProgress.WinnableMoneyByPosition = result.UpdatedJackpotDistributions.ToDictionary(jac => jac.PlayerPosition, jac => jac.Amount);
             eliminatedPlayer.TotalRebuy = result.PlayerEliminated.TotalReBuy;
 
 
@@ -108,62 +106,35 @@ namespace WSOA.Client.Shared.Stores
             return tournamentInProgress;
         }
 
-        public TournamentInProgressDto Update(Player player)
+        public TournamentInProgressDto Update(PlayerAddonEditionResultDto playerAddonEditionResultDto)
         {
             TournamentInProgressDto tournamentInProgress = CheckTournamentAlwaysInProgress();
 
-            int totalJackpotBefore = tournamentInProgress.CalculateTotalJackpot();
+            PlayerPlayingDto playerConcerned = tournamentInProgress.PlayerPlayings.Single(pla => pla.Id == playerAddonEditionResultDto.PlayerUpdated.Id);
+            playerConcerned.TotalRebuy = playerAddonEditionResultDto.PlayerUpdated.TotalReBuy;
+            playerConcerned.TotalAddOn = playerAddonEditionResultDto.PlayerUpdated.TotalAddOn;
 
-            PlayerPlayingDto playerConcerned = tournamentInProgress.PlayerPlayings.Single(pla => pla.Id == player.Id);
-            playerConcerned.TotalRebuy = player.TotalReBuy;
-            playerConcerned.TotalAddOn = player.TotalAddOn;
-
-            int totalJackpotAfter = tournamentInProgress.CalculateTotalJackpot();
-
-            int totalJackpotDiff = totalJackpotBefore - totalJackpotAfter;
-            if (totalJackpotDiff > 0)
-            {
-                int positionCanBeModify = tournamentInProgress.WinnableMoneyByPosition.First(win => win.Value >= totalJackpotDiff).Key;
-                tournamentInProgress.WinnableMoneyByPosition[positionCanBeModify] = tournamentInProgress.WinnableMoneyByPosition[positionCanBeModify] - totalJackpotDiff;
-            }
-            else
-            {
-                tournamentInProgress.WinnableMoneyByPosition[1] = tournamentInProgress.WinnableMoneyByPosition[1] + Math.Abs(totalJackpotDiff);
-            }
+            tournamentInProgress.WinnableMoneyByPosition = playerAddonEditionResultDto.JackpotDistributionsUpdated.ToDictionary(jac => jac.PlayerPosition, jac => jac.Amount);
 
             return tournamentInProgress;
         }
 
-        public TournamentInProgressDto AddPlayers(IEnumerable<PlayerPlayingDto> playersToAdd)
+        public TournamentInProgressDto AddPlayers(AddPlayersResultDto addPlayersResultDto)
         {
             TournamentInProgressDto tournamentInProgress = CheckTournamentAlwaysInProgress();
 
-            int totalJackpotBefore = tournamentInProgress.CalculateTotalJackpot();
+            tournamentInProgress.PlayerPlayings = tournamentInProgress.PlayerPlayings.Concat(addPlayersResultDto.AddedPlayersPlaying);
 
-            tournamentInProgress.PlayerPlayings = tournamentInProgress.PlayerPlayings.Concat(playersToAdd);
-
-            int totalJackpotAfter = tournamentInProgress.CalculateTotalJackpot();
-
-            int totalJackpotDiff = totalJackpotBefore - totalJackpotAfter;
-            if (totalJackpotDiff > 0)
-            {
-                int positionCanBeModify = tournamentInProgress.WinnableMoneyByPosition.First(win => win.Value >= totalJackpotDiff).Key;
-                tournamentInProgress.WinnableMoneyByPosition[positionCanBeModify] = tournamentInProgress.WinnableMoneyByPosition[positionCanBeModify] - totalJackpotDiff;
-            }
-            else
-            {
-                tournamentInProgress.WinnableMoneyByPosition[1] = tournamentInProgress.WinnableMoneyByPosition[1] + Math.Abs(totalJackpotDiff);
-            }
+            tournamentInProgress.WinnableMoneyByPosition = addPlayersResultDto.UpdatedJackpotDistributions.ToDictionary(j => j.PlayerPosition, j => j.Amount);
 
             return tournamentInProgress;
         }
 
-        public TournamentInProgressDto RemovePlayer(int playerId)
+        public TournamentInProgressDto RemovePlayer(int playerId, IEnumerable<JackpotDistribution> jackpotDistributionsUpdated)
         {
             TournamentInProgressDto tournamentInProgress = CheckTournamentAlwaysInProgress();
 
-            int positionCanBeModify = tournamentInProgress.WinnableMoneyByPosition.First(win => win.Value >= tournamentInProgress.BuyIn).Key;
-            tournamentInProgress.WinnableMoneyByPosition[positionCanBeModify] = tournamentInProgress.WinnableMoneyByPosition[positionCanBeModify] - tournamentInProgress.BuyIn;
+            tournamentInProgress.WinnableMoneyByPosition = jackpotDistributionsUpdated.ToDictionary(j => j.PlayerPosition, j => j.Amount);
 
             tournamentInProgress.PlayerPlayings = tournamentInProgress.PlayerPlayings.Where(pla => pla.Id != playerId);
 
@@ -226,11 +197,11 @@ namespace WSOA.Client.Shared.Stores
             return tournamentInProgress;
         }
 
-        public TournamentInProgressDto GoToPreviousStep(TournamentStepEnum newTournamentStep)
+        public TournamentInProgressDto GoToPreviousStep(SwitchTournamentStepResultDto switchTournamentStepResult)
         {
             TournamentInProgressDto tournamentInProgress = CheckTournamentAlwaysInProgress();
 
-            switch (newTournamentStep)
+            switch (switchTournamentStepResult.NewTournamentStep)
             {
                 case TournamentStepEnum.ADDON:
                     tournamentInProgress.IsFinalTable = false;
@@ -241,21 +212,18 @@ namespace WSOA.Client.Shared.Stores
                     {
                         player.TotalAddOn = null;
                     }
-                    tournamentInProgress.WinnableMoneyByPosition = new Dictionary<int, int>
-                    {
-                        { 1, tournamentInProgress.CalculateTotalJackpot() }
-                    };
+                    tournamentInProgress.WinnableMoneyByPosition = switchTournamentStepResult.UpdatedJackpotDistributions!.ToDictionary(j => j.PlayerPosition, j => j.Amount);
                     break;
             }
 
             return tournamentInProgress;
         }
 
-        public TournamentInProgressDto UpdateWinnableMoneysByPosition(IDictionary<int, int> winnableMoneysByPositionUpdated)
+        public TournamentInProgressDto UpdateWinnableMoneysByPosition(IEnumerable<JackpotDistribution> jackpotDistributionsUpdated)
         {
             TournamentInProgressDto tournamentInProgressDto = CheckTournamentAlwaysInProgress();
 
-            tournamentInProgressDto.WinnableMoneyByPosition = winnableMoneysByPositionUpdated;
+            tournamentInProgressDto.WinnableMoneyByPosition = jackpotDistributionsUpdated.OrderBy(j => j.PlayerPosition).ToDictionary(j => j.PlayerPosition, j => j.Amount);
 
             return tournamentInProgressDto;
         }
