@@ -2,6 +2,7 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using WSOA.Server.Data;
 
@@ -10,9 +11,11 @@ using WSOA.Server.Data;
 namespace WSOA.Server.Migrations
 {
     [DbContext(typeof(WSOADbContext))]
-    partial class WSOADbContextModelSnapshot : ModelSnapshot
+    [Migration("20240218224853_Add_Permission_Edit_Winnable_Moneys_For_Orga")]
+    partial class Add_Permission_Edit_Winnable_Moneys_For_Orga
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder

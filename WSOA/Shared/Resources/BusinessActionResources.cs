@@ -11,5 +11,6 @@
         public const string EDIT_TOURNAMENT_IN_PROGRESS = "EDIT_TOURNAMENT_IN_PROGRESS";
         public const string EDIT_PLAYABLE_TOURNAMENT = "EDIT_PLAYABLE_TOURNAMENT";
         public const string COMMON_DASHBOARD = "COMMON_DASHBOARD";
+        public const string EDIT_WINNABLE_MONEYS = "E_WIN_MON";
     }
 }

@@ -57,6 +57,7 @@ namespace WSOA.Test.Business
                     _playerRepository,
                     null,
                     null,
+                    null,
                     null
                 );
         }
@@ -64,7 +65,7 @@ namespace WSOA.Test.Business
         [TestMethod]
         public void ShouldAddPlayersIntoTournamentInProgress()
         {
-            APICallResult<IEnumerable<PlayerPlayingDto>> result = ExecuteAddPlayersIntoTournamentInProgress();
+            APICallResult<AddPlayersResultDto> result = ExecuteAddPlayersIntoTournamentInProgress();
 
             VerifyAPICallResultSuccess(result, null);
             VerifyTransactionManagerCommit(_transactionManagerMock);
@@ -79,8 +80,8 @@ namespace WSOA.Test.Business
                         select usr
                     ).Single()
                 );
-            Assert.AreEqual(_usrToAdd.FirstName, result.Data.Single().FirstName);
-            Assert.AreEqual(_usrToAdd.LastName, result.Data.Single().LastName);
+            Assert.AreEqual(_usrToAdd.FirstName, result.Data.AddedPlayersPlaying.Single().FirstName);
+            Assert.AreEqual(_usrToAdd.LastName, result.Data.AddedPlayersPlaying.Single().LastName);
         }
 
         [TestMethod]
@@ -88,7 +89,7 @@ namespace WSOA.Test.Business
         {
             _usrToAdd.Id = -1;
 
-            APICallResult<IEnumerable<PlayerPlayingDto>> result = ExecuteAddPlayersIntoTournamentInProgress();
+            APICallResult<AddPlayersResultDto> result = ExecuteAddPlayersIntoTournamentInProgress();
 
             string expectedErrorMsg = UserBusinessMessageResources.USER_NO_EXISTS_IN_DB;
             VerifyAPICallResultError(result, string.Format(RouteResources.MAIN_ERROR, expectedErrorMsg), expectedErrorMsg);
@@ -99,7 +100,7 @@ namespace WSOA.Test.Business
         // Si user pas co
         // Si user a pas les droit
 
-        private APICallResult<IEnumerable<PlayerPlayingDto>> ExecuteAddPlayersIntoTournamentInProgress()
+        private APICallResult<AddPlayersResultDto> ExecuteAddPlayersIntoTournamentInProgress()
         {
             return _tournamentBusiness.AddPlayersIntoTournamentInProgress(_usersToAdd.Select(usr => usr.Id), _tournamentInProgress.Id, _sessionMock.Object);
         }

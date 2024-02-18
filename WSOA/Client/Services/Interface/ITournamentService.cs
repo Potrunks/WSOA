@@ -66,12 +66,12 @@ namespace WSOA.Client.Services.Interface
         /// <summary>
         /// Edit the value of the total addon of the selected player.
         /// </summary>
-        Task<APICallResult<Player>> EditPlayerTotalAddon(int playerId, int addonNb);
+        Task<APICallResult<PlayerAddonEditionResultDto>> EditPlayerTotalAddon(int playerId, int addonNb);
 
         /// <summary>
         /// Remove player never come into tournament in progress.
         /// </summary>
-        Task<APICallResultBase> RemovePlayerNeverComeIntoTournamentInProgress(int playerId);
+        Task<APICallResult<IEnumerable<JackpotDistribution>>> RemovePlayerNeverComeIntoTournamentInProgress(int playerId);
 
         /// <summary>
         /// Cancel tournament in progress.
@@ -81,7 +81,7 @@ namespace WSOA.Client.Services.Interface
         /// <summary>
         /// Add players into tournament in progress.
         /// </summary>
-        Task<APICallResult<IEnumerable<PlayerPlayingDto>>> AddPlayersIntoTournamentInProgress(IEnumerable<int> usrIds, int tournamentId);
+        Task<APICallResult<AddPlayersResultDto>> AddPlayersIntoTournamentInProgress(IEnumerable<int> usrIds, int tournamentId);
 
         /// <summary>
         /// Load users can be add into tournament in progress.
@@ -96,7 +96,7 @@ namespace WSOA.Client.Services.Interface
         /// <summary>
         /// Go to previous step for tournament in progress.
         /// </summary>
-        Task<APICallResult<TournamentStepEnum>> GoToTournamentInProgressPreviousStep(int tournamentId);
+        Task<APICallResult<SwitchTournamentStepResultDto>> GoToTournamentInProgressPreviousStep(int tournamentId);
 
         /// <summary>
         /// Delete playable tournament by selected ID.
@@ -107,5 +107,10 @@ namespace WSOA.Client.Services.Interface
         /// Load season result by selected season.
         /// </summary>
         Task<APICallResult<SeasonResultViewModel>> LoadSeasonResult(int seasonSelected);
+
+        /// <summary>
+        /// Edit winnable moneys by position during a tournament in progress.
+        /// </summary>
+        Task<APICallResult<IEnumerable<JackpotDistribution>>> EditWinnableMoneysByPosition(IDictionary<int, int> winnableMoneysByPosition, int tournamentId);
     }
 }

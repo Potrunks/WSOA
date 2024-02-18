@@ -2,6 +2,7 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using WSOA.Server.Data;
 
@@ -10,9 +11,11 @@ using WSOA.Server.Data;
 namespace WSOA.Server.Migrations
 {
     [DbContext(typeof(WSOADbContext))]
-    partial class WSOADbContextModelSnapshot : ModelSnapshot
+    [Migration("20240218223813_Jackpot_Distribution_Entity_Creation_And_Add_Business_Action_Edit_Winnable_Moneys")]
+    partial class Jackpot_Distribution_Entity_Creation_And_Add_Business_Action_Edit_Winnable_Moneys
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -373,12 +376,6 @@ namespace WSOA.Server.Migrations
                             Id = 21,
                             BusinessActionCode = "E_WIN_MON",
                             ProfileCode = "ADMIN"
-                        },
-                        new
-                        {
-                            Id = 22,
-                            BusinessActionCode = "E_WIN_MON",
-                            ProfileCode = "ORGA"
                         });
                 });
 

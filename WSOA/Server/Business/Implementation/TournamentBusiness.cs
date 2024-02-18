@@ -27,6 +27,7 @@ namespace WSOA.Server.Business.Implementation
         private readonly IBonusTournamentRepository _bonusTournamentRepository;
         private readonly IEliminationRepository _eliminationRepository;
         private readonly IBonusTournamentEarnedRepository _bonusTournamentEarnedRepository;
+        private readonly IJackpotDistributionRepository _jackpotDistributionRepository;
 
         private readonly ILog _log = LogManager.GetLogger(nameof(TournamentBusiness));
 
@@ -41,7 +42,8 @@ namespace WSOA.Server.Business.Implementation
             IPlayerRepository playerRepository,
             IBonusTournamentRepository bonusTournamentRepository,
             IEliminationRepository eliminationRepository,
-            IBonusTournamentEarnedRepository bonusTournamentEarnedRepository
+            IBonusTournamentEarnedRepository bonusTournamentEarnedRepository,
+            IJackpotDistributionRepository jackpotDistributionRepository
         )
         {
             _transactionManager = transactionManager;
@@ -54,6 +56,7 @@ namespace WSOA.Server.Business.Implementation
             _bonusTournamentRepository = bonusTournamentRepository;
             _eliminationRepository = eliminationRepository;
             _bonusTournamentEarnedRepository = bonusTournamentEarnedRepository;
+            _jackpotDistributionRepository = jackpotDistributionRepository;
         }
 
         public APICallResultBase CreateTournament(TournamentCreationFormViewModel form, ISession session)
@@ -413,7 +416,33 @@ namespace WSOA.Server.Business.Implementation
 
                 UsersBestDto usersBestDto = GetBestUsersByCurrentSeasonTournament(tournamentInProgress);
 
-                result.Data = new TournamentInProgressDto(tournamentInProgress, presentPlayers, winnableBonusByCode, bonusEarnedsByPlayerId, usersBestDto.TotalSeasonTournamentPlayed, usersBestDto.WinnerPreviousTournament, usersBestDto.FirstRanked);
+                List<JackpotDistribution> jackpotDistributions = _jackpotDistributionRepository.GetJackpotDistributionsByTournamentId(tournamentInProgress.Id);
+                if (!jackpotDistributions.Any())
+                {
+                    int totalJackpot = tournamentInProgress.BuyIn * (presentPlayers.Count()
+                                                + presentPlayers.Where(pla => pla.Player.TotalReBuy.HasValue && pla.Player.TotalReBuy > 0).Sum(pla => pla.Player.TotalReBuy!.Value)
+                                                + presentPlayers.Where(pla => pla.Player.TotalAddOn.HasValue && pla.Player.TotalAddOn > 0).Sum(pla => pla.Player.TotalAddOn!.Value))
+                                                - 20;
+                    JackpotDistribution newJackpotDistribution = new JackpotDistribution
+                    {
+                        TournamentId = tournamentInProgress.Id,
+                        Amount = totalJackpot,
+                        PlayerPosition = 1
+                    };
+                    _jackpotDistributionRepository.SaveJackpotDistributions(new List<JackpotDistribution> { newJackpotDistribution });
+                    jackpotDistributions.Add(newJackpotDistribution);
+                }
+
+                result.Data = new TournamentInProgressDto(
+                    tournamentInProgress,
+                    presentPlayers,
+                    winnableBonusByCode,
+                    bonusEarnedsByPlayerId,
+                    usersBestDto.TotalSeasonTournamentPlayed,
+                    usersBestDto.WinnerPreviousTournament,
+                    usersBestDto.FirstRanked,
+                    jackpotDistributions
+                    );
 
                 result.Success = true;
             }
@@ -439,9 +468,9 @@ namespace WSOA.Server.Business.Implementation
             User? firstRankUser = null;
 
             int tournamentNb = _tournamentRepository.GetTournamentNumber(tournament);
-            if (tournamentNb > 1)
+            Tournament? tournamentPrevious = _tournamentRepository.GetPreviousTournament(tournament);
+            if (tournamentPrevious != null)
             {
-                Tournament tournamentPrevious = _tournamentRepository.GetPreviousTournament(tournament);
                 lastWinner = _userRepository.GetUserWinnerByTournamentId(tournamentPrevious.Id);
                 firstRankUser = _userRepository.GetFirstRankUserBySeasonCode(tournament.Season);
             }
@@ -489,9 +518,13 @@ namespace WSOA.Server.Business.Implementation
                 }
 
                 Player eliminatedPlayer = players[eliminationDto.EliminatedPlayerId];
+                Tournament currentTournament = _tournamentRepository.GetTournamentById(eliminatedPlayer.PlayedTournamentId);
                 if (eliminationDto.HasReBuy)
                 {
                     eliminatedPlayer.TotalReBuy = eliminatedPlayer.TotalReBuy == null ? 1 : eliminatedPlayer.TotalReBuy + 1;
+
+                    List<JackpotDistribution> jackpotDistributions = _jackpotDistributionRepository.GetJackpotDistributionsByTournamentId(currentTournament.Id);
+                    result.Data.UpdatedJackpotDistributions = AddAmountIntoJackpotDistributions(currentTournament.BuyIn, jackpotDistributions);
                 }
                 if (!eliminationDto.HasReBuy && eliminatedPlayer.TotalReBuy == null && !eliminatedPlayer.WasAddOn.GetValueOrDefault())
                 {
@@ -510,7 +543,6 @@ namespace WSOA.Server.Business.Implementation
                 };
                 _eliminationRepository.SaveElimination(elimination);
 
-                Tournament currentTournament = _tournamentRepository.GetTournamentById(eliminatedPlayer.PlayedTournamentId);
                 IEnumerable<PlayerDto> allPlayers = _playerRepository.GetPlayersByTournamentIdAndPresenceStateCode(eliminatedPlayer.PlayedTournamentId, PresenceStateResources.PRESENT_CODE);
                 int nbPlayers = allPlayers.Where(pla => pla.Player.CurrentTournamentPosition == null)
                                           .Count();
@@ -716,6 +748,8 @@ namespace WSOA.Server.Business.Implementation
                 Player eliminatorPlayer = existingPlayerWithEliminations.EliminatorPlayersById[lastElimination.PlayerEliminatorId];
                 Player eliminatedPlayer = existingPlayerWithEliminations.EliminatedPlayer;
 
+                List<JackpotDistribution> jackpotDistributions = _jackpotDistributionRepository.GetJackpotDistributionsByTournamentId(eliminationEditionDto.TournamentId);
+
                 if (lastElimination.IsDefinitive)
                 {
                     eliminatedPlayer.CurrentTournamentPosition = null;
@@ -753,6 +787,8 @@ namespace WSOA.Server.Business.Implementation
                 else
                 {
                     eliminatedPlayer.TotalReBuy--;
+
+                    jackpotDistributions = RemoveAmountIntoJackpotDistributions(eliminationEditionDto.BuyIn, jackpotDistributions).ToList();
                 }
 
                 eliminatedPlayer.TotalReBuy = eliminatedPlayer.TotalReBuy == 0 ? null : eliminatedPlayer.TotalReBuy;
@@ -766,7 +802,8 @@ namespace WSOA.Server.Business.Implementation
                     PlayerEliminated = eliminatedPlayer,
                     PlayerEliminator = eliminatorPlayer,
                     BonusTournamentsLostByEliminator = bonusTournamentsLostByEliminator,
-                    EliminationCanceled = lastElimination
+                    EliminationCanceled = lastElimination,
+                    UpdatedJackpotDistributions = jackpotDistributions
                 };
                 result.Success = true;
             }
@@ -790,9 +827,44 @@ namespace WSOA.Server.Business.Implementation
             return result;
         }
 
-        public APICallResult<Player> EditPlayerTotalAddon(int playerId, int addonNb, ISession session)
+        private IEnumerable<JackpotDistribution> RemoveAmountIntoJackpotDistributions(int amountToRemove, IEnumerable<JackpotDistribution> jackpotDistributionsToUpdate)
         {
-            APICallResult<Player> result = new APICallResult<Player>(false);
+            List<int> jackpotDistributionIdsToRemove = new List<int>();
+
+            for (int i = jackpotDistributionsToUpdate.Max(jac => jac.PlayerPosition); i > 0; i--)
+            {
+                if (amountToRemove <= 0)
+                {
+                    break;
+                }
+
+                JackpotDistribution jackpotDistribution = jackpotDistributionsToUpdate.Single(jac => jac.PlayerPosition == i);
+
+                int amountRemoved = Math.Min(jackpotDistribution.Amount, amountToRemove);
+                jackpotDistribution.Amount -= amountRemoved;
+                amountToRemove -= amountRemoved;
+
+                if (jackpotDistribution.Amount == 0)
+                {
+                    jackpotDistributionIdsToRemove.Add(jackpotDistribution.Id);
+                }
+            }
+
+            _jackpotDistributionRepository.RemoveJackpotDistributions(jackpotDistributionsToUpdate.Where(jac => jackpotDistributionIdsToRemove.Contains(jac.Id)));
+            return jackpotDistributionsToUpdate.Where(jac => !jackpotDistributionIdsToRemove.Contains(jac.Id));
+        }
+
+        private IEnumerable<JackpotDistribution> AddAmountIntoJackpotDistributions(int amountToAdd, IEnumerable<JackpotDistribution> jackpotDistributionsToUpdate)
+        {
+            JackpotDistribution firstJackpotDistribution = jackpotDistributionsToUpdate.Single(j => j.PlayerPosition == 1);
+            firstJackpotDistribution.Amount += amountToAdd;
+            _jackpotDistributionRepository.SaveJackpotDistributions(new List<JackpotDistribution> { firstJackpotDistribution });
+            return jackpotDistributionsToUpdate;
+        }
+
+        public APICallResult<PlayerAddonEditionResultDto> EditPlayerTotalAddon(int playerId, int addonNb, ISession session)
+        {
+            APICallResult<PlayerAddonEditionResultDto> result = new APICallResult<PlayerAddonEditionResultDto>(false);
 
             try
             {
@@ -811,8 +883,21 @@ namespace WSOA.Server.Business.Implementation
                     throw new FunctionalException(TournamentBusinessResources.PLAYER_NOT_IN_ADDON, null);
                 }
 
+                List<JackpotDistribution> jackpotDistributions = _jackpotDistributionRepository.GetJackpotDistributionsByTournamentId(playerConcerned.PlayedTournamentId);
+                Tournament tournament = _tournamentRepository.GetTournamentById(playerConcerned.PlayedTournamentId);
+
                 if (playerConcerned.TotalAddOn != addonNb)
                 {
+                    int addOnDiff = addonNb - playerConcerned.TotalAddOn.GetValueOrDefault();
+                    if (addOnDiff < 0)
+                    {
+                        jackpotDistributions = RemoveAmountIntoJackpotDistributions(Math.Abs(addOnDiff) * tournament.BuyIn, jackpotDistributions).ToList();
+                    }
+                    else
+                    {
+                        jackpotDistributions = AddAmountIntoJackpotDistributions(addOnDiff * tournament.BuyIn, jackpotDistributions).ToList();
+                    }
+
                     playerConcerned.TotalAddOn = addonNb;
                     _playerRepository.SavePlayer(playerConcerned);
                 }
@@ -820,7 +905,11 @@ namespace WSOA.Server.Business.Implementation
                 _transactionManager.CommitTransaction();
 
                 result.Success = true;
-                result.Data = playerConcerned;
+                result.Data = new PlayerAddonEditionResultDto
+                {
+                    PlayerUpdated = playerConcerned,
+                    JackpotDistributionsUpdated = jackpotDistributions
+                };
             }
             catch (FunctionalException e)
             {
@@ -842,9 +931,9 @@ namespace WSOA.Server.Business.Implementation
             return result;
         }
 
-        public APICallResultBase RemovePlayerNeverComeIntoTournamentInProgress(int playerId, ISession session)
+        public APICallResult<IEnumerable<JackpotDistribution>> RemovePlayerNeverComeIntoTournamentInProgress(int playerId, ISession session)
         {
-            APICallResultBase result = new APICallResultBase(false);
+            APICallResult<IEnumerable<JackpotDistribution>> result = new APICallResult<IEnumerable<JackpotDistribution>>(false);
 
             try
             {
@@ -903,6 +992,10 @@ namespace WSOA.Server.Business.Implementation
                 playerNeverCome.Player.PresenceStateCode = PresenceStateResources.ABSENT_CODE;
 
                 _playerRepository.SavePlayer(playerNeverCome.Player);
+
+                IEnumerable<JackpotDistribution> jackpotDistributions = _jackpotDistributionRepository.GetJackpotDistributionsByTournamentId(playerNeverCome.Tournament.Id);
+
+                result.Data = RemoveAmountIntoJackpotDistributions(playerNeverCome.Tournament.BuyIn, jackpotDistributions);
 
                 _transactionManager.CommitTransaction();
 
@@ -987,9 +1080,9 @@ namespace WSOA.Server.Business.Implementation
             return result;
         }
 
-        public APICallResult<IEnumerable<PlayerPlayingDto>> AddPlayersIntoTournamentInProgress(IEnumerable<int> usrIds, int tournamentId, ISession session)
+        public APICallResult<AddPlayersResultDto> AddPlayersIntoTournamentInProgress(IEnumerable<int> usrIds, int tournamentId, ISession session)
         {
-            APICallResult<IEnumerable<PlayerPlayingDto>> result = new APICallResult<IEnumerable<PlayerPlayingDto>>(false);
+            APICallResult<AddPlayersResultDto> result = new APICallResult<AddPlayersResultDto>(false);
 
             try
             {
@@ -1027,9 +1120,15 @@ namespace WSOA.Server.Business.Implementation
                                                                                              PresenceStateCode = PresenceStateResources.PRESENT_CODE
                                                                                          });
 
+                IEnumerable<JackpotDistribution> jackpotDistributions = _jackpotDistributionRepository.GetJackpotDistributionsByTournamentId(tournamentInProgress.Id);
+
                 _playerRepository.SavePlayers(playersToAddIntoTournament.Concat(playersAlreadyAttachedIntoTournament));
 
-                result.Data = _playerRepository.GetPlayerPlayingDtosByUserIdsAndTournamentId(usrIds, tournamentId);
+                result.Data = new AddPlayersResultDto
+                {
+                    AddedPlayersPlaying = _playerRepository.GetPlayerPlayingDtosByUserIdsAndTournamentId(usrIds, tournamentId),
+                    UpdatedJackpotDistributions = AddAmountIntoJackpotDistributions(usrIds.Count() * tournamentInProgress.BuyIn, jackpotDistributions)
+                };
 
                 _transactionManager.CommitTransaction();
 
@@ -1120,9 +1219,9 @@ namespace WSOA.Server.Business.Implementation
             return result;
         }
 
-        public APICallResult<TournamentStepEnum> GoToTournamentInProgressPreviousStep(int tournamentId, ISession session)
+        public APICallResult<SwitchTournamentStepResultDto> GoToTournamentInProgressPreviousStep(int tournamentId, ISession session)
         {
-            APICallResult<TournamentStepEnum> result = new APICallResult<TournamentStepEnum>(false);
+            APICallResult<SwitchTournamentStepResultDto> result = new APICallResult<SwitchTournamentStepResultDto>(false);
 
             try
             {
@@ -1148,15 +1247,40 @@ namespace WSOA.Server.Business.Implementation
                     {
                         case TournamentStepEnum.FINAL_TABLE:
                             player.WasFinalTable = null;
-                            result.Data = TournamentStepEnum.ADDON;
                             break;
                         case TournamentStepEnum.ADDON:
                             player.WasAddOn = null;
                             player.TotalAddOn = null;
-                            result.Data = TournamentStepEnum.NORMAL;
                             break;
                     }
                     playersUpdated.Add(player);
+                }
+
+                switch (currentTournamentStep)
+                {
+                    case TournamentStepEnum.FINAL_TABLE:
+                        result.Data = new SwitchTournamentStepResultDto
+                        {
+                            NewTournamentStep = TournamentStepEnum.ADDON
+                        };
+                        break;
+                    case TournamentStepEnum.ADDON:
+                        List<JackpotDistribution> jackpotDistributions = _jackpotDistributionRepository.GetJackpotDistributionsByTournamentId(tournamentInProgressDto.Tournament.Id);
+                        int totalJackpot = tournamentInProgressDto.Tournament.BuyIn * (playersPresent.Count()
+                                                + playersPresent.Where(pla => pla.TotalReBuy.HasValue && pla.TotalReBuy > 0).Sum(pla => pla.TotalReBuy!.Value)
+                                                + playersPresent.Where(pla => pla.TotalAddOn.HasValue && pla.TotalAddOn > 0).Sum(pla => pla.TotalAddOn!.Value))
+                                                - 20;
+                        JackpotDistribution jackpotDistribution = jackpotDistributions.Single(j => j.PlayerPosition == 1);
+                        jackpotDistribution.Amount = totalJackpot;
+                        _jackpotDistributionRepository.RemoveJackpotDistributions(jackpotDistributions.Where(j => j.PlayerPosition != 1));
+                        List<JackpotDistribution> updatedJackpotDistributions = new List<JackpotDistribution> { jackpotDistribution };
+                        _jackpotDistributionRepository.SaveJackpotDistributions(updatedJackpotDistributions);
+                        result.Data = new SwitchTournamentStepResultDto
+                        {
+                            NewTournamentStep = TournamentStepEnum.NORMAL,
+                            UpdatedJackpotDistributions = updatedJackpotDistributions
+                        };
+                        break;
                 }
 
                 _playerRepository.SavePlayers(playersUpdated);
@@ -1270,6 +1394,82 @@ namespace WSOA.Server.Business.Implementation
             }
             catch (Exception e)
             {
+                string errorMsg = MainBusinessResources.TECHNICAL_ERROR;
+                _log.Error(e.Message);
+                result.ErrorMessage = errorMsg;
+                result.RedirectUrl = string.Format(RouteBusinessResources.MAIN_ERROR, errorMsg);
+            }
+
+            return result;
+        }
+
+        public APICallResult<IEnumerable<JackpotDistribution>> EditWinnableMoneysByPosition(IDictionary<int, int> winnableMoneysByPosition, int tournamentId, ISession session)
+        {
+            APICallResult<IEnumerable<JackpotDistribution>> result = new APICallResult<IEnumerable<JackpotDistribution>>(false);
+
+            try
+            {
+                _transactionManager.BeginTransaction();
+
+                session.CanUserPerformAction(_userRepository, BusinessActionResources.EDIT_WINNABLE_MONEYS);
+
+                Tournament tournament = _tournamentRepository.GetTournamentById(tournamentId);
+                if (!tournament.IsInProgress)
+                {
+                    string errorMsg = TournamentMessageResources.NO_TOURNAMENT_IN_PROGRESS;
+                    throw new FunctionalException(errorMsg, string.Format(RouteBusinessResources.MAIN_ERROR, errorMsg));
+                }
+
+                IDictionary<int, JackpotDistribution> existingJackpotDistributions = _jackpotDistributionRepository.GetJackpotDistributionsByTournamentId(tournamentId).ToDictionary(j => j.PlayerPosition);
+
+                List<JackpotDistribution> jackpotDistributionsToCreate = new List<JackpotDistribution>();
+                List<JackpotDistribution> jackpotDistributionsToUpdate = new List<JackpotDistribution>();
+                List<JackpotDistribution> jackpotDistributionsToRemove = new List<JackpotDistribution>();
+
+                foreach (KeyValuePair<int, int> winnableMoneyByPosition in winnableMoneysByPosition)
+                {
+                    JackpotDistribution? jackpotDistribution;
+                    if (existingJackpotDistributions.TryGetValue(winnableMoneyByPosition.Key, out jackpotDistribution))
+                    {
+                        if (jackpotDistribution.Amount != winnableMoneyByPosition.Value)
+                        {
+                            jackpotDistribution.Amount = winnableMoneyByPosition.Value;
+                        }
+                    }
+                    else
+                    {
+                        jackpotDistribution = new JackpotDistribution
+                        {
+                            Amount = winnableMoneyByPosition.Value,
+                            PlayerPosition = winnableMoneyByPosition.Key,
+                            TournamentId = tournamentId
+                        };
+                    }
+                    jackpotDistributionsToCreate.Add(jackpotDistribution);
+                }
+
+                jackpotDistributionsToRemove.AddRange(existingJackpotDistributions.Where(j => !winnableMoneysByPosition.ContainsKey(j.Key)).Select(j => j.Value));
+
+                _jackpotDistributionRepository.SaveJackpotDistributions(jackpotDistributionsToCreate.Concat(jackpotDistributionsToUpdate));
+                _jackpotDistributionRepository.RemoveJackpotDistributions(jackpotDistributionsToRemove);
+
+                _transactionManager.CommitTransaction();
+
+                result.Data = jackpotDistributionsToCreate.Concat(jackpotDistributionsToUpdate);
+
+                result.Success = true;
+            }
+            catch (FunctionalException e)
+            {
+                _transactionManager.RollbackTransaction();
+                string errorMsg = e.Message;
+                _log.Error(errorMsg);
+                result.ErrorMessage = errorMsg;
+                result.RedirectUrl = e.RedirectUrl;
+            }
+            catch (Exception e)
+            {
+                _transactionManager.RollbackTransaction();
                 string errorMsg = MainBusinessResources.TECHNICAL_ERROR;
                 _log.Error(e.Message);
                 result.ErrorMessage = errorMsg;

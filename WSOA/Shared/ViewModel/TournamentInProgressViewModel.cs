@@ -12,7 +12,7 @@ namespace WSOA.Shared.ViewModel
             Id = tournamentInProgressDto.Id;
             StartDate = tournamentInProgressDto.StartDate.ToString("dd MMMM yyyy");
             TotalJackpot = $"{tournamentInProgressDto.CalculateTotalJackpot()} euros";
-            WinnableMoneys = tournamentInProgressDto.WinnableMoneyByPosition.Select(win =>
+            WinnableMoneys = tournamentInProgressDto.WinnableMoneyByPosition.OrderBy(mon => mon.Key).Select(win =>
             {
                 return win.Key == 1 ? $"{win.Key}er : {win.Value} euros" : $"{win.Key}eme : {win.Value} euros";
             });

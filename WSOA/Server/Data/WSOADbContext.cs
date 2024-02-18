@@ -370,6 +370,11 @@ namespace WSOA.Server.Data
                 {
                     Code = BusinessActionResources.COMMON_DASHBOARD,
                     Label = "Dashboard commun"
+                },
+                new BusinessAction
+                {
+                    Code = BusinessActionResources.EDIT_WINNABLE_MONEYS,
+                    Label = "Editer la répartition du jackpot"
                 }
             );
 
@@ -494,6 +499,18 @@ namespace WSOA.Server.Data
                     Id = 20,
                     ProfileCode = "ADMIN",
                     BusinessActionCode = BusinessActionResources.EDIT_PLAYABLE_TOURNAMENT
+                },
+                new BusinessActionByProfileCode
+                {
+                    Id = 21,
+                    ProfileCode = "ADMIN",
+                    BusinessActionCode = BusinessActionResources.EDIT_WINNABLE_MONEYS
+                },
+                new BusinessActionByProfileCode
+                {
+                    Id = 22,
+                    ProfileCode = "ORGA",
+                    BusinessActionCode = BusinessActionResources.EDIT_WINNABLE_MONEYS
                 }
             );
 
@@ -553,5 +570,6 @@ namespace WSOA.Server.Data
         public DbSet<BusinessAction> BusinessActions { get; set; }
         public DbSet<BusinessActionByProfileCode> BusinessActionsByProfileCode { get; set; }
         public DbSet<Elimination> Eliminations { get; set; }
+        public DbSet<JackpotDistribution> JackpotDistributions { get; set; }
     }
 }
