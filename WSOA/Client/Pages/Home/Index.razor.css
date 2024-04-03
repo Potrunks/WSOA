@@ -1,0 +1,41 @@
+﻿.c-home__mainContainer {
+    width: 100%;
+    height: 100%;
+    padding : 9px;
+}
+
+.c-home__seasonInfo {
+    background-color: #EDE8DF;
+    border-radius: 5px;
+    padding: 8px;
+    margin-bottom: 8px;
+}
+
+.c-home__seasonInfo-label {
+    text-align: center;
+    font-size: 20px;
+}
+
+.c-home__seasonInfo-nbTournament {
+    text-align: center;
+    font-size: 20px;
+}
+
+.c-home__seasonRank {
+    background-color: #EDE8DF;
+    height: 87%;
+    border-radius: 5px;
+    padding: 8px;
+    overflow: auto;
+}
+
+.c-home__seasonRank-title {
+    text-align: center;
+    font-size: 20px;
+}
+
+.c-home__seasonRank-playerResult {
+    text-align: center;
+    font-size: 20px;
+    margin-bottom: 5px;
+}

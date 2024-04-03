@@ -1,0 +1,29 @@
+﻿@page "/home"
+@page "/home/{SubSectionId:int}"
+@using WSOA.Client.Pages.Home.Components;
+@using WSOA.Client.Shared.Loaders
+@using WSOA.Shared.ViewModel;
+@inherits HomeComponent
+
+@if (IsLoading)
+{
+    <CardCoinLoader />
+}
+else
+{
+    <div class="c-home__mainContainer">
+        <div class="c-home__seasonInfo">
+            <div class="c-home__seasonInfo-label">@($"Saison en cours : {SeasonResultViewModel.Season}")</div>
+            <div class="c-home__seasonInfo-nbTournament">@($"Nombre de tournoi passé : {SeasonResultViewModel.NbTournamentPlayed}")</div>
+        </div>
+        <div class="c-home__seasonRank">
+            <div class="c-home__seasonRank-title">Classement</div>
+            <div class="c-home__seasonRank-container">
+                @foreach (KeyValuePair<int, PlayerPointViewModel> playerPointByPosition in PlayerPointsOrdered)
+                {
+                    <div class="c-home__seasonRank-playerResult">@($"{playerPointByPosition.Key} : {playerPointByPosition.Value.FullName} - {playerPointByPosition.Value.Point} point(s)")</div>
+                }
+            </div>
+        </div>
+    </div>
+}

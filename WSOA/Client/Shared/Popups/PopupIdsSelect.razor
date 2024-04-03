@@ -1,0 +1,29 @@
+﻿@using WSOA.Client.Shared.Buttons.Main
+@using WSOA.Client.Shared.Buttons.Resources;
+@using WSOA.Client.Shared.Popups.Components;
+@using WSOA.Shared.ViewModel;
+@inherits PopupIdsSelectComponent
+
+@if (IsDisplay)
+{
+    <div class="c-selectItems__popup">
+        <div class="c-selectItems__emptyZone">
+            <div class="c-selectItems__containerZone">
+                <div class="c-selectItems__title">@Title</div>
+                <div class="c-selectItems__items">
+                    @foreach (IdSelectableViewModel item in Items)
+                    {
+                        <div class="c-selectItems__item">
+                            <img class="c-selectItems__checkbox @(item.IsSelected ? "selected" : "")" src="images/success_logo.png" onclick="@(() => SwitchSelectionStatus.InvokeAsync(item))" />
+                            <div class="c-selectItems__label">@item.Label</div>
+                        </div>
+                    }
+                </div>
+                <div class="c-selectItems__panelButtons">
+                    <MainButton IsPrimary="true" Label="@ButtonLabelResources.VALIDATE" Type="button" OnClick="() => ValidPopup.InvokeAsync()" />
+                    <MainButton Label="@ButtonLabelResources.CLOSE" Type="button" OnClick="() => ClosePopup.InvokeAsync()" />
+                </div>
+            </div>
+        </div>
+    </div>
+}

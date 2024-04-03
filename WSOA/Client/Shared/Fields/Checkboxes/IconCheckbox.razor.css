@@ -1,0 +1,12 @@
+﻿.c-iconCheckbox__mainContainer {
+    display: flex;
+    align-items: center;
+}
+
+.c-iconCheckbox__icon {
+    width: 30px;
+}
+
+.c-iconCheckbox__label {
+    margin-left: 15px;
+}

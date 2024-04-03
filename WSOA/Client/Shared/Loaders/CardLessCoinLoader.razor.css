@@ -1,0 +1,10 @@
+﻿.cardLessCoinLoader_mainContainer {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+}
+
+.cardLessCoinLoader_animation {
+    height: 150px;
+}

@@ -1,0 +1,39 @@
+﻿@using WSOA.Client.Shared.Buttons.Main
+@using WSOA.Client.Shared.Buttons.Resources
+@using WSOA.Client.Shared.Fields.Inputs.Number
+@using WSOA.Client.Shared.Popups.Components;
+@inherits PopupDispatchJackpotComponent
+
+@if (IsDisplay)
+{
+    <div class="c-popupDispatchJackpot__mainContainer">
+        <div class="c-popupDispatchJackpot__emptyZone">
+            <div class="c-popupDispatchJackpot__containerZone">
+                <div class="c-popupDispatchJackpot__title">@Title</div>
+                <div class="c-popupDispatchJackpot__totalJackpot">@($"Jackpot : {TotalJackpot} euros")</div>
+                @if (!string.IsNullOrEmpty(ErrorMessage))
+                {
+                    <div class="c-popupDispatchJackpot__errorMsg">@ErrorMessage</div>
+                }
+                <EditForm EditContext="@EditContext">
+                    @foreach (KeyValuePair<int, int> moneyByPosition in WinnableMoneysByPosition)
+                    {
+                        <div class="c-popupDispatchJackpot__dispatchJackpotLine">
+                            <IntegerInputField Label="@(moneyByPosition.Key == 1 ? $"{moneyByPosition.Key}er : " : $"{moneyByPosition.Key}eme : ")" @bind-InputValue="WinnableMoneysByPosition[moneyByPosition.Key]" />
+                            <div class="c-popupDispatchJackpot__dispatchJackpotLine-currency">euros</div>
+                            <img src="images/trash_bin.png" onclick="@(() => RemoveDispatchJackpotLine.InvokeAsync(moneyByPosition.Key))" />
+                        </div>
+                    }
+                </EditForm>
+                <div class="c-popupDispatchJackpot__addDispatchContainer">
+                    <img src="images/plus.png" onclick="@(() => CreateDispatchJackpotLine.InvokeAsync())" />
+                    <div class="c-popupDispatchJackpot__addDispatchLabel">Ajouter une répartition...</div>
+                </div>
+                <div class="c-popupDispatchJackpot__panelButtons">
+                    <MainButton IsPrimary="true" Label="@ButtonLabelResources.VALIDATE" Type="button" OnClick="() => ValidPopup.InvokeAsync()" />
+                    <MainButton Label="@ButtonLabelResources.CLOSE" Type="button" OnClick="() => ClosePopup.InvokeAsync()" />
+                </div>
+            </div>
+        </div>
+    </div>
+}

@@ -1,0 +1,40 @@
+﻿.mainButton {
+    height: 40px;
+    border-radius: 10px;
+    border: 1px solid;
+    background-color: white;
+    font-size: 14px;
+}
+
+    .mainButton:hover,
+    .mainButton.primary:hover {
+        background-color: seagreen;
+        color: white;
+        transition: background-color 0.5s, color 0.5s;
+    }
+
+    .mainButton.primary {
+        background-color: #276347;
+        color: white;
+    }
+
+@media only screen and (min-width: 768px) and (min-height: 1024px) {
+    .mainButton {
+        height: 70px;
+        font-size: 25px;
+    }
+}
+
+@media only screen and (min-height: 740px) {
+    .mainButton {
+        height: 50px;
+        font-size: 20px;
+    }
+}
+
+@media only screen and (min-height: 1024px) {
+    .mainButton {
+        height: 70px;
+        font-size: 25px;
+    }
+}

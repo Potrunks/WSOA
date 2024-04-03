@@ -1,0 +1,100 @@
+﻿.c-selectPlayers__container-main {
+    height: 95%;
+    width: 95%;
+    background-color: #EDE8DF;
+    border-radius: 10px;
+}
+
+.c-selectPlayers__container-sub,
+.c-selectPlayers__container-players {
+    height: 90%;
+    width: 100%;
+}
+
+.c-selectPlayers__container-players {
+    padding-top: 10px;
+    overflow: auto;
+}
+
+.c-selectPlayers__container-player,
+.c-selectPlayers__panelButtons-addPlayer {
+    width: 100%;
+    height: 10%;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 5px 0 5px;
+}
+
+    .c-selectPlayers__container-player img,
+    .c-selectPlayers__panelButtons-addPlayer img,
+    .c-selectPlayer__icon-blank {
+        width: 35px;
+    }
+
+.notPaid::before {
+    content: '';
+}
+
+.c-selectPlayers__title,
+.c-selectPlayers__panelButtons {
+    width: 100%;
+    height: 10%;
+}
+
+.c-selectPlayers__panelButtons {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 5px;
+}
+
+    .c-selectPlayers__panelButtons ::deep .mainButton {
+        width: 100%;
+        height: 100%;
+        font-size: 20px;
+    }
+
+.c-selectPlayers__title {
+    font-size: 20px;
+    display: flex;
+    align-items: center;
+    padding-left: 10px;
+    text-decoration: underline;
+    text-underline-offset: 10px;
+    text-decoration-color: red;
+    text-decoration-thickness: 2px;
+}
+
+.c-selectPlayers__label-playerFullName {
+    grid-column: 5 / 19;
+    text-wrap: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    font-size: 20px;
+    align-self: center;
+    padding: 0 5px 0 5px;
+    width: 100%;
+    text-align: center;
+}
+
+.c-selectPlayers__label {
+    font-size: 20px;
+}
+
+@media only screen and (min-width: 390px) {
+    .c-selectPlayers__container-player img,
+    .c-selectPlayers__panelButtons-addPlayer img,
+    .c-selectPlayer__icon-blank {
+        width: 40px;
+        margin-right: 10px;
+        margin-left: 10px;
+    }
+
+    .c-selectPlayers__title,
+    .c-selectPlayers__label-playerFullName,
+    .c-selectPlayers__label,
+    .c-selectPlayers__panelButtons ::deep .mainButton {
+        font-size: 25px;
+    }
+}

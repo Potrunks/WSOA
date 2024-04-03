@@ -1,0 +1,12 @@
+﻿@using WSOA.Client.Shared.Fields.Selects.NumberText.Components;
+@inherits IntegerTextSelectFieldComponent
+
+<div class="selectField_mainContainer">
+    <span>@Label</span>
+    <InputSelect @bind-Value="InputValue">
+        @foreach (KeyValuePair<int, string> kvp in Options)
+        {
+                <option value="@kvp.Key">@kvp.Value</option>
+        }
+    </InputSelect>
+</div>

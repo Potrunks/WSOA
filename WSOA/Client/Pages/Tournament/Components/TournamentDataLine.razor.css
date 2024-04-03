@@ -1,0 +1,162 @@
+﻿.container__main {
+    background-color: #EDE8DF;
+    width: 100%;
+    border-radius: 5px;
+    margin-bottom: 10px;
+}
+
+.panelButtons__collapsable {
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+}
+
+    .panelButtons__collapsable > img {
+        height: 33px;
+    }
+
+.container__data-noCollapsable {
+    display: flex;
+    flex-direction: column;
+    padding-left: 10px;
+    padding-bottom: 10px;
+}
+
+.container__data-presenceCounter {
+    display: flex;
+    align-items: center;
+}
+
+.presenceCounter__maybe {
+    margin-left: 10px;
+}
+
+    .presenceCounter__presence > img,
+    .presenceCounter__maybe > img {
+        width: 25px;
+    }
+
+    .presenceCounter__maybe > img {
+        opacity: 0.33;
+    }
+
+.container__data-players {
+    padding-left: 10px;
+    padding-bottom: 10px;
+}
+
+    .container__data-players > .title {
+        font-weight: 500;
+        border-bottom: 2px solid red;
+    }
+
+.players__block {
+    margin-top: 10px;
+}
+
+.panelButtons__actions {
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+    padding-bottom: 10px;
+}
+
+.panelButtons__actions > ::deep .mainButton {
+    width: 30%;
+}
+
+.action {
+    width: 92px;
+    height: 40px;
+    border-radius: 5px;
+    border: 1px solid;
+    background-color: white;
+    font-size: 16px;
+}
+
+.action.present {
+    color: seagreen;
+}
+
+.action.absent {
+    color: indianred;
+}
+
+.presenceState__response-logo {
+    width: 25px;
+}
+
+@media only screen and (max-width: 280px) {
+    .container__main {
+        width: 266px;
+    }
+
+    .action {
+        width: 84px;
+        font-size: 14px;
+    }
+
+    .panelButtons__actions > ::deep .mainButton {
+        font-size: 13px;
+    }
+}
+
+@media only screen and (min-width: 360px) {
+    .panelButtons__actions > ::deep .mainButton {
+        font-size: 17px;
+    }
+}
+
+@media only screen and (min-width: 390px) {
+    .panelButtons__actions > ::deep .mainButton {
+        font-size: 19px;
+    }
+}
+
+@media only screen and (min-width: 768px) {
+    .panelButtons__actions > ::deep .mainButton {
+        font-size: 25px;
+    }
+}
+
+@media only screen and (max-height: 600px) {
+    .container__data-noCollapsable {
+        font-size: 25px;
+    }
+
+    .panelButtons__actions > ::deep .mainButton {
+        height: 60px;
+    }
+
+    .presenceCounter__presence > img,
+    .presenceCounter__maybe > img {
+        width: 50px;
+    }
+}
+
+@media only screen and (min-height: 740px) {
+    .container__data-noCollapsable {
+        font-size: 20px;
+    }
+}
+
+@media only screen and (min-height: 1024px) {
+    .container__data-noCollapsable {
+        font-size: 25px;
+    }
+}
+
+@media only screen and (min-width: 1280px) and (min-height: 800px) {
+    .panelButtons__actions > ::deep .mainButton {
+        height: 60px;
+    }
+
+    .container__data-noCollapsable {
+        font-size: 25px;
+    }
+
+    .presenceCounter__presence > img,
+    .presenceCounter__maybe > img {
+        width: 50px;
+    }
+}

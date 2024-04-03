@@ -1,0 +1,48 @@
+﻿@page "/account/create"
+@using WSOA.Client.Pages.Account.Create.Components;
+@using WSOA.Client.Pages.Account.Create.Resources;
+@using WSOA.Client.Shared.Buttons.Main
+@using WSOA.Client.Shared.Buttons.Resources;
+@using WSOA.Client.Shared.Counters
+@using WSOA.Client.Shared.Fields.Inputs.Text
+@using WSOA.Client.Shared.Fields.Inputs.Password
+@using WSOA.Client.Shared.Fields.Resources;
+@using WSOA.Client.Shared.Forms
+@using WSOA.Client.Shared.Loaders
+@inherits AccountCreateComponent
+@layout FullPageLayout
+
+@if (IsLoading)
+{
+    <CardCoinLoader />
+}
+else
+{
+    <MultiPageForm Model="@AccountCreationFormVM"
+               Title="@AccountCreateLabelResources.ACCOUNT_CREATION_TITLE"
+               OnSubmit="CreateNewAccount()"
+               MaxPages="2">
+        <PageForms>
+            <PageFormContainer PageForm="1">
+                <Fields>
+                    <TextInputField Label="@InputLabelResources.LAST_NAME"
+                                @bind-InputValue="AccountCreationFormVM.LastName" />
+                    <TextInputField Label="@InputLabelResources.FIRST_NAME"
+                                @bind-InputValue="AccountCreationFormVM.FirstName" />
+                    <TextInputField Label="@InputLabelResources.MAIL"
+                                @bind-InputValue="AccountCreationFormVM.Email" />
+                </Fields>
+            </PageFormContainer>
+            <PageFormContainer PageForm="2">
+                <Fields>
+                    <TextInputField Label="@InputLabelResources.LOGIN"
+                                @bind-InputValue="AccountCreationFormVM.Login" />
+                    <PasswordInputField Label="@InputLabelResources.PASSWORD"
+                                    @bind-InputValue="AccountCreationFormVM.Password" />
+                    <PasswordInputField Label="@InputLabelResources.PASSWORD_CONFIRMATION"
+                                    @bind-InputValue="AccountCreationFormVM.PasswordConfirmation" />
+                </Fields>
+            </PageFormContainer>
+        </PageForms>
+    </MultiPageForm>
+}

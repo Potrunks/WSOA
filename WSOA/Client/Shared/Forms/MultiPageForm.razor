@@ -1,0 +1,35 @@
+﻿@using WSOA.Client.Shared.Buttons.Main
+@using WSOA.Client.Shared.Buttons.Resources;
+@using WSOA.Client.Shared.Counters
+@using WSOA.Client.Shared.Forms.Components;
+@using WSOA.Client.Shared.Loaders
+@inherits MultiPageFormComponent
+
+<div class="multiPageForm_mainContainer">
+    <span class="multiPageForm_title">@Title</span>
+    <EditForm EditContext="@EditContext">
+
+        <CascadingValue Value="@MaxPages" Name="MaxPages">
+            <CascadingValue Value="@SubmitCallback" Name="Submit">
+                <CascadingValue Value="@ChangePageCallback" Name="ChangePage">
+                    <CascadingValue Value="@CurrentPageDisplay" Name="CurrentPageDisplay">
+                        @PageForms
+                    </CascadingValue>
+                </CascadingValue>
+            </CascadingValue>
+        </CascadingValue>
+
+        @if (IsProcessing)
+        {
+            <CardLessCoinLoader />
+        }
+
+        @if (HaveProcessDone)
+        {
+            <PagePromptForm ErrorMessageListener="@ErrorMessage"
+                        SuccessListener="@IsSuccess"
+                        WarningMessageListener="@WarningMessage"
+                        OnExit="Reset" />
+        }
+    </EditForm>
+</div>

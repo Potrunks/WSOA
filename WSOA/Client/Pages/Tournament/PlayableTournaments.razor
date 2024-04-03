@@ -1,0 +1,38 @@
+﻿@page "/tournament/execute/{SubSectionId:int}"
+@using WSOA.Client.Pages.Tournament.Components;
+@using WSOA.Client.Shared.Loaders
+@using WSOA.Client.Shared.Prompts.Prompt
+@using WSOA.Client.Shared.Resources;
+@using WSOA.Shared.Resources;
+@using WSOA.Shared.ViewModel;
+@inherits PlayableTournamentsComponent
+
+@if (IsLoading)
+{
+    <CardCoinLoader />
+}
+else
+{
+    <div class="container__main">
+        @if (ViewModel != null && ViewModel.TournamentsVM != null && ViewModel.TournamentsVM.Any())
+        {
+            <CascadingValue Value="@TournamentService" Name="TournamentService">
+                <CascadingValue Value="@NavigationManager" Name="NavigationManager">
+                    @foreach (TournamentViewModel model in ViewModel.TournamentsVM)
+                    {
+                        <TournamentDataLine Data="model"
+                                Mode="TournamentActionMode.PLAY"
+                                OnDeletePlayableTournament="DeleteTournamentSelectedIntoViewModel"/>
+                    }
+                </CascadingValue>
+            </CascadingValue>
+        }
+        else
+        {
+            <div class="c-prompt__mainContainer">
+                <LittlePromptCard LogoPath="images/emoji_surprised.png"
+                          Message="@MainLabelResources.NO_EXECUTABLE_TOURNAMENT" />
+            </div>
+        }
+    </div>
+}

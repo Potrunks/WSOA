@@ -1,0 +1,9 @@
+﻿@using WSOA.Client.Shared.Buttons.Main.Components;
+@inherits MainButtonComponent
+
+<button class="mainButton @_primaryCssClassName"
+        type="@Type"
+        onclick="@OnClick"
+        style="margin-right: @(MarginRight)px;">
+    @Label
+</button>

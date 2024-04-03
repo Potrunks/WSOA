@@ -1,0 +1,7 @@
+﻿@using WSOA.Client.Shared.NavMenus.Main.Components;
+@inherits MainNavSubSectionComponent
+
+<div class="mainContainer" @onclick="SelectSubSection">
+    <span class="@_selectedStateCssClassName">@ViewModel.Label</span>
+    <div class="highlighter @_selectedStateCssClassName" />
+</div>

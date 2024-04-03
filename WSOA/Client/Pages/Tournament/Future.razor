@@ -1,0 +1,39 @@
+﻿@page "/tournament/future/{SubSectionId:int}"
+@using WSOA.Client.Pages.Tournament.Components;
+@using WSOA.Client.Shared.Loaders
+@using WSOA.Client.Shared.Prompts.Prompt
+@using WSOA.Client.Shared.Resources;
+@using WSOA.Shared.Resources;
+@using WSOA.Shared.ViewModel;
+@inherits FutureTournamentComponent
+
+@if (IsLoading)
+{
+    <CardCoinLoader />
+}
+else
+{
+    <div class="container__main">
+        <span class="title__main">@Description</span>
+        @if (FutureTournamentDatasVM != null && FutureTournamentDatasVM.Any())
+        {
+            <CascadingValue Value="@TournamentService" Name="TournamentService">
+                <CascadingValue Value="@NavigationManager" Name="NavigationManager">
+                    <div class="container__datas">
+                        @foreach (TournamentViewModel vm in FutureTournamentDatasVM)
+                        {
+                            <TournamentDataLine Data="vm" Mode="TournamentActionMode.SIGN_UP"/>
+                        }
+                    </div>
+                </CascadingValue>
+            </CascadingValue>
+        }
+        else
+        {
+            <div class="container__prompt">
+                <LittlePromptCard LogoPath="images/emoji_surprised.png"
+                          Message="@MainLabelResources.NO_FUTURE_TOURNAMENT" />
+            </div>
+        }
+    </div>
+}
