@@ -74,7 +74,7 @@ namespace WSOA.Shared.Dtos
             PlayerPlayingDto? firstPlayerDefinitivelyEliminated = PlayerPlayings.Where(pla => playerIds.Contains(pla.Id)).FirstOrDefault(pla => pla.IsEliminated);
             if (firstPlayerDefinitivelyEliminated != null)
             {
-                result = StringFormatUtil.ToFullFirstNameAndFirstLetterLastName(firstPlayerDefinitivelyEliminated.FirstName, firstPlayerDefinitivelyEliminated.LastName);
+                result = StringFormatUtil.ToFormatFullName(firstPlayerDefinitivelyEliminated.FirstName, firstPlayerDefinitivelyEliminated.LastName);
             }
             return result;
         }

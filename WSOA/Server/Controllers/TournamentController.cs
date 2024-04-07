@@ -216,9 +216,9 @@ namespace WSOA.Server.Controllers
         /// </summary>
         [HttpGet]
         [Route("api/season/{season}/result")]
-        public APICallResult<SeasonResultViewModel> LoadSeasonResult(int season)
+        public APICallResult<SeasonResultDto> LoadSeasonResult(int season)
         {
-            return _tournamentBusiness.LoadSeasonResult(season, HttpContext.Session);
+            return _tournamentBusiness.LoadSeasonResultDto(season, HttpContext.Session);
         }
 
         /// <summary>

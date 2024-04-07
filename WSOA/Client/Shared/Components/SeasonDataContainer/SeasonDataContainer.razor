@@ -1,0 +1,26 @@
+﻿@using WSOA.Client.Shared.Components.SeasonDataContainer.Components;
+@using WSOA.Shared.Dtos;
+@using WSOA.Shared.Utils;
+@using WSOA.Shared.ViewModel;
+@inherits SeasonDataContainerComponent
+
+<div class="c-season-data-container__main-container">
+    <div class="c-season-data-container__main-container_header">
+        <img src="/images/chevron_left.png" class="c-season-data-container__header_switch-btn" onclick=@(() => SwitchRankResultDisplay.InvokeAsync(false)) />
+        <div class="c-season-data-container__header_label">@ViewModel.RankResultTypeLabel</div>
+        <img src="/images/chevron_right.png" class="c-season-data-container__header_switch-btn" onclick=@(() => SwitchRankResultDisplay.InvokeAsync(true)) />
+    </div>
+    <div class="c-season-data-container__main-container_rank-result">
+        @foreach (RankResultViewModel rankResult in ViewModel.RankResults)
+        {
+            <div class="c-season-data-container__rank-result_line">
+                <div class="c-season-data-container__rank-result_rank">
+                    <div class=@($"rank-card {GetColorRankClass(rankResult)}")>@rankResult.Rank</div>
+                </div>
+                <div class="c-season-data-container__rank-result_full-name">@rankResult.FullName</div>
+                <div class="c-season-data-container__rank-result_score">@rankResult.Score</div>
+                <div class=@($"c-season-data-container__rank-result_evolution {GetScoreEvolutionClass(rankResult)}")>@rankResult.Evolution</div>
+            </div>
+        }
+    </div>
+</div>

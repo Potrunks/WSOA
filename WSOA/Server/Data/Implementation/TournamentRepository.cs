@@ -176,37 +176,48 @@ namespace WSOA.Server.Data.Implementation
             _dbContext.SaveChanges();
         }
 
-        public SeasonResultDto? GetSeasonResultDto(string season)
+        public List<TournamentPlayedDto> LoadTournamentPlayedDtos(string season)
         {
-            var rawData = (
+            return (
                     from tou in _dbContext.Tournaments
                     join pla in _dbContext.Players on tou.Id equals pla.PlayedTournamentId
                     join usr in _dbContext.Users on pla.UserId equals usr.Id
-                    join eli in _dbContext.Eliminations on pla.Id equals eli.PlayerEliminatorId into left_eli
-                    from eli in left_eli.DefaultIfEmpty()
-                    join bon in _dbContext.BonusTournamentEarneds on pla.Id equals bon.PlayerId into left_bon
-                    from bon in left_bon.DefaultIfEmpty()
                     where
                         tou.IsOver
                         && tou.Season == season
                         && pla.PresenceStateCode == PresenceStateResources.PRESENT_CODE
-                    select new { pla, eli, tou, usr, bon }
-                )
-                .ToList();
-
-            if (rawData.Count == 0)
-            {
-                return null;
-            }
-
-            return new SeasonResultDto
-            {
-                Eliminations = rawData.Select(gr => gr.eli).Where(eli => eli != null).Distinct(),
-                Players = rawData.Select(gr => gr.pla).Where(pla => pla != null).Distinct(),
-                Tournaments = rawData.Select(gr => gr.tou).Where(tou => tou != null).Distinct(),
-                Users = rawData.Select(gr => gr.usr).Where(usr => usr != null).Distinct(),
-                BonusEarneds = rawData.Select(raw => raw.bon).Where(bon => bon != null).Distinct()
-            };
+                    group new { pla, usr } by tou into grouped
+                    select new TournamentPlayedDto
+                    {
+                        StartDate = grouped.Key.StartDate,
+                        PlayerResults = grouped.Select(gr => new PlayerResultDto
+                        {
+                            FirstName = gr.usr.FirstName,
+                            LastName = gr.usr.LastName,
+                            Position = gr.pla.CurrentTournamentPosition!.Value,
+                            Points = gr.pla.TotalWinningsPoint!.Value,
+                            UserId = gr.usr.Id,
+                            BonusTournamentEarneds = _dbContext.BonusTournamentEarneds.Where(bon => bon.PlayerId == gr.pla.Id).Select(bon => new BonusTournamentEarnedResultDto
+                            {
+                                Code = bon.BonusTournamentCode,
+                                Occurence = bon.Occurrence,
+                                Points = bon.PointAmount
+                            }),
+                            Eliminations = _dbContext.Eliminations.Where(eli => eli.PlayerEliminatorId == gr.pla.Id).Select(eli => new EliminationResultDto
+                            {
+                                Id = eli.Id
+                            }),
+                            Victims = _dbContext.Eliminations.Where(eli => eli.PlayerVictimId == gr.pla.Id).Select(eli => new EliminationResultDto
+                            {
+                                Id = eli.Id
+                            }),
+                            TotalAddon = gr.pla.TotalAddOn.HasValue ? gr.pla.TotalAddOn.Value : 0,
+                            TotalRebuy = gr.pla.TotalReBuy.HasValue ? gr.pla.TotalReBuy.Value : 0,
+                            BuyIn = grouped.Key.BuyIn,
+                            TotalWinningAmount = gr.pla.TotalWinningsAmount.HasValue ? gr.pla.TotalWinningsAmount.Value : 0
+                        })
+                    }
+                ).ToList();
         }
     }
 }
