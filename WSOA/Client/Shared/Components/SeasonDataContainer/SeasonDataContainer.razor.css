@@ -1,0 +1,106 @@
+.c-season-data-container__main-container_rank-result {
+    overflow: auto;
+    height: 90%;
+    width: 100%;
+}
+
+.c-season-data-container__main-container {
+    height: 100%;
+    width: 100%;
+}
+
+.c-season-data-container__main-container_header {
+    height: 10%;
+    width: 100%;
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 10px;
+}
+
+.c-season-data-container__header_switch-btn {
+    width: 40px;
+    height: 40px;
+}
+
+.c-season-data-container__header_label {
+    font-size: 20px;
+}
+
+.c-season-data-container__rank-result_line {
+    display: grid;
+    height: 30px;
+    grid-template-rows: 100%;
+    grid-template-columns: 15% 40% 30% 15%;
+    margin-bottom: 10px;
+}
+
+.c-season-data-container__rank-result_evolution {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 10px;
+}
+
+    .c-season-data-container__rank-result_evolution.no-evol {
+        color: orange;
+    }
+
+    .c-season-data-container__rank-result_evolution.evol-up {
+        color: green;
+    }
+
+    .c-season-data-container__rank-result_evolution.evol-down {
+        color: red;
+    }
+
+.c-season-data-container__rank-result_score {
+    display: flex;
+    align-items: center;
+    justify-content: end;
+}
+
+.c-season-data-container__rank-result_rank {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    justify-content: start;
+    align-items: center;
+}
+
+    .c-season-data-container__rank-result_rank .rank-card {
+        width: 20px;
+        height: 30px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        border-radius: 5px;
+    }
+
+        .c-season-data-container__rank-result_rank .rank-card.first {
+            background-color: #FFD700;
+            box-shadow: 4px 4px 4px 1px rgba(0, 0, 0, 0.15);
+        }
+
+        .c-season-data-container__rank-result_rank .rank-card.second {
+            background-color: #C0C0C0;
+            box-shadow: 4px 4px 4px 1px rgba(0, 0, 0, 0.15);
+        }
+
+        .c-season-data-container__rank-result_rank .rank-card.third {
+            background-color: #705d29;
+            box-shadow: 4px 4px 4px 1px rgba(0, 0, 0, 0.15);
+        }
+
+.c-season-data-container__rank-result_full-name {
+    display: flex;
+    align-items: center;
+    justify-content: start;
+}
+
+@media only screen and (max-width: 281px) {
+    .c-season-data-container__rank-result_score {
+        font-size: 15px;
+    }
+}

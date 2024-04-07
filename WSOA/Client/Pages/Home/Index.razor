@@ -1,7 +1,10 @@
 ﻿@page "/home"
 @page "/home/{SubSectionId:int}"
 @using WSOA.Client.Pages.Home.Components;
+@using WSOA.Client.Shared.Components.SeasonDataContainer
 @using WSOA.Client.Shared.Loaders
+@using WSOA.Shared.Dtos;
+@using WSOA.Shared.Resources;
 @using WSOA.Shared.ViewModel;
 @inherits HomeComponent
 
@@ -13,17 +16,13 @@ else
 {
     <div class="c-home__mainContainer">
         <div class="c-home__seasonInfo">
-            <div class="c-home__seasonInfo-label">@($"Saison en cours : {SeasonResultViewModel.Season}")</div>
-            <div class="c-home__seasonInfo-nbTournament">@($"Nombre de tournoi passé : {SeasonResultViewModel.NbTournamentPlayed}")</div>
+            <div class="c-home__seasonInfo-label">@($"Saison en cours : {SeasonResult.Season}")</div>
+            <div class="c-home__seasonInfo-nbTournament">@($"Nombre de tournoi passé : {SeasonResult.NbTournamentPlayed}")</div>
         </div>
         <div class="c-home__seasonRank">
-            <div class="c-home__seasonRank-title">Classement</div>
-            <div class="c-home__seasonRank-container">
-                @foreach (KeyValuePair<int, PlayerPointViewModel> playerPointByPosition in PlayerPointsOrdered)
-                {
-                    <div class="c-home__seasonRank-playerResult">@($"{playerPointByPosition.Key} : {playerPointByPosition.Value.FullName} - {playerPointByPosition.Value.Point} point(s)")</div>
-                }
-            </div>
+            <SeasonDataContainer
+                RankResults=@SeasonResult.RankResults
+            />
         </div>
     </div>
 }

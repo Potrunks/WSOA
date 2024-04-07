@@ -66,8 +66,8 @@ namespace WSOA.Server.Data.Interface
         void DeleteTournaments(IEnumerable<Tournament> tournamentsToDelete);
 
         /// <summary>
-        /// Get the season result by season selected.
+        /// Load tournament played dto list.
         /// </summary>
-        SeasonResultDto? GetSeasonResultDto(string season);
+        List<TournamentPlayedDto> LoadTournamentPlayedDtos(string season);
     }
 }

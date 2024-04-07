@@ -1369,19 +1369,28 @@ namespace WSOA.Server.Business.Implementation
             return result;
         }
 
-        public APICallResult<SeasonResultViewModel> LoadSeasonResult(int season, ISession session)
+        public APICallResult<SeasonResultDto> LoadSeasonResultDto(int season, ISession session)
         {
-            APICallResult<SeasonResultViewModel> result = new APICallResult<SeasonResultViewModel>(false);
+            APICallResult<SeasonResultDto> result = new APICallResult<SeasonResultDto>(false);
 
             try
             {
-                result.Data = new SeasonResultViewModel(season);
+                string seasonStringFormat = season.ToString();
 
                 session.CanUserPerformAction(_userRepository, BusinessActionResources.COMMON_DASHBOARD);
 
-                SeasonResultDto? seasonResultDto = _tournamentRepository.GetSeasonResultDto(season.ToString());
+                List<TournamentPlayedDto> tournamentPlayeds = _tournamentRepository.LoadTournamentPlayedDtos(seasonStringFormat);
 
-                result.Data = seasonResultDto != null ? new SeasonResultViewModel(seasonResultDto) : result.Data;
+                List<RankResultType> rankResultTypesWanted = new List<RankResultType>
+                {
+                    RankResultType.POINTS,
+                    RankResultType.BONUS,
+                    RankResultType.ELIMINATOR,
+                    RankResultType.VICTIM,
+                    RankResultType.PROFITABILITY
+                };
+
+                result.Data = new SeasonResultDto(seasonStringFormat, tournamentPlayeds, rankResultTypesWanted);
 
                 result.Success = true;
             }

@@ -106,7 +106,7 @@ namespace WSOA.Client.Services.Interface
         /// <summary>
         /// Load season result by selected season.
         /// </summary>
-        Task<APICallResult<SeasonResultViewModel>> LoadSeasonResult(int seasonSelected);
+        Task<APICallResult<SeasonResultDto>> LoadSeasonResult(int seasonSelected);
 
         /// <summary>
         /// Edit winnable moneys by position during a tournament in progress.

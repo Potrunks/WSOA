@@ -104,9 +104,9 @@ namespace WSOA.Server.Business.Interface
         APICallResultBase DeletePlayableTournament(int tournamentIdToDelete, ISession session);
 
         /// <summary>
-        /// Load season result by selected season.
+        /// Load season result dto by selected season.
         /// </summary>
-        APICallResult<SeasonResultViewModel> LoadSeasonResult(int season, ISession session);
+        APICallResult<SeasonResultDto> LoadSeasonResultDto(int season, ISession session);
 
         /// <summary>
         /// Edit winnable moneys by position during a tournament in progress.

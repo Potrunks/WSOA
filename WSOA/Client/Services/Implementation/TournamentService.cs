@@ -132,10 +132,10 @@ namespace WSOA.Client.Services.Implementation
             return response.Content.ToObject<APICallResultBase>();
         }
 
-        public async Task<APICallResult<SeasonResultViewModel>> LoadSeasonResult(int seasonSelected)
+        public async Task<APICallResult<SeasonResultDto>> LoadSeasonResult(int seasonSelected)
         {
             HttpResponseMessage response = await _httpClient.GetAsync(string.Format("api/season/{0}/result", seasonSelected));
-            return response.Content.ToObject<APICallResult<SeasonResultViewModel>>();
+            return response.Content.ToObject<APICallResult<SeasonResultDto>>();
         }
 
         public async Task<APICallResult<IEnumerable<JackpotDistribution>>> EditWinnableMoneysByPosition(IDictionary<int, int> winnableMoneysByPosition, int tournamentId)
