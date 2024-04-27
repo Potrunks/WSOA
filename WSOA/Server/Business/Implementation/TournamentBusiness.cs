@@ -1385,18 +1385,27 @@ namespace WSOA.Server.Business.Implementation
 
                 session.CanUserPerformAction(_userRepository, BusinessActionResources.COMMON_DASHBOARD);
 
-                List<TournamentPlayedDto> tournamentPlayeds = _tournamentRepository.LoadTournamentPlayedDtos(seasonStringFormat);
+                Tournament? lastTournament = _tournamentRepository.GetLastTournamentOver(false);
 
-                List<RankResultType> rankResultTypesWanted = new List<RankResultType>
+                if (lastTournament == null)
                 {
-                    RankResultType.POINTS,
-                    RankResultType.BONUS,
-                    RankResultType.ELIMINATOR,
-                    RankResultType.VICTIM,
-                    RankResultType.PROFITABILITY
-                };
+                    result.Data = new SeasonResultDto();
+                }
+                else
+                {
+                    List<TournamentPlayedDto> tournamentPlayeds = _tournamentRepository.LoadTournamentPlayedDtos(seasonStringFormat);
 
-                result.Data = new SeasonResultDto(seasonStringFormat, tournamentPlayeds, rankResultTypesWanted);
+                    List<RankResultType> rankResultTypesWanted = new List<RankResultType>
+                    {
+                        RankResultType.POINTS,
+                        RankResultType.BONUS,
+                        RankResultType.ELIMINATOR,
+                        RankResultType.VICTIM,
+                        RankResultType.PROFITABILITY
+                    };
+
+                    result.Data = new SeasonResultDto(seasonStringFormat, tournamentPlayeds, rankResultTypesWanted);
+                }
 
                 result.Success = true;
             }
