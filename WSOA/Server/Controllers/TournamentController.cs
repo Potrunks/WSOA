@@ -216,9 +216,9 @@ namespace WSOA.Server.Controllers
         /// </summary>
         [HttpGet]
         [Route("api/season/{season}/result")]
-        public APICallResult<SeasonResultViewModel> LoadSeasonResult(int season)
+        public APICallResult<SeasonResultDto> LoadSeasonResult(int season)
         {
-            return _tournamentBusiness.LoadSeasonResult(season, HttpContext.Session);
+            return _tournamentBusiness.LoadSeasonResultDto(season, HttpContext.Session);
         }
 
         /// <summary>
@@ -229,6 +229,16 @@ namespace WSOA.Server.Controllers
         public APICallResult<IEnumerable<JackpotDistribution>> EditWinnableMoneysByPosition([FromBody] IDictionary<int, int> winnableMoneysByPosition, int tournamentId)
         {
             return _tournamentBusiness.EditWinnableMoneysByPosition(winnableMoneysByPosition, tournamentId, HttpContext.Session);
+        }
+
+        /// <summary>
+        /// Load the season in progress result of the current user connected.
+        /// </summary>
+        [HttpGet]
+        [Route("api/season/in-progress/my/load")]
+        public APICallResult<SeasonMyResultDto> LoadMySeasonInProgressResultDto()
+        {
+            return _tournamentBusiness.LoadMySeasonInProgressResultDto(HttpContext.Session);
         }
     }
 }

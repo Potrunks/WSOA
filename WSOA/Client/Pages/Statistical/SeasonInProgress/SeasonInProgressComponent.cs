@@ -4,20 +4,20 @@ using WSOA.Client.Shared.Components;
 using WSOA.Shared.Dtos;
 using WSOA.Shared.Result;
 
-namespace WSOA.Client.Pages.Home.Components
+namespace WSOA.Client.Pages.Statistical.SeasonInProgress
 {
-    public class HomeComponent : SubSectionComponentBase
+    public class SeasonInProgressComponent : SubSectionComponentBase
     {
         [Inject]
         public ITournamentService TournamentService { get; set; }
 
-        public SeasonResultDto SeasonResult { get; set; }
+        public SeasonMyResultDto SeasonMyResultDto { get; set; }
 
         protected override async Task OnInitializedAsync()
         {
             IsLoading = true;
 
-            APICallResult<SeasonResultDto> result = await TournamentService.LoadSeasonResult(DateTime.UtcNow.Year);
+            APICallResult<SeasonMyResultDto> result = await TournamentService.LoadMySeasonInProgressResultDto();
             if (!result.Success)
             {
                 string redirectUrl = !string.IsNullOrEmpty(result.RedirectUrl) ?
@@ -27,7 +27,7 @@ namespace WSOA.Client.Pages.Home.Components
                 return;
             }
 
-            SeasonResult = result.Data;
+            SeasonMyResultDto = result.Data;
 
             IsLoading = false;
         }

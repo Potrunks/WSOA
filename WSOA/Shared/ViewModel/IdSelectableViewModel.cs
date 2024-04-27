@@ -9,13 +9,13 @@ namespace WSOA.Shared.ViewModel
         public IdSelectableViewModel(PlayerViewModel player)
         {
             Id = player.UserId;
-            Label = StringFormatUtil.ToFullFirstNameAndFirstLetterLastName(player.FirstName, player.LastName);
+            Label = StringFormatUtil.ToFormatFullName(player.FirstName, player.LastName);
         }
 
         public IdSelectableViewModel(PlayerPlayingViewModel player)
         {
             Id = player.Id;
-            Label = StringFormatUtil.ToFullFirstNameAndFirstLetterLastName(player.FirstName, player.LastName);
+            Label = StringFormatUtil.ToFormatFullName(player.FirstName, player.LastName);
         }
 
         public int Id { get; set; }

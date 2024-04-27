@@ -1051,6 +1051,12 @@ namespace WSOA.Server.Business.Implementation
                     playerToUpdate.TotalWinningsAmount = null;
                 }
 
+                List<JackpotDistribution> jackpotDistributionsToDelete = _jackpotDistributionRepository.GetJackpotDistributionsByTournamentId(tournamentInProgressId);
+                if (jackpotDistributionsToDelete.Any())
+                {
+                    _jackpotDistributionRepository.RemoveJackpotDistributions(jackpotDistributionsToDelete);
+                }
+
                 _bonusTournamentEarnedRepository.DeleteBonusTournamentEarneds(tournamentToCancelDto.BonusToDelete);
                 _eliminationRepository.DeleteEliminations(tournamentToCancelDto.EliminationsToDelete);
                 _tournamentRepository.SaveTournament(tournamentToCancelDto.TournamentToCancel);
@@ -1369,19 +1375,37 @@ namespace WSOA.Server.Business.Implementation
             return result;
         }
 
-        public APICallResult<SeasonResultViewModel> LoadSeasonResult(int season, ISession session)
+        public APICallResult<SeasonResultDto> LoadSeasonResultDto(int season, ISession session)
         {
-            APICallResult<SeasonResultViewModel> result = new APICallResult<SeasonResultViewModel>(false);
+            APICallResult<SeasonResultDto> result = new APICallResult<SeasonResultDto>(false);
 
             try
             {
-                result.Data = new SeasonResultViewModel(season);
+                string seasonStringFormat = season.ToString();
 
                 session.CanUserPerformAction(_userRepository, BusinessActionResources.COMMON_DASHBOARD);
 
-                SeasonResultDto? seasonResultDto = _tournamentRepository.GetSeasonResultDto(season.ToString());
+                Tournament? lastTournament = _tournamentRepository.GetLastTournamentOver(false);
 
-                result.Data = seasonResultDto != null ? new SeasonResultViewModel(seasonResultDto) : result.Data;
+                if (lastTournament == null)
+                {
+                    result.Data = new SeasonResultDto();
+                }
+                else
+                {
+                    List<TournamentPlayedDto> tournamentPlayeds = _tournamentRepository.LoadTournamentPlayedDtos(seasonStringFormat);
+
+                    List<RankResultType> rankResultTypesWanted = new List<RankResultType>
+                    {
+                        RankResultType.POINTS,
+                        RankResultType.BONUS,
+                        RankResultType.ELIMINATOR,
+                        RankResultType.VICTIM,
+                        RankResultType.PROFITABILITY
+                    };
+
+                    result.Data = new SeasonResultDto(seasonStringFormat, tournamentPlayeds, rankResultTypesWanted);
+                }
 
                 result.Success = true;
             }
@@ -1470,6 +1494,56 @@ namespace WSOA.Server.Business.Implementation
             catch (Exception e)
             {
                 _transactionManager.RollbackTransaction();
+                string errorMsg = MainBusinessResources.TECHNICAL_ERROR;
+                _log.Error(e.Message);
+                result.ErrorMessage = errorMsg;
+                result.RedirectUrl = string.Format(RouteBusinessResources.MAIN_ERROR, errorMsg);
+            }
+
+            return result;
+        }
+
+        public APICallResult<SeasonMyResultDto> LoadMySeasonInProgressResultDto(ISession session)
+        {
+            APICallResult<SeasonMyResultDto> result = new APICallResult<SeasonMyResultDto>(false);
+
+            try
+            {
+                session.CanUserPerformAction(_userRepository, BusinessActionResources.MY_RESULTS);
+
+                Tournament? lastTournament = _tournamentRepository.GetLastTournamentOver(false);
+
+                if (lastTournament == null)
+                {
+                    result.Data = new SeasonMyResultDto();
+                }
+                else
+                {
+
+                    List<TournamentPlayedDto> tournamentPlayeds = _tournamentRepository.LoadTournamentPlayedDtos(lastTournament.Season);
+                    List<RankResultType> rankResultTypesWanted = new List<RankResultType>
+                    {
+                        RankResultType.RANK,
+                        RankResultType.PROFITABILITY,
+                        RankResultType.ELIMINATOR,
+                        RankResultType.VICTIM,
+                        RankResultType.BONUS
+                    };
+
+                    result.Data = new SeasonMyResultDto(lastTournament.Season, rankResultTypesWanted, tournamentPlayeds, session.GetCurrentUserId());
+                }
+
+                result.Success = true;
+            }
+            catch (FunctionalException e)
+            {
+                string errorMsg = e.Message;
+                _log.Error(errorMsg);
+                result.ErrorMessage = errorMsg;
+                result.RedirectUrl = e.RedirectUrl;
+            }
+            catch (Exception e)
+            {
                 string errorMsg = MainBusinessResources.TECHNICAL_ERROR;
                 _log.Error(e.Message);
                 result.ErrorMessage = errorMsg;
