@@ -178,7 +178,7 @@ namespace WSOA.Server.Data.Implementation
 
         public List<TournamentPlayedDto> LoadTournamentPlayedDtos(string season)
         {
-            return (
+            var rawResults = (
                     from tou in _dbContext.Tournaments
                     join pla in _dbContext.Players on tou.Id equals pla.PlayedTournamentId
                     join usr in _dbContext.Users on pla.UserId equals usr.Id
@@ -187,64 +187,78 @@ namespace WSOA.Server.Data.Implementation
                         && tou.Season == season
                         && pla.PresenceStateCode == PresenceStateResources.PRESENT_CODE
                     group new { pla, usr } by tou into grouped
-                    select new TournamentPlayedDto
+                    select new
                     {
-                        StartDate = grouped.Key.StartDate,
-                        BuyIn = grouped.Key.BuyIn,
-                        PlayerResults = grouped.Select(gr => new PlayerResultDto
-                        {
-                            FirstName = gr.usr.FirstName,
-                            LastName = gr.usr.LastName,
-                            Position = gr.pla.CurrentTournamentPosition!.Value,
-                            Points = gr.pla.TotalWinningsPoint!.Value,
-                            UserId = gr.usr.Id,
-                            BonusTournamentEarneds = _dbContext.BonusTournamentEarneds.Where(bon => bon.PlayerId == gr.pla.Id).Select(bon => new BonusTournamentEarnedResultDto
-                            {
-                                Code = bon.BonusTournamentCode,
-                                Occurence = bon.Occurrence,
-                                Points = bon.PointAmount
-                            }),
-                            Eliminations = (
+                        grouped.Key.StartDate,
+                        grouped.Key.BuyIn,
+                        Players = grouped.Select(g => g.pla),
+                        Users = grouped.Select(g => g.usr)
+                    }
+                ).ToList();
+
+            List<TournamentPlayedDto> results = rawResults.Select(rr => new TournamentPlayedDto
+            {
+                StartDate = rr.StartDate,
+                BuyIn = rr.BuyIn,
+                PlayerResults = rr.Players.Select(p => new PlayerResultDto
+                {
+                    PlayerId = p.Id,
+                    FirstName = rr.Users.Single(u => u.Id == p.UserId).FirstName,
+                    LastName = rr.Users.Single(u => u.Id == p.UserId).LastName,
+                    Position = p.CurrentTournamentPosition!.Value,
+                    Points = p.TotalWinningsPoint!.Value,
+                    UserId = rr.Users.Single(u => u.Id == p.UserId).Id,
+                    TotalAddon = p.TotalAddOn.HasValue ? p.TotalAddOn.Value : 0,
+                    TotalRebuy = p.TotalReBuy.HasValue ? p.TotalReBuy.Value : 0,
+                    BuyIn = rr.BuyIn,
+                    TotalWinningAmount = p.TotalWinningsAmount.HasValue ? p.TotalWinningsAmount.Value : 0,
+                    WasFinalTable = p.WasFinalTable.HasValue && p.WasFinalTable.Value ? true : false,
+                    PresenceStateCode = p.PresenceStateCode
+                }).ToList()
+            }).ToList();
+
+            IEnumerable<int> allPlayerIds = results.SelectMany(r => r.PlayerResults).Select(p => p.PlayerId).Distinct();
+
+            List<BonusTournamentEarnedResultDto> bonus = _dbContext.BonusTournamentEarneds.Where(bon => allPlayerIds.Contains(bon.PlayerId)).Select(b => new BonusTournamentEarnedResultDto
+            {
+                PlayerId = b.PlayerId,
+                Code = b.BonusTournamentCode,
+                Occurence = b.Occurrence,
+                Points = b.PointAmount
+            }).ToList();
+
+            List<EliminationResultDto> eliminations = (
                                 from eli in _dbContext.Eliminations
                                 join pla_victim in _dbContext.Players on eli.PlayerVictimId equals pla_victim.Id
                                 join usr_victim in _dbContext.Users on pla_victim.UserId equals usr_victim.Id
-                                where eli.PlayerEliminatorId == gr.pla.Id
-                                select new EliminationResultDto
-                                {
-                                    Id = eli.Id,
-                                    FirstNameEliminator = gr.usr.FirstName,
-                                    LastNameEliminator = gr.usr.LastName,
-                                    UserEliminatorId = gr.usr.Id,
-                                    FirstNameVictim = usr_victim.FirstName,
-                                    LastNameVictim = usr_victim.LastName,
-                                    UserVictimId = usr_victim.Id
-                                }
-                            ),
-                            Victimisations = (
-                                from eli in _dbContext.Eliminations
                                 join pla_elim in _dbContext.Players on eli.PlayerEliminatorId equals pla_elim.Id
                                 join usr_elim in _dbContext.Users on pla_elim.UserId equals usr_elim.Id
-                                where eli.PlayerVictimId == gr.pla.Id
+                                where allPlayerIds.Contains(eli.PlayerEliminatorId) || allPlayerIds.Contains(eli.PlayerVictimId)
                                 select new EliminationResultDto
                                 {
                                     Id = eli.Id,
                                     FirstNameEliminator = usr_elim.FirstName,
                                     LastNameEliminator = usr_elim.LastName,
                                     UserEliminatorId = usr_elim.Id,
-                                    FirstNameVictim = gr.usr.FirstName,
-                                    LastNameVictim = gr.usr.LastName,
-                                    UserVictimId = gr.usr.Id
+                                    PlayerEliminatorId = pla_elim.Id,
+                                    FirstNameVictim = usr_victim.FirstName,
+                                    LastNameVictim = usr_victim.LastName,
+                                    UserVictimId = usr_victim.Id,
+                                    PlayerVictimId = pla_victim.Id
                                 }
-                            ),
-                            TotalAddon = gr.pla.TotalAddOn.HasValue ? gr.pla.TotalAddOn.Value : 0,
-                            TotalRebuy = gr.pla.TotalReBuy.HasValue ? gr.pla.TotalReBuy.Value : 0,
-                            BuyIn = grouped.Key.BuyIn,
-                            TotalWinningAmount = gr.pla.TotalWinningsAmount.HasValue ? gr.pla.TotalWinningsAmount.Value : 0,
-                            WasFinalTable = gr.pla.WasFinalTable.HasValue && gr.pla.WasFinalTable.Value ? true : false,
-                            PresenceStateCode = gr.pla.PresenceStateCode
-                        })
-                    }
-                ).ToList();
+                            ).ToList();
+
+            foreach (TournamentPlayedDto tournamentPlayedDto in results)
+            {
+                foreach (PlayerResultDto playerResultDto in tournamentPlayedDto.PlayerResults)
+                {
+                    playerResultDto.BonusTournamentEarneds = bonus.Where(b => b.PlayerId == playerResultDto.PlayerId).ToList();
+                    playerResultDto.Eliminations = eliminations.Where(e => e.PlayerEliminatorId == playerResultDto.PlayerId).ToList();
+                    playerResultDto.Victimisations = eliminations.Where(v => v.PlayerVictimId == playerResultDto.PlayerId).ToList();
+                }
+            }
+
+            return results;
         }
 
         public Tournament? GetLastTournamentOver(bool includeOutOfSeason)
