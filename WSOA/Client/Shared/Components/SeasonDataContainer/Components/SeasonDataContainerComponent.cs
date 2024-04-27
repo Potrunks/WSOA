@@ -3,7 +3,7 @@ using WSOA.Shared.Dtos;
 using WSOA.Shared.Resources;
 using WSOA.Shared.ViewModel;
 
-namespace WSOA.Client.Shared.Components.SeasonDataContainer.Components
+namespace WSOA.Client.Shared.Components.SeasonDataContainer
 {
     public class SeasonDataContainerComponent : ComponentBase
     {

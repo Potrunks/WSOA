@@ -2,6 +2,7 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using WSOA.Server.Data;
 
@@ -10,9 +11,11 @@ using WSOA.Server.Data;
 namespace WSOA.Server.Migrations
 {
     [DbContext(typeof(WSOADbContext))]
-    partial class WSOADbContextModelSnapshot : ModelSnapshot
+    [Migration("20240408223605_Add_New_Menu_My_Season")]
+    partial class Add_New_Menu_My_Season
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -222,11 +225,6 @@ namespace WSOA.Server.Migrations
                         {
                             Code = "E_WIN_MON",
                             Label = "Editer la répartition du jackpot"
-                        },
-                        new
-                        {
-                            Code = "MY_RESULTS",
-                            Label = "Mes résultats"
                         });
                 });
 
@@ -384,24 +382,6 @@ namespace WSOA.Server.Migrations
                             Id = 22,
                             BusinessActionCode = "E_WIN_MON",
                             ProfileCode = "ORGA"
-                        },
-                        new
-                        {
-                            Id = 23,
-                            BusinessActionCode = "MY_RESULTS",
-                            ProfileCode = "ADMIN"
-                        },
-                        new
-                        {
-                            Id = 24,
-                            BusinessActionCode = "MY_RESULTS",
-                            ProfileCode = "ORGA"
-                        },
-                        new
-                        {
-                            Id = 25,
-                            BusinessActionCode = "MY_RESULTS",
-                            ProfileCode = "PLAYER"
                         });
                 });
 

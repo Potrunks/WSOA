@@ -159,6 +159,16 @@ namespace WSOA.Server.Data
                     Description = "Résultats de la saison en cours",
                     Order = 0,
                     Url = "/home"
+                },
+                // STATISTICAL MAIN NAV SECTION
+                new MainNavSubSection
+                {
+                    Id = 8,
+                    Label = "Ma saison",
+                    MainNavSectionId = 2,
+                    Description = "Mes résultats de la saison en cours",
+                    Order = 0,
+                    Url = "/statistical/my-season"
                 }
             );
 
@@ -284,6 +294,25 @@ namespace WSOA.Server.Data
                     Id = 16,
                     MainNavSubSectionId = 7,
                     ProfileCode = "GUEST"
+                },
+                // MY SEASON
+                new MainNavSubSectionByProfileCode
+                {
+                    Id = 20,
+                    MainNavSubSectionId = 8,
+                    ProfileCode = "ADMIN"
+                },
+                new MainNavSubSectionByProfileCode
+                {
+                    Id = 21,
+                    MainNavSubSectionId = 8,
+                    ProfileCode = "ORGA"
+                },
+                new MainNavSubSectionByProfileCode
+                {
+                    Id = 22,
+                    MainNavSubSectionId = 8,
+                    ProfileCode = "PLAYER"
                 }
             );
 
@@ -375,6 +404,11 @@ namespace WSOA.Server.Data
                 {
                     Code = BusinessActionResources.EDIT_WINNABLE_MONEYS,
                     Label = "Editer la répartition du jackpot"
+                },
+                new BusinessAction
+                {
+                    Code = BusinessActionResources.MY_RESULTS,
+                    Label = "Mes résultats"
                 }
             );
 
@@ -511,6 +545,24 @@ namespace WSOA.Server.Data
                     Id = 22,
                     ProfileCode = "ORGA",
                     BusinessActionCode = BusinessActionResources.EDIT_WINNABLE_MONEYS
+                },
+                new BusinessActionByProfileCode
+                {
+                    Id = 23,
+                    ProfileCode = "ADMIN",
+                    BusinessActionCode = BusinessActionResources.MY_RESULTS
+                },
+                new BusinessActionByProfileCode
+                {
+                    Id = 24,
+                    ProfileCode = "ORGA",
+                    BusinessActionCode = BusinessActionResources.MY_RESULTS
+                },
+                new BusinessActionByProfileCode
+                {
+                    Id = 25,
+                    ProfileCode = "PLAYER",
+                    BusinessActionCode = BusinessActionResources.MY_RESULTS
                 }
             );
 

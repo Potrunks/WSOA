@@ -112,5 +112,10 @@ namespace WSOA.Server.Business.Interface
         /// Edit winnable moneys by position during a tournament in progress.
         /// </summary>
         APICallResult<IEnumerable<JackpotDistribution>> EditWinnableMoneysByPosition(IDictionary<int, int> winnableMoneysByPosition, int tournamentId, ISession session);
+
+        /// <summary>
+        /// Load the season result in progress of the current user connected.
+        /// </summary>
+        APICallResult<SeasonMyResultDto> LoadMySeasonInProgressResultDto(ISession session);
     }
 }

@@ -26,6 +26,10 @@
 
 .c-season-data-container__header_label {
     font-size: 20px;
+    text-align: center;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
 }
 
 .c-season-data-container__rank-result_line {

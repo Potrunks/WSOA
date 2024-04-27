@@ -39,3 +39,33 @@
         font-size: 17px;
     }
 }
+
+@media only screen and (min-height: 740px) {
+    .c-home__seasonRank {
+        height: 88%;
+    }
+}
+
+@media only screen and (min-height: 844px) {
+    .c-home__seasonRank {
+        height: 89.5%;
+    }
+}
+
+@media only screen and (min-height: 896px) {
+    .c-home__seasonRank {
+        height: 90%;
+    }
+}
+
+@media only screen and (min-height: 1280px) {
+    .c-home__seasonRank {
+        height: 93%;
+    }
+}
+
+@media only screen and (min-height: 1366px) {
+    .c-home__seasonRank {
+        height: 93.5%;
+    }
+}

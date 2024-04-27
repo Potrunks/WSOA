@@ -1,0 +1,27 @@
+﻿@page "/statistical/my-season/{SubSectionId:int}"
+@using WSOA.Client.Shared.Components.SeasonMyDetailResult
+@using WSOA.Client.Shared.Loaders
+@using WSOA.Client.Shared.Logos.RandomCardLogo
+@using WSOA.Shared.Dtos;
+@inherits SeasonInProgressComponent
+
+@if (IsLoading)
+{
+    <CardCoinLoader />
+}
+else
+{
+    <div class="c-season-in-progress__main-container">
+        <div class="c-season-in-progress__header">
+            <RandomCardLogo Height="25" />
+            <div class="season-number">@($"Saison {SeasonMyResultDto.Season}")</div>
+            <RandomCardLogo Height="25" />
+        </div>
+        <div class="c-season-in-progress__detail-results-container">
+            @foreach (SeasonMyDetailResultDto detail in SeasonMyResultDto.Details)
+            {
+                <SeasonMyDetailResult Dto="detail" />
+            }
+        </div>
+    </div>
+}

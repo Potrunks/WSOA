@@ -143,5 +143,11 @@ namespace WSOA.Client.Services.Implementation
             HttpResponseMessage response = await _httpClient.PostAsync(string.Format("api/tournament/inProgress/{0}/editWinnableMoneys", tournamentId), winnableMoneysByPosition.ToJsonUtf8());
             return response.Content.ToObject<APICallResult<IEnumerable<JackpotDistribution>>>();
         }
+
+        public async Task<APICallResult<SeasonMyResultDto>> LoadMySeasonInProgressResultDto()
+        {
+            HttpResponseMessage response = await _httpClient.GetAsync(string.Format("api/season/in-progress/my/load"));
+            return response.Content.ToObject<APICallResult<SeasonMyResultDto>>();
+        }
     }
 }
