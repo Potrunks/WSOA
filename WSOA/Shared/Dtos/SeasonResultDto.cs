@@ -225,7 +225,7 @@ namespace WSOA.Shared.Dtos
                             UserId = grouped.First().UserId
                         }
                     )
-                    .OrderByDescending(tou => tou.Score)
+                    .OrderBy(tou => tou.Score)
                     .ThenBy(tou => tou.LastName)
                     .Select((rnk, id) => new RankResultDto
                     {
@@ -248,7 +248,7 @@ namespace WSOA.Shared.Dtos
                             UserId = grouped.First().UserId
                         }
                     )
-                    .OrderByDescending(tou => tou.Score)
+                    .OrderBy(tou => tou.Score)
                     .ThenBy(tou => tou.LastName)
                     .Select((rnk, id) => new RankResultDto
                     {

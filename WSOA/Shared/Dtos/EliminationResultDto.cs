@@ -10,10 +10,14 @@
 
         public int UserEliminatorId { get; set; }
 
+        public int PlayerEliminatorId { get; set; }
+
         public string FirstNameVictim { get; set; }
 
         public string LastNameVictim { get; set; }
 
         public int UserVictimId { get; set; }
+
+        public int PlayerVictimId { get; set; }
     }
 }
