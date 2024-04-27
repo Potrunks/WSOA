@@ -20,10 +20,14 @@
 
         public int TotalWinningAmount { get; set; }
 
+        public bool WasFinalTable { get; set; }
+
+        public string PresenceStateCode { get; set; }
+
         public IEnumerable<BonusTournamentEarnedResultDto> BonusTournamentEarneds { get; set; }
 
         public IEnumerable<EliminationResultDto> Eliminations { get; set; }
 
-        public IEnumerable<EliminationResultDto> Victims { get; set; }
+        public IEnumerable<EliminationResultDto> Victimisations { get; set; }
     }
 }

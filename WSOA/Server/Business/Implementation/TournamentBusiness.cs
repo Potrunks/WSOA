@@ -1487,5 +1487,55 @@ namespace WSOA.Server.Business.Implementation
 
             return result;
         }
+
+        public APICallResult<SeasonMyResultDto> LoadMySeasonInProgressResultDto(ISession session)
+        {
+            APICallResult<SeasonMyResultDto> result = new APICallResult<SeasonMyResultDto>(false);
+
+            try
+            {
+                session.CanUserPerformAction(_userRepository, BusinessActionResources.MY_RESULTS);
+
+                Tournament? lastTournament = _tournamentRepository.GetLastTournamentOver(false);
+
+                if (lastTournament == null)
+                {
+                    result.Data = new SeasonMyResultDto();
+                }
+                else
+                {
+
+                    List<TournamentPlayedDto> tournamentPlayeds = _tournamentRepository.LoadTournamentPlayedDtos(lastTournament.Season);
+                    List<RankResultType> rankResultTypesWanted = new List<RankResultType>
+                    {
+                        RankResultType.RANK,
+                        RankResultType.PROFITABILITY,
+                        RankResultType.ELIMINATOR,
+                        RankResultType.VICTIM,
+                        RankResultType.BONUS
+                    };
+
+                    result.Data = new SeasonMyResultDto(lastTournament.Season, rankResultTypesWanted, tournamentPlayeds, session.GetCurrentUserId());
+                }
+
+                result.Success = true;
+            }
+            catch (FunctionalException e)
+            {
+                string errorMsg = e.Message;
+                _log.Error(errorMsg);
+                result.ErrorMessage = errorMsg;
+                result.RedirectUrl = e.RedirectUrl;
+            }
+            catch (Exception e)
+            {
+                string errorMsg = MainBusinessResources.TECHNICAL_ERROR;
+                _log.Error(e.Message);
+                result.ErrorMessage = errorMsg;
+                result.RedirectUrl = string.Format(RouteBusinessResources.MAIN_ERROR, errorMsg);
+            }
+
+            return result;
+        }
     }
 }

@@ -64,6 +64,7 @@ namespace WSOA.Shared.Dtos
                         }
                     )
                     .OrderByDescending(tou => tou.Score)
+                    .ThenBy(tou => tou.LastName)
                     .Select((rnk, id) => new RankResultDto
                     {
                         FirstName = rnk.FirstName,
@@ -86,6 +87,7 @@ namespace WSOA.Shared.Dtos
                         }
                     )
                     .OrderByDescending(tou => tou.Score)
+                    .ThenBy(tou => tou.LastName)
                     .Select((rnk, id) => new RankResultDto
                     {
                         FirstName = rnk.FirstName,
@@ -116,6 +118,7 @@ namespace WSOA.Shared.Dtos
                         }
                     )
                     .OrderByDescending(tou => tou.Score)
+                    .ThenBy(tou => tou.LastName)
                     .Select((rnk, id) => new RankResultDto
                     {
                         FirstName = rnk.FirstName,
@@ -138,6 +141,7 @@ namespace WSOA.Shared.Dtos
                         }
                     )
                     .OrderByDescending(tou => tou.Score)
+                    .ThenBy(tou => tou.LastName)
                     .Select((rnk, id) => new RankResultDto
                     {
                         FirstName = rnk.FirstName,
@@ -168,6 +172,7 @@ namespace WSOA.Shared.Dtos
                         }
                     )
                     .OrderByDescending(tou => tou.Score)
+                    .ThenBy(tou => tou.LastName)
                     .Select((rnk, id) => new RankResultDto
                     {
                         FirstName = rnk.FirstName,
@@ -190,6 +195,7 @@ namespace WSOA.Shared.Dtos
                         }
                     )
                     .OrderByDescending(tou => tou.Score)
+                    .ThenBy(tou => tou.LastName)
                     .Select((rnk, id) => new RankResultDto
                     {
                         FirstName = rnk.FirstName,
@@ -215,11 +221,12 @@ namespace WSOA.Shared.Dtos
                         {
                             FirstName = grouped.First().FirstName,
                             LastName = grouped.First().LastName,
-                            Score = grouped.SelectMany(gr => gr.Victims).Count(),
+                            Score = grouped.SelectMany(gr => gr.Victimisations).Count(),
                             UserId = grouped.First().UserId
                         }
                     )
                     .OrderByDescending(tou => tou.Score)
+                    .ThenBy(tou => tou.LastName)
                     .Select((rnk, id) => new RankResultDto
                     {
                         FirstName = rnk.FirstName,
@@ -237,11 +244,12 @@ namespace WSOA.Shared.Dtos
                         {
                             FirstName = grouped.First().FirstName,
                             LastName = grouped.First().LastName,
-                            Score = grouped.SelectMany(gr => gr.Victims).Count(),
+                            Score = grouped.SelectMany(gr => gr.Victimisations).Count(),
                             UserId = grouped.First().UserId
                         }
                     )
                     .OrderByDescending(tou => tou.Score)
+                    .ThenBy(tou => tou.LastName)
                     .Select((rnk, id) => new RankResultDto
                     {
                         FirstName = rnk.FirstName,
@@ -272,6 +280,7 @@ namespace WSOA.Shared.Dtos
                         }
                     )
                     .OrderByDescending(tou => tou.Score)
+                    .ThenBy(tou => tou.LastName)
                     .Select((rnk, id) => new RankResultDto
                     {
                         FirstName = rnk.FirstName,
@@ -294,6 +303,7 @@ namespace WSOA.Shared.Dtos
                         }
                     )
                     .OrderByDescending(tou => tou.Score)
+                    .ThenBy(tou => tou.LastName)
                     .Select((rnk, id) => new RankResultDto
                     {
                         FirstName = rnk.FirstName,

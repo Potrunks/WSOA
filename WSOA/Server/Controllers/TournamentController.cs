@@ -230,5 +230,15 @@ namespace WSOA.Server.Controllers
         {
             return _tournamentBusiness.EditWinnableMoneysByPosition(winnableMoneysByPosition, tournamentId, HttpContext.Session);
         }
+
+        /// <summary>
+        /// Load the season in progress result of the current user connected.
+        /// </summary>
+        [HttpGet]
+        [Route("api/season/in-progress/my/load")]
+        public APICallResult<SeasonMyResultDto> LoadMySeasonInProgressResultDto()
+        {
+            return _tournamentBusiness.LoadMySeasonInProgressResultDto(HttpContext.Session);
+        }
     }
 }

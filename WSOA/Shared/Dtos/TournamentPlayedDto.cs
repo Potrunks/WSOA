@@ -4,6 +4,8 @@
     {
         public DateTime StartDate { get; set; }
 
+        public int BuyIn { get; set; }
+
         public IEnumerable<PlayerResultDto> PlayerResults { get; set; }
     }
 }

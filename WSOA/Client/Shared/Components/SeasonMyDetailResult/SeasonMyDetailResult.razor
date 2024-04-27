@@ -1,0 +1,14 @@
+﻿@using WSOA.Client.Shared.Components.SeasonMySubDetailResult;
+@using WSOA.Shared.Dtos;
+@inherits SeasonMyDetailResultComponent;
+
+<div class="c-season-my-detail-result__main-container">
+    <div class="result-type-label">@ViewModel.ResultTypeLabel</div>
+    <div class="score">@ViewModel.Score</div>
+    <div class="c-season-my-detail-result__sub-details-container">
+        @foreach (SeasonMySubDetailResultDto subDetail in Dto.SubDetails)
+        {
+            <SeasonMySubDetailResult Dto="subDetail" />
+        }
+    </div>
+</div>

@@ -1,0 +1,30 @@
+﻿.c-season-my-detail-result__main-container {
+    background-color: #EDE8DF;
+    border-radius: 5px;
+    padding: 5px;
+    margin-top: 5px;
+}
+
+    .c-season-my-detail-result__main-container:first-child {
+        margin-top: 0;
+    }
+
+    .c-season-my-detail-result__main-container .result-type-label {
+        font-size: 20px;
+        text-decoration: underline red;
+        text-underline-offset: 5px;
+    }
+
+    .c-season-my-detail-result__main-container .score {
+        text-align: center;
+        font-size: 20px;
+        padding: 5px;
+    }
+
+.c-season-my-detail-result__sub-details-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 5px;
+    flex-direction: column;
+}

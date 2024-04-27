@@ -69,5 +69,10 @@ namespace WSOA.Server.Data.Interface
         /// Load tournament played dto list.
         /// </summary>
         List<TournamentPlayedDto> LoadTournamentPlayedDtos(string season);
+
+        /// <summary>
+        /// Get the last tournament over.
+        /// </summary>
+        Tournament? GetLastTournamentOver(bool includeOutOfSeason);
     }
 }
