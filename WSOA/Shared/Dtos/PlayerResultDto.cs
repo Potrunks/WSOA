@@ -2,6 +2,8 @@
 {
     public class PlayerResultDto
     {
+        public int PlayerId { get; set; }
+
         public int UserId { get; set; }
 
         public int Position { get; set; }
@@ -24,10 +26,10 @@
 
         public string PresenceStateCode { get; set; }
 
-        public IEnumerable<BonusTournamentEarnedResultDto> BonusTournamentEarneds { get; set; }
+        public List<BonusTournamentEarnedResultDto> BonusTournamentEarneds { get; set; }
 
-        public IEnumerable<EliminationResultDto> Eliminations { get; set; }
+        public List<EliminationResultDto> Eliminations { get; set; }
 
-        public IEnumerable<EliminationResultDto> Victimisations { get; set; }
+        public List<EliminationResultDto> Victimisations { get; set; }
     }
 }
