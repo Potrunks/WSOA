@@ -104,13 +104,18 @@ namespace WSOA.Server.Business.Interface
         APICallResultBase DeletePlayableTournament(int tournamentIdToDelete, ISession session);
 
         /// <summary>
-        /// Load season result by selected season.
+        /// Load season result dto by selected season.
         /// </summary>
-        APICallResult<SeasonResultViewModel> LoadSeasonResult(int season, ISession session);
+        APICallResult<SeasonResultDto> LoadSeasonResultDto(int season, ISession session);
 
         /// <summary>
         /// Edit winnable moneys by position during a tournament in progress.
         /// </summary>
         APICallResult<IEnumerable<JackpotDistribution>> EditWinnableMoneysByPosition(IDictionary<int, int> winnableMoneysByPosition, int tournamentId, ISession session);
+
+        /// <summary>
+        /// Load the season result in progress of the current user connected.
+        /// </summary>
+        APICallResult<SeasonMyResultDto> LoadMySeasonInProgressResultDto(ISession session);
     }
 }

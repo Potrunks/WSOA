@@ -176,37 +176,92 @@ namespace WSOA.Server.Data.Implementation
             _dbContext.SaveChanges();
         }
 
-        public SeasonResultDto? GetSeasonResultDto(string season)
+        public List<TournamentPlayedDto> LoadTournamentPlayedDtos(string season)
         {
-            var rawData = (
+            return (
                     from tou in _dbContext.Tournaments
                     join pla in _dbContext.Players on tou.Id equals pla.PlayedTournamentId
                     join usr in _dbContext.Users on pla.UserId equals usr.Id
-                    join eli in _dbContext.Eliminations on pla.Id equals eli.PlayerEliminatorId into left_eli
-                    from eli in left_eli.DefaultIfEmpty()
-                    join bon in _dbContext.BonusTournamentEarneds on pla.Id equals bon.PlayerId into left_bon
-                    from bon in left_bon.DefaultIfEmpty()
                     where
                         tou.IsOver
                         && tou.Season == season
                         && pla.PresenceStateCode == PresenceStateResources.PRESENT_CODE
-                    select new { pla, eli, tou, usr, bon }
-                )
-                .ToList();
+                    group new { pla, usr } by tou into grouped
+                    select new TournamentPlayedDto
+                    {
+                        StartDate = grouped.Key.StartDate,
+                        BuyIn = grouped.Key.BuyIn,
+                        PlayerResults = grouped.Select(gr => new PlayerResultDto
+                        {
+                            FirstName = gr.usr.FirstName,
+                            LastName = gr.usr.LastName,
+                            Position = gr.pla.CurrentTournamentPosition!.Value,
+                            Points = gr.pla.TotalWinningsPoint!.Value,
+                            UserId = gr.usr.Id,
+                            BonusTournamentEarneds = _dbContext.BonusTournamentEarneds.Where(bon => bon.PlayerId == gr.pla.Id).Select(bon => new BonusTournamentEarnedResultDto
+                            {
+                                Code = bon.BonusTournamentCode,
+                                Occurence = bon.Occurrence,
+                                Points = bon.PointAmount
+                            }),
+                            Eliminations = (
+                                from eli in _dbContext.Eliminations
+                                join pla_victim in _dbContext.Players on eli.PlayerVictimId equals pla_victim.Id
+                                join usr_victim in _dbContext.Users on pla_victim.UserId equals usr_victim.Id
+                                where eli.PlayerEliminatorId == gr.pla.Id
+                                select new EliminationResultDto
+                                {
+                                    Id = eli.Id,
+                                    FirstNameEliminator = gr.usr.FirstName,
+                                    LastNameEliminator = gr.usr.LastName,
+                                    UserEliminatorId = gr.usr.Id,
+                                    FirstNameVictim = usr_victim.FirstName,
+                                    LastNameVictim = usr_victim.LastName,
+                                    UserVictimId = usr_victim.Id
+                                }
+                            ),
+                            Victimisations = (
+                                from eli in _dbContext.Eliminations
+                                join pla_elim in _dbContext.Players on eli.PlayerEliminatorId equals pla_elim.Id
+                                join usr_elim in _dbContext.Users on pla_elim.UserId equals usr_elim.Id
+                                where eli.PlayerVictimId == gr.pla.Id
+                                select new EliminationResultDto
+                                {
+                                    Id = eli.Id,
+                                    FirstNameEliminator = usr_elim.FirstName,
+                                    LastNameEliminator = usr_elim.LastName,
+                                    UserEliminatorId = usr_elim.Id,
+                                    FirstNameVictim = gr.usr.FirstName,
+                                    LastNameVictim = gr.usr.LastName,
+                                    UserVictimId = gr.usr.Id
+                                }
+                            ),
+                            TotalAddon = gr.pla.TotalAddOn.HasValue ? gr.pla.TotalAddOn.Value : 0,
+                            TotalRebuy = gr.pla.TotalReBuy.HasValue ? gr.pla.TotalReBuy.Value : 0,
+                            BuyIn = grouped.Key.BuyIn,
+                            TotalWinningAmount = gr.pla.TotalWinningsAmount.HasValue ? gr.pla.TotalWinningsAmount.Value : 0,
+                            WasFinalTable = gr.pla.WasFinalTable.HasValue && gr.pla.WasFinalTable.Value ? true : false,
+                            PresenceStateCode = gr.pla.PresenceStateCode
+                        })
+                    }
+                ).ToList();
+        }
 
-            if (rawData.Count == 0)
+        public Tournament? GetLastTournamentOver(bool includeOutOfSeason)
+        {
+            IEnumerable<Tournament> tournaments = _dbContext.Tournaments.Where(tou => (includeOutOfSeason || tou.Season != SeasonResources.OUT_OF_SEASON) && tou.IsOver);
+
+            if (includeOutOfSeason)
             {
-                return null;
+                return tournaments.OrderByDescending(tou => tou.StartDate)
+                                  .FirstOrDefault();
             }
-
-            return new SeasonResultDto
+            else
             {
-                Eliminations = rawData.Select(gr => gr.eli).Where(eli => eli != null).Distinct(),
-                Players = rawData.Select(gr => gr.pla).Where(pla => pla != null).Distinct(),
-                Tournaments = rawData.Select(gr => gr.tou).Where(tou => tou != null).Distinct(),
-                Users = rawData.Select(gr => gr.usr).Where(usr => usr != null).Distinct(),
-                BonusEarneds = rawData.Select(raw => raw.bon).Where(bon => bon != null).Distinct()
-            };
+                return tournaments.OrderByDescending(tou => tou.Season)
+                                  .ThenByDescending(tou => tou.StartDate)
+                                  .FirstOrDefault();
+            }
         }
     }
 }

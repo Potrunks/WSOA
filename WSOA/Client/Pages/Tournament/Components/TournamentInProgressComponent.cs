@@ -60,7 +60,7 @@ namespace WSOA.Client.Pages.Tournament.Components
 
         public EventCallback<PlayerPlayingViewModel> OpenPlayerActionsPopup => EventCallback.Factory.Create(this, (PlayerPlayingViewModel player) =>
         {
-            PopupEventHandler.Open(GeneratePlayerActions(player), StringFormatUtil.ToFullFirstNameAndFirstLetterLastName(player.FirstName, player.LastName), player.Id);
+            PopupEventHandler.Open(GeneratePlayerActions(player), StringFormatUtil.ToFormatFullName(player.FirstName, player.LastName), player.Id);
         });
 
         private Action<int?> OpenEliminationPopup()
@@ -79,7 +79,7 @@ namespace WSOA.Client.Pages.Tournament.Components
                         PopupEventHandler.Open(
                             msg: TournamentMessageResources.PLAYER_ALREADY_ELIMINATED,
                             isError: false,
-                            title: StringFormatUtil.ToFullFirstNameAndFirstLetterLastName(eliminatedPlayer.FirstName, eliminatedPlayer.LastName),
+                            title: StringFormatUtil.ToFormatFullName(eliminatedPlayer.FirstName, eliminatedPlayer.LastName),
                             onValid: null
                             );
                     }
@@ -94,7 +94,7 @@ namespace WSOA.Client.Pages.Tournament.Components
 
                     PopupEventHandler.Open(
                         eliminatorPlayers,
-                        string.Format(TournamentMessageResources.WHO_ELIMINATE_PLAYER, StringFormatUtil.ToFullFirstNameAndFirstLetterLastName(eliminatedPlayer.FirstName, eliminatedPlayer.LastName)),
+                        string.Format(TournamentMessageResources.WHO_ELIMINATE_PLAYER, StringFormatUtil.ToFormatFullName(eliminatedPlayer.FirstName, eliminatedPlayer.LastName)),
                         playerId!.Value,
                         option,
                         EliminatePlayer()
@@ -121,7 +121,7 @@ namespace WSOA.Client.Pages.Tournament.Components
                     PopupEventHandler.Open
                     (
                         items,
-                        string.Format(TournamentMessageResources.WHICH_BONUS_HAS_WON, StringFormatUtil.ToFullFirstNameAndFirstLetterLastName(player.FirstName, player.LastName)),
+                        string.Format(TournamentMessageResources.WHICH_BONUS_HAS_WON, StringFormatUtil.ToFormatFullName(player.FirstName, player.LastName)),
                         playerId!.Value,
                         EditBonus(false)
                     );
@@ -146,7 +146,7 @@ namespace WSOA.Client.Pages.Tournament.Components
                     PopupEventHandler.Open
                     (
                         items,
-                        string.Format(TournamentMessageResources.WHICH_BONUS_TO_DELETE, StringFormatUtil.ToFullFirstNameAndFirstLetterLastName(player.FirstName, player.LastName)),
+                        string.Format(TournamentMessageResources.WHICH_BONUS_TO_DELETE, StringFormatUtil.ToFormatFullName(player.FirstName, player.LastName)),
                         playerId!.Value,
                         EditBonus(true)
                     );
@@ -445,7 +445,7 @@ namespace WSOA.Client.Pages.Tournament.Components
                 {
                     TournamentInProgressDto tournamentInProgressDto = TournamentInProgressStore.CheckTournamentAlwaysInProgress();
                     PlayerPlayingDto player = tournamentInProgressDto.PlayerPlayings.Single(pla => pla.Id == playerId);
-                    PopupEventHandler.OpenInputNumberPopup(player.TotalAddOn, string.Format(TournamentMessageResources.HOW_MUCH_ADDON_FOR_PLAYER, StringFormatUtil.ToFullFirstNameAndFirstLetterLastName(player.FirstName, player.LastName)), player.Id, EditPlayerTotalAddon());
+                    PopupEventHandler.OpenInputNumberPopup(player.TotalAddOn, string.Format(TournamentMessageResources.HOW_MUCH_ADDON_FOR_PLAYER, StringFormatUtil.ToFormatFullName(player.FirstName, player.LastName)), player.Id, EditPlayerTotalAddon());
                 }
                 catch (FunctionalException e)
                 {
