@@ -1051,6 +1051,12 @@ namespace WSOA.Server.Business.Implementation
                     playerToUpdate.TotalWinningsAmount = null;
                 }
 
+                List<JackpotDistribution> jackpotDistributionsToDelete = _jackpotDistributionRepository.GetJackpotDistributionsByTournamentId(tournamentInProgressId);
+                if (jackpotDistributionsToDelete.Any())
+                {
+                    _jackpotDistributionRepository.RemoveJackpotDistributions(jackpotDistributionsToDelete);
+                }
+
                 _bonusTournamentEarnedRepository.DeleteBonusTournamentEarneds(tournamentToCancelDto.BonusToDelete);
                 _eliminationRepository.DeleteEliminations(tournamentToCancelDto.EliminationsToDelete);
                 _tournamentRepository.SaveTournament(tournamentToCancelDto.TournamentToCancel);
