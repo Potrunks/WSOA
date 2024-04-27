@@ -6,6 +6,6 @@
 
         public int BuyIn { get; set; }
 
-        public IEnumerable<PlayerResultDto> PlayerResults { get; set; }
+        public List<PlayerResultDto> PlayerResults { get; set; }
     }
 }
