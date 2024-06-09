@@ -129,7 +129,12 @@ namespace WSOA.Server.Data.Implementation
 
         public Tournament? GetPreviousTournament(Tournament currentTournament)
         {
-            string previousSeason = (int.Parse(currentTournament.Season) - 1).ToString();
+            string previousSeason = string.Empty;
+            if (int.TryParse(currentTournament.Season, out int parseResult))
+            {
+                previousSeason = (int.Parse(currentTournament.Season) - 1).ToString();
+            }
+
             return _dbContext.Tournaments.Where(tou => ((currentTournament.Season == SeasonResources.OUT_OF_SEASON && currentTournament.Season == tou.Season)
                                                          || (currentTournament.Season != SeasonResources.OUT_OF_SEASON && (tou.Season == currentTournament.Season || tou.Season == previousSeason)))
                                                        && tou.IsOver
