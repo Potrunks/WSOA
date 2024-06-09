@@ -422,7 +422,7 @@ namespace WSOA.Server.Business.Implementation
                     int totalJackpot = tournamentInProgress.BuyIn * (presentPlayers.Count()
                                                 + presentPlayers.Where(pla => pla.Player.TotalReBuy.HasValue && pla.Player.TotalReBuy > 0).Sum(pla => pla.Player.TotalReBuy!.Value)
                                                 + presentPlayers.Where(pla => pla.Player.TotalAddOn.HasValue && pla.Player.TotalAddOn > 0).Sum(pla => pla.Player.TotalAddOn!.Value))
-                                                - 20;
+                                                - (tournamentInProgress.Season != SeasonResources.OUT_OF_SEASON ? 20 : 0);
                     JackpotDistribution newJackpotDistribution = new JackpotDistribution
                     {
                         TournamentId = tournamentInProgress.Id,

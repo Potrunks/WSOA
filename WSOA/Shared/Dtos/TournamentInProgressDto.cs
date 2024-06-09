@@ -1,4 +1,5 @@
 ﻿using WSOA.Shared.Entity;
+using WSOA.Shared.Resources;
 using WSOA.Shared.Utils;
 
 namespace WSOA.Shared.Dtos
@@ -84,7 +85,7 @@ namespace WSOA.Shared.Dtos
             return BuyIn * (PlayerPlayings.Count()
                             + PlayerPlayings.Where(pla => pla.TotalRebuy.HasValue && pla.TotalRebuy > 0).Sum(pla => pla.TotalRebuy!.Value)
                             + PlayerPlayings.Where(pla => pla.TotalAddOn.HasValue && pla.TotalAddOn > 0).Sum(pla => pla.TotalAddOn!.Value))
-                            - 20;
+                            - (Season != SeasonResources.OUT_OF_SEASON ? 20 : 0);
         }
     }
 }
