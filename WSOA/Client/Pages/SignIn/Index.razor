@@ -9,6 +9,7 @@
 @using WSOA.Client.Shared.Loaders
 @using WSOA.Client.Shared.Prompts.Prompt
 @using WSOA.Client.Shared.Resources;
+@using WSOA.Shared.Resources;
 @inherits SignInComponent
 
 @if (_isLoading)
@@ -52,6 +53,7 @@ else
                     IsProcessSuccessListener="@_isProcessSuccess"
                     Width="100"/>
             </EditForm>
+            <span class="signIn_container-app_version">@VersionResources.APP_VERSION</span>
         </div>
         <div class="signIn_borderRight">
             <img class="signIn_borderRight-logo" src="images/@_cardLeftRenderObject.IconFileName" />
