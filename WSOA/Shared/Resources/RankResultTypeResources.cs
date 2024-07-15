@@ -53,16 +53,12 @@
             },
             { RankResultType.ELIMINATOR, new List<SubRankResultType>
                 {
-                    SubRankResultType.FIRST_MOST_VICTIM,
-                    SubRankResultType.SECOND_MOST_VICTIM,
-                    SubRankResultType.THIRD_MOST_VICTIM
+                    SubRankResultType.ALL_VICTIM
                 }
             },
             { RankResultType.VICTIM, new List<SubRankResultType>
                 {
-                    SubRankResultType.FIRST_MOST_ELIMINATOR,
-                    SubRankResultType.SECOND_MOST_ELIMINATOR,
-                    SubRankResultType.THIRD_MOST_ELIMINATOR
+                    SubRankResultType.ALL_ELIMINATOR
                 }
             },
             { RankResultType.BONUS, new List<SubRankResultType>
