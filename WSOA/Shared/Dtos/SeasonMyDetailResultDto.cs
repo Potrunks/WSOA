@@ -21,10 +21,13 @@ namespace WSOA.Shared.Dtos
             SubDetails = new List<SeasonMySubDetailResultDto>();
             foreach (SubRankResultType subRankResultType in rankResultType.GetSubRankResultTypes())
             {
-                SeasonMySubDetailResultDto? dto = subRankResultType.CreateSeasonMySubDetailResultDto(tournamentPlayeds, currentUsrId);
-                if (dto != null && !dto.IsNoResult(false))
+                List<SeasonMySubDetailResultDto> dtos = subRankResultType.CreateSeasonMySubDetailResultDto(tournamentPlayeds, currentUsrId);
+                foreach (SeasonMySubDetailResultDto dto in dtos)
                 {
-                    SubDetails.Add(dto);
+                    if (!dto.IsNoResult(false))
+                    {
+                        SubDetails.Add(dto);
+                    }
                 }
             }
         }
