@@ -14,5 +14,9 @@
         public const string LINK_ACCOUNT_CREATION_NOT_EXIST_OR_EXPIRED = "Création de compte non autorisée ou expirée.";
         public const string LOGIN_ALREADY_EXISTS = "Ce login est déjà utilisé";
         public const string LOG_OUT = "Vous êtes deconnecté";
+        public const string ACCOUNT_NOT_EXISTS = "Le compte n'existe pas. Veuillez contacter un administrateur";
+        public const int ACCOUNT_RESET_LOGIN_EXPIRATION_HOUR = 24;
+        public const string RESET_PWD_LINK_EXPIRED = "Le lien de réinitialisation du compte est expiré";
+        public const string TECHNICAL_ERROR_SEND_MAIL_RESET_PWD = "Erreur technique pendant la tentative d'envoi du mail d'envoi du mail de réinitialisation du mot de passe -> {0}";
     }
 }

@@ -24,6 +24,8 @@ namespace WSOA.Test.Business
         private Mock<ITransactionManager> _transactionManagerMock;
         private IPlayerRepository _playerRepository;
         private IUserRepository _userRepository;
+        private IJackpotDistributionRepository _jackpotDistributionRepository;
+        private ITournamentRepository _tournamentRepository;
 
         private ITournamentBusiness _tournamentBusiness;
 
@@ -33,18 +35,21 @@ namespace WSOA.Test.Business
             _userPerformer = SaveUser("Test", "TEST", "ttest", "Trunks92!", ProfileResources.ORGANIZER_CODE);
             SaveBusinessAction(_userPerformer.ProfileCode, BusinessActionResources.EDIT_TOTAL_ADDON);
             Tournament tournament = SaveTournament(true);
+            SaveJackpotDistribution(tournament.Id);
             _playerConcerned = SavePlayer("Alexis", "ARRIAL", ProfileResources.PLAYER_CODE, tournament.Id, PresenceStateResources.PRESENT_CODE, wasAddon: true);
 
             _sessionMock = CreateISessionMock(_userPerformer.ProfileCode, _userPerformer.Id);
             _transactionManagerMock = CreateITransactionManagerMock();
             _playerRepository = new PlayerRepository(_dbContext);
             _userRepository = new UserRepository(_dbContext);
+            _jackpotDistributionRepository = new JackpotDistributionRepository(_dbContext);
+            _tournamentRepository = new TournamentRepository(_dbContext);
 
             _tournamentBusiness = new TournamentBusiness
                 (
                     _transactionManagerMock.Object,
                     null,
-                    null,
+                    _tournamentRepository,
                     null,
                     _userRepository,
                     null,
@@ -52,7 +57,7 @@ namespace WSOA.Test.Business
                     null,
                     null,
                     null,
-                    null
+                    _jackpotDistributionRepository
                 );
         }
 

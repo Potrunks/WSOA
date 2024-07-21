@@ -25,6 +25,12 @@ namespace WSOA.Server.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int");
 
+                    b.Property<DateTime?>("ForgotPasswordExpirationDate")
+                        .HasColumnType("datetime(6)");
+
+                    b.Property<long?>("ForgotPasswordKey")
+                        .HasColumnType("bigint");
+
                     b.Property<string>("Login")
                         .IsRequired()
                         .HasColumnType("longtext");
@@ -587,6 +593,15 @@ namespace WSOA.Server.Migrations
                         },
                         new
                         {
+                            Id = 9,
+                            Description = "Affiche les informations de tous les comptes",
+                            Label = "Comptes",
+                            MainNavSectionId = 4,
+                            Order = 2,
+                            Url = "/account/get/all"
+                        },
+                        new
+                        {
                             Id = 3,
                             Description = "Créer un tournoi",
                             Label = "Créer tournoi",
@@ -794,6 +809,12 @@ namespace WSOA.Server.Migrations
                             Id = 22,
                             MainNavSubSectionId = 8,
                             ProfileCode = "PLAYER"
+                        },
+                        new
+                        {
+                            Id = 23,
+                            MainNavSubSectionId = 9,
+                            ProfileCode = "ADMIN"
                         });
                 });
 

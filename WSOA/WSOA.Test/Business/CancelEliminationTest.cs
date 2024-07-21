@@ -34,6 +34,7 @@ namespace WSOA.Test.Business
         private IBonusTournamentEarnedRepository _bonusTournamentEarnedRepository;
         private IBonusTournamentRepository _bonusTournamentRepository;
         private IPlayerRepository _playerRepository;
+        private IJackpotDistributionRepository _jackpotDistributionRepository;
 
         private ITournamentBusiness _tournamentBusiness;
 
@@ -43,6 +44,7 @@ namespace WSOA.Test.Business
             _usrPerformer = SaveUser("Aang", "AVATAR", "aavatar", "Trunks92!", ProfileResources.ORGANIZER_CODE);
 
             _tournament = SaveTournament(true);
+            SaveJackpotDistribution(_tournament.Id);
 
             _usrEliminated = SaveUser("Alexis", "ARRIAL", "aarrial", "Trunks92!", ProfileResources.PLAYER_CODE);
             _playerEliminated = SavePlayer(_tournament.Id, _usrEliminated.Id, PresenceStateResources.PRESENT_CODE, totalRebuy: 3);
@@ -58,6 +60,7 @@ namespace WSOA.Test.Business
             _bonusTournamentEarnedRepository = new BonusTournamentEarnedRepository(_dbContext);
             _bonusTournamentRepository = new BonusTournamentRepository(_dbContext);
             _playerRepository = new PlayerRepository(_dbContext);
+            _jackpotDistributionRepository = new JackpotDistributionRepository(_dbContext);
 
             _tournamentBusiness = new TournamentBusiness
             (
@@ -71,7 +74,7 @@ namespace WSOA.Test.Business
                 _bonusTournamentRepository,
                 _eliminationRepository,
                 _bonusTournamentEarnedRepository,
-                null
+                _jackpotDistributionRepository
             );
         }
 
@@ -260,7 +263,8 @@ namespace WSOA.Test.Business
             {
                 EliminatedPlayerId = _playerEliminated.Id,
                 IsAddOn = isAddon,
-                IsFinalTable = isFinalTable
+                IsFinalTable = isFinalTable,
+                TournamentId = _tournament.Id
             };
             return _tournamentBusiness.CancelLastPlayerElimination(eliminationEditionDto, _sessionMock.Object);
         }

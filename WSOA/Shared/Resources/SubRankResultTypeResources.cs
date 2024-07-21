@@ -12,17 +12,13 @@ namespace WSOA.Shared.Resources
         MONEY_WIN = 5,
         TOTAL_REBUY = 6,
         TOTAL_ADDON = 7,
-        FIRST_MOST_VICTIM = 8,
-        SECOND_MOST_VICTIM = 9,
-        THIRD_MOST_VICTIM = 10,
-        FIRST_MOST_ELIMINATOR = 11,
-        SECOND_MOST_ELIMINATOR = 12,
-        THIRD_MOST_ELIMINATOR = 13,
-        FIRST_RANKED_KILLED = 14,
-        PREVIOUS_WINNER_KILLED = 15,
-        FOUR_OF_A_KIND = 16,
-        STRAIGHT_FLUSH = 17,
-        ROYAL_STRAIGHT_FLUSH = 18
+        FIRST_RANKED_KILLED = 8,
+        PREVIOUS_WINNER_KILLED = 9,
+        FOUR_OF_A_KIND = 10,
+        STRAIGHT_FLUSH = 11,
+        ROYAL_STRAIGHT_FLUSH = 12,
+        ALL_VICTIM = 13,
+        ALL_ELIMINATOR = 14
     }
 
     public static class SubRankResultTypeUtil
@@ -56,7 +52,7 @@ namespace WSOA.Shared.Resources
             }
         }
 
-        public static SeasonMySubDetailResultDto? CreateSeasonMySubDetailResultDto(this SubRankResultType subRankResultType, IEnumerable<TournamentPlayedDto> tournamentPlayeds, int currentUserId)
+        public static List<SeasonMySubDetailResultDto> CreateSeasonMySubDetailResultDto(this SubRankResultType subRankResultType, IEnumerable<TournamentPlayedDto> tournamentPlayeds, int currentUserId)
         {
             switch (subRankResultType)
             {
@@ -73,16 +69,14 @@ namespace WSOA.Shared.Resources
                 case SubRankResultType.FOUR_OF_A_KIND:
                 case SubRankResultType.STRAIGHT_FLUSH:
                 case SubRankResultType.ROYAL_STRAIGHT_FLUSH:
-                    return new SeasonMySubDetailResultDto(tournamentPlayeds, subRankResultType, currentUserId);
-                case SubRankResultType.FIRST_MOST_VICTIM:
-                case SubRankResultType.SECOND_MOST_VICTIM:
-                case SubRankResultType.THIRD_MOST_VICTIM:
-                case SubRankResultType.FIRST_MOST_ELIMINATOR:
-                case SubRankResultType.SECOND_MOST_ELIMINATOR:
-                case SubRankResultType.THIRD_MOST_ELIMINATOR:
-                    return new SeasonMySubDetailUserResultDto(tournamentPlayeds, subRankResultType, currentUserId);
+                    return new List<SeasonMySubDetailResultDto> { new SeasonMySubDetailResultDto(tournamentPlayeds, subRankResultType, currentUserId) };
+                case SubRankResultType.ALL_VICTIM:
+                case SubRankResultType.ALL_ELIMINATOR:
+                    List<SeasonMySubDetailResultDto> result = new List<SeasonMySubDetailResultDto>();
+                    result.AddRange(SeasonMySubDetailUserResultDto.CreateSeasonMySubDetailUserResultDtos(tournamentPlayeds, subRankResultType, currentUserId));
+                    return result;
                 default:
-                    return null;
+                    return new List<SeasonMySubDetailResultDto>();
             }
         }
     }

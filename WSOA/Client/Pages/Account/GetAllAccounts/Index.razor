@@ -1,0 +1,37 @@
+﻿@page "/account/get/all/{SubSectionId:int}"
+@using WSOA.Client.Pages.Account.GetAllAccounts.Component
+@using WSOA.Client.Shared.Loaders
+@using WSOA.Client.Shared.Fields.Selects.NumberText
+@using WSOA.Shared.ViewModel
+@inherits GetAllAccountsComponent
+
+@if (IsLoading)
+{
+    <CardCoinLoader />
+}
+else
+{
+    <div class="c-get-all-accounts__main-container">
+        <span class="c-get-all-accounts__header">Tous les comptes</span>
+        <div class="c-get-all-accounts__body">
+            <div class="c-get-all-accounts__account-panel-selector">
+                <label>Compte</label>
+                <select @onchange="ChangeSelectedAccount">
+                    @foreach (KeyValuePair<int, AccountViewModel> kvp in AccountViewModelDictionary)
+                    {
+                        <option value="@kvp.Key">@($"{kvp.Value.FirstName} {kvp.Value.LastName}")</option>
+                    }
+                </select>
+            </div>
+            <div class="c-get-all-accounts__account-data-content">
+                <span>@($"{AccountViewModelSelected.FirstName} {AccountViewModelSelected.LastName}")</span>
+                <label>Login</label>
+                <span class="c-get-all-accounts__account-data-content--data">@AccountViewModelSelected.Login</span>
+                <label>Lien de création de compte</label>
+                <span class="c-get-all-accounts__account-data-content--data">@AccountViewModelSelected.AccountCreationLink</span>
+                <label>Lien de reset password</label>
+                <span class="c-get-all-accounts__account-data-content--data">@AccountViewModelSelected.AccountResetPwdLink</span>
+            </div>
+        </div>
+    </div>
+}

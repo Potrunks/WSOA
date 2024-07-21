@@ -27,6 +27,7 @@ namespace WSOA.Test.Business
         private IUserRepository _userRepository;
         private IPlayerRepository _playerRepository;
         private ITournamentRepository _tournamentRepository;
+        private IJackpotDistributionRepository _jackpotDistributionRepository;
         private ITournamentBusiness _tournamentBusiness;
 
         [TestInitialize]
@@ -36,6 +37,7 @@ namespace WSOA.Test.Business
 
             _tournamentInProgress = SaveTournament(true);
             SavePlayers(_tournamentInProgress.Id, PresenceStateResources.PRESENT_CODE, 3);
+            SaveJackpotDistribution(_tournamentInProgress.Id);
 
             _usrToAdd = SaveUser("New", "PLAYER", "nplayer", "Trunks92!", ProfileResources.PLAYER_CODE);
             _usersToAdd = new List<User> { _usrToAdd };
@@ -45,6 +47,7 @@ namespace WSOA.Test.Business
             _userRepository = new UserRepository(_dbContext);
             _playerRepository = new PlayerRepository(_dbContext);
             _tournamentRepository = new TournamentRepository(_dbContext);
+            _jackpotDistributionRepository = new JackpotDistributionRepository(_dbContext);
 
             _tournamentBusiness = new TournamentBusiness
                 (
@@ -58,7 +61,7 @@ namespace WSOA.Test.Business
                     null,
                     null,
                     null,
-                    null
+                    _jackpotDistributionRepository
                 );
         }
 

@@ -1,4 +1,5 @@
-﻿using WSOA.Shared.Entity;
+﻿using WSOA.Shared.Dtos;
+using WSOA.Shared.Entity;
 
 namespace WSOA.Server.Data.Interface
 {
@@ -33,5 +34,11 @@ namespace WSOA.Server.Data.Interface
         /// Delete Link Account Creation from DB.
         /// </summary>
         void DeleteLinkAccountCreation(LinkAccountCreation link);
+
+        IQueryable<Account> GetAccountsByMails(IEnumerable<string> mails);
+
+        IQueryable<Account> GetAccountsByIds(IEnumerable<int> ids);
+
+        IQueryable<AccountDto> GetAllAccountDtos();
     }
 }

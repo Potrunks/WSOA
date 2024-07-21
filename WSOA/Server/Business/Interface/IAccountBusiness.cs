@@ -1,4 +1,5 @@
-﻿using WSOA.Shared.Result;
+﻿using WSOA.Shared.Forms;
+using WSOA.Shared.Result;
 using WSOA.Shared.ViewModel;
 
 namespace WSOA.Server.Business.Interface
@@ -35,5 +36,13 @@ namespace WSOA.Server.Business.Interface
         /// Clear all token in session.
         /// </summary>
         APICallResultBase ClearSession(ISession currentSession);
+
+        APICallResultBase SendResetAccountLoginMail(MailForm form);
+
+        APICallResultBase ResetAccountLogin(AccountResetForm form);
+
+        APICallResult<AccountViewModel> GetAccountViewModel(int accountId, long? forgotPasswordKey = null);
+
+        APICallResult<List<AccountViewModel>> GetAllAccountViewModels(ISession session, string baseUrl);
     }
 }

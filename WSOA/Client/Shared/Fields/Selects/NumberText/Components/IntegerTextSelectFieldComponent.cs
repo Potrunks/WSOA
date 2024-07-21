@@ -20,6 +20,10 @@ namespace WSOA.Client.Shared.Fields.Selects.NumberText.Components
                 }
                 _inputValue = value;
                 InputValueChanged.InvokeAsync(value);
+                if (OnInputValueChange != null)
+                {
+                    OnInputValueChange.Value.InvokeAsync(value);
+                }
             }
         }
 
@@ -27,6 +31,9 @@ namespace WSOA.Client.Shared.Fields.Selects.NumberText.Components
 
         [Parameter]
         public EventCallback<int> InputValueChanged { get; set; }
+
+        [Parameter]
+        public EventCallback<int>? OnInputValueChange { get; set; }
 
         [Parameter]
         [EditorRequired]

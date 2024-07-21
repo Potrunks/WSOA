@@ -682,7 +682,7 @@ namespace WSOA.Test
         {
             Assert.AreEqual(true, result.Success);
             Assert.AreEqual(expectedRedirectUrl, result.RedirectUrl);
-            Assert.AreEqual(null, result.WarningMessage);
+            Assert.AreEqual(string.Empty, result.WarningMessage);
             Assert.AreEqual(null, result.ErrorMessage);
         }
 
@@ -690,8 +690,22 @@ namespace WSOA.Test
         {
             Assert.AreEqual(false, result.Success);
             Assert.AreEqual(expectedRedirectUrl, result.RedirectUrl);
-            Assert.AreEqual(null, result.WarningMessage);
+            Assert.AreEqual(string.Empty, result.WarningMessage);
             Assert.AreEqual(expectedErrorMsg, result.ErrorMessage);
+        }
+
+        public JackpotDistribution SaveJackpotDistribution(int tournamentId, int amount = 10, int playerPosition = 1)
+        {
+            JackpotDistribution jackpot = new JackpotDistribution
+            {
+                Amount = amount,
+                PlayerPosition = playerPosition,
+                TournamentId = tournamentId
+            };
+
+            _dbContext.JackpotDistributions.Add(jackpot);
+            _dbContext.SaveChanges();
+            return jackpot;
         }
     }
 }
