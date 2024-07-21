@@ -86,8 +86,6 @@ namespace WSOA.Server.Business.Implementation
                 smtpClient.EnableSsl = true;
 
                 smtpClient.Send(message);
-
-                throw new WarningException("Test");
             }
             catch (Exception e)
             {
