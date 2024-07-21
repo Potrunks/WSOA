@@ -1,4 +1,6 @@
-﻿namespace WSOA.Server.Business.Interface
+﻿using WSOA.Shared.Entity;
+
+namespace WSOA.Server.Business.Interface
 {
     public interface IMailService
     {
@@ -11,5 +13,10 @@
         /// Send mails.
         /// </summary>
         void SendMails(IEnumerable<string> recipientMails, string subject, string body);
+
+        /// <summary>
+        /// Send the mail to invite the user to re-initialize his login data.
+        /// </summary>
+        void SendResetAccountLoginMail(string recipientMail, Account account, string baseUri);
     }
 }

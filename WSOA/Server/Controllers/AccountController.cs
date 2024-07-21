@@ -1,5 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using WSOA.Server.Business.Interface;
+using WSOA.Server.Business.Utils;
+using WSOA.Shared.Forms;
 using WSOA.Shared.Result;
 using WSOA.Shared.ViewModel;
 
@@ -73,6 +75,34 @@ namespace WSOA.Server.Controllers
         public APICallResultBase ClearSession()
         {
             return _accountBusiness.ClearSession(HttpContext.Session);
+        }
+
+        [HttpPost]
+        [Route("api/account/reset/send/mail")]
+        public APICallResultBase SendResetAccountLoginMail([FromBody] MailForm form)
+        {
+            return _accountBusiness.SendResetAccountLoginMail(form);
+        }
+
+        [HttpPost]
+        [Route("api/account/reset/login")]
+        public APICallResultBase ResetAccountLogin([FromBody] AccountResetForm form)
+        {
+            return _accountBusiness.ResetAccountLogin(form);
+        }
+
+        [HttpGet]
+        [Route("api/account/{accountId}/{forgotPasswordKey}/get")]
+        public APICallResult<AccountViewModel> GetResetPasswordAccountViewModel(int accountId, long forgotPasswordKey)
+        {
+            return _accountBusiness.GetAccountViewModel(accountId, forgotPasswordKey);
+        }
+
+        [HttpGet]
+        [Route("api/account/get/all")]
+        public APICallResult<List<AccountViewModel>> GetAllAccountViewModels()
+        {
+            return _accountBusiness.GetAllAccountViewModels(HttpContext.Session, HttpContext.Request.GeBasetUrl());
         }
     }
 }

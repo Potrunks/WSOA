@@ -24,7 +24,20 @@
 
         public string? ErrorMessage { get; set; }
 
-        public string? WarningMessage { get; set; }
+        public string WarningMessage
+        {
+            get
+            {
+                return string.IsNullOrWhiteSpace(_warningMessage) ? string.Empty :
+                       _warningMessage.Contains("Un avertissement sauvage apparait") ? _warningMessage :
+                       $"Un avertissement sauvage apparait : {_warningMessage}. Rien de grave mais préviens juste l'administrateur";
+            }
+            set
+            {
+                _warningMessage = value ?? string.Empty;
+            }
+        }
+        private string _warningMessage;
 
         public string? RedirectUrl { get; set; }
     }

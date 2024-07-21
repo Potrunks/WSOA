@@ -5,6 +5,9 @@ using WSOA.Server.Business.Resources;
 using WSOA.Server.Business.Utils;
 using WSOA.Server.Data.Interface;
 using WSOA.Shared.Entity;
+using WSOA.Shared.Exceptions;
+using WSOA.Shared.Forms;
+using WSOA.Shared.Resources;
 using WSOA.Shared.Result;
 using WSOA.Shared.ViewModel;
 
@@ -152,9 +155,14 @@ namespace WSOA.Server.Business.Implementation
 
                 _accountRepository.SaveLinkAccountCreation(currentLink);
 
-                _mailService.SendMailAccountCreationLink(currentLink.RecipientMail, link.BaseUri);
-
                 _transactionManager.CommitTransaction();
+
+                _mailService.SendMailAccountCreationLink(currentLink.RecipientMail, link.BaseUri);
+            }
+            catch (WarningException e)
+            {
+                _log.Error(string.Format(AccountBusinessResources.TECHNICAL_ERROR_LINK_ACCOUNT_CREATION, e.Message));
+                result.WarningMessage = e.Message;
             }
             catch (Exception ex)
             {
@@ -251,6 +259,166 @@ namespace WSOA.Server.Business.Implementation
             }
 
             return new APICallResultBase(true, RouteBusinessResources.HOME);
+        }
+
+        public APICallResultBase SendResetAccountLoginMail(MailForm form)
+        {
+            APICallResultBase result = new APICallResultBase(true);
+
+            try
+            {
+                _transactionManager.BeginTransaction();
+
+                if (string.IsNullOrWhiteSpace(form.Mail))
+                {
+                    throw new NullReferenceException(string.Format(MainBusinessResources.NULL_OBJ_NOT_ALLOWED, typeof(string), nameof(AccountBusiness.SendResetAccountLoginMail)));
+                }
+
+                Account? account = _accountRepository.GetAccountsByMails(new List<string> { form.Mail }).SingleOrDefault();
+                if (account == null)
+                {
+                    string errorMsg = AccountBusinessResources.ACCOUNT_NOT_EXISTS;
+                    throw new FunctionalException(errorMsg, string.Format("/signIn/error/{0}", errorMsg));
+                }
+
+                if (!account.ForgotPasswordExpirationDate.HasValue || account.ForgotPasswordExpirationDate < DateTime.UtcNow)
+                {
+                    account.ForgotPasswordExpirationDate = DateTime.UtcNow.AddHours(AccountBusinessResources.ACCOUNT_RESET_LOGIN_EXPIRATION_HOUR);
+                    account.ForgotPasswordKey = account.ForgotPasswordExpirationDate.Value.Ticks;
+                }
+
+                _accountRepository.SaveAccount(account);
+
+                _transactionManager.CommitTransaction();
+
+                _mailService.SendResetAccountLoginMail(form.Mail, account, form.BaseURL);
+            }
+            catch (WarningException e)
+            {
+                _log.Error(string.Format(AccountBusinessResources.TECHNICAL_ERROR_SEND_MAIL_RESET_PWD, e.Message));
+                result.WarningMessage = e.Message;
+            }
+            catch (FunctionalException e)
+            {
+                _transactionManager.RollbackTransaction();
+                string errorMsg = e.Message;
+                _log.Error(errorMsg);
+                return new APICallResultBase(errorMsg, e.RedirectUrl);
+            }
+            catch (Exception e)
+            {
+                _transactionManager.RollbackTransaction();
+                _log.Error(e.Message);
+                return new APICallResultBase(MainBusinessResources.TECHNICAL_ERROR);
+            }
+
+            return result;
+        }
+
+        public APICallResultBase ResetAccountLogin(AccountResetForm form)
+        {
+            try
+            {
+                _transactionManager.BeginTransaction();
+
+                APICallResultBase result = new APICallResultBase(true);
+
+                Account? account = _accountRepository.GetAccountsByIds(new List<int> { form.AccountId }).SingleOrDefault();
+
+                if (account == null)
+                {
+                    string errorMsg = AccountBusinessResources.ACCOUNT_NOT_EXISTS;
+                    throw new FunctionalException(errorMsg, string.Format("/signIn/error/{0}", errorMsg));
+                }
+
+                if (account.ForgotPasswordExpirationDate < DateTime.UtcNow || account.ForgotPasswordKey != form.ForgotPasswordKey)
+                {
+                    string errorMsg = AccountBusinessResources.RESET_PWD_LINK_EXPIRED;
+                    throw new FunctionalException(errorMsg, string.Format("/signIn/error/{0}", errorMsg));
+                }
+
+                account.Password = form.Password.ToSha256();
+                account.ForgotPasswordExpirationDate = null;
+                account.ForgotPasswordKey = null;
+
+                _accountRepository.SaveAccount(account);
+
+                _transactionManager.CommitTransaction();
+
+                return result;
+            }
+            catch (FunctionalException e)
+            {
+                _transactionManager.RollbackTransaction();
+                string errorMsg = e.Message;
+                _log.Error(errorMsg);
+                return new APICallResultBase(errorMsg, e.RedirectUrl);
+            }
+            catch (Exception e)
+            {
+                _transactionManager.RollbackTransaction();
+                _log.Error(e.Message);
+                return new APICallResultBase(MainBusinessResources.TECHNICAL_ERROR);
+            }
+        }
+
+        public APICallResult<AccountViewModel> GetAccountViewModel(int accountId, long? forgotPasswordKey = null)
+        {
+            try
+            {
+                APICallResult<AccountViewModel> result = new APICallResult<AccountViewModel>(true);
+
+                Account? account = _accountRepository.GetAccountsByIds(new List<int> { accountId }).SingleOrDefault();
+
+                if (account == null)
+                {
+                    string errorMsg = AccountBusinessResources.ACCOUNT_NOT_EXISTS;
+                    throw new FunctionalException(errorMsg, string.Format("/signIn/error/{0}", errorMsg));
+                }
+
+                if (forgotPasswordKey != null && (account.ForgotPasswordExpirationDate < DateTime.UtcNow || account.ForgotPasswordKey != forgotPasswordKey))
+                {
+                    string errorMsg = AccountBusinessResources.RESET_PWD_LINK_EXPIRED;
+                    throw new FunctionalException(errorMsg, string.Format("/signIn/error/{0}", errorMsg));
+                }
+
+                result.Data = new AccountViewModel
+                {
+                    Login = account.Login
+                };
+
+                return result;
+            }
+            catch (FunctionalException e)
+            {
+                string errorMsg = e.Message;
+                _log.Error(errorMsg);
+                return new APICallResult<AccountViewModel>(errorMsg, e.RedirectUrl);
+            }
+            catch (Exception e)
+            {
+                _log.Error(e.Message);
+                return new APICallResult<AccountViewModel>(MainBusinessResources.TECHNICAL_ERROR);
+            }
+        }
+
+        public APICallResult<List<AccountViewModel>> GetAllAccountViewModels(ISession session, string baseUrl)
+        {
+            APICallResult<List<AccountViewModel>> result = new APICallResult<List<AccountViewModel>>(true);
+
+            try
+            {
+                session.CanUserPerformAction(_menuRepository, MainNavSubSectionResources.GET_ALL_ACCOUNTS_ID);
+
+                result.Data = _accountRepository.GetAllAccountDtos().Select(acc => new AccountViewModel(acc, baseUrl)).ToList();
+            }
+            catch (Exception e)
+            {
+                _log.Error(e.Message);
+                return new APICallResult<List<AccountViewModel>>(MainBusinessResources.TECHNICAL_ERROR);
+            }
+
+            return result;
         }
     }
 }

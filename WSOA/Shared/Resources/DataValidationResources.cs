@@ -21,5 +21,6 @@
         public const string BUY_IN_MISSING = "Buy-In manquant";
         public const string BUY_IN_ERROR_RANGE = "Buy-In doit être supérieur ou égale à 1";
         public const string ADDRESS_MISSING = "Adresse manquante";
+        public const string TECHNICAL_ERROR = "Erreur technique. Contactez l'administrateur";
     }
 }

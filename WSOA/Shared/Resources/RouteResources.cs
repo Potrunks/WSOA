@@ -13,5 +13,7 @@
         public const string CANCEL_TOURNAMENT_IN_PROGRESS = "api/tournament/inProgress/{0}/cancel";
         public const string HOME = "/home";
         public const string ADD_PLAYERS_TOURNAMENT_IN_PROGRESS = "api/tournament/inProgress/{0}/addPlayers";
+        public const string CREATE_ACCOUNT_PAGE = "{0}account/create";
+        public const string RESET_PWD_PAGE = "{0}account/{1}/reinit/{2}";
     }
 }

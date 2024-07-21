@@ -1,0 +1,35 @@
+﻿@page "/account/forgot/login"
+@using WSOA.Client.Pages.Account.ForgotLogin.Component
+@using WSOA.Client.Shared.Forms
+@using WSOA.Client.Shared.Loaders
+@using WSOA.Client.Shared.Fields.Inputs.Text
+@using WSOA.Client.Shared.Fields.Resources
+@inherits ForgotLoginComponent
+@layout FullPageLayout
+
+@if (IsLoading)
+{
+    <CardCoinLoader />
+}
+else
+{
+    <MultiPageForm Model="@Form"
+               Title="Mot de passe oublié"
+               OnSubmit="SendResetAccountLoginMail()"
+               MaxPages="1"
+               HeightPercentage="70"
+    >
+        <PageForms>
+            <PageFormContainer PageForm="1">
+                <Fields>
+                    <div class="c-forgot-login__explication-container">
+                        <span class="c-forgot-login__explication-title">Ti été où mon mot de passe !!! Ti été où !!!</span>
+                        <span class="c-forgot-login__explication-description">Tu recevras un mail d'une validité de 24h pour réinitialiser ton compte</span>
+                    </div>
+                    <TextInputField Label="@InputLabelResources.MAIL"
+                                @bind-InputValue="Form.Mail" />
+                </Fields>
+            </PageFormContainer>
+        </PageForms>
+    </MultiPageForm>
+}

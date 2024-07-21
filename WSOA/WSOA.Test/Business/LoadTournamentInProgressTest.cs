@@ -30,6 +30,7 @@ namespace WSOA.Test.Business
         private IPlayerRepository _playerRepository;
         private IBonusTournamentRepository _bonusTournamentRepository;
         private IUserRepository _userRepository;
+        private IJackpotDistributionRepository _jackpotDistributionRepository;
 
         private ITournamentBusiness _tournamentBusiness;
 
@@ -44,7 +45,9 @@ namespace WSOA.Test.Business
             _tournamentPrevious = SaveTournament(isOver: true, startDate: _tournamentInProgress.StartDate.AddMonths(-1));
 
             _playersIntoTournament = SavePlayers(_tournamentInProgress.Id, PresenceStateResources.PRESENT_CODE, 3);
+            SaveJackpotDistribution(_tournamentInProgress.Id, amount: _tournamentInProgress.BuyIn * _playersIntoTournament.Count);
             _playersIntoPreviousTournament = SavePlayers(_tournamentPrevious.Id, PresenceStateResources.PRESENT_CODE, 3, tournamentIsOver: true);
+            SaveJackpotDistribution(_tournamentPrevious.Id, amount: _tournamentPrevious.BuyIn * _playersIntoPreviousTournament.Count);
 
             _availableBonus = SaveBonusTournaments(3);
             SaveBonusTournamentEarneds(_playersIntoTournament.Select(pla => pla.Id), _availableBonus);
@@ -55,6 +58,7 @@ namespace WSOA.Test.Business
             _playerRepository = new PlayerRepository(_dbContext);
             _bonusTournamentRepository = new BonusTournamentRepository(_dbContext);
             _userRepository = new UserRepository(_dbContext);
+            _jackpotDistributionRepository = new JackpotDistributionRepository(_dbContext);
 
             _tournamentBusiness = new TournamentBusiness
                 (
@@ -68,7 +72,7 @@ namespace WSOA.Test.Business
                     _bonusTournamentRepository,
                     null,
                     null,
-                    null
+                    _jackpotDistributionRepository
                 );
         }
 

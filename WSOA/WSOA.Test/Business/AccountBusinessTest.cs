@@ -91,7 +91,7 @@ namespace WSOA.Test.Business
 
             Assert.AreEqual(true, result.Success);
             Assert.AreEqual(null, result.ErrorMessage);
-            Assert.AreEqual(null, result.WarningMessage);
+            Assert.AreEqual(string.Empty, result.WarningMessage);
             Assert.AreEqual(null, result.RedirectUrl);
             Assert.AreEqual(_linkAccountCreationVM.RecipientMail, linkCreated!.RecipientMail);
             Assert.AreEqual(_linkAccountCreationVM.ProfileCodeSelected, linkCreated.ProfileCode);
@@ -110,7 +110,7 @@ namespace WSOA.Test.Business
 
             Assert.AreEqual(false, result.Success);
             Assert.AreEqual(MainBusinessResources.USER_NOT_CONNECTED, result.ErrorMessage);
-            Assert.AreEqual(null, result.WarningMessage);
+            Assert.AreEqual(string.Empty, result.WarningMessage);
             Assert.AreEqual(string.Format(RouteBusinessResources.SIGN_IN_WITH_ERROR_MESSAGE, MainBusinessResources.USER_NOT_CONNECTED), result.RedirectUrl);
             _transactionManagerMock.Verify(t => t.BeginTransaction(), Times.Once());
             _transactionManagerMock.Verify(t => t.CommitTransaction(), Times.Never());
@@ -127,7 +127,7 @@ namespace WSOA.Test.Business
 
             Assert.AreEqual(false, result.Success);
             Assert.AreEqual(MainBusinessResources.USER_CANNOT_PERFORM_ACTION, result.ErrorMessage);
-            Assert.AreEqual(null, result.WarningMessage);
+            Assert.AreEqual(string.Empty, result.WarningMessage);
             Assert.AreEqual(null, result.RedirectUrl);
             _transactionManagerMock.Verify(t => t.BeginTransaction(), Times.Once());
             _transactionManagerMock.Verify(t => t.CommitTransaction(), Times.Never());
@@ -151,7 +151,7 @@ namespace WSOA.Test.Business
 
             Assert.AreEqual(true, result.Success);
             Assert.AreEqual(null, result.ErrorMessage);
-            Assert.AreEqual(AccountBusinessResources.LINK_ACCOUNT_CREATION_EXTENDED, result.WarningMessage);
+            Assert.IsTrue(result.WarningMessage.Contains(AccountBusinessResources.LINK_ACCOUNT_CREATION_EXTENDED));
             Assert.AreEqual(null, result.RedirectUrl);
             Assert.AreEqual(DateTime.UtcNow.AddDays(AccountBusinessResources.LINK_ACCOUNT_CREATION_EXPIRATION_DAY_DELAY).Day, currentLink.ExpirationDate.Day);
             _transactionManagerMock.Verify(t => t.BeginTransaction(), Times.Once());
@@ -176,7 +176,7 @@ namespace WSOA.Test.Business
 
             Assert.AreEqual(true, result.Success);
             Assert.AreEqual(null, result.ErrorMessage);
-            Assert.AreEqual(AccountBusinessResources.LINK_ACCOUNT_CREATION_RE_SEND, result.WarningMessage);
+            Assert.IsTrue(result.WarningMessage.Contains(AccountBusinessResources.LINK_ACCOUNT_CREATION_RE_SEND));
             Assert.AreEqual(null, result.RedirectUrl);
             _transactionManagerMock.Verify(t => t.BeginTransaction(), Times.Once());
             _transactionManagerMock.Verify(t => t.CommitTransaction(), Times.Once());

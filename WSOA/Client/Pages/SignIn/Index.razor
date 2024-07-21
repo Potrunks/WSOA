@@ -45,7 +45,10 @@ else
                     <MainButton Label="@SignInLabelResources.SIGN_IN_BTN_LABEL"
                             IsPrimary="true"
                             Type="submit" />
-                    <MainButton Label="@SignInLabelResources.PWD_FORGOTTEN_BTN_LABEL" />
+                    <MainButton
+                        Label="@SignInLabelResources.PWD_FORGOTTEN_BTN_LABEL"
+                        OnClick="() => GoToForgotLoginPage.InvokeAsync()"
+                    />
                 </div>
                 <Prompt
                     ErrorMessageListerner="@ErrorMessage"
