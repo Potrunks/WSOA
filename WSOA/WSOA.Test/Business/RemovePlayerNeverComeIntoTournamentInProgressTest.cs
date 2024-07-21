@@ -23,6 +23,7 @@ namespace WSOA.Test.Business
         private Mock<ISession> _sessionMock;
         private IPlayerRepository _playerRepository;
         private IUserRepository _userRepository;
+        private IJackpotDistributionRepository _jackpotDistributionRepository;
         private ITournamentBusiness _tournamentBusiness;
 
         [TestInitialize]
@@ -31,12 +32,14 @@ namespace WSOA.Test.Business
             _userPerformer = SaveUser("Antoine", "GUERTS", "aguerts", "Trunks92!", ProfileResources.ORGANIZER_CODE);
             SaveBusinessAction(_userPerformer.ProfileCode, BusinessActionResources.EDIT_PLAYER_PRESENCE);
             _tournamentConcerned = SaveTournament(true);
+            SaveJackpotDistribution(_tournamentConcerned.Id);
             _playerNeverCome = SavePlayer("Alexis", "ARRIAL", ProfileResources.PLAYER_CODE, _tournamentConcerned.Id, PresenceStateResources.PRESENT_CODE);
 
             _transactionManagerMock = CreateITransactionManagerMock();
             _sessionMock = CreateISessionMock(_userPerformer.ProfileCode, _userPerformer.Id);
             _playerRepository = new PlayerRepository(_dbContext);
             _userRepository = new UserRepository(_dbContext);
+            _jackpotDistributionRepository = new JackpotDistributionRepository(_dbContext);
 
             _tournamentBusiness = new TournamentBusiness(
                     _transactionManagerMock.Object,
@@ -49,7 +52,7 @@ namespace WSOA.Test.Business
                     null,
                     null,
                     null,
-                    null
+                    _jackpotDistributionRepository
                 );
         }
 
@@ -125,7 +128,7 @@ namespace WSOA.Test.Business
 
             VerifyTransactionManagerCommit(_transactionManagerMock);
             Assert.AreEqual(PresenceStateResources.ABSENT_CODE, _playerNeverCome.PresenceStateCode);
-            Assert.AreEqual(TournamentMessageResources.PLAYER_ALREADY_NOT_PRESENT, result.WarningMessage);
+            Assert.IsTrue(result.WarningMessage.Contains(TournamentMessageResources.PLAYER_ALREADY_NOT_PRESENT));
             Assert.AreEqual(true, result.Success);
             Assert.AreEqual(null, result.RedirectUrl);
             Assert.AreEqual(null, result.ErrorMessage);

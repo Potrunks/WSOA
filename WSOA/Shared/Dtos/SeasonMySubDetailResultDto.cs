@@ -159,12 +159,8 @@ namespace WSOA.Shared.Dtos
                 case SubRankResultType.STRAIGHT_FLUSH:
                 case SubRankResultType.ROYAL_STRAIGHT_FLUSH:
                     return SubRankResultType.GetUnity();
-                case SubRankResultType.FIRST_MOST_VICTIM:
-                case SubRankResultType.SECOND_MOST_VICTIM:
-                case SubRankResultType.THIRD_MOST_VICTIM:
-                case SubRankResultType.FIRST_MOST_ELIMINATOR:
-                case SubRankResultType.SECOND_MOST_ELIMINATOR:
-                case SubRankResultType.THIRD_MOST_ELIMINATOR:
+                case SubRankResultType.ALL_VICTIM:
+                case SubRankResultType.ALL_ELIMINATOR:
                     return $"fois {StringFormatUtil.ToFormatFullName(FirstName, LastName)}";
                 default:
                     return string.Empty;

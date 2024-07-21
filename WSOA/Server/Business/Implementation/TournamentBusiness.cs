@@ -74,21 +74,20 @@ namespace WSOA.Server.Business.Implementation
                 _tournamentRepository.SaveTournament(newTournament);
 
                 IEnumerable<User> allUsers = _userRepository.GetAllUsers();
-                try
-                {
-                    _mailService.SendMails
+
+                _transactionManager.CommitTransaction();
+
+                _mailService.SendMails
                     (
                         allUsers.Select(usr => usr.Email),
                         TournamentBusinessResources.MAIL_SUBJECT_NEW_TOURNAMENT,
                         string.Format(TournamentBusinessResources.MAIL_BODY_NEW_TOURNAMENT, form.BaseUri)
                     );
-                }
-                catch (Exception e)
-                {
-                    _log.Error(e);
-                }
-
-                _transactionManager.CommitTransaction();
+            }
+            catch (WarningException e)
+            {
+                _log.Error(string.Format(TournamentBusinessResources.TECHNICAL_ERROR_TOURNAMENT_CREATION, e.Message));
+                result.WarningMessage = e.Message;
             }
             catch (FunctionalException e)
             {

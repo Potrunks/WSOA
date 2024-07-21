@@ -29,6 +29,9 @@ namespace WSOA.Client.Shared.Forms.Components
         [EditorRequired]
         public int MaxPages { get; set; }
 
+        [Parameter]
+        public int? HeightPercentage { get; set; }
+
         public EditContext EditContext { get; set; }
 
         public bool IsProcessing { get; set; }

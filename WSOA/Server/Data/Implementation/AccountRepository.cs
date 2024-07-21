@@ -1,4 +1,5 @@
 ﻿using WSOA.Server.Data.Interface;
+using WSOA.Shared.Dtos;
 using WSOA.Shared.Entity;
 
 namespace WSOA.Server.Data.Implementation
@@ -57,6 +58,44 @@ namespace WSOA.Server.Data.Implementation
         {
             _dbContext.LinkAccountCreations.Remove(link);
             _dbContext.SaveChanges();
+        }
+
+        public IQueryable<Account> GetAccountsByMails(IEnumerable<string> mails)
+        {
+            return (
+                    from acc in _dbContext.Accounts
+                    join usr in _dbContext.Users on acc.Id equals usr.AccountId
+                    where mails.Contains(usr.Email)
+                    select acc
+                );
+        }
+
+        public IQueryable<Account> GetAccountsByIds(IEnumerable<int> ids)
+        {
+            return (
+                    from acc in _dbContext.Accounts
+                    where ids.Contains(acc.Id)
+                    select acc
+                );
+        }
+
+        public IQueryable<AccountDto> GetAllAccountDtos()
+        {
+            DateTime now = DateTime.UtcNow;
+
+            return (
+                    from acc in _dbContext.Accounts
+                    join usr in _dbContext.Users on acc.Id equals usr.AccountId
+                    select new AccountDto
+                    {
+                        Id = acc.Id,
+                        FirstName = usr.FirstName,
+                        LastName = usr.LastName,
+                        ForgotPasswordExpirationDate = acc.ForgotPasswordExpirationDate,
+                        ForgotPasswordKey = acc.ForgotPasswordKey,
+                        Login = acc.Login
+                    }
+                );
         }
     }
 }

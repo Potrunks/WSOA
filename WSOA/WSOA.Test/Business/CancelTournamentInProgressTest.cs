@@ -31,6 +31,7 @@ namespace WSOA.Test.Business
         private IEliminationRepository _eliminationRepository;
         private IBonusTournamentEarnedRepository _bonusTournamentEarnedRepository;
         private IUserRepository _userRepository;
+        private IJackpotDistributionRepository _jackpotDistributionRepository;
 
         private ITournamentBusiness _tournamentBusiness;
 
@@ -40,6 +41,7 @@ namespace WSOA.Test.Business
             _usrPerformer = SaveUser("Alexis", "ARRIAL", "aarrial", "Trunks92!", ProfileResources.ORGANIZER_CODE);
 
             _tournamentInProgress = SaveTournament(true);
+            SaveJackpotDistribution(_tournamentInProgress.Id);
 
             _player1 = SavePlayer
                 (
@@ -102,6 +104,7 @@ namespace WSOA.Test.Business
             _eliminationRepository = new EliminationRepository(_dbContext);
             _bonusTournamentEarnedRepository = new BonusTournamentEarnedRepository(_dbContext);
             _userRepository = new UserRepository(_dbContext);
+            _jackpotDistributionRepository = new JackpotDistributionRepository(_dbContext);
 
             _tournamentBusiness = new TournamentBusiness
                 (
@@ -115,7 +118,7 @@ namespace WSOA.Test.Business
                     null,
                     _eliminationRepository,
                     _bonusTournamentEarnedRepository,
-                    null
+                    _jackpotDistributionRepository
                 );
         }
 

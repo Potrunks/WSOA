@@ -13,5 +13,9 @@ namespace WSOA.Shared.Entity
 
         [Required]
         public string Password { get; set; }
+
+        public DateTime? ForgotPasswordExpirationDate { get; set; }
+
+        public long? ForgotPasswordKey { get; set; }
     }
 }

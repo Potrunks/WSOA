@@ -113,6 +113,15 @@ namespace WSOA.Server.Data
                     Order = 1,
                     Url = "/account/logOut"
                 },
+                new MainNavSubSection
+                {
+                    Id = 9,
+                    Label = "Comptes",
+                    MainNavSectionId = 4,
+                    Description = "Affiche les informations de tous les comptes",
+                    Order = 2,
+                    Url = "/account/get/all"
+                },
                 // TOURNAMENT MAIN NAV SECTION
                 new MainNavSubSection
                 {
@@ -313,6 +322,13 @@ namespace WSOA.Server.Data
                     Id = 22,
                     MainNavSubSectionId = 8,
                     ProfileCode = "PLAYER"
+                },
+                // ALL ACCOUNTS
+                new MainNavSubSectionByProfileCode
+                {
+                    Id = 23,
+                    MainNavSubSectionId = 9,
+                    ProfileCode = "ADMIN"
                 }
             );
 

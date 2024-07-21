@@ -10,5 +10,6 @@
         public const string TOTAL_ADDON_GIVEN_LESS_THAN_ZERO = "Le nombre d'add-on ne peut pas être inférieur à zéro";
         public const string PLAYER_NOT_IN_ADDON = "Le joueur n'est pas en add-on";
         public const string TOURNAMENT_NOT_IN_PROGRESS = "Le tournoi n'est pas en cours";
+        public const string TECHNICAL_ERROR_TOURNAMENT_CREATION = "Erreur technique pendant la tentative de création d'un tournoi -> {0}";
     }
 }

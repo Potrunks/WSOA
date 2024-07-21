@@ -1,0 +1,31 @@
+﻿.c-reset-pwd__explication-container {
+    display: flex;
+    flex-direction: column;
+}
+
+.c-reset-pwd__explication-title {
+    text-align: center;
+    font-size: 20px;
+    font-weight: 500;
+    margin-bottom: 15px;
+}
+
+.c-reset-pwd__explication-description {
+    margin-bottom: 15px;
+    text-align: center;
+}
+
+.c-reset-pwd__login-container {
+    display: flex;
+    flex-direction: column;
+}
+
+    .c-reset-pwd__login-container label {
+        font-size: 14px;
+    }
+
+    .c-reset-pwd__login-container input {
+        height: 40px;
+        border-radius: 10px;
+        border: 1px solid;
+    }
