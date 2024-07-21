@@ -1,6 +1,7 @@
 ﻿using WSOA.Client.Services.Interface;
 using WSOA.Client.Shared.Resources;
 using WSOA.Client.Utils;
+using WSOA.Shared.Forms;
 using WSOA.Shared.Result;
 using WSOA.Shared.ViewModel;
 
@@ -49,6 +50,30 @@ namespace WSOA.Client.Services.Implementation
         {
             HttpResponseMessage rep = await _httpClient.PostAsync(ApiRouteResources.SIGN_IN, signInFormVM.ToJsonUtf8());
             return rep.Content.ToObject<APICallResultBase>();
+        }
+
+        public async Task<APICallResultBase> SendResetAccountLoginMail(MailForm form)
+        {
+            HttpResponseMessage rep = await _httpClient.PostAsync(ApiRouteResources.SEND_MAIL_RESET_LOGIN, form.ToJsonUtf8());
+            return rep.Content.ToObject<APICallResultBase>();
+        }
+
+        public async Task<APICallResultBase> ResetAccountLogin(AccountResetForm form)
+        {
+            HttpResponseMessage rep = await _httpClient.PostAsync(ApiRouteResources.RESET_LOGIN, form.ToJsonUtf8());
+            return rep.Content.ToObject<APICallResultBase>();
+        }
+
+        public async Task<APICallResult<AccountViewModel>> GetResetPasswordAccountViewModel(int accountId, long forgotPasswordKey)
+        {
+            HttpResponseMessage rep = await _httpClient.GetAsync(string.Format(ApiRouteResources.GET_RESET_PWD_ACCOUNT_VM, accountId, forgotPasswordKey));
+            return rep.Content.ToObject<APICallResult<AccountViewModel>>();
+        }
+
+        public async Task<APICallResult<List<AccountViewModel>>> GetAllAccountViewModels()
+        {
+            HttpResponseMessage rep = await _httpClient.GetAsync(ApiRouteResources.GET_ALL_ACCOUNTS_VM);
+            return rep.Content.ToObject<APICallResult<List<AccountViewModel>>>();
         }
     }
 }

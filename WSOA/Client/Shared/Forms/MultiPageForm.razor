@@ -7,7 +7,10 @@
 
 <div class="multiPageForm_mainContainer">
     <span class="multiPageForm_title">@Title</span>
-    <EditForm EditContext="@EditContext">
+    <EditForm
+        EditContext="@EditContext"
+        style="@(HeightPercentage != null ? $"height: {HeightPercentage}%" : "")"
+    >
 
         <CascadingValue Value="@MaxPages" Name="MaxPages">
             <CascadingValue Value="@SubmitCallback" Name="Submit">

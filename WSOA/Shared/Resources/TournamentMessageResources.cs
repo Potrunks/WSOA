@@ -16,7 +16,7 @@
         public const string PLAYERS_ALREADY_DEFINITIVELY_ELIMINATED = "Le joueur eliminé et/ou eliminateur est déjà définitivement éliminé";
         public const string TOURNAMENT_PAST = "La date du tournoi est passé";
         public const string HOW_MUCH_ADDON_FOR_PLAYER = "Combien d'add-on pour {0}";
-        public const string PLAYER_ALREADY_NOT_PRESENT = "Le joueur était déjà non présent. L'action a été réalisé tout de même mais prevenez un administrateur malgré tout.";
+        public const string PLAYER_ALREADY_NOT_PRESENT = "Le joueur était déjà non présent. L'action a été réalisé malgré tout.";
         public const string REMOVE_PLAYER_FROM_TOURNAMENT_REBUY_ERROR = "Le joueur ne peut pas être retiré du tournoi car il a déjà rebuy";
         public const string REMOVE_PLAYER_FROM_TOURNAMENT_ADDON_ERROR = "Le joueur ne peut pas être retiré du tournoi car il a déjà fait l'addon";
         public const string REMOVE_PLAYER_FROM_TOURNAMENT_FINAL_TABLE_ERROR = "Le joueur ne peut pas être retiré du tournoi car il est déjà en table finale";

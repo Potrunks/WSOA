@@ -42,6 +42,7 @@ namespace WSOA.Test.Business
         private ITournamentRepository _tournamentRepository;
         private Mock<IBonusTournamentEarnedRepository> _bonusTournamentRepositoryMock;
         private IBonusTournamentRepository _bonusTournamentRepository;
+        private IJackpotDistributionRepository _jackpotDistributionRepository;
 
         private ITournamentBusiness _tournamentBusiness;
 
@@ -52,6 +53,7 @@ namespace WSOA.Test.Business
             SaveBonusTournament(BonusTournamentResources.PREVIOUS_WINNER_KILLED, 20);
 
             _tournamentInProgress = SaveTournament(isInProgress: true);
+            SaveJackpotDistribution(_tournamentInProgress.Id);
 
             _currentUser = SaveUser
                 (
@@ -139,6 +141,7 @@ namespace WSOA.Test.Business
                                               _eliminatorPlayerBonus.Add(bonus);
                                           });
             _bonusTournamentRepository = new BonusTournamentRepository(_dbContext);
+            _jackpotDistributionRepository = new JackpotDistributionRepository(_dbContext);
 
             _tournamentBusiness = new TournamentBusiness
                 (
@@ -152,7 +155,7 @@ namespace WSOA.Test.Business
                     _bonusTournamentRepository,
                     _eliminationRepositoryMock.Object,
                     _bonusTournamentRepositoryMock.Object,
-                    null
+                    _jackpotDistributionRepository
                 );
         }
 

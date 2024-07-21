@@ -99,7 +99,7 @@ namespace WSOA.Test.Business
             Assert.AreEqual(_form.AddressId, _tournamentCreated.AddressId);
             Assert.AreEqual(true, result.Success);
             Assert.AreEqual(null, result.ErrorMessage);
-            Assert.AreEqual(null, result.WarningMessage);
+            Assert.AreEqual(string.Empty, result.WarningMessage);
             Assert.AreEqual(null, result.RedirectUrl);
         }
 
@@ -114,7 +114,7 @@ namespace WSOA.Test.Business
             Assert.AreEqual(null, _tournamentCreated);
             Assert.AreEqual(false, result.Success);
             Assert.AreEqual(MainBusinessResources.USER_NOT_CONNECTED, result.ErrorMessage);
-            Assert.AreEqual(null, result.WarningMessage);
+            Assert.AreEqual(string.Empty, result.WarningMessage);
             Assert.AreEqual(string.Format(RouteBusinessResources.SIGN_IN_WITH_ERROR_MESSAGE, MainBusinessResources.USER_NOT_CONNECTED), result.RedirectUrl);
         }
 
@@ -131,7 +131,7 @@ namespace WSOA.Test.Business
             Assert.AreEqual(null, _tournamentCreated);
             Assert.AreEqual(false, result.Success);
             Assert.AreEqual(MainBusinessResources.USER_CANNOT_PERFORM_ACTION, result.ErrorMessage);
-            Assert.AreEqual(null, result.WarningMessage);
+            Assert.AreEqual(string.Empty, result.WarningMessage);
             Assert.AreEqual(string.Format(RouteBusinessResources.SIGN_IN_WITH_ERROR_MESSAGE, MainBusinessResources.USER_CANNOT_PERFORM_ACTION), result.RedirectUrl);
         }
 
@@ -146,7 +146,7 @@ namespace WSOA.Test.Business
             Assert.AreEqual(null, _tournamentCreated);
             Assert.AreEqual(false, result.Success);
             Assert.AreEqual(DataValidationResources.STARTDATE_PAST_ERROR, result.ErrorMessage);
-            Assert.AreEqual(null, result.WarningMessage);
+            Assert.AreEqual(string.Empty, result.WarningMessage);
             Assert.AreEqual(null, result.RedirectUrl);
         }
 
@@ -158,7 +158,7 @@ namespace WSOA.Test.Business
 
             Assert.AreEqual(true, result.Success);
             Assert.AreEqual(null, result.ErrorMessage);
-            Assert.AreEqual(null, result.WarningMessage);
+            Assert.AreEqual(string.Empty, result.WarningMessage);
             Assert.AreEqual(null, result.RedirectUrl);
             Assert.AreEqual(true, viewModelResult.SelectableSeasons.All(sea => _expectedSeasons.Any(exp => exp == sea)));
             Assert.AreEqual(true, viewModelResult.SelectableAddresses.All(sea => _expectedAddresses.Any(exp => exp.Id == sea.Id)));
@@ -174,7 +174,7 @@ namespace WSOA.Test.Business
 
             Assert.AreEqual(false, result.Success);
             Assert.AreEqual(MainBusinessResources.USER_NOT_CONNECTED, result.ErrorMessage);
-            Assert.AreEqual(null, result.WarningMessage);
+            Assert.AreEqual(string.Empty, result.WarningMessage);
             Assert.AreEqual(string.Format(RouteBusinessResources.SIGN_IN_WITH_ERROR_MESSAGE, MainBusinessResources.USER_NOT_CONNECTED), result.RedirectUrl);
             Assert.AreEqual(null, result.Data);
         }
@@ -190,7 +190,7 @@ namespace WSOA.Test.Business
 
             Assert.AreEqual(false, result.Success);
             Assert.AreEqual(MainBusinessResources.USER_CANNOT_PERFORM_ACTION, result.ErrorMessage);
-            Assert.AreEqual(null, result.WarningMessage);
+            Assert.AreEqual(string.Empty, result.WarningMessage);
             Assert.AreEqual(string.Format(RouteBusinessResources.SIGN_IN_WITH_ERROR_MESSAGE, MainBusinessResources.USER_CANNOT_PERFORM_ACTION), result.RedirectUrl);
             Assert.AreEqual(null, result.Data);
         }
@@ -206,7 +206,7 @@ namespace WSOA.Test.Business
             Assert.AreEqual(false, result.Success);
             string expectedErrorMsg = string.Format(MainBusinessResources.NULL_OR_EMPTY_OBJ_NOT_ALLOWED, "addresses", nameof(TournamentBusiness.LoadTournamentCreationDatas));
             Assert.AreEqual(expectedErrorMsg, result.ErrorMessage);
-            Assert.AreEqual(null, result.WarningMessage);
+            Assert.AreEqual(string.Empty, result.WarningMessage);
             Assert.AreEqual(string.Format(RouteBusinessResources.MAIN_ERROR, expectedErrorMsg), result.RedirectUrl);
             Assert.AreEqual(null, result.Data);
         }
@@ -222,7 +222,7 @@ namespace WSOA.Test.Business
             Assert.AreEqual(false, result.Success);
             string expectedErrorMsg = string.Format(MainBusinessResources.NULL_OR_EMPTY_OBJ_NOT_ALLOWED, "addresses", nameof(TournamentBusiness.LoadTournamentCreationDatas));
             Assert.AreEqual(expectedErrorMsg, result.ErrorMessage);
-            Assert.AreEqual(null, result.WarningMessage);
+            Assert.AreEqual(string.Empty, result.WarningMessage);
             Assert.AreEqual(string.Format(RouteBusinessResources.MAIN_ERROR, expectedErrorMsg), result.RedirectUrl);
             Assert.AreEqual(null, result.Data);
         }

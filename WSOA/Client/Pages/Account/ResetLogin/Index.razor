@@ -1,0 +1,41 @@
+﻿@page "/account/{AccountId:int}/reinit/{ForgotPasswordKey:long}"
+@using WSOA.Client.Pages.Account.ResetLogin.Component
+@using WSOA.Client.Shared.Loaders
+@using WSOA.Client.Shared.Forms
+@using WSOA.Client.Shared.Fields.Inputs.Password
+@using WSOA.Client.Shared.Fields.Resources
+@inherits ResetLoginComponent
+@layout FullPageLayout
+
+@if (IsLoading)
+{
+    <CardCoinLoader />
+}
+else
+{
+    <MultiPageForm Model="@AccountResetForm"
+               Title="Mot de passe oublié"
+               OnSubmit="ResetAccountLogin()"
+               MaxPages="1"
+               HeightPercentage="70"
+    >
+        <PageForms>
+            <PageFormContainer PageForm="1">
+                <Fields>
+                    <div class="c-reset-pwd__explication-container">
+                        <span class="c-reset-pwd__explication-title">Ha Ha Ha !!! Vous n'avez pas dit le mot magique !!!</span>
+                        <span class="c-reset-pwd__explication-description">Inscris ton nouveau mot de passe puis valide</span>
+                    </div>
+                    <div class="c-reset-pwd__login-container">
+                        <label>Login</label>
+                        <input value="@AccountViewModel.Login" readonly />
+                    </div>
+                    <PasswordInputField Label="@InputLabelResources.PASSWORD"
+                                @bind-InputValue="AccountResetForm.Password" />
+                    <PasswordInputField Label="@InputLabelResources.PASSWORD_CONFIRMATION"
+                                @bind-InputValue="AccountResetForm.PasswordConfirmation" />
+                </Fields>
+            </PageFormContainer>
+        </PageForms>
+    </MultiPageForm>
+}

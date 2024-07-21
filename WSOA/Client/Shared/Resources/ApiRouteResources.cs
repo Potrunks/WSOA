@@ -15,5 +15,9 @@
         public const string TOURNAMENT_PREPARATION_GET_PLAYERS = "api/tournament/load/presentPlayers/{0}";
         public const string PLAY_TOURNAMENT_PREPARED = "api/tournament/prepared/save";
         public const string ADD_PLAYERS_TOURNAMENT_IN_PROGRESS = "api/tournament/inProgress/{0}/load/newPlayers";
+        public const string SEND_MAIL_RESET_LOGIN = "api/account/reset/send/mail";
+        public const string RESET_LOGIN = "api/account/reset/login";
+        public const string GET_RESET_PWD_ACCOUNT_VM = "api/account/{0}/{1}/get";
+        public const string GET_ALL_ACCOUNTS_VM = "api/account/get/all";
     }
 }

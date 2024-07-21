@@ -2,6 +2,7 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using WSOA.Server.Data;
 
@@ -10,9 +11,11 @@ using WSOA.Server.Data;
 namespace WSOA.Server.Migrations
 {
     [DbContext(typeof(WSOADbContext))]
-    partial class WSOADbContextModelSnapshot : ModelSnapshot
+    [Migration("20240717224912_Update_Account_Entity_Forgot_Pwd")]
+    partial class Update_Account_Entity_Forgot_Pwd
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -593,15 +596,6 @@ namespace WSOA.Server.Migrations
                         },
                         new
                         {
-                            Id = 9,
-                            Description = "Affiche les informations de tous les comptes",
-                            Label = "Comptes",
-                            MainNavSectionId = 4,
-                            Order = 2,
-                            Url = "/account/get/all"
-                        },
-                        new
-                        {
                             Id = 3,
                             Description = "Créer un tournoi",
                             Label = "Créer tournoi",
@@ -809,12 +803,6 @@ namespace WSOA.Server.Migrations
                             Id = 22,
                             MainNavSubSectionId = 8,
                             ProfileCode = "PLAYER"
-                        },
-                        new
-                        {
-                            Id = 23,
-                            MainNavSubSectionId = 9,
-                            ProfileCode = "ADMIN"
                         });
                 });
 

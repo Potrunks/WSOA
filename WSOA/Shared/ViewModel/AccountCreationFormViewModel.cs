@@ -46,7 +46,7 @@ namespace WSOA.Shared.ViewModel
             }
             set
             {
-                _email = value?.Trim();
+                _email = value?.ToLower().Trim();
             }
         }
         private string _email;

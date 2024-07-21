@@ -74,5 +74,10 @@ namespace WSOA.Client.Pages.SignIn.Component
             _cardLeftRenderObject = new CardRenderObject();
             _cardRightRenderObject = new CardRenderObject(_cardLeftRenderObject);
         }
+
+        public EventCallback GoToForgotLoginPage => EventCallback.Factory.Create(this, () =>
+        {
+            NavigationManager.NavigateTo("/account/forgot/login");
+        });
     }
 }

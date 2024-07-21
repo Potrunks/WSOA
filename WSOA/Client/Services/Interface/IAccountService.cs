@@ -1,4 +1,5 @@
-﻿using WSOA.Shared.Result;
+﻿using WSOA.Shared.Forms;
+using WSOA.Shared.Result;
 using WSOA.Shared.ViewModel;
 
 namespace WSOA.Client.Services.Interface
@@ -34,5 +35,13 @@ namespace WSOA.Client.Services.Interface
         /// Clear all token in session.
         /// </summary>
         Task<APICallResultBase> ClearSession();
+
+        Task<APICallResultBase> SendResetAccountLoginMail(MailForm form);
+
+        Task<APICallResultBase> ResetAccountLogin(AccountResetForm form);
+
+        Task<APICallResult<AccountViewModel>> GetResetPasswordAccountViewModel(int accountId, long forgotPasswordKey);
+
+        Task<APICallResult<List<AccountViewModel>>> GetAllAccountViewModels();
     }
 }
